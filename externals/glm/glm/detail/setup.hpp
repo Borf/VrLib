@@ -672,7 +672,8 @@
 #endif
 
 // Not standard
-#define GLM_HAS_ANONYMOUS_UNION (GLM_LANG & GLM_LANG_CXXMS_FLAG)
+// Johan, dit veroorzaakt aligmnment fouten!
+//#define GLM_HAS_ANONYMOUS_UNION (GLM_LANG & GLM_LANG_CXXMS_FLAG)
 
 ///////////////////////////////////////////////////////////////////////////////////
 // Platform 

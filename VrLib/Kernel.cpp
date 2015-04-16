@@ -1,0 +1,449 @@
+#include "Kernel.h"
+
+#include <fstream>
+#include <cctype>
+
+#include <VrLib/Application.h>
+#include <VrLib/Log.h>
+#include <VrLib/Viewport.h>
+#include <VrLib/User.h>
+#include <VrLib/ClusterManager.h>
+#include <VrLib/ClusterManagers/ClusterManagerMaster.h>
+#include <VrLib/ClusterManagers/ClusterManagerSlave.h>
+#include <VrLib/ClusterData.h>
+#include <VrLib/Device.h>
+#include <VrLib/drivers/MouseButton.h>
+#include <VrLib/drivers/Keyboard.h>
+#include <VrLib/drivers/SimPosition.h>
+#include <VrLib/drivers/XBOXController.h>
+#include <VrLib/drivers/Vrpn.h>
+#include <VrLib/drivers/GloveDriver.h>
+#include <VrLib/drivers/RaceWheelDriver.h>
+#include <VrLib/drivers/Oculus.h>
+#include <VrLib/PerfMon.h>
+#include <VrLib/drivers/HydraDriver.h>
+
+#include <GL/glew.h>
+#include <GL/wglew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+namespace vrlib
+{
+	Log logger;
+	double PCFreq = 0.0;
+	__int64 CounterStart = 0;
+
+
+	Kernel::Kernel(void)
+	{
+		currentApplication = NULL;
+		newApplication = NULL;
+
+		mouseDriver = NULL;
+		keyboardDriver = NULL;
+		simPositionDriver = NULL;
+		raceWheelDriver = NULL;
+		oculusDriver = NULL;
+	}
+
+
+	Kernel::~Kernel(void)
+	{
+	}
+
+	void Kernel::loadConfig(std::string fileName)
+	{
+		std::ifstream file;
+		file.open(fileName);
+		if (!file.is_open())
+		{
+			logger << "Could not open file " << fileName << Log::newline;
+			return;
+		}
+		json::Value newValue = json::readJson(file);
+		mergeConfig(config, newValue);
+	}
+
+	void Kernel::setApp(Application* application)
+	{
+		newApplication = application;
+	}
+
+
+	void Kernel::start()
+	{
+		if (config.size() == 0)
+		{
+			logger << "No configuration file loaded" << Log::newline;
+			logger << "Press any key to exit" << Log::newline;
+			getchar();
+			return;
+		}
+		setLocalConfig();
+		loadDeviceDrivers();
+		loadCluster();
+		createWindow();
+
+		User* user = new User("MainUser");
+		users.push_back(user);
+
+		createViewports(user);
+
+
+		frameCount = 0;
+
+		double time = 0;
+		double frameTime;
+		double lastFps = 0;
+		headDevice = new PositionalDevice();
+		headDevice->init(config["users"][0u]["src"].asString());
+
+		PerfMon::getInstance()->resetTimer();
+
+		running = true;
+		while (running)
+		{
+			frameTime = PerfMon::getInstance()->getTime();
+			PerfMon::getInstance()->resetTimer();
+
+			time += frameTime;
+
+			if (lastFps + 10000 < time)
+			{
+				lastFps = time;
+				logger << "FPS: " << frameCount / 10.0f << Log::newline;
+				frameCount = 0;
+			}
+
+			tick(frameTime, time);
+			Sleep(0);
+		}
+	}
+
+	void Kernel::stop()
+	{
+		running = false;
+	}
+
+
+	void Kernel::mergeConfig(json::Value &config, const json::Value &newConfig)
+	{
+		//TODO
+		/*
+		json::Value::Members values = newConfig.getMemberNames();
+		
+		for (size_t i = 0; i < values.size(); i++)
+			if (config.isMember(values[i]))
+				if (config[values[i]].isObject())
+					mergeConfig(config[values[i]], newConfig[values[i]]);
+				else if (config[values[i]].isArray())
+				{
+					for (int ii = 0; ii < newConfig[values[i]].size(); ii++)
+						config[values[i]].append(newConfig[values[i]][ii]);
+				}
+				else
+					config[values[i]] = newConfig[values[i]];
+			else
+				config[values[i]] = newConfig[values[i]];*/
+	}
+
+
+
+
+
+
+	DeviceDriver* Kernel::getDeviceDriver(std::string name)
+	{
+		if (name == "SimPosition")
+		{
+			SimPositionDeviceDriver* driver = new SimPositionDeviceDriver(config["driverconfig"]["SimPosition"]);
+			if (simPositionDriver)
+				logger << "Double simpositiondriver" << Log::newline;
+			simPositionDriver = driver;
+			return driver;
+		}
+		else if (name == "XBOX")
+		{
+			XBOXDeviceDriver* driver = new XBOXDeviceDriver();
+			if (xboxDriver)
+				logger << "Double XBOX controller driver" << Log::newline;
+			xboxDriver = driver;
+			return driver;
+		}
+		else if (name == "mouse")
+		{
+			MouseButtonDeviceDriver* driver = new MouseButtonDeviceDriver();
+			if (mouseDriver)
+				logger << "Double Mousedriver" << Log::newline;
+			mouseDriver = driver;
+			return driver;
+		}
+		else if (name == "keyboard")
+		{
+			KeyboardDeviceDriver* driver = new KeyboardDeviceDriver();
+			if (keyboardDriver)
+				logger << "Double Keyboarddriver" << Log::newline;
+			keyboardDriver = driver;
+			return driver;
+		}
+		else if (name == "vrpn")
+		{
+			return new VrpnDeviceDriver();
+		}
+		else if (name == "glove")
+		{
+			return new GloveDeviceDriver();
+		}
+		else if (name == "wheel")
+		{
+
+			HWND _window = GetActiveWindow();
+			HWND _activeWindow;
+
+			while (_window != NULL)
+			{
+				_activeWindow = _window;
+				_window = GetParent(_window);
+			}
+
+			cRaceWheelDriver* driver = new cRaceWheelDriver(_activeWindow);
+
+			/*if (RaceWheelDriver)
+				logger << "Double Keyboarddriver" << Log::newline;*/
+			raceWheelDriver = driver;
+			//raceWheelDriver = new cRaceWheelDriver(_activeWindow);
+			return driver;
+		}
+		else if (name == "oculus")
+		{
+			if (!oculusDriver)
+				oculusDriver = new OculusDeviceDriver(config["driverconfig"]["Oculus"]);
+			return oculusDriver;
+		}
+		else if (name == "hydra")
+		{
+			return new HydraDeviceDriver();
+		}
+		else
+		{
+			logger << "Unknown driver requested: '" << name << "'" << Log::newline;
+			return NULL;
+		}
+	}
+
+	DeviceDriverAdaptor* Kernel::getDeviceDriverAdaptor(std::string name)
+	{
+		if (adaptors.find(name) == adaptors.end())
+		{
+			logger << "Unable to find device " << name << Log::newline;
+			return NULL;
+		}
+		return adaptors[name];
+	}
+
+	void Kernel::registerDevice(Device* device)
+	{
+		for (std::list<Device*>::iterator it = devices.begin(); it != devices.end(); it++)
+			if (*it == device)
+				return;
+		devices.push_back(device);
+	}
+
+	bool Kernel::isMaster()
+	{
+		if (!clusterManager)
+			return true;
+		return clusterManager->isMaster();
+	}
+
+	void Kernel::registerClusterData(ClusterDataBase* data)
+	{
+		clusterData.push_back(data);
+	}
+
+	void Kernel::setLocalConfig()
+	{
+		char hostname[1024];
+		gethostname(hostname, 1024);
+		localConfig = json::Value::null;
+		for (size_t i = 0; i < config["computers"].size(); i++)
+		{
+			if (config["computers"][i]["host"].asString() == hostname)
+				localConfig = config["computers"][i];
+		}
+		if (localConfig.isNull() && config.isMember("local"))
+			localConfig = config["local"];
+
+		if (localConfig.isNull())
+		{
+			logger << "Couldn't find config for this host!: Hostname '" << hostname << "'" << Log::newline;
+			for (size_t i = 0; i < config["computers"].size(); i++)
+				logger << "Found: " << config["computers"][i]["host"].asString() << Log::newline;
+		}
+	}
+
+	void Kernel::loadDeviceDrivers()
+	{
+		for (size_t i = 0; i < config["devices"].size(); i++)
+		{
+			if (drivers.find(config["devices"][i]["driver"].asString()) == drivers.end())
+				drivers[config["devices"][i]["driver"].asString()] = getDeviceDriver(config["devices"][i]["driver"].asString());
+
+			DeviceDriver* driver = drivers[config["devices"][i]["driver"].asString()];
+			if (!driver)
+				continue;
+			adaptors[config["devices"][i]["name"].asString()] = driver->getAdaptor(config["devices"][i]["src"].asString());
+		}
+	}
+
+	void Kernel::loadCluster()
+	{
+		if (localConfig.isMember("mode"))
+		{
+			if (localConfig["mode"].asString() == "slave")
+			{
+				clusterManager = new ClusterSlave();
+			}
+			else if (localConfig["mode"].asString() == "master")
+			{
+				std::vector<std::pair<std::string, std::string> > clusterNodes;
+				for (size_t i = 0; i < config["computers"].size(); i++)
+					if (config["computers"][i]["mode"].asString() == "slave")
+						clusterNodes.push_back(std::pair<std::string, std::string>(config["computers"][i]["host"].asString(), config["computers"][i]["ip"].asString()));
+				clusterManager = new ClusterMaster(clusterNodes);
+			}
+			else
+				logger << "Unknown configuration mode: " << localConfig["mode"].asString() << Log::newline;
+		}
+		else
+			clusterManager = NULL;
+	}
+
+
+	void Kernel::createViewports(User* user)
+	{
+		for (size_t i = 0; i < localConfig["viewports"].size(); i++)
+		{
+			Viewport* viewport = Viewport::createViewport(this, localConfig["viewports"][i], config["computers"]);
+			if (viewport)
+				viewports.push_back(viewport);
+		}
+	}
+
+	void Kernel::tick(double frameTime, double time)
+	{
+		checkForNewApp();
+
+		double startTime = PerfMon::getInstance()->getTime();
+
+		if (oculusDriver)
+			oculusDriver->beginFrame();
+
+		syncDevices();
+
+		if (PerfMon::getInstance()->getTime() - startTime > 10)
+			logger << "Cluster sync 1: " << PerfMon::getInstance()->getTime() - startTime << Log::newline;
+
+		(*users.begin())->matrix = headDevice->getData();
+		currentApplication->preFrame(frameTime, time);
+
+
+		startTime = PerfMon::getInstance()->getTime();
+		syncClusterData();
+
+		if (PerfMon::getInstance()->getTime() - startTime > 10)
+			logger << "Cluster sync 2: " << PerfMon::getInstance()->getTime() - startTime << Log::newline;
+
+
+		currentApplication->latePreFrame();
+
+		glViewport(0, 0, windowWidth, windowHeight); // Set the viewport size to fill the window
+		glClearColor(currentApplication->clearColor[0], currentApplication->clearColor[1], currentApplication->clearColor[2], currentApplication->clearColor[3]);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // Clear required buffers
+		for (std::list<Viewport*>::iterator it = viewports.begin(); it != viewports.end(); it++)
+		{
+			Viewport* vp = *it;
+			glViewport((int)(windowWidth*vp->x()), (int)(windowHeight*vp->y()), (int)(windowWidth*vp->width()), (int)(windowHeight*vp->height())); // Set the viewport size to fill the window
+			glClear(GL_DEPTH_BUFFER_BIT); // Clear required buffers
+
+			vp->draw(currentApplication);
+		}
+		swapBuffer();
+		frameCount++;
+	}
+
+	void Kernel::checkForNewApp()
+	{
+		if (newApplication)
+		{
+			if (currentApplication)
+			{
+				currentApplication->stop();
+				delete currentApplication;
+			}
+			currentApplication = newApplication;
+			newApplication = NULL;
+			currentApplication->init();
+		}
+	}
+
+	User* Kernel::getUser(std::string userName)
+	{
+		for (std::list<User*>::iterator it = users.begin(); it != users.end(); it++)
+			if ((*it)->getName() == userName)
+				return *it;
+		return NULL;
+	}
+
+	void Kernel::syncDevices()
+	{
+		if (simPositionDriver && keyboardDriver)
+			simPositionDriver->update(keyboardDriver);
+
+		if (oculusDriver && keyboardDriver)
+			oculusDriver->update(keyboardDriver);
+
+		if (isMaster())
+		{
+			for (std::map<std::string, DeviceDriver*>::iterator it = drivers.begin(); it != drivers.end(); it++)
+				it->second->update();
+
+			BinaryStream data(2048);
+			for (std::map<std::string, DeviceDriverAdaptor*>::iterator it = adaptors.begin(); it != adaptors.end(); it++)
+				it->second->updateDataMaster(data);
+
+			if (clusterManager)
+				if (!clusterManager->sync(data.str()))
+					stop();
+		}
+		else
+		{
+			if (!clusterManager->sync(adaptors))
+				stop();
+		}
+	}
+
+	void Kernel::syncClusterData()
+	{
+		if (isMaster())
+		{
+			int size = 0;
+			for (std::list<ClusterDataBase*>::iterator it = clusterData.begin(); it != clusterData.end(); it++)
+				size += (*it)->getEstimatedSize();
+			BinaryStream data(size);
+			for (std::list<ClusterDataBase*>::iterator it = clusterData.begin(); it != clusterData.end(); it++)
+				(*it)->updateDataMaster(data);
+
+			if (clusterManager)
+				if (!clusterManager->sync(data.str()))
+					stop();
+		}
+		else
+		{
+			if (!clusterManager->sync(clusterData))
+				stop();
+		}
+	}
+
+}

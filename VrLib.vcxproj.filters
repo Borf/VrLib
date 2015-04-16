@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="drivers">
+      <UniqueIdentifier>{39e5d823-d742-498c-a678-cf42049604e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{818121e2-7137-4920-90a0-571228d301a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Viewports">
+      <UniqueIdentifier>{8d3f532a-2c19-4024-9639-7020cf177f16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ClusterManagers">
+      <UniqueIdentifier>{9502fd0b-03ae-489d-8f61-c34b642ecf39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gl">
+      <UniqueIdentifier>{4306606e-7765-4662-9ad5-e83e010b8ee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{47f68287-43a2-4dc1-8c76-fe9e36741404}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="VrLib\VrLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Kernel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\User.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\ClusterManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Device.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\BinaryStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\MouseButton.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\SimPosition.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Multiton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\ClusterData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\PerfMon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\Vrpn.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\Keyboard.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\util\thread.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\util\mutex.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Viewports\ProjectionViewport.h">
+      <Filter>Viewports</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Viewports\SimulatorViewport.h">
+      <Filter>Viewports</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\ClusterManagers\ClusterManagerSlave.h">
+      <Filter>ClusterManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\ClusterManagers\ClusterManagerMaster.h">
+      <Filter>ClusterManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\GloveDriver.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\Oculus.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Viewports\RiftViewport.h">
+      <Filter>Viewports</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\XBOXController.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\RaceWheelDriver.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\drivers\HydraDriver.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\json.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Kernel_Windows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\VBO.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\Vertex.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\VIO.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\FBO.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\VAO.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\shader.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VrLib\VrLib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Kernel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\User.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\ClusterManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\BinaryStream.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\MouseButton.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\SimPosition.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\ClusterData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\PerfMon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\Vrpn.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\face.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\eye.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\Keyboard.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\util\thread.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\util\mutex.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Viewports\SimulatorViewport.cpp">
+      <Filter>Viewports</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Viewports\ProjectionViewport.cpp">
+      <Filter>Viewports</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\ClusterManagers\ClusterManagerSlave.cpp">
+      <Filter>ClusterManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\ClusterManagers\ClusterManagerMaster.cpp">
+      <Filter>ClusterManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Kernel_Windows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\GloveDriver.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\Oculus.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Viewports\RiftViewport.cpp">
+      <Filter>Viewports</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\XBOXController.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\RaceWheelDriver.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\HydraDriver.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\VBO.cpp">
+      <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\Vertex.cpp">
+      <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\VIO.cpp">
+      <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\FBO.cpp">
+      <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\VAO.cpp">
+      <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\Shader.cpp">
+      <Filter>gl</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

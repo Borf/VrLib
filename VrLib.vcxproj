@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C1C8BD19-EF70-44E0-A9B4-E11BAC4FB858}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>VrLib</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GLM_FORCE_RADIANS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn;externals/fglove;externals/hydra/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;vrpn_$(Configuration).lib;libovrd.lib;winmm.lib;cavelib_$(Configuration).lib;dinput8.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies);sixense_utils.lib;sixense.lib</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Libraries\Hydra;$(SolutionDir)\Libraries\LibOVR\lib\Win32\VS2013;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn;externals/fglove;externals/hydra/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ws2_32.lib;vrpn_$(Configuration).lib;libovr.lib;winmm.lib;cavelib_$(Configuration).lib;dinput8.lib;dxguid.lib;comctl32.lib;%(AdditionalDependencies);sixense_utils.lib;sixense.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Libraries\Hydra;$(SolutionDir)\Libraries\LibOVR\lib\Win32\VS2013;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="VrLib\Application.h" />
+    <ClInclude Include="VrLib\BinaryStream.h" />
+    <ClInclude Include="VrLib\ClusterData.h" />
+    <ClInclude Include="VrLib\ClusterManager.h" />
+    <ClInclude Include="VrLib\ClusterManagers\ClusterManagerMaster.h" />
+    <ClInclude Include="VrLib\ClusterManagers\ClusterManagerSlave.h" />
+    <ClInclude Include="VrLib\Device.h" />
+    <ClInclude Include="VrLib\drivers\GloveDriver.h" />
+    <ClInclude Include="VrLib\drivers\HydraDriver.h" />
+    <ClInclude Include="VrLib\drivers\Keyboard.h" />
+    <ClInclude Include="VrLib\drivers\MouseButton.h" />
+    <ClInclude Include="VrLib\drivers\Oculus.h" />
+    <ClInclude Include="VrLib\drivers\RaceWheelDriver.h" />
+    <ClInclude Include="VrLib\drivers\SimPosition.h" />
+    <ClInclude Include="VrLib\drivers\Vrpn.h" />
+    <ClInclude Include="VrLib\drivers\XBOXController.h" />
+    <ClInclude Include="VrLib\gl\FBO.h" />
+    <ClInclude Include="VrLib\gl\shader.h" />
+    <ClInclude Include="VrLib\gl\VAO.h" />
+    <ClInclude Include="VrLib\gl\VBO.h" />
+    <ClInclude Include="VrLib\gl\Vertex.h" />
+    <ClInclude Include="VrLib\gl\VIO.h" />
+    <ClInclude Include="VrLib\json.h" />
+    <ClInclude Include="VrLib\Kernel.h" />
+    <ClInclude Include="VrLib\Kernel_Windows.h" />
+    <ClInclude Include="VrLib\Log.h" />
+    <ClInclude Include="VrLib\Multiton.h" />
+    <ClInclude Include="VrLib\PerfMon.h" />
+    <ClInclude Include="VrLib\User.h" />
+    <ClInclude Include="VrLib\util\mutex.h" />
+    <ClInclude Include="VrLib\util\thread.h" />
+    <ClInclude Include="VrLib\Viewport.h" />
+    <ClInclude Include="VrLib\Viewports\ProjectionViewport.h" />
+    <ClInclude Include="VrLib\Viewports\RiftViewport.h" />
+    <ClInclude Include="VrLib\Viewports\SimulatorViewport.h" />
+    <ClInclude Include="VrLib\VrLib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="VrLib\Application.cpp" />
+    <ClCompile Include="VrLib\BinaryStream.cpp" />
+    <ClCompile Include="VrLib\ClusterData.cpp" />
+    <ClCompile Include="VrLib\ClusterManager.cpp" />
+    <ClCompile Include="VrLib\ClusterManagers\ClusterManagerMaster.cpp" />
+    <ClCompile Include="VrLib\ClusterManagers\ClusterManagerSlave.cpp" />
+    <ClCompile Include="VrLib\Device.cpp" />
+    <ClCompile Include="VrLib\drivers\GloveDriver.cpp" />
+    <ClCompile Include="VrLib\drivers\HydraDriver.cpp" />
+    <ClCompile Include="VrLib\drivers\Keyboard.cpp" />
+    <ClCompile Include="VrLib\drivers\MouseButton.cpp" />
+    <ClCompile Include="VrLib\drivers\Oculus.cpp" />
+    <ClCompile Include="VrLib\drivers\RaceWheelDriver.cpp" />
+    <ClCompile Include="VrLib\drivers\SimPosition.cpp" />
+    <ClCompile Include="VrLib\drivers\Vrpn.cpp" />
+    <ClCompile Include="VrLib\drivers\XBOXController.cpp" />
+    <ClCompile Include="VrLib\eye.cpp" />
+    <ClCompile Include="VrLib\face.cpp" />
+    <ClCompile Include="VrLib\gl\FBO.cpp" />
+    <ClCompile Include="VrLib\gl\Shader.cpp" />
+    <ClCompile Include="VrLib\gl\VAO.cpp" />
+    <ClCompile Include="VrLib\gl\VBO.cpp" />
+    <ClCompile Include="VrLib\gl\Vertex.cpp" />
+    <ClCompile Include="VrLib\gl\VIO.cpp" />
+    <ClCompile Include="VrLib\json.cpp" />
+    <ClCompile Include="VrLib\Kernel.cpp" />
+    <ClCompile Include="VrLib\Kernel_Windows.cpp" />
+    <ClCompile Include="VrLib\Log.cpp" />
+    <ClCompile Include="VrLib\PerfMon.cpp" />
+    <ClCompile Include="VrLib\User.cpp" />
+    <ClCompile Include="VrLib\util\mutex.cpp" />
+    <ClCompile Include="VrLib\util\thread.cpp" />
+    <ClCompile Include="VrLib\Viewport.cpp" />
+    <ClCompile Include="VrLib\Viewports\ProjectionViewport.cpp" />
+    <ClCompile Include="VrLib\Viewports\RiftViewport.cpp" />
+    <ClCompile Include="VrLib\Viewports\SimulatorViewport.cpp" />
+    <ClCompile Include="VrLib\VrLib.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
