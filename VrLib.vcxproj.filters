@@ -31,6 +31,18 @@
     <Filter Include="math">
       <UniqueIdentifier>{47f68287-43a2-4dc1-8c76-fe9e36741404}</UniqueIdentifier>
     </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{1259f6d7-6075-4a6b-9ee1-fd3d60865b5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{d407aedd-66ce-4691-964b-8d312ef74d08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\components">
+      <UniqueIdentifier>{b365a25d-b74f-44dd-9f8d-544afd852b6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\layoutManagers">
+      <UniqueIdentifier>{ddf092b1-f2be-4897-8fec-3f7920e1330f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VrLib\VrLib.h">
@@ -140,6 +152,57 @@
     </ClInclude>
     <ClInclude Include="VrLib\gl\shader.h">
       <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\models\AssimpModel.h">
+      <Filter>models</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\GUIpanel.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\Label.h">
+      <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\Panel.h">
+      <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\Slider.h">
+      <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\Button.h">
+      <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\Component.h">
+      <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\Image.h">
+      <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\layoutmanagers\LayoutManager.h">
+      <Filter>gui\layoutManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\layoutmanagers\ManualLayout.h">
+      <Filter>gui\layoutManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\layoutmanagers\TableLayout.h">
+      <Filter>gui\layoutManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\layoutmanagers\FlowLayout.h">
+      <Filter>gui\layoutManagers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\CheckBox.h">
+      <Filter>gui\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +316,57 @@
     </ClCompile>
     <ClCompile Include="VrLib\gl\Shader.cpp">
       <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\stb_image.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\models\AssimpModel.cpp">
+      <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\GUIpanel.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\Panel.cpp">
+      <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\Slider.cpp">
+      <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\Button.cpp">
+      <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\Component.cpp">
+      <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\Image.cpp">
+      <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\Label.cpp">
+      <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\layoutmanagers\LayoutManager.cpp">
+      <Filter>gui\layoutManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\layoutmanagers\ManualLayout.cpp">
+      <Filter>gui\layoutManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\layoutmanagers\TableLayout.cpp">
+      <Filter>gui\layoutManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\layoutmanagers\FlowLayout.cpp">
+      <Filter>gui\layoutManagers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\CheckBox.cpp">
+      <Filter>gui\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

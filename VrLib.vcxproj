@@ -41,9 +41,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,6 +56,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn;externals/fglove;externals/hydra/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -73,6 +76,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn;externals/fglove;externals/hydra/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -107,12 +111,29 @@
     <ClInclude Include="VrLib\gl\VBO.h" />
     <ClInclude Include="VrLib\gl\Vertex.h" />
     <ClInclude Include="VrLib\gl\VIO.h" />
+    <ClInclude Include="VrLib\gui\components\Button.h" />
+    <ClInclude Include="VrLib\gui\components\CheckBox.h" />
+    <ClInclude Include="VrLib\gui\components\Component.h" />
+    <ClInclude Include="VrLib\gui\components\Image.h" />
+    <ClInclude Include="VrLib\gui\components\Label.h" />
+    <ClInclude Include="VrLib\gui\components\Panel.h" />
+    <ClInclude Include="VrLib\gui\components\Slider.h" />
+    <ClInclude Include="VrLib\gui\GUIpanel.h" />
+    <ClInclude Include="VrLib\gui\layoutmanagers\FlowLayout.h" />
+    <ClInclude Include="VrLib\gui\layoutmanagers\LayoutManager.h" />
+    <ClInclude Include="VrLib\gui\layoutmanagers\ManualLayout.h" />
+    <ClInclude Include="VrLib\gui\layoutmanagers\TableLayout.h" />
+    <ClInclude Include="VrLib\Image.h" />
     <ClInclude Include="VrLib\json.h" />
     <ClInclude Include="VrLib\Kernel.h" />
     <ClInclude Include="VrLib\Kernel_Windows.h" />
     <ClInclude Include="VrLib\Log.h" />
+    <ClInclude Include="VrLib\Model.h" />
+    <ClInclude Include="VrLib\models\AssimpModel.h" />
     <ClInclude Include="VrLib\Multiton.h" />
     <ClInclude Include="VrLib\PerfMon.h" />
+    <ClInclude Include="VrLib\stb_image.h" />
+    <ClInclude Include="VrLib\Texture.h" />
     <ClInclude Include="VrLib\User.h" />
     <ClInclude Include="VrLib\util\mutex.h" />
     <ClInclude Include="VrLib\util\thread.h" />
@@ -147,11 +168,28 @@
     <ClCompile Include="VrLib\gl\VBO.cpp" />
     <ClCompile Include="VrLib\gl\Vertex.cpp" />
     <ClCompile Include="VrLib\gl\VIO.cpp" />
+    <ClCompile Include="VrLib\gui\components\Button.cpp" />
+    <ClCompile Include="VrLib\gui\components\CheckBox.cpp" />
+    <ClCompile Include="VrLib\gui\components\Component.cpp" />
+    <ClCompile Include="VrLib\gui\components\Image.cpp" />
+    <ClCompile Include="VrLib\gui\components\Label.cpp" />
+    <ClCompile Include="VrLib\gui\components\Panel.cpp" />
+    <ClCompile Include="VrLib\gui\components\Slider.cpp" />
+    <ClCompile Include="VrLib\gui\GUIpanel.cpp" />
+    <ClCompile Include="VrLib\gui\layoutmanagers\FlowLayout.cpp" />
+    <ClCompile Include="VrLib\gui\layoutmanagers\LayoutManager.cpp" />
+    <ClCompile Include="VrLib\gui\layoutmanagers\ManualLayout.cpp" />
+    <ClCompile Include="VrLib\gui\layoutmanagers\TableLayout.cpp" />
+    <ClCompile Include="VrLib\Image.cpp" />
     <ClCompile Include="VrLib\json.cpp" />
     <ClCompile Include="VrLib\Kernel.cpp" />
     <ClCompile Include="VrLib\Kernel_Windows.cpp" />
     <ClCompile Include="VrLib\Log.cpp" />
+    <ClCompile Include="VrLib\Model.cpp" />
+    <ClCompile Include="VrLib\models\AssimpModel.cpp" />
     <ClCompile Include="VrLib\PerfMon.cpp" />
+    <ClCompile Include="VrLib\stb_image.c" />
+    <ClCompile Include="VrLib\Texture.cpp" />
     <ClCompile Include="VrLib\User.cpp" />
     <ClCompile Include="VrLib\util\mutex.cpp" />
     <ClCompile Include="VrLib\util\thread.cpp" />
