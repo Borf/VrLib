@@ -190,6 +190,7 @@ namespace vrlib
 	{
 		this->driver = driver;
 		this->button = button;
+		this->lastValue = false;
 	}
 
 	DigitalState KeyboardDeviceDriver::KeyboardDeviceDriverAdaptor::getData()

@@ -10,10 +10,10 @@ namespace vrlib
 		int width;
 		int height;
 		int depth;
-		char* data;
+		unsigned char* data;
 
 		Image(const std::string &filename);
-		Image();
+		Image(int width, int height);
 		~Image();
 	};
 }

@@ -65,6 +65,7 @@ namespace vrlib
 	{
 		this->driver = driver;
 		this->button = button;
+		this->lastValue = false;
 	}
 
 	DigitalState MouseButtonDeviceDriver::MouseButtonDeviceDriverAdaptor::getData()

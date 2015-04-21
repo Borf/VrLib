@@ -13,8 +13,14 @@ namespace vrlib
 		GLuint texid;
 		
 		bool loaded;
+		bool unloadImageAfterLoad = true;
+		bool resizeToLog = false;
+		bool textureRepeat = true;
+		bool nearestFilter = false;
+		
 
-		Texture(const std::string &fileName) {};
-		void bind() {};
+		Texture(const std::string &fileName);
+		void load();
+		void bind();
 	};
 }
