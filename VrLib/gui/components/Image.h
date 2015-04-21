@@ -4,6 +4,7 @@
 
 namespace vrlib
 {
+	class Texture;
 	namespace gui
 	{
 		namespace components
@@ -11,7 +12,7 @@ namespace vrlib
 			class Image : public Component
 			{
 			public:
-				Image(vrlib::Texture* texture);
+				Image(vrlib::Texture* texture) {};
 			};
 		}
 	}

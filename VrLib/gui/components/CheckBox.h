@@ -2,6 +2,8 @@
 
 #include <functional>
 
+#include "Component.h"
+
 namespace vrlib
 {
 	namespace gui

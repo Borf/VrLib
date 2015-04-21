@@ -7,6 +7,33 @@
 #include <list>
 #include <map>
 
+
+#pragma comment(lib, "vrlib.lib")
+#pragma comment(lib, "glew32s.lib")
+#pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "dinput8.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "opengl32.lib")
+
+
+
+#ifdef _DEBUG
+#pragma comment(lib, "libovrd.lib")
+#pragma comment(lib, "sixensed.lib")
+#pragma comment(lib, "sixense_utilsd.lib")
+#pragma comment(lib, "fgloved.lib")
+#pragma comment(lib, "vrpn_debug.lib")
+#else
+#pragma comment(lib, "libovr.lib")
+#pragma comment(lib, "sixense.lib")
+#pragma comment(lib, "sixense_utils.lib")
+#pragma comment(lib, "fglove.lib")
+#pragma comment(lib, "vrpn_debug.lib")
+#endif
+
+
+
 namespace vrlib
 {
 	class Application;
@@ -27,8 +54,6 @@ namespace vrlib
 	class XBOXDeviceDriver;
 	namespace json { class Value; }
 
-#pragma comment(lib, "opengl32.lib")
-#pragma warning(disable : 4251)
 
 	class KernelWindows;
 

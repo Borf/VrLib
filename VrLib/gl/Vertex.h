@@ -15,7 +15,6 @@ namespace vrlib
 		};
 
 
-#pragma warning(disable: 4251)
 		class VertexPosition : public Vertex
 		{
 		public:

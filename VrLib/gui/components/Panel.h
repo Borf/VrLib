@@ -15,6 +15,7 @@ namespace vrlib
 				Panel(layoutmanagers::LayoutManager* layoutManager);
 
 				void add(Component* component);
+				void remove(Component* component);
 			};
 		}
 	}

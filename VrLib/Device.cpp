@@ -57,7 +57,7 @@ namespace vrlib
 		stream >> data;
 	}
 
-
+	
 
 	template <class R, class T>
 	void DeviceImpl<R, T>::init(std::string name)
@@ -74,4 +74,16 @@ namespace vrlib
 			return driver->data;
 		throw("No Driver Loader"); //have to throw something, otherwise I get scolded on by the compiler
 	}
+
+
+
+
+	template class DeviceImpl<DigitalState, DigitalDeviceDriverAdaptor>;
+	template class DeviceImpl<float, AnalogDeviceDriverAdaptor>;
+	template class DeviceImpl<glm::mat4, PositionalDeviceDriverAdaptor>;
+	template class DeviceImpl<glm::vec2, TwoDimensionDeviceDriverAdaptor>;
+
+
+
+
 }

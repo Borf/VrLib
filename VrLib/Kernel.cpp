@@ -73,7 +73,7 @@ namespace vrlib
 
 	void Kernel::start()
 	{
-		if (config.size() == 0)
+		if (config.isNull() || config.size() == 0)
 		{
 			logger << "No configuration file loaded" << Log::newline;
 			logger << "Press any key to exit" << Log::newline;
@@ -129,23 +129,19 @@ namespace vrlib
 
 	void Kernel::mergeConfig(json::Value &config, const json::Value &newConfig)
 	{
-		//TODO
-		/*
-		json::Value::Members values = newConfig.getMemberNames();
-		
-		for (size_t i = 0; i < values.size(); i++)
-			if (config.isMember(values[i]))
-				if (config[values[i]].isObject())
-					mergeConfig(config[values[i]], newConfig[values[i]]);
-				else if (config[values[i]].isArray())
+		for (json::Value::Iterator it = newConfig.begin(); it != newConfig.end(); it++)
+			if (config.isMember(it.key()))
+				if (config[it.key()].isObject())
+					mergeConfig(config[it.key()], it.value());
+				else if (config[it.key()].isArray())
 				{
-					for (int ii = 0; ii < newConfig[values[i]].size(); ii++)
-						config[values[i]].append(newConfig[values[i]][ii]);
+					for (int ii = 0; ii < newConfig[it.key()].size(); ii++)
+						config[it.key()].push_back(it.value()[ii]);
 				}
 				else
-					config[values[i]] = newConfig[values[i]];
+					config[it.key()] = it.value();
 			else
-				config[values[i]] = newConfig[values[i]];*/
+				config[it.key()] = it.value();
 	}
 
 

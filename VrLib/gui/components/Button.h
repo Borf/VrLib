@@ -14,7 +14,9 @@ namespace vrlib
 			class Button : public Component
 			{
 			public:
-				Button(const std::string &text, std::function<void()> callback = nullptr);
+				std::string text;
+
+				Button(const std::string &text, std::function<void()> callback = nullptr) {};
 			};
 		}
 	}

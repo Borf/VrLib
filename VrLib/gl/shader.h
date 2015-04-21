@@ -7,8 +7,6 @@
 #include <glm/glm.hpp>
 
 
-#pragma warning(disable: 4251)
-
 namespace vrlib
 {
 	namespace gl

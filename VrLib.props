@@ -9,7 +9,15 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\VrLib;$(SolutionDir)\Libraries\VrLib\externals\glm;$(SolutionDir)\Libraries\VrLib\externals\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
+      <PreprocessorDefinitions>GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\win32\VS2013;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Lib>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

@@ -2,8 +2,7 @@
 
 #include <VrLib/VrLib.h>
 #include <glm/glm.hpp>
-#pragma warning (disable : 4251)
-
+#
 namespace vrlib
 {
 	class Application

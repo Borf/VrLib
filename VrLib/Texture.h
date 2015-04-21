@@ -11,8 +11,10 @@ namespace vrlib
 	public:
 		Image* image;
 		GLuint texid;
+		
+		bool loaded;
 
-		Texture(const std::string &fileName);
-		void bind();
+		Texture(const std::string &fileName) {};
+		void bind() {};
 	};
 }

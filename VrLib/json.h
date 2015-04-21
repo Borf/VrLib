@@ -68,7 +68,7 @@ namespace vrlib
 			inline bool isFloat() const					{ return type == Type::floatValue; }
 			inline bool isObject() const				{ return type == Type::objectValue; }
 			inline bool isArray() const					{ return type == Type::arrayValue; }
-			inline bool isMember(const std::string &name) const				{ assert(type == Type::objectValue); return value.objectValue->find(name) != value.objectValue->end(); }
+			inline bool isMember(const std::string &name) const				{ if(type != Type::objectValue) return false; return value.objectValue->find(name) != value.objectValue->end(); }
 			//array/object
 			virtual size_t size() const;
 			//array

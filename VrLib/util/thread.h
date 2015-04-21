@@ -9,7 +9,6 @@
 
 #include <string>
 
-#pragma warning(disable: 4251)
 namespace vrlib
 {
 	class Thread

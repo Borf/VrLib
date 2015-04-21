@@ -25,7 +25,6 @@ namespace vrlib
 	BinaryStream& operator << (BinaryStream& stream, DigitalState &value); //todo: move these somewhere cooler?
 	BinaryStream& operator >> (BinaryStream& stream, DigitalState &value);
 
-#pragma warning(disable: 4251)
 	class Device
 	{
 	public:
@@ -113,5 +112,7 @@ namespace vrlib
 		virtual void update() {};
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options) = 0;
 	};
+
+
 
 }

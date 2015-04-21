@@ -5,10 +5,11 @@
 
 namespace vrlib
 {
-	namespace components { class Panel; }
 	namespace math { class Ray;  }
 	namespace gui
 	{
+		namespace components { class Panel; }
+
 		class Window
 		{
 		protected:

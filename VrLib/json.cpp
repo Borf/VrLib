@@ -136,7 +136,12 @@ namespace vrlib
 
 		Value& Value::operator[](const std::string &key)
 		{
-			assert(type == Type::objectValue);
+			assert(type == Type::objectValue || type == Type::nullValue);
+			if (type == Type::nullValue)
+			{
+				type = Type::objectValue;
+				value.objectValue = new std::map<std::string, Value>();
+			}
 			return (*value.objectValue)[key];
 		}
 		Value& Value::operator[](const std::string &key) const
@@ -480,6 +485,8 @@ namespace vrlib
 
 		Value readJson(std::istream &stream)
 		{
+			assert(!stream.eof() && stream.good() && !stream.bad());
+
 			return eatValue(stream);
 		}
 

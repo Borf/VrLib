@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+#include <glm/glm.hpp>
+
 namespace vrlib
 {
 	namespace gui
@@ -16,7 +18,7 @@ namespace vrlib
 				float value;
 
 				Slider(float minValue, float maxValue, float startValue);
-				void drag(glm::vec3 intersect); //TODO: use callback
+				void drag(const glm::vec3 &intersect); //TODO: use callback
 			};
 		}
 	}
