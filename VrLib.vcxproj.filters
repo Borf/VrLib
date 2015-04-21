@@ -168,9 +168,6 @@
     <ClInclude Include="VrLib\models\AssimpModel.h">
       <Filter>models</Filter>
     </ClInclude>
-    <ClInclude Include="VrLib\gui\GUIpanel.h">
-      <Filter>gui</Filter>
-    </ClInclude>
     <ClInclude Include="VrLib\gui\components\Label.h">
       <Filter>gui\components</Filter>
     </ClInclude>
@@ -203,6 +200,12 @@
     </ClInclude>
     <ClInclude Include="VrLib\gui\components\CheckBox.h">
       <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\Window.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\math\Ray.h">
+      <Filter>math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -332,9 +335,6 @@
     <ClCompile Include="VrLib\models\AssimpModel.cpp">
       <Filter>models</Filter>
     </ClCompile>
-    <ClCompile Include="VrLib\gui\GUIpanel.cpp">
-      <Filter>gui</Filter>
-    </ClCompile>
     <ClCompile Include="VrLib\gui\components\Panel.cpp">
       <Filter>gui\components</Filter>
     </ClCompile>
@@ -367,6 +367,12 @@
     </ClCompile>
     <ClCompile Include="VrLib\gui\components\CheckBox.cpp">
       <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\Window.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\Ray.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -13,5 +13,6 @@ namespace vrlib
 		GLuint texid;
 
 		Texture(const std::string &fileName);
+		void bind();
 	};
 }

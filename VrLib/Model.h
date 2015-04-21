@@ -1,9 +1,9 @@
 #pragma once
 
+#include <VrLib/gl/shader.h>
 
 namespace vrlib
 {
-	namespace gl { class Shader; }
 	class ModelLoadOptions
 	{
 	public:

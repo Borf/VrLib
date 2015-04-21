@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 namespace vrlib
 {
 	namespace gui
@@ -8,7 +10,9 @@ namespace vrlib
 		{
 			class Component
 			{
+			public:
 
+				void addClickHandler(const std::function<void(void)>& callback);
 			};
 		}
 	}

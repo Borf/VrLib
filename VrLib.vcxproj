@@ -118,7 +118,7 @@
     <ClInclude Include="VrLib\gui\components\Label.h" />
     <ClInclude Include="VrLib\gui\components\Panel.h" />
     <ClInclude Include="VrLib\gui\components\Slider.h" />
-    <ClInclude Include="VrLib\gui\GUIpanel.h" />
+    <ClInclude Include="VrLib\gui\Window.h" />
     <ClInclude Include="VrLib\gui\layoutmanagers\FlowLayout.h" />
     <ClInclude Include="VrLib\gui\layoutmanagers\LayoutManager.h" />
     <ClInclude Include="VrLib\gui\layoutmanagers\ManualLayout.h" />
@@ -128,6 +128,7 @@
     <ClInclude Include="VrLib\Kernel.h" />
     <ClInclude Include="VrLib\Kernel_Windows.h" />
     <ClInclude Include="VrLib\Log.h" />
+    <ClInclude Include="VrLib\math\Ray.h" />
     <ClInclude Include="VrLib\Model.h" />
     <ClInclude Include="VrLib\models\AssimpModel.h" />
     <ClInclude Include="VrLib\Multiton.h" />
@@ -175,7 +176,7 @@
     <ClCompile Include="VrLib\gui\components\Label.cpp" />
     <ClCompile Include="VrLib\gui\components\Panel.cpp" />
     <ClCompile Include="VrLib\gui\components\Slider.cpp" />
-    <ClCompile Include="VrLib\gui\GUIpanel.cpp" />
+    <ClCompile Include="VrLib\gui\Window.cpp" />
     <ClCompile Include="VrLib\gui\layoutmanagers\FlowLayout.cpp" />
     <ClCompile Include="VrLib\gui\layoutmanagers\LayoutManager.cpp" />
     <ClCompile Include="VrLib\gui\layoutmanagers\ManualLayout.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="VrLib\Kernel.cpp" />
     <ClCompile Include="VrLib\Kernel_Windows.cpp" />
     <ClCompile Include="VrLib\Log.cpp" />
+    <ClCompile Include="VrLib\math\Ray.cpp" />
     <ClCompile Include="VrLib\Model.cpp" />
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />
     <ClCompile Include="VrLib\PerfMon.cpp" />

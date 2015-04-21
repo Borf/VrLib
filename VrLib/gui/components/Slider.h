@@ -15,7 +15,7 @@ namespace vrlib
 			public:
 				float value;
 
-				Slider(int minValue, int maxValue, int startValue);
+				Slider(float minValue, float maxValue, float startValue);
 				void drag(glm::vec3 intersect); //TODO: use callback
 			};
 		}
