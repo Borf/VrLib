@@ -46,9 +46,9 @@ namespace vrlib
 				this->length = length;
 				bind();
 				if (GLEW_VERSION_1_5)
-					glBufferData(GL_ARRAY_BUFFER, T::getSize() * length, data, usage);
+					glBufferData(GL_ARRAY_BUFFER, sizeof(T) * length, data, usage);
 				else
-					glBufferDataARB(GL_ARRAY_BUFFER_ARB, T::getSize() * length, data, usage);
+					glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(T) * length, data, usage);
 			}
 
 
@@ -118,6 +118,11 @@ namespace vrlib
 			void setVAO()
 			{
 				T::setVAO(T::getSize());
+			}
+
+			void setAttributes()
+			{
+				vrlib::gl::setAttributes<T>(0);
 			}
 
 		};

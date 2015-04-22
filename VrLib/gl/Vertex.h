@@ -15,9 +15,82 @@ namespace vrlib
 		};
 
 
-		class VertexP3 {};
-		class VertexP3N3 {};
-		class VertexP3N3T2 {};
+		struct VertexP3
+		{
+			float px, py, pz;
+		};
+
+		struct VertexP3N3
+		{
+			float px, py, pz;
+			float nx, ny, nz;
+		};
+
+		struct VertexP3N3T2
+		{
+			float px, py, pz;
+			float nx, ny, nz;
+			float tx, ty;
+		};
+
+
+		template<class T>	inline void setP3(T& vertex, const glm::vec3 &p)								{	}
+		template<>			inline void setP3<VertexP3>(VertexP3& vertex, const glm::vec3 &p)				{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &p)		{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+
+		template<class T>	inline void setN3(T& vertex, const glm::vec3 &n)								{	}
+		template<>			inline void setN3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &n)			{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
+		template<>			inline void setN3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &n)		{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
+
+		template<class T>	inline void setT2(T& vertex, const glm::vec2 &t)								{	}
+		template<>			inline void setT2(VertexP3N3T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y;  }
+
+
+		//// WATCH OUT, NEEDS TO BE SPECIALIZED IN THE RIGHT ORDER
+		template<class T>	inline int setAttribute(int& attributeIndex, int totalSize, int offset)	{}
+		template<>			inline int setAttribute<VertexP3>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = 0;
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 3, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 3 * sizeof(float);
+		}
+		template<>			inline int setAttribute<VertexP3N3>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = setAttribute<VertexP3>(attributeIndex, totalSize, offset);
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 3, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 3 * sizeof(float);
+		}
+
+		template<>			inline int setAttribute<VertexP3N3T2>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = setAttribute<VertexP3N3>(attributeIndex, totalSize, offset);
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 2, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 2 * sizeof(float);
+		}
+
+
+
+
+
+
+
+		template<class T>	inline void setAttributes(int offset)											
+		{
+			int i = 0;
+			setAttribute<T>(i, sizeof(T), offset);
+		}
+
+
+
+
+		
 
 
 		class VertexPosition : public Vertex

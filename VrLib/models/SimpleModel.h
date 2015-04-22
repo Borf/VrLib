@@ -18,6 +18,11 @@ namespace vrlib
 		virtual void draw(gl::ShaderProgram* shader) override;
 		virtual ModelInstance* getInstance() override;
 
+
+		std::vector<glm::vec3> vertices;
+		std::vector<unsigned short> indices;
+
+
 		gl::VBO<VertexType> vbo;
 		gl::VIO<unsigned short> vio;
 		gl::VAO<VertexType>* vao;

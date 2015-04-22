@@ -9,6 +9,7 @@ namespace vrlib
 	template<class VertexFormat>
 	Model* Model::getModel(const std::string &fileName, const ModelLoadOptions &options /*= ModelLoadOptions()*/)
 	{
+		logger << "Loading " << fileName << Log::newline;
 		std::string extension = fileName;
 		extension = extension.substr(extension.rfind("."));
 		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);

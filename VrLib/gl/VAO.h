@@ -20,7 +20,7 @@ namespace vrlib
 				glGenVertexArrays(1, &vao);
 				bind();
 				vbo->bind();
-				vbo->setVAO();
+				vbo->setAttributes();
 			}
 
 			~VAO()
