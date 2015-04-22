@@ -23,12 +23,13 @@
 #pragma comment(lib, "sixensed.lib")
 #pragma comment(lib, "sixense_utilsd.lib")
 #pragma comment(lib, "fgloved.lib")
+#pragma comment(lib, "vrpn.lib")
 #else
 #pragma comment(lib, "libovr.lib")
 #pragma comment(lib, "sixense.lib")
 #pragma comment(lib, "sixense_utils.lib")
 #pragma comment(lib, "fglove.lib")
-//#pragma comment(lib, "vrpn_debug.lib")
+#pragma comment(lib, "vrpn.lib")
 #endif
 
 

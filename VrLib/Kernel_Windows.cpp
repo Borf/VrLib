@@ -260,6 +260,8 @@ namespace vrlib
 #endif
 #endif
 #endif
+		logger << "Using Renderer: " << std::string((char*)glGetString(GL_RENDERER)) << Log::newline;
+
 
 		if (localConfig["window"].isMember("vsync"))
 		{

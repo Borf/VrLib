@@ -15,7 +15,7 @@ namespace vrlib
 		return new VrpnDeviceDriverAdaptor(this, atoi(options.c_str()));
 	}
 
-	/*void VRPN_CALLBACK handle_tracker_pos_quat(void *userdata, const vrpn_TRACKERCB t)
+	void VRPN_CALLBACK handle_tracker_pos_quat(void *userdata, const vrpn_TRACKERCB t)
 	{
 		VrpnDeviceDriver* driver = (VrpnDeviceDriver*)userdata;
 
@@ -31,17 +31,17 @@ namespace vrlib
 		rot = glm::scale(glm::mat4(), glm::vec3(1, -1, 1)) * rot;
 
 		driver->data[t.sensor] = glm::translate(glm::mat4(), glm::vec3((float)t.pos[0], (float)t.pos[1], (float)t.pos[2])) * rot;
-	}*/
+	}
 
 	VrpnDeviceDriver::VrpnDeviceDriver()
 	{
-	//	tracker = new vrpn_Tracker_Remote("test_tracker@localhost");
-	//	tracker->register_change_handler(this, handle_tracker_pos_quat);
+		tracker = new vrpn_Tracker_Remote("test_tracker@localhost");
+		tracker->register_change_handler(this, handle_tracker_pos_quat);
 	}
 
 	void VrpnDeviceDriver::update()
 	{
-	//	tracker->mainloop();
+		tracker->mainloop();
 	}
 
 
