@@ -210,6 +210,12 @@
     <ClInclude Include="VrLib\models\SimpleModel.h">
       <Filter>models</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -379,6 +385,12 @@
     </ClCompile>
     <ClCompile Include="VrLib\models\SimpleModel.cpp">
       <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\util.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -31,6 +31,7 @@ namespace vrlib
 	protected:
 		Model(){};
 	public:
+		template<class VertexFormat>
 		static Model* getModel(const std::string &fileName, const ModelLoadOptions &options = ModelLoadOptions());
 
 

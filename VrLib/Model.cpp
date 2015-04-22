@@ -6,6 +6,7 @@
 
 namespace vrlib
 {
+	template<class VertexFormat>
 	Model* Model::getModel(const std::string &fileName, const ModelLoadOptions &options /*= ModelLoadOptions()*/)
 	{
 		std::string extension = fileName;
@@ -14,7 +15,7 @@ namespace vrlib
 
 		if (extension == ".shape")
 		{
-			return new SimpleModel(fileName, options);
+			return new SimpleModel<VertexFormat>(fileName, options);
 		}
 
 
@@ -35,4 +36,7 @@ namespace vrlib
 		model->draw(shader);
 	}
 
+	template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
+	template Model* Model::getModel< gl::VertexP3N3 >(const std::string &fileName, const ModelLoadOptions &options);
+	template Model* Model::getModel< gl::VertexP3N3T2 >(const std::string &fileName, const ModelLoadOptions &options);
 }

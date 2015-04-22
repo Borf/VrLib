@@ -134,6 +134,7 @@
     <ClInclude Include="VrLib\Kernel.h" />
     <ClInclude Include="VrLib\Kernel_Windows.h" />
     <ClInclude Include="VrLib\Log.h" />
+    <ClInclude Include="VrLib\math.h" />
     <ClInclude Include="VrLib\math\Ray.h" />
     <ClInclude Include="VrLib\Model.h" />
     <ClInclude Include="VrLib\models\AssimpModel.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="VrLib\stb_image.h" />
     <ClInclude Include="VrLib\Texture.h" />
     <ClInclude Include="VrLib\User.h" />
+    <ClInclude Include="VrLib\util.h" />
     <ClInclude Include="VrLib\util\mutex.h" />
     <ClInclude Include="VrLib\util\thread.h" />
     <ClInclude Include="VrLib\Viewport.h" />
@@ -193,6 +195,7 @@
     <ClCompile Include="VrLib\Kernel.cpp" />
     <ClCompile Include="VrLib\Kernel_Windows.cpp" />
     <ClCompile Include="VrLib\Log.cpp" />
+    <ClCompile Include="VrLib\math.cpp" />
     <ClCompile Include="VrLib\math\Ray.cpp" />
     <ClCompile Include="VrLib\Model.cpp" />
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />
@@ -201,6 +204,7 @@
     <ClCompile Include="VrLib\stb_image.c" />
     <ClCompile Include="VrLib\Texture.cpp" />
     <ClCompile Include="VrLib\User.cpp" />
+    <ClCompile Include="VrLib\util.cpp" />
     <ClCompile Include="VrLib\util\mutex.cpp" />
     <ClCompile Include="VrLib\util\thread.cpp" />
     <ClCompile Include="VrLib\Viewport.cpp" />

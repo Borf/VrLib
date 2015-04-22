@@ -15,6 +15,11 @@ namespace vrlib
 		};
 
 
+		class VertexP3 {};
+		class VertexP3N3 {};
+		class VertexP3N3T2 {};
+
+
 		class VertexPosition : public Vertex
 		{
 		public:
