@@ -137,6 +137,7 @@
     <ClInclude Include="VrLib\math\Ray.h" />
     <ClInclude Include="VrLib\Model.h" />
     <ClInclude Include="VrLib\models\AssimpModel.h" />
+    <ClInclude Include="VrLib\models\SimpleModel.h" />
     <ClInclude Include="VrLib\Multiton.h" />
     <ClInclude Include="VrLib\PerfMon.h" />
     <ClInclude Include="VrLib\stb_image.h" />
@@ -195,6 +196,7 @@
     <ClCompile Include="VrLib\math\Ray.cpp" />
     <ClCompile Include="VrLib\Model.cpp" />
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />
+    <ClCompile Include="VrLib\models\SimpleModel.cpp" />
     <ClCompile Include="VrLib\PerfMon.cpp" />
     <ClCompile Include="VrLib\stb_image.c" />
     <ClCompile Include="VrLib\Texture.cpp" />

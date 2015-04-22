@@ -207,6 +207,9 @@
     <ClInclude Include="VrLib\math\Ray.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\models\SimpleModel.h">
+      <Filter>models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -373,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\math\Ray.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\models\SimpleModel.cpp">
+      <Filter>models</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -12,21 +12,31 @@ namespace vrlib
 		ModelLoadOptions(float size, bool keepVerts) {};
 	};
 
+	class Model;
+
+	class ModelInstance
+	{
+	public:
+		Model* model;
+
+		ModelInstance(Model* model);
+
+		virtual void draw(gl::ShaderProgram* shader);;
+
+	};
+
+
 	class Model
 	{
-	private:
-		Model();
+	protected:
+		Model(){};
 	public:
-		static Model* getModel(const std::string &fileName, const ModelLoadOptions &options = ModelLoadOptions()) { return NULL;  };
-		/*
-			todo: could do this with overloading new
-			http://stackoverflow.com/questions/24943831/pass-more-parameter-in-overriding-new-operatorc
-			syntax would be something like
-			Model* model = new("file.obj") Model();
-			this kinda looks ugly though
-		*/
+		static Model* getModel(const std::string &fileName, const ModelLoadOptions &options = ModelLoadOptions());
 
-		std::vector<glm::vec3> getVertices(int amount) { return std::vector<glm::vec3>();  };
-		void draw(gl::ShaderProgram* shader) {};
+
+		virtual std::vector<glm::vec3> getVertices(int amount) = 0;
+		virtual void draw(gl::ShaderProgram* shader) = 0;
+
+		virtual ModelInstance* getInstance() = 0;
 	};
 }
