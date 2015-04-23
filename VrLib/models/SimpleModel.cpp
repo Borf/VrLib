@@ -17,7 +17,7 @@ namespace vrlib
 		if (parameters[0] == "cavewall")
 		{
 			VertexFormat v;
-			setN3(v, glm::vec3(0, -1, 0));
+			setN3(v, glm::vec3(0, 1, 0));
 
 			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0, 0));			verts.push_back(v);
 			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
@@ -36,7 +36,7 @@ namespace vrlib
 			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
 			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
 
-			setN3(v, glm::vec3(0, 0, -1));
+			setN3(v, glm::vec3(0, 0, 1));
 			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
 			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
 			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
@@ -56,8 +56,15 @@ namespace vrlib
 		}
 		else if (parameters[0] == "sphere")
 		{
-			int stacks = 8;
-			int slices = 8;
+			int stacks = 10;
+			int slices = 10;
+
+			if (parameters.size() == 4)
+			{
+				stacks = atoi(parameters[1].c_str());
+				slices = atoi(parameters[2].c_str());
+			}
+
 
 			float thetaInc = (float)M_PI / stacks;
 			float phiInc = (float)(2 * M_PI / slices);
