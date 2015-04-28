@@ -1,6 +1,8 @@
 #pragma once
 
-#include <VrLib/gl/shader.h>
+#include <functional>
+#include <vector>
+#include <glm/glm.hpp>
 
 namespace vrlib
 {
@@ -13,6 +15,10 @@ namespace vrlib
 	};
 
 	class Model;
+	class Material
+	{
+	public:
+	};
 
 	class ModelInstance
 	{
@@ -21,7 +27,7 @@ namespace vrlib
 
 		ModelInstance(Model* model);
 
-		virtual void draw(gl::ShaderProgram* shader);;
+		virtual void draw(const std::function<void()> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr);
 
 	};
 
@@ -35,8 +41,8 @@ namespace vrlib
 		static Model* getModel(const std::string &fileName, const ModelLoadOptions &options = ModelLoadOptions());
 
 
-		virtual std::vector<glm::vec3> getVertices(int amount) = 0;
-		virtual void draw(gl::ShaderProgram* shader) = 0;
+		virtual std::vector<glm::vec3> getVertices(int amount) const = 0;
+		virtual void draw(const std::function<void()> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
 
 		virtual ModelInstance* getInstance() = 0;
 	};

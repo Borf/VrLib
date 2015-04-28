@@ -137,13 +137,13 @@ namespace vrlib
 
 
 	template<class VertexFormat>
-	std::vector<glm::vec3> SimpleModel<VertexFormat>::getVertices(int amount)
+	std::vector<glm::vec3> SimpleModel<VertexFormat>::getVertices(int amount) const
 	{
 		return vertices;
 	}
 
 	template<class VertexFormat>
-	void SimpleModel<VertexFormat>::draw(gl::ShaderProgram* shader)
+	void SimpleModel<VertexFormat>::draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
 		if (vao)
 		{

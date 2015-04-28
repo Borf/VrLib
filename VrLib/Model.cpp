@@ -18,6 +18,8 @@ namespace vrlib
 		{
 			return new SimpleModel<VertexFormat>(fileName, options);
 		}
+		else
+			return new AssimpModel<VertexFormat>(fileName, options);
 
 
 
@@ -32,9 +34,9 @@ namespace vrlib
 	{
 		this->model = model;
 	}
-	void ModelInstance::draw(gl::ShaderProgram* shader)
+	void ModelInstance::draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
-		model->draw(shader);
+		model->draw(modelviewMatrixCallback, materialCallback);
 	}
 
 	template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
