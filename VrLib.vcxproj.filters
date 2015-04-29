@@ -216,6 +216,9 @@
     <ClInclude Include="VrLib\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math\aabb.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -391,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\util.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\aabb.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

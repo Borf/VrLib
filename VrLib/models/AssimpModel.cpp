@@ -131,6 +131,7 @@ namespace vrlib
 		import(glm::mat4(), scene, scene->mRootNode);
 
 
+		handleModelLoadOptions(vertices, options);
 	}
 
 
@@ -142,7 +143,7 @@ namespace vrlib
 		for (const VertexFormat& v : vertices)
 			ret.push_back(glm::vec3(v.px, v.py, v.pz));
 		
-		auto last = std::unique(ret.begin(), ret.end(), [](const glm::vec3 &a, const glm::vec3 &b) { return glm::distance(a, b) < 0.025f;  });
+		auto last = std::unique(ret.begin(), ret.end(), [](const glm::vec3 &a, const glm::vec3 &b) { return glm::distance(a, b) < 0.075f;  });
 		ret = std::vector<glm::vec3>(ret.begin(), last);
 
 		return ret;
