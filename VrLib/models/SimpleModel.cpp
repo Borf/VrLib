@@ -54,6 +54,57 @@ namespace vrlib
 				indices.push_back(i + 0);
 			}
 		}
+		if (parameters[0] == "cube")
+		{
+			VertexFormat v;
+			setN3(v, glm::vec3(0, 1, 0));
+			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0, 0));			verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, 1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(0, 0.5f));		verts.push_back(v);
+
+			setN3(v, glm::vec3(0, -1, 0));
+			setP3(v, glm::vec3(-1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(0, 0.5f));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0, 0));			verts.push_back(v);
+
+			setN3(v, glm::vec3(1, 0, 0));
+			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+
+			setN3(v, glm::vec3(-1, 0, 0));
+			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+
+			setN3(v, glm::vec3(0, 0, 1));
+			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+
+			setN3(v, glm::vec3(0, 0, -1));
+			setP3(v, glm::vec3(1.5f, -1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+
+			indices.clear();
+			for (size_t i = 0; i < verts.size(); i += 4)
+			{
+				indices.push_back(i + 0);
+				indices.push_back(i + 1);
+				indices.push_back(i + 2);
+
+				indices.push_back(i + 0);
+				indices.push_back(i + 2);
+				indices.push_back(i + 3);
+			}
+		}
 		else if (parameters[0] == "sphere")
 		{
 			int stacks = 10;
