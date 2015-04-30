@@ -1,5 +1,8 @@
 #pragma once
 
+#include <VrLib/gl/VAO.h>
+#include <VrLib/gl/VBO.h>
+#include <VrLib/gl/VIO.h>
 #include <VrLib/Model.h>
 #include <functional>
 
@@ -40,6 +43,10 @@ namespace vrlib
 		std::vector<Mesh> meshes;
 		std::vector<VertexFormat> vertices;
 		std::vector<unsigned short> indices;
+
+		gl::VBO<VertexFormat> vbo;
+		gl::VIO<unsigned short> vio;
+		gl::VAO<VertexFormat>* vao;
 
 	};
 }

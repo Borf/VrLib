@@ -113,6 +113,13 @@ namespace vrlib
 
 			meshes.push_back(m);
 		}
+
+
+		for (unsigned int i = 0; i < node->mNumChildren; i++)
+		{
+			import(transform, scene, node->mChildren[i]);
+		}
+
 	}
 
 
@@ -129,9 +136,15 @@ namespace vrlib
 		}
 
 		import(glm::mat4(), scene, scene->mRootNode);
-
-
 		handleModelLoadOptions(vertices, options);
+
+		vao = new gl::VAO<VertexFormat>(&vbo);
+		vbo.bind();
+		vbo.setData(vertices.size(), &vertices[0], GL_STATIC_DRAW);
+		vio.bind();
+		vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
+
+		vao->unBind();
 	}
 
 
@@ -152,7 +165,12 @@ namespace vrlib
 	template<class VertexFormat>
 	void AssimpModel<VertexFormat>::draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback)
 	{
+		vao->bind();
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 
+		for (const Mesh& mesh : meshes)
+		{
+		}
 	}
 
 	template<class VertexFormat>

@@ -22,7 +22,7 @@ namespace vrlib
 			Window(const std::string &title);
 
 
-			void draw();
+			void draw(const glm::mat4& projectionMatrix, const glm::mat4 &viewMatrix);
 
 
 			void setSelector(const vrlib::math::Ray& ray);
