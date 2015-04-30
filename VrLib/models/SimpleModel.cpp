@@ -54,7 +54,7 @@ namespace vrlib
 				indices.push_back(i + 0);
 			}
 		}
-		if (parameters[0] == "cube")
+		else if (parameters[0] == "cube")
 		{
 			VertexFormat v;
 			setN3(v, glm::vec3(0, 1, 0));
