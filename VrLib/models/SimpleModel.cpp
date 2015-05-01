@@ -197,11 +197,13 @@ namespace vrlib
 	}
 
 	template<class VertexFormat>
-	void SimpleModel<VertexFormat>::draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
+	void SimpleModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
 		if (vao)
 		{
 			vao->bind();
+			if (modelviewMatrixCallback)
+				modelviewMatrixCallback(glm::mat4());
 			glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 			vao->unBind();
 		}

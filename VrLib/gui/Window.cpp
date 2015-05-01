@@ -5,6 +5,7 @@
 #include <VrLib/Model.h>
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/gl/shader.h>
+#include <VrLib/gui/components/Panel.h>
 
 
 namespace vrlib
@@ -15,8 +16,9 @@ namespace vrlib
 
 	namespace gui
 	{
-		static vrlib::Model* panelModel = NULL;
-		static vrlib::gl::ShaderProgram* shader = NULL;
+		vrlib::Model* Window::panelModel = NULL;
+		vrlib::gl::ShaderProgram* Window::shader = NULL;
+		float Window::thickness = 0.04f;
 
 		Window::Window(const std::string &title)
 		{
@@ -29,11 +31,6 @@ namespace vrlib
 				shader->bindAttributeLocation("a_texture", 2);
 				shader->link();
 			}
-
-
-
-
-
 		}
 
 
@@ -43,14 +40,16 @@ namespace vrlib
 			shader->setUniformMatrix4("projectionmatrix", projectionMatrix);
 			shader->setUniformMatrix4("cameraMatrix", viewMatrix);
 
+			/*glm::mat4 mat = renderMatrix;
+			mat = glm::scale(mat, glm::vec3(size, 1));
 
-			glm::mat4 mat = renderMatrix;
-			mat = glm::scale(mat, glm::vec3(1.0f, 1.0f, 0.025f));
+			panelModel->draw([&mat](const glm::mat4& matrix)
+			{
+				shader->setUniformMatrix4("modelMatrix", mat * matrix);
+			});*/
 
-			shader->setUniformMatrix4("modelMatrix", mat);
 
-			panelModel->draw();
-
+			rootPanel->draw(glm::translate(renderMatrix, glm::vec3(0,0, 0)));
 		}
 
 

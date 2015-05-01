@@ -110,6 +110,15 @@ namespace vrlib
 					indices.push_back(vertexStart + (int)face->mIndices[iii]);
 			}
 			m.indexCount = indices.size() - m.indexStart;
+			m.matrix = transform;
+
+			
+			aiString texPath;
+			
+			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == aiReturn_SUCCESS)
+				m.material.texture = new vrlib::Texture(path + "/" + texPath.C_Str());
+			else
+				m.material.texture = NULL;
 
 			meshes.push_back(m);
 		}
@@ -134,6 +143,13 @@ namespace vrlib
 			logger<<"Error loading file : " << importer.GetErrorString() << Log::newline;
 			return;
 		}
+
+		path = "";
+		if (fileName.find("/") != std::string::npos)
+			path = fileName.substr(0, fileName.rfind("/"));
+		
+		
+
 
 		import(glm::mat4(), scene, scene->mRootNode);
 		handleModelLoadOptions(vertices, options);
@@ -163,13 +179,22 @@ namespace vrlib
 	}
 
 	template<class VertexFormat>
-	void AssimpModel<VertexFormat>::draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback)
+	void AssimpModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback)
 	{
 		vao->bind();
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 
 		for (const Mesh& mesh : meshes)
 		{
+			if (modelviewMatrixCallback)
+				modelviewMatrixCallback(mesh.matrix);
+			if (materialCallback)
+				materialCallback(mesh.material);
+			else
+			{
+				if (mesh.material.texture)
+					mesh.material.texture->bind();
+			}
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_SHORT, (void*)mesh.indexStart);
 		}
 	}
 

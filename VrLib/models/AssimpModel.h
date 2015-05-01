@@ -16,7 +16,7 @@ namespace vrlib
 	class AssimpModel : public Model
 	{
 	public:
-		class Material : vrlib::Material
+		class Material : public vrlib::Material
 		{
 		public:
 
@@ -28,6 +28,7 @@ namespace vrlib
 			int indexStart;
 			int indexCount;
 			glm::mat4 matrix;
+			Material material;
 		};
 
 
@@ -36,9 +37,11 @@ namespace vrlib
 
 		void import(const glm::mat4 &matrix, const aiScene* scene, aiNode* node);
 		virtual std::vector<glm::vec3> getVertices(int amount) const override;
-		virtual void draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback) override;
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback) override;
 		virtual ModelInstance* getInstance() override;
 
+
+		std::string path;
 
 		std::vector<Mesh> meshes;
 		std::vector<VertexFormat> vertices;

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "ContainerComponent.h"
+#include <functional>
+#include <vector>
+#include <VrLib/gui/components/Component.h>
 
 namespace vrlib
 {
@@ -8,13 +10,10 @@ namespace vrlib
 	{
 		namespace components
 		{
-			class Panel : public ContainerComponent
+			class ContainerComponent : public Component, public std::vector<Component*>
 			{
 			public:
-				Panel();
-
 				virtual void draw(const glm::mat4 &parentMatrix) override;
-
 
 			};
 		}

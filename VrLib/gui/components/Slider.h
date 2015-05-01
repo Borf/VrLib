@@ -19,6 +19,7 @@ namespace vrlib
 
 				Slider(float minValue, float maxValue, float startValue);
 				void drag(const glm::vec3 &intersect); //TODO: use callback
+				virtual void draw(const glm::mat4 &parentMatrix) override {};
 			};
 		}
 	}

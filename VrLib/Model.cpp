@@ -36,7 +36,7 @@ namespace vrlib
 	{
 		this->model = model;
 	}
-	void ModelInstance::draw(const std::function<void()> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
+	void ModelInstance::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
 		model->draw(modelviewMatrixCallback, materialCallback);
 	}

@@ -8,9 +8,10 @@ namespace vrlib
 		{
 
 
-			Label::Label(const std::string &text)
+			Label::Label(const std::string &text, const glm::vec2 &position)
 			{
-
+				this->text = text;
+				this->position = position;
 			}
 
 		}

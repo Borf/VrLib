@@ -7,6 +7,7 @@
 
 namespace vrlib
 {
+	class Texture;
 	class ModelLoadOptions
 	{
 	public:
@@ -31,6 +32,7 @@ namespace vrlib
 	class Material
 	{
 	public:
+		Texture* texture;
 	};
 
 	class ModelInstance
@@ -40,7 +42,7 @@ namespace vrlib
 
 		ModelInstance(Model* model);
 
-		virtual void draw(const std::function<void()> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr);
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr);
 
 	};
 
@@ -57,7 +59,7 @@ namespace vrlib
 
 
 		virtual std::vector<glm::vec3> getVertices(int amount) const = 0;
-		virtual void draw(const std::function<void()> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
 
 		virtual ModelInstance* getInstance() = 0;
 
