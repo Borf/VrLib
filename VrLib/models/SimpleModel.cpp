@@ -173,14 +173,13 @@ namespace vrlib
 			for (size_t i = 0; i < verts.size(); i++)
 				vertices.push_back(glm::vec3(verts[i].px, verts[i].py, verts[i].pz));
 
-
-			vao = new gl::VAO<VertexFormat>(&vbo);
-
 			vbo.bind();
 			vbo.setData(verts.size(), &verts[0], GL_STATIC_DRAW);
+
+
+			vao = new gl::VAO<VertexFormat>(&vbo);
 			vio.bind();
 			vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
-
 			vao->unBind();
 		}
 		else

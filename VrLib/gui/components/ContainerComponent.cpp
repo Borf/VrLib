@@ -17,6 +17,20 @@ namespace vrlib
 				for (auto c : *this)
 					c->draw(matrix);
 			}
+
+			Component* ContainerComponent::getComponent(const std::string &name)
+			{
+				Component* subEl = NULL;
+
+				for (auto el : *this)
+					if (el->name == name)
+						return el;
+					else if (static_cast<ContainerComponent*>(el))
+						if(subEl = static_cast<ContainerComponent*>(el)->getComponent(name))
+							return subEl;
+				return NULL;
+			}
+
 		}
 	}
 }

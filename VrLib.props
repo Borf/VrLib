@@ -7,12 +7,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\VrLib;$(SolutionDir)\Libraries\VrLib\externals\glm;$(SolutionDir)\Libraries\VrLib\externals\glew\include;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\VrLib;$(SolutionDir)\Libraries\VrLib\externals\glm;$(SolutionDir)\Libraries\VrLib\externals\glew\include;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PreprocessorDefinitions>GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\win32\VS2013;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\assimp;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\win32\VS2013;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\assimp;$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>

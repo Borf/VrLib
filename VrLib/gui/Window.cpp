@@ -6,6 +6,7 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/gl/shader.h>
 #include <VrLib/gui/components/Panel.h>
+#include <VrLib/Font.h>
 
 
 namespace vrlib
@@ -18,6 +19,7 @@ namespace vrlib
 	{
 		vrlib::Model* Window::panelModel = NULL;
 		vrlib::gl::ShaderProgram* Window::shader = NULL;
+		vrlib::Font* Window::font = NULL;
 		float Window::thickness = 0.04f;
 
 		Window::Window(const std::string &title)
@@ -30,7 +32,11 @@ namespace vrlib
 				shader->bindAttributeLocation("a_normal", 1);
 				shader->bindAttributeLocation("a_texture", 2);
 				shader->link();
+
+				font = new Font("Tahoma");
+
 			}
+			rootPanel = NULL;
 		}
 
 
@@ -66,6 +72,13 @@ namespace vrlib
 		void Window::mouseUp()
 		{
 
+		}
+
+		void Window::setRootPanel(components::Panel* panel)
+		{
+			if (rootPanel)
+				delete rootPanel;
+			rootPanel = panel;
 		}
 
 	}

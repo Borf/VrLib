@@ -40,6 +40,9 @@
     <Filter Include="gui\components">
       <UniqueIdentifier>{b365a25d-b74f-44dd-9f8d-544afd852b6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="freetype">
+      <UniqueIdentifier>{74ace0ca-2ceb-491d-b1c9-2c48dbe55e27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VrLib\VrLib.h">

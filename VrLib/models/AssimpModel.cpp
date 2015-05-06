@@ -154,9 +154,12 @@ namespace vrlib
 		import(glm::mat4(), scene, scene->mRootNode);
 		handleModelLoadOptions(vertices, options);
 
-		vao = new gl::VAO<VertexFormat>(&vbo);
+
 		vbo.bind();
 		vbo.setData(vertices.size(), &vertices[0], GL_STATIC_DRAW);
+
+		vao = new gl::VAO<VertexFormat>(&vbo);
+		vao->bind();
 		vio.bind();
 		vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
 
@@ -196,6 +199,7 @@ namespace vrlib
 			}
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_SHORT, (void*)mesh.indexStart);
 		}
+		vao->unBind();
 	}
 
 	template<class VertexFormat>

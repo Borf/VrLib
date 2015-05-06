@@ -14,6 +14,7 @@ namespace vrlib
 			public:
 				glm::vec2 position;
 				glm::vec2 size;
+				std::string name;
 
 				void addClickHandler(const std::function<void(void)>& callback);
 

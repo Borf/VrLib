@@ -4,6 +4,7 @@
 
 namespace vrlib
 {
+	namespace json { class Value;  }
 	namespace gui
 	{
 		namespace components
@@ -12,8 +13,10 @@ namespace vrlib
 			{
 			public:
 				Panel();
+				Panel(const std::string &jsonFileName);
 
 				virtual void draw(const glm::mat4 &parentMatrix) override;
+				void Panel::loadJson(const json::Value &config);
 
 
 			};

@@ -7,12 +7,15 @@
 
 namespace vrlib
 {
+	class Model;
+
 	namespace gui
 	{
 		namespace components
 		{
 			class Button : public Component
 			{
+				static vrlib::Model* buttonModel;
 			public:
 				std::string text;
 

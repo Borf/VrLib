@@ -14,7 +14,7 @@ namespace vrlib
 			{
 			public:
 				virtual void draw(const glm::mat4 &parentMatrix) override;
-
+				Component* getComponent(const std::string &name);
 			};
 		}
 	}
