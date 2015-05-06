@@ -95,7 +95,14 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Font.h" />
+    <ClInclude Include="externals\clipper\clipper.hpp" />
+    <ClInclude Include="externals\poly2tri\common\shapes.h" />
+    <ClInclude Include="externals\poly2tri\common\utils.h" />
+    <ClInclude Include="externals\poly2tri\poly2tri.h" />
+    <ClInclude Include="externals\poly2tri\sweep\advancing_front.h" />
+    <ClInclude Include="externals\poly2tri\sweep\cdt.h" />
+    <ClInclude Include="externals\poly2tri\sweep\sweep.h" />
+    <ClInclude Include="externals\poly2tri\sweep\sweep_context.h" />
     <ClInclude Include="VrLib\Application.h" />
     <ClInclude Include="VrLib\BinaryStream.h" />
     <ClInclude Include="VrLib\ClusterData.h" />
@@ -112,6 +119,7 @@
     <ClInclude Include="VrLib\drivers\SimPosition.h" />
     <ClInclude Include="VrLib\drivers\Vrpn.h" />
     <ClInclude Include="VrLib\drivers\XBOXController.h" />
+    <ClInclude Include="VrLib\Font.h" />
     <ClInclude Include="VrLib\gl\FBO.h" />
     <ClInclude Include="VrLib\gl\shader.h" />
     <ClInclude Include="VrLib\gl\VAO.h" />
@@ -153,6 +161,12 @@
     <ClInclude Include="VrLib\VrLib.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="externals\clipper\clipper.cpp" />
+    <ClCompile Include="externals\poly2tri\common\shapes.cc" />
+    <ClCompile Include="externals\poly2tri\sweep\advancing_front.cc" />
+    <ClCompile Include="externals\poly2tri\sweep\cdt.cc" />
+    <ClCompile Include="externals\poly2tri\sweep\sweep.cc" />
+    <ClCompile Include="externals\poly2tri\sweep\sweep_context.cc" />
     <ClCompile Include="VrLib\Application.cpp" />
     <ClCompile Include="VrLib\BinaryStream.cpp" />
     <ClCompile Include="VrLib\ClusterData.cpp" />

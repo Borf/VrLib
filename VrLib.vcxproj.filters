@@ -40,8 +40,14 @@
     <Filter Include="gui\components">
       <UniqueIdentifier>{b365a25d-b74f-44dd-9f8d-544afd852b6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="freetype">
-      <UniqueIdentifier>{74ace0ca-2ceb-491d-b1c9-2c48dbe55e27}</UniqueIdentifier>
+    <Filter Include="externals">
+      <UniqueIdentifier>{da20e25b-1d55-448f-9aac-f157a079915f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals\poly2tri">
+      <UniqueIdentifier>{781bae37-136d-4edd-99ad-9b1facdffa85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="externals\clipper">
+      <UniqueIdentifier>{8b81ecea-5136-4fb3-a7da-c424dbeafb73}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +215,33 @@
     </ClInclude>
     <ClInclude Include="VrLib\gui\components\ContainerComponent.h">
       <Filter>gui\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\clipper\clipper.hpp">
+      <Filter>externals\clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\poly2tri.h">
+      <Filter>externals\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\common\shapes.h">
+      <Filter>externals\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\common\utils.h">
+      <Filter>externals\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\sweep\sweep_context.h">
+      <Filter>externals\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\sweep\advancing_front.h">
+      <Filter>externals\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\sweep\cdt.h">
+      <Filter>externals\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="externals\poly2tri\sweep\sweep.h">
+      <Filter>externals\poly2tri</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +412,27 @@
     </ClCompile>
     <ClCompile Include="VrLib\gui\components\ContainerComponent.cpp">
       <Filter>gui\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\clipper\clipper.cpp">
+      <Filter>externals\clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\poly2tri\common\shapes.cc">
+      <Filter>externals\poly2tri</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\poly2tri\sweep\sweep_context.cc">
+      <Filter>externals\poly2tri</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\poly2tri\sweep\advancing_front.cc">
+      <Filter>externals\poly2tri</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\poly2tri\sweep\cdt.cc">
+      <Filter>externals\poly2tri</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\poly2tri\sweep\sweep.cc">
+      <Filter>externals\poly2tri</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
