@@ -21,6 +21,7 @@ namespace vrlib
 				bind();
 				vbo->bind();
 				vbo->setAttributes();
+				//unBind();
 			}
 
 			~VAO()

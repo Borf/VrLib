@@ -1,21 +1,24 @@
 #pragma once
 
-#include "Component.h"
+#include "ContainerComponent.h"
 
 namespace vrlib
 {
+	namespace json { class Value;  }
 	namespace gui
 	{
-		namespace layoutmanagers { class LayoutManager; }
 		namespace components
 		{
-			class Panel : public Component
+			class Panel : public ContainerComponent
 			{
 			public:
-				Panel(layoutmanagers::LayoutManager* layoutManager);
+				Panel();
+				Panel(const std::string &jsonFileName);
 
-				void add(Component* component);
-				void remove(Component* component);
+				virtual void draw(const glm::mat4 &parentMatrix) override;
+				void Panel::loadJson(const json::Value &config);
+
+
 			};
 		}
 	}

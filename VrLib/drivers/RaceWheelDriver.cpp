@@ -15,13 +15,13 @@ namespace vrlib
 	bool g_bFilterOutXinputDevices;
 
 	LPDIRECTINPUT8          g_pDI;
-	cRaceWheelDriver::XINPUT_DEVICE_NODE*  g_pXInputDeviceList;
+	RaceWheelDriver::XINPUT_DEVICE_NODE*  g_pXInputDeviceList;
 	unsigned int            device_counter;
 	LPDIRECTINPUTDEVICE8    g_pJoystick;
 
 
 
-	DeviceDriverAdaptor* cRaceWheelDriver::getAdaptor(std::string options)
+	DeviceDriverAdaptor* RaceWheelDriver::getAdaptor(std::string options)
 	{
 		WheelButtons  pressedButton;
 
@@ -61,7 +61,7 @@ namespace vrlib
 		return NULL;
 	}
 
-	void cRaceWheelDriver::wheelDown(WheelButtons button)
+	void RaceWheelDriver::wheelDown(WheelButtons button)
 	{
 		if (button == UpperLeft)
 			upperLeft = true;
@@ -90,7 +90,7 @@ namespace vrlib
 	}
 
 
-	void cRaceWheelDriver::wheelUp(WheelButtons button)
+	void RaceWheelDriver::wheelUp(WheelButtons button)
 	{
 		if (button == UpperLeft)
 			upperLeft = false;
@@ -118,7 +118,7 @@ namespace vrlib
 			x = false;
 	}
 
-	bool cRaceWheelDriver::isPressed(WheelButtons button)
+	bool RaceWheelDriver::isPressed(WheelButtons button)
 	{
 		if (button == UpperLeft)
 			return upperLeft;
@@ -148,7 +148,7 @@ namespace vrlib
 		return false;
 	}
 
-	float cRaceWheelDriver::getAxis(WheelAxis axis)
+	float RaceWheelDriver::getAxis(WheelAxis axis)
 	{
 		if (axis == Xaxis)
 			return xAxis;
@@ -160,7 +160,7 @@ namespace vrlib
 		return 0.0f;
 	}
 
-	void cRaceWheelDriver::setAxis(WheelAxis axis, float value)
+	void RaceWheelDriver::setAxis(WheelAxis axis, float value)
 	{
 		if (axis == Xaxis)
 			xAxis = value;
@@ -181,7 +181,7 @@ namespace vrlib
 	// This function stores the list of xinput devices in a linked list 
 	// at g_pXInputDeviceList, and IsXInputDevice() searchs that linked list
 	//-----------------------------------------------------------------------------
-	HRESULT cRaceWheelDriver::SetupForIsXInputDevice()
+	HRESULT RaceWheelDriver::SetupForIsXInputDevice()
 	{
 		IWbemServices* pIWbemServices = NULL;
 		IEnumWbemClassObject* pEnumDevices = NULL;
@@ -302,7 +302,7 @@ namespace vrlib
 	bool IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 	{
 		// Check each xinput device to see if this device's vid/pid matches
-		cRaceWheelDriver::XINPUT_DEVICE_NODE* pNode = g_pXInputDeviceList;
+		RaceWheelDriver::XINPUT_DEVICE_NODE* pNode = g_pXInputDeviceList;
 		while (pNode)
 		{
 			if (pNode->dwVidPid == pGuidProductFromDirectInput->Data1)
@@ -321,7 +321,7 @@ namespace vrlib
 	BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance,
 		VOID* pContext)
 	{
-		cRaceWheelDriver::DI_ENUM_CONTEXT* pEnumContext = (cRaceWheelDriver::DI_ENUM_CONTEXT*)pContext;
+		RaceWheelDriver::DI_ENUM_CONTEXT* pEnumContext = (RaceWheelDriver::DI_ENUM_CONTEXT*)pContext;
 		HRESULT hr;
 
 		if (g_bFilterOutXinputDevices && IsXInputDevice(&pdidInstance->guidProduct))
@@ -458,7 +458,7 @@ namespace vrlib
 	// Name: UpdateInputState()
 	// Desc: Get the input device's state and display it.
 	//-----------------------------------------------------------------------------
-	HRESULT cRaceWheelDriver::UpdateInputState(HWND hDlg)
+	HRESULT RaceWheelDriver::UpdateInputState(HWND hDlg)
 	{
 		HRESULT hr;
 		TCHAR strText[512] = { 0 }; // Device state text
@@ -530,9 +530,9 @@ namespace vrlib
 		for (int i = 0; i < 128; i++)
 		{
 			if (js.rgbButtons[i] & 0x80)
-				wheelDown((cRaceWheelDriver::WheelButtons) i);
+				wheelDown((RaceWheelDriver::WheelButtons) i);
 			else
-				wheelUp((cRaceWheelDriver::WheelButtons) i);
+				wheelUp((RaceWheelDriver::WheelButtons) i);
 		}
 
 		//SetWindowText( GetDlgItem( windowHandle, IDC_BUTTONS ), strText );
@@ -544,7 +544,7 @@ namespace vrlib
 	// Name: FreeDirectInput()
 	// Desc: Initialize the DirectInput variables.
 	//-----------------------------------------------------------------------------
-	VOID cRaceWheelDriver::FreeDirectInput()
+	VOID RaceWheelDriver::FreeDirectInput()
 	{
 		// Unacquire the device one last time just in case 
 		// the app tried to exit while the device is still acquired.
@@ -560,7 +560,7 @@ namespace vrlib
 	// Name: InitDirectInput()
 	// Desc: Initialize the DirectInput variables.
 	//-----------------------------------------------------------------------------
-	HRESULT cRaceWheelDriver::InitDirectInput(HWND hDlg)
+	HRESULT RaceWheelDriver::InitDirectInput(HWND hDlg)
 	{
 		HRESULT hr;
 
@@ -642,7 +642,7 @@ namespace vrlib
 	//-----------------------------------------------------------------------------
 	// Cleanup needed for IsXInputDevice()
 	//-----------------------------------------------------------------------------
-	void cRaceWheelDriver::CleanupForIsXInputDevice()
+	void RaceWheelDriver::CleanupForIsXInputDevice()
 	{
 		// Cleanup linked list
 		XINPUT_DEVICE_NODE* pNode = g_pXInputDeviceList;
@@ -654,7 +654,7 @@ namespace vrlib
 		}
 	}
 
-	cRaceWheelDriver::cRaceWheelDriver(HWND _windowHandle)
+	RaceWheelDriver::RaceWheelDriver(HWND _windowHandle)
 	{
 		device_counter = 0;
 		g_pEffect = NULL;
@@ -682,13 +682,13 @@ namespace vrlib
 		x = false;
 	}
 
-	cRaceWheelDriver::~cRaceWheelDriver()
+	RaceWheelDriver::~RaceWheelDriver()
 	{
 		close();
 	}
 
 	HRESULT
-		cRaceWheelDriver::deviceName(char* name)
+		RaceWheelDriver::deviceName(char* name)
 	{
 		HRESULT hr;
 		DIDEVICEINSTANCE device;
@@ -726,7 +726,7 @@ namespace vrlib
 	}
 
 	HRESULT
-		cRaceWheelDriver::open()
+		RaceWheelDriver::open()
 	{
 
 		HRESULT hr;
@@ -821,7 +821,7 @@ namespace vrlib
 		return hr;
 	}
 
-	HRESULT cRaceWheelDriver::setEffect(int _magnitude)
+	HRESULT RaceWheelDriver::setEffect(int _magnitude)
 	{
 
 		if (NULL == g_pEffect)
@@ -854,7 +854,7 @@ namespace vrlib
 	}
 
 	HRESULT
-		cRaceWheelDriver::close()
+		RaceWheelDriver::close()
 	{
 		if (g_pJoystick) {
 			g_pJoystick->Unacquire();
@@ -867,7 +867,7 @@ namespace vrlib
 	}
 
 	HRESULT
-		cRaceWheelDriver::poll(DIJOYSTATE2 *js)
+		RaceWheelDriver::poll(DIJOYSTATE2 *js)
 	{
 		HRESULT hr;
 
@@ -940,7 +940,7 @@ namespace vrlib
 	}*/
 
 	unsigned int
-		cRaceWheelDriver::deviceCount()
+		RaceWheelDriver::deviceCount()
 	{
 		unsigned int counter = 0;
 		LPDIRECTINPUT8 di = NULL;
@@ -969,24 +969,24 @@ namespace vrlib
 		return DIENUM_CONTINUE;
 	}
 
-	cRaceWheelDriver::WheelAxisDeviceDriverAdaptor::WheelAxisDeviceDriverAdaptor(cRaceWheelDriver* driver, WheelAxis id)
+	RaceWheelDriver::WheelAxisDeviceDriverAdaptor::WheelAxisDeviceDriverAdaptor(RaceWheelDriver* driver, WheelAxis id)
 	{
 		this->driver = driver;
 		this->axis = id;
 	}
 
-	float cRaceWheelDriver::WheelAxisDeviceDriverAdaptor::getData()
+	float RaceWheelDriver::WheelAxisDeviceDriverAdaptor::getData()
 	{
 		return driver->getAxis(axis);
 	}
 
-	cRaceWheelDriver::WheelDeviceDriverAdaptor::WheelDeviceDriverAdaptor(cRaceWheelDriver* driver, WheelButtons id)
+	RaceWheelDriver::WheelDeviceDriverAdaptor::WheelDeviceDriverAdaptor(RaceWheelDriver* driver, WheelButtons id)
 	{
 		this->driver = driver;
 		this->buttons = id;
 	}
 
-	DigitalState cRaceWheelDriver::WheelDeviceDriverAdaptor::getData()
+	DigitalState RaceWheelDriver::WheelDeviceDriverAdaptor::getData()
 	{
 		bool b = driver->isPressed(buttons);
 		DigitalState returnValue;

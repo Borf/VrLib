@@ -40,8 +40,8 @@
     <Filter Include="gui\components">
       <UniqueIdentifier>{b365a25d-b74f-44dd-9f8d-544afd852b6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="gui\layoutManagers">
-      <UniqueIdentifier>{ddf092b1-f2be-4897-8fec-3f7920e1330f}</UniqueIdentifier>
+    <Filter Include="freetype">
+      <UniqueIdentifier>{74ace0ca-2ceb-491d-b1c9-2c48dbe55e27}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -186,18 +186,6 @@
     <ClInclude Include="VrLib\gui\components\Image.h">
       <Filter>gui\components</Filter>
     </ClInclude>
-    <ClInclude Include="VrLib\gui\layoutmanagers\LayoutManager.h">
-      <Filter>gui\layoutManagers</Filter>
-    </ClInclude>
-    <ClInclude Include="VrLib\gui\layoutmanagers\ManualLayout.h">
-      <Filter>gui\layoutManagers</Filter>
-    </ClInclude>
-    <ClInclude Include="VrLib\gui\layoutmanagers\TableLayout.h">
-      <Filter>gui\layoutManagers</Filter>
-    </ClInclude>
-    <ClInclude Include="VrLib\gui\layoutmanagers\FlowLayout.h">
-      <Filter>gui\layoutManagers</Filter>
-    </ClInclude>
     <ClInclude Include="VrLib\gui\components\CheckBox.h">
       <Filter>gui\components</Filter>
     </ClInclude>
@@ -215,6 +203,12 @@
     </ClInclude>
     <ClInclude Include="VrLib\util.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\math\aabb.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gui\components\ContainerComponent.h">
+      <Filter>gui\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -362,18 +356,6 @@
     <ClCompile Include="VrLib\gui\components\Label.cpp">
       <Filter>gui\components</Filter>
     </ClCompile>
-    <ClCompile Include="VrLib\gui\layoutmanagers\LayoutManager.cpp">
-      <Filter>gui\layoutManagers</Filter>
-    </ClCompile>
-    <ClCompile Include="VrLib\gui\layoutmanagers\ManualLayout.cpp">
-      <Filter>gui\layoutManagers</Filter>
-    </ClCompile>
-    <ClCompile Include="VrLib\gui\layoutmanagers\TableLayout.cpp">
-      <Filter>gui\layoutManagers</Filter>
-    </ClCompile>
-    <ClCompile Include="VrLib\gui\layoutmanagers\FlowLayout.cpp">
-      <Filter>gui\layoutManagers</Filter>
-    </ClCompile>
     <ClCompile Include="VrLib\gui\components\CheckBox.cpp">
       <Filter>gui\components</Filter>
     </ClCompile>
@@ -391,6 +373,12 @@
     </ClCompile>
     <ClCompile Include="VrLib\util.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\aabb.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gui\components\ContainerComponent.cpp">
+      <Filter>gui\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

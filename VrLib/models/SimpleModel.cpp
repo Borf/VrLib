@@ -54,6 +54,57 @@ namespace vrlib
 				indices.push_back(i + 0);
 			}
 		}
+		else if (parameters[0] == "cube")
+		{
+			VertexFormat v;
+			setN3(v, glm::vec3(0, 1, 0));
+			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0, 0));			verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, 1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(0, 0.5f));		verts.push_back(v);
+
+			setN3(v, glm::vec3(0, -1, 0));
+			setP3(v, glm::vec3(-1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(0, 0.5f));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0, 0));			verts.push_back(v);
+
+			setN3(v, glm::vec3(1, 0, 0));
+			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+
+			setN3(v, glm::vec3(-1, 0, 0));
+			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+
+			setN3(v, glm::vec3(0, 0, 1));
+			setP3(v, glm::vec3(-1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, -1.5f));	setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, -1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+
+			setN3(v, glm::vec3(0, 0, -1));
+			setP3(v, glm::vec3(1.5f, -1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
+			setP3(v, glm::vec3(1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(1.0f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, 1.5f, 1.5f));		setT2(v, glm::vec2(0.5f, 0.5f));	verts.push_back(v);
+			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
+
+			indices.clear();
+			for (size_t i = 0; i < verts.size(); i += 4)
+			{
+				indices.push_back(i + 0);
+				indices.push_back(i + 1);
+				indices.push_back(i + 2);
+
+				indices.push_back(i + 0);
+				indices.push_back(i + 2);
+				indices.push_back(i + 3);
+			}
+		}
 		else if (parameters[0] == "sphere")
 		{
 			int stacks = 10;
@@ -116,17 +167,19 @@ namespace vrlib
 
 		if (!verts.empty())
 		{
+			handleModelLoadOptions(verts, options);
+
+
 			for (size_t i = 0; i < verts.size(); i++)
 				vertices.push_back(glm::vec3(verts[i].px, verts[i].py, verts[i].pz));
 
-
-			vao = new gl::VAO<VertexFormat>(&vbo);
-
 			vbo.bind();
 			vbo.setData(verts.size(), &verts[0], GL_STATIC_DRAW);
+
+
+			vao = new gl::VAO<VertexFormat>(&vbo);
 			vio.bind();
 			vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
-
 			vao->unBind();
 		}
 		else
@@ -137,17 +190,19 @@ namespace vrlib
 
 
 	template<class VertexFormat>
-	std::vector<glm::vec3> SimpleModel<VertexFormat>::getVertices(int amount)
+	std::vector<glm::vec3> SimpleModel<VertexFormat>::getVertices(int amount) const
 	{
 		return vertices;
 	}
 
 	template<class VertexFormat>
-	void SimpleModel<VertexFormat>::draw(gl::ShaderProgram* shader)
+	void SimpleModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
 		if (vao)
 		{
 			vao->bind();
+			if (modelviewMatrixCallback)
+				modelviewMatrixCallback(glm::mat4());
 			glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, 0);
 			vao->unBind();
 		}

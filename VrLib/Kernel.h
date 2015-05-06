@@ -15,7 +15,8 @@
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
-
+#pragma comment(lib, "assimp.lib")
+#pragma comment(lib, "freetype.lib")
 
 
 #ifdef _DEBUG
@@ -48,7 +49,7 @@ namespace vrlib
 	class KeyboardDeviceDriver;
 	class SimPositionDeviceDriver;
 	class PositionalDevice;
-	class cRaceWheelDriver;
+	class RaceWheelDriver;
 	class OculusDeviceDriver;
 	class Oculus;
 	class XBOXDeviceDriver;
@@ -129,7 +130,7 @@ namespace vrlib
 		Kernel();
 	public:
 		virtual ~Kernel();
-		cRaceWheelDriver* raceWheelDriver; // this one is public so that you can sent an effect to it
+		RaceWheelDriver* raceWheelDriver; // this one is public so that you can sent an effect to it
 		static Kernel* getInstance();	//IS DEFINED IN KERNEL_WINDOWS.CPP
 		inline int getWindowHeight()
 		{

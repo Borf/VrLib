@@ -71,7 +71,7 @@
 
 namespace vrlib
 {
-	class cRaceWheelDriver : public DeviceDriver
+	class RaceWheelDriver : public DeviceDriver
 	{
 	private:
 		enum WheelButtons
@@ -85,20 +85,20 @@ namespace vrlib
 
 		class WheelDeviceDriverAdaptor : public DigitalDeviceDriverAdaptor
 		{
-			cRaceWheelDriver* driver;
+			RaceWheelDriver* driver;
 			WheelButtons buttons;
 			bool lastValue;
 		public:
-			WheelDeviceDriverAdaptor(cRaceWheelDriver*, WheelButtons id);
+			WheelDeviceDriverAdaptor(RaceWheelDriver*, WheelButtons id);
 			virtual DigitalState getData();
 		};
 
 		class WheelAxisDeviceDriverAdaptor : public AnalogDeviceDriverAdaptor
 		{
-			cRaceWheelDriver* driver;
+			RaceWheelDriver* driver;
 			WheelAxis axis;
 		public:
-			WheelAxisDeviceDriverAdaptor(cRaceWheelDriver*, WheelAxis id);
+			WheelAxisDeviceDriverAdaptor(RaceWheelDriver*, WheelAxis id);
 			virtual float getData();
 		};
 
@@ -121,8 +121,8 @@ namespace vrlib
 		HWND					windowHandle;
 		LPDIRECTINPUTDEVICE8    Joystick;
 
-		cRaceWheelDriver(HWND _windowHandle);
-		~cRaceWheelDriver();
+		RaceWheelDriver(HWND _windowHandle);
+		~RaceWheelDriver();
 
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 		//virtual void update();

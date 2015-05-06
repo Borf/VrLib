@@ -1,18 +1,39 @@
 #pragma once
 
-#include <VrLib/gl/shader.h>
+#include <functional>
+#include <vector>
+#include <glm/glm.hpp>
+#include <vrlib/math/aabb.h>
 
 namespace vrlib
 {
+	class Texture;
 	class ModelLoadOptions
 	{
 	public:
+		enum Options
+		{
+			KeepVerts = 1,
+			RepositionToCenter = 2,
+			RepositionToCenterBottom = 4,
+		};
+
 		ModelLoadOptions() {};
-		ModelLoadOptions(float size) {};
-		ModelLoadOptions(float size, bool keepVerts) {};
+		ModelLoadOptions(float size) { this->size = size; };
+		ModelLoadOptions(float size, int options) { this->size = size; this->options = options; };
+		ModelLoadOptions(float size, bool keepVerts) { this->size = size; this->options = KeepVerts; };
+
+		int options = 0;
+
+		float size = -1;
 	};
 
 	class Model;
+	class Material
+	{
+	public:
+		Texture* texture;
+	};
 
 	class ModelInstance
 	{
@@ -21,7 +42,7 @@ namespace vrlib
 
 		ModelInstance(Model* model);
 
-		virtual void draw(gl::ShaderProgram* shader);;
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr);
 
 	};
 
@@ -31,13 +52,31 @@ namespace vrlib
 	protected:
 		Model(){};
 	public:
+		math::AABB aabb;
+
 		template<class VertexFormat>
 		static Model* getModel(const std::string &fileName, const ModelLoadOptions &options = ModelLoadOptions());
 
 
-		virtual std::vector<glm::vec3> getVertices(int amount) = 0;
-		virtual void draw(gl::ShaderProgram* shader) = 0;
+		virtual std::vector<glm::vec3> getVertices(int amount) const = 0;
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
 
 		virtual ModelInstance* getInstance() = 0;
+
+
+		template<class VertexFormat>
+		void handleModelLoadOptions(std::vector<VertexFormat> &vertices, const ModelLoadOptions& options);
+
+		template<class VertexFormat>
+		void calculateAABB(const std::vector<VertexFormat> &vertices);
+
+		template<class VertexFormat>
+		void scaleToSize(std::vector<VertexFormat> &vertices, float maxSize);
+
+		template<class VertexFormat>
+		void recenterToCenter(std::vector<VertexFormat> &vertices);
+
+		template<class VertexFormat>
+		void recenterToCenterBottom(std::vector<VertexFormat> &vertices);
 	};
 }

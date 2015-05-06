@@ -13,6 +13,7 @@ namespace vrlib
 			{
 			public:
 				Image(vrlib::Texture* texture) {};
+				virtual void draw(const glm::mat4 &parentMatrix) override {};
 			};
 		}
 	}

@@ -203,7 +203,7 @@ namespace vrlib
 				_window = GetParent(_window);
 			}
 
-			cRaceWheelDriver* driver = new cRaceWheelDriver(_activeWindow);
+			RaceWheelDriver* driver = new RaceWheelDriver(_activeWindow);
 
 			/*if (RaceWheelDriver)
 				logger << "Double Keyboarddriver" << Log::newline;*/

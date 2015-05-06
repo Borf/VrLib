@@ -81,10 +81,10 @@ namespace vrlib
 
 
 
-		template<class T>	inline void setAttributes(int offset)											
+		template<class T>	inline void setAttributes(void* offset)											
 		{
 			int i = 0;
-			setAttribute<T>(i, sizeof(T), offset);
+			setAttribute<T>(i, sizeof(T), (int)offset);
 		}
 
 

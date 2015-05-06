@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GLM_FORCE_RADIANS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>
@@ -95,6 +95,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Font.h" />
     <ClInclude Include="VrLib\Application.h" />
     <ClInclude Include="VrLib\BinaryStream.h" />
     <ClInclude Include="VrLib\ClusterData.h" />
@@ -120,21 +121,19 @@
     <ClInclude Include="VrLib\gui\components\Button.h" />
     <ClInclude Include="VrLib\gui\components\CheckBox.h" />
     <ClInclude Include="VrLib\gui\components\Component.h" />
+    <ClInclude Include="VrLib\gui\components\ContainerComponent.h" />
     <ClInclude Include="VrLib\gui\components\Image.h" />
     <ClInclude Include="VrLib\gui\components\Label.h" />
     <ClInclude Include="VrLib\gui\components\Panel.h" />
     <ClInclude Include="VrLib\gui\components\Slider.h" />
     <ClInclude Include="VrLib\gui\Window.h" />
-    <ClInclude Include="VrLib\gui\layoutmanagers\FlowLayout.h" />
-    <ClInclude Include="VrLib\gui\layoutmanagers\LayoutManager.h" />
-    <ClInclude Include="VrLib\gui\layoutmanagers\ManualLayout.h" />
-    <ClInclude Include="VrLib\gui\layoutmanagers\TableLayout.h" />
     <ClInclude Include="VrLib\Image.h" />
     <ClInclude Include="VrLib\json.h" />
     <ClInclude Include="VrLib\Kernel.h" />
     <ClInclude Include="VrLib\Kernel_Windows.h" />
     <ClInclude Include="VrLib\Log.h" />
     <ClInclude Include="VrLib\math.h" />
+    <ClInclude Include="VrLib\math\aabb.h" />
     <ClInclude Include="VrLib\math\Ray.h" />
     <ClInclude Include="VrLib\Model.h" />
     <ClInclude Include="VrLib\models\AssimpModel.h" />
@@ -172,6 +171,7 @@
     <ClCompile Include="VrLib\drivers\XBOXController.cpp" />
     <ClCompile Include="VrLib\eye.cpp" />
     <ClCompile Include="VrLib\face.cpp" />
+    <ClCompile Include="VrLib\Font.cpp" />
     <ClCompile Include="VrLib\gl\FBO.cpp" />
     <ClCompile Include="VrLib\gl\Shader.cpp" />
     <ClCompile Include="VrLib\gl\VAO.cpp" />
@@ -181,21 +181,19 @@
     <ClCompile Include="VrLib\gui\components\Button.cpp" />
     <ClCompile Include="VrLib\gui\components\CheckBox.cpp" />
     <ClCompile Include="VrLib\gui\components\Component.cpp" />
+    <ClCompile Include="VrLib\gui\components\ContainerComponent.cpp" />
     <ClCompile Include="VrLib\gui\components\Image.cpp" />
     <ClCompile Include="VrLib\gui\components\Label.cpp" />
     <ClCompile Include="VrLib\gui\components\Panel.cpp" />
     <ClCompile Include="VrLib\gui\components\Slider.cpp" />
     <ClCompile Include="VrLib\gui\Window.cpp" />
-    <ClCompile Include="VrLib\gui\layoutmanagers\FlowLayout.cpp" />
-    <ClCompile Include="VrLib\gui\layoutmanagers\LayoutManager.cpp" />
-    <ClCompile Include="VrLib\gui\layoutmanagers\ManualLayout.cpp" />
-    <ClCompile Include="VrLib\gui\layoutmanagers\TableLayout.cpp" />
     <ClCompile Include="VrLib\Image.cpp" />
     <ClCompile Include="VrLib\json.cpp" />
     <ClCompile Include="VrLib\Kernel.cpp" />
     <ClCompile Include="VrLib\Kernel_Windows.cpp" />
     <ClCompile Include="VrLib\Log.cpp" />
     <ClCompile Include="VrLib\math.cpp" />
+    <ClCompile Include="VrLib\math\aabb.cpp" />
     <ClCompile Include="VrLib\math\Ray.cpp" />
     <ClCompile Include="VrLib\Model.cpp" />
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />
