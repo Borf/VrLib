@@ -43,6 +43,7 @@ namespace vrlib
 		void Window::draw(const glm::mat4& projectionMatrix, const glm::mat4 &viewMatrix)
 		{
 			shader->use();
+			shader->setUniformVec4("colorMult", glm::vec4(1, 1, 1, 1));
 			shader->setUniformMatrix4("projectionmatrix", projectionMatrix);
 			shader->setUniformMatrix4("cameraMatrix", viewMatrix);
 

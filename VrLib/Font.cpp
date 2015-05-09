@@ -5,6 +5,8 @@
 #include FT_OUTLINE_H
 #include FT_GLYPH_H
 
+#include <externals/poly2tri/poly2tri.h>
+
 #include <VrLib/Log.h>
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/gl/VBO.h>
@@ -26,7 +28,7 @@ namespace vrlib
 				logger << "Error initializing freetype" << Log::newline;
 		}
 		
-		int error = FT_New_Face(library, "c:/windows/fonts/arial.ttf", 0, &face);
+		int error = FT_New_Face(library, "c:/windows/fonts/tahoma.ttf", 0, &face);
 		if (error == FT_Err_Unknown_File_Format)
 			logger << "the font file could be opened and read, but it appears that its font format is unsupported" << Log::newline;
 		else if (error)
@@ -48,12 +50,12 @@ namespace vrlib
 	}
 
 
-	const float scale = 3000.0f;
+	const float scale = 10000.0f;
 
 
 	int blaMove(FT_Vector* to, Font::Glyph* outline)
 	{
-		logger << "Move To " << to->x << ", " << to->y << Log::newline;
+		//logger << "Move To " << to->x << ", " << to->y << Log::newline;
 		outline->vertices.push_back(std::vector<glm::vec2>());
 		outline->vertices.back().push_back(glm::vec2(to->x / scale, to->y / scale));
 		return 0;
@@ -61,7 +63,7 @@ namespace vrlib
 
 	int bla(FT_Vector* to, Font::Glyph* outline)
 	{
-		logger << "Line To " << to->x << ", " << to->y << Log::newline;
+		//logger << "Line To " << to->x << ", " << to->y << Log::newline;
 		outline->vertices.back().push_back(glm::vec2(to->x / scale, to->y / scale));
 		return 0;
 	}
@@ -69,14 +71,14 @@ namespace vrlib
 
 	int blaConic(FT_Vector* control, FT_Vector* to, Font::Glyph* outline)
 	{
-		logger << "Conic " << to->x << ", " << to->y << Log::newline;
+		//logger << "Conic " << to->x << ", " << to->y << Log::newline;
 		outline->vertices.back().push_back(glm::vec2(to->x / scale, to->y / scale));
 		return 0;
 	}
 
 	int blaCubic(FT_Vector* control1, FT_Vector* control2, FT_Vector* to, Font::Glyph* outline)
 	{
-		logger << "Cubic " << to->x << ", " << to->y << Log::newline;
+		//logger << "Cubic " << to->x << ", " << to->y << Log::newline;
 		outline->vertices.back().push_back(glm::vec2(to->x / scale, to->y / scale));
 		return 0;
 	}
@@ -133,6 +135,7 @@ namespace vrlib
 
 		std::vector<gl::VertexP3N3T2> vertices;
 		gl::VertexP3N3T2 v;
+		gl::setT2(v, glm::vec2(0.5,0.5));
 		glm::vec3 pos(0, 0, 0);
 
 		for (int i = 0; i < len; i++)
@@ -151,17 +154,66 @@ namespace vrlib
 				for (int i = 0; i < (int)line.size(); i++)
 				{
 					int ii = (i + 1) % line.size();
-					
-					setP3(v, pos + glm::vec3(line[i].x, 0, line[i].y));						vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[ii].x, 0, line[ii].y));					vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[i].x, 0.1f, line[i].y));					vertices.push_back(v);
 
-					setP3(v, pos + glm::vec3(line[ii].x, 0, line[ii].y));					vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[ii].x, 0.1f, line[ii].y));				vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[i].x, 0.1f, line[i].y));					vertices.push_back(v);
+					glm::vec2 normal = glm::normalize(line[ii] - line[i]);
+					normal = glm::vec2(-normal.y, normal.x);
+
+
+					setN3(v, glm::vec3(normal.x, normal.y, 0));
+
+					setP3(v, pos + glm::vec3(line[i].x, line[i].y, 0));						vertices.push_back(v);
+					setP3(v, pos + glm::vec3(line[ii].x, line[ii].y, 0));					vertices.push_back(v);
+					setP3(v, pos + glm::vec3(line[i].x, line[i].y, thickness));				vertices.push_back(v);
+
+					setP3(v, pos + glm::vec3(line[ii].x, line[ii].y, 0));					vertices.push_back(v);
+					setP3(v, pos + glm::vec3(line[ii].x, line[ii].y, thickness));			vertices.push_back(v);
+					setP3(v, pos + glm::vec3(line[i].x, line[i].y, thickness));				vertices.push_back(v);
 				}
 			}
-			pos += glm::vec3(g->advance.x, 0, g->advance.y);
+
+			std::vector<p2t::Point*> polyline;
+			if (!g->vertices.empty())
+			{
+				for (int i = 0; i < (int)g->vertices[0].size()-1; i++)
+				{
+					polyline.push_back(new p2t::Point(g->vertices[0][i].x, g->vertices[0][i].y));
+				}
+			}
+
+			if (!polyline.empty())
+			{
+				p2t::CDT* cdt = new p2t::CDT(polyline);;
+
+				for (int ii = 1; ii < g->vertices.size(); ii++)
+				{
+					std::vector<p2t::Point*> holeLine;
+					for (int iii = 0; iii < ((int)g->vertices[ii].size()) - 1; iii++)
+					{
+						holeLine.push_back(new p2t::Point(g->vertices[ii][iii].x, g->vertices[ii][iii].y));
+					}
+					cdt->AddHole(holeLine);
+				}
+
+				cdt->Triangulate();
+				std::vector<p2t::Triangle*> triangles = cdt->GetTriangles();
+				for (auto triangle : triangles)
+				{
+					for (int ii = 0; ii < 3; ii++)
+					{
+						setN3(v, glm::vec3(0, 0, -1));
+						setP3(v, pos + glm::vec3(triangle->GetPoint(ii)->x, triangle->GetPoint(ii)->y, 0));						vertices.push_back(v);
+					}
+
+					for (int ii = 0; ii < 3; ii++)
+					{
+						setN3(v, glm::vec3(0, 0, 1));
+						setP3(v, pos + glm::vec3(triangle->GetPoint(ii)->x, triangle->GetPoint(ii)->y, thickness));						vertices.push_back(v);
+					}
+
+				}
+			}
+
+			pos += glm::vec3(g->advance.x, g->advance.y, 0);
 
 
 		}

@@ -38,7 +38,7 @@ namespace vrlib
 		std::map<char, Glyph*> glyphs;
 	public:
 
-
+		float thickness = 0.025f;
 
 
 		Font(const std::string &font);

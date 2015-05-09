@@ -79,10 +79,10 @@ namespace vrlib
 				matrix = glm::scale(matrix, glm::vec3(((Component*)this)->size, 1));
 
 
-			/*	vrlib::gui::Window::panelModel->draw([this, &matrix](const glm::mat4& mat)
+				vrlib::gui::Window::panelModel->draw([this, &matrix](const glm::mat4& mat)
 				{
 					vrlib::gui::Window::shader->setUniformMatrix4("modelMatrix", matrix * mat);
-				});*/
+				});
 
 
 				ContainerComponent::draw(glm::translate(parentMatrix, glm::vec3(position, Window::thickness)));
