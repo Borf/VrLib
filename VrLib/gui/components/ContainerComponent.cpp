@@ -31,6 +31,18 @@ namespace vrlib
 				return NULL;
 			}
 
+			void ContainerComponent::foreach(const std::function<void(Component*)> &callback)
+			{
+				callback(this);
+				for (auto el : *this)
+				{
+					if (static_cast<ContainerComponent*>(el))
+						static_cast<ContainerComponent*>(el)->foreach(callback);
+					else
+						callback(el);
+				}
+			}
+
 		}
 	}
 }

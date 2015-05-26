@@ -235,8 +235,6 @@ namespace vrlib
 
 	float Font::getLength(const char *fmt, ...)
 	{
-/*		if (base == 0)
-			generate();
 		float		length = 0;								// Used To Find The Length Of The Text
 		char		text[256];								// Holds Our String
 		va_list		ap;										// Pointer To List Of Arguments
@@ -247,13 +245,25 @@ namespace vrlib
 		va_start(ap, fmt);									// Parses The String For Variables
 		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
 		va_end(ap);											// Results Are Stored In Text
+		int len = strlen(text);
 
-		for (unsigned int loop = 0; loop < (strlen(text)); loop++)	// Loop To Find Text Length
+
+		std::vector<gl::VertexP3N3T2> vertices;
+		gl::VertexP3N3T2 v;
+		gl::setT2(v, glm::vec2(0.5, 0.5));
+		glm::vec3 pos(0, 0, 0);
+
+		for (int i = 0; i < len; i++)
 		{
-			length += gmf[text[loop]].gmfCellIncX;			// Increase Length By Each Characters Width
-		}
-		return length;*/
+			char c = text[i];
+			if (glyphs.find(c) == glyphs.end())
+				generateGlyph(c);
 
-		return 0;
+
+			Glyph* g = glyphs[c];
+			length += g->advance.x;
+		}
+
+		return length;
 	}
 }

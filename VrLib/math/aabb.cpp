@@ -13,7 +13,7 @@ namespace vrlib
 		Author: Bas Rops - 09-06-2014
 		Last edit: Bas Rops - dd-mm-yyyy
 		*/
-		bool AABB::hasRayCollision(Ray& r, float minDistance, float maxDistance)
+		bool AABB::hasRayCollision(const Ray& r, float minDistance, float maxDistance)
 		{
 			float tmin, tmax, tymin, tymax, tzmin, tzmax;
 

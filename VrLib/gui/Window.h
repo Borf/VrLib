@@ -2,6 +2,7 @@
 
 #include <string>
 #include <glm/glm.hpp>
+#include <VrLib/math/Ray.h>
 
 namespace vrlib
 {
@@ -26,6 +27,10 @@ namespace vrlib
 			static vrlib::gl::ShaderProgram* shader;
 			static vrlib::Font* font;
 			static float thickness;
+
+
+			math::Ray pointerRay;
+			math::Ray pointerRayInWindowSpace;
 
 			Window(const std::string &title);
 

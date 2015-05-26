@@ -22,7 +22,7 @@ namespace vrlib
 			bounds[1] = _max;
 		}
 
-		bool hasRayCollision(Ray& r, float minDistance, float maxDistance);
+		bool hasRayCollision(const Ray& r, float minDistance, float maxDistance);
 	};
 	}
 }

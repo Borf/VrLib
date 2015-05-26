@@ -62,6 +62,13 @@ namespace vrlib
 
 		void Window::setSelector(const vrlib::math::Ray& ray)
 		{
+			this->pointerRay = ray;
+			pointerRayInWindowSpace = glm::inverse(renderMatrix) * ray;
+
+			rootPanel->foreach([](components::Component* c) {
+				c->hover = false;
+			});
+
 
 		}
 

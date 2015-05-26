@@ -40,7 +40,7 @@ namespace vrlib
 					vrlib::gui::Window::shader->setUniformMatrix4("modelMatrix", matrix * mat);
 				});
 
-				matrix = glm::translate(parentMatrix, glm::vec3(position, vrlib::gui::Window::thickness));
+				matrix = glm::translate(parentMatrix, glm::vec3(position + glm::vec2(size.x / 2 - 0.25f * Window::font->getLength("%s", text.c_str())/2.0f ,0.05f), vrlib::gui::Window::thickness));
 				matrix = glm::scale(matrix, glm::vec3(0.25f, 0.25f, 0.25f));
 				vrlib::gui::Window::shader->setUniformMatrix4("modelMatrix", matrix);
 				vrlib::gui::Window::shader->setUniformVec4("colorMult", glm::vec4(0.25f, 0.25f, 0.25f, 1));

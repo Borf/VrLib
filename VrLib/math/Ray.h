@@ -17,18 +17,11 @@ namespace vrlib
 			int sign[3];
 
 			Ray() {}
-			Ray(glm::vec3 origin, glm::vec3 dir)
-			{
-				this->mOrigin = origin;
-				this->mDir = dir;
-		
-				invDir = glm::vec3(1.0f / dir.x, 1.0f / dir.y, 1.0f / dir.z);
-				sign[0] = (invDir.x < 0);
-				sign[1] = (invDir.y < 0);
-				sign[2] = (invDir.z < 0);
-			}
+			Ray(const glm::vec3 &origin, const glm::vec3 &dir);
+
 		};
 
+		Ray operator * (const glm::mat4& matrix, const Ray& ray);
 
 	}
 }
