@@ -18,6 +18,11 @@
     <Lib>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>
+    <PostBuildEvent>
+      <Command>IF EXIST "$(SolutionDir)\Libraries\VrLib\fixdata.bat" (
+"$(SolutionDir)\Libraries\VrLib\fixdata.bat" "$(TargetPath)" "$(ProjectDir)"
+)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
