@@ -25,8 +25,8 @@ namespace vrlib
 				for (auto el : *this)
 					if (el->name == name)
 						return el;
-					else if (static_cast<ContainerComponent*>(el))
-						if(subEl = static_cast<ContainerComponent*>(el)->getComponent(name))
+					else if (dynamic_cast<ContainerComponent*>(el))
+						if (subEl = dynamic_cast<ContainerComponent*>(el)->getComponent(name))
 							return subEl;
 				return NULL;
 			}
@@ -36,10 +36,23 @@ namespace vrlib
 				callback(this);
 				for (auto el : *this)
 				{
-					if (static_cast<ContainerComponent*>(el))
-						static_cast<ContainerComponent*>(el)->foreach(callback);
+					if (dynamic_cast<ContainerComponent*>(el))
+						dynamic_cast<ContainerComponent*>(el)->foreach(callback);
 					else
 						callback(el);
+				}
+			}
+
+			void ContainerComponent::foreachWithMatrix(const std::function<void(const glm::mat4 &parentMatrix, Component*)> &callback, const glm::mat4 &parentMatrix)
+			{
+				glm::mat4 matrix = glm::translate(parentMatrix, glm::vec3(position.x, position.y, 0));
+				callback(matrix, this);
+				for (auto el : *this)
+				{
+					if (dynamic_cast<ContainerComponent*>(el))
+						dynamic_cast<ContainerComponent*>(el)->foreachWithMatrix(callback, matrix);
+					else
+						callback(matrix, el);
 				}
 			}
 

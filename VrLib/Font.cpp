@@ -211,7 +211,13 @@ namespace vrlib
 					}
 
 				}
+
+				delete cdt;
 			}
+			for (p2t::Point* p : polyline)
+				delete p;
+			polyline.clear();
+
 
 			pos += glm::vec3(g->advance.x, g->advance.y, 0);
 

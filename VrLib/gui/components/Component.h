@@ -19,11 +19,10 @@ namespace vrlib
 				bool hover = false;
 
 				void addClickHandler(const std::function<void(void)>& callback);
-
 				void setBounds(const glm::vec2 &position, const glm::vec2 &size);
 				virtual void draw(const glm::mat4 &parentMatrix) = 0;
 
-				math::AABB getBoundingBox() const;
+				math::AABB getBoundingBox(const glm::mat4& parentMatrix) const;
 
 			};
 		}

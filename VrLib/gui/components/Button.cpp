@@ -35,10 +35,16 @@ namespace vrlib
 				glm::mat4 matrix = glm::translate(parentMatrix, glm::vec3(position, 0));
 				matrix = glm::scale(matrix, glm::vec3(((Component*)this)->size, glm::max(((Component*)this)->size.x, ((Component*)this)->size.y)));
 
+				if (hover)
+					vrlib::gui::Window::shader->setUniformVec4("colorMult", glm::vec4(0.5f, 0.5f, 0.5f, 1));
+
 				buttonModel->draw([this, &matrix](const glm::mat4& mat)
 				{
 					vrlib::gui::Window::shader->setUniformMatrix4("modelMatrix", matrix * mat);
 				});
+
+				if (hover)
+					vrlib::gui::Window::shader->setUniformVec4("colorMult", glm::vec4(1.0f, 1.0f, 1.0f, 1));
 
 				matrix = glm::translate(parentMatrix, glm::vec3(position + glm::vec2(size.x / 2 - 0.25f * Window::font->getLength("%s", text.c_str())/2.0f ,0.05f), vrlib::gui::Window::thickness));
 				matrix = glm::scale(matrix, glm::vec3(0.25f, 0.25f, 0.25f));

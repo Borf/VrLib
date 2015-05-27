@@ -17,6 +17,7 @@ namespace vrlib
 				Component* getComponent(const std::string &name);
 
 				void foreach(const std::function<void(Component*)> &callback);
+				virtual void foreachWithMatrix(const std::function<void(const glm::mat4 &matrix, Component*)> &callback, const glm::mat4 &parentMatrix = glm::mat4());
 			};
 		}
 	}

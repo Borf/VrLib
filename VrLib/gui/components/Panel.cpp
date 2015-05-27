@@ -88,6 +88,10 @@ namespace vrlib
 				ContainerComponent::draw(glm::translate(parentMatrix, glm::vec3(position, Window::thickness)));
 			}
 
+			void Panel::foreachWithMatrix(const std::function<void(const glm::mat4 &matrix, Component*) > &callback, const glm::mat4 &parentMatrix /*= glm::mat4()*/)
+			{
+				ContainerComponent::foreachWithMatrix(callback, glm::translate(parentMatrix, glm::vec3(0, 0, Window::thickness)));
+			}
 		}
 	}
 }

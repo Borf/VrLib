@@ -57,6 +57,26 @@ namespace vrlib
 
 
 			rootPanel->draw(glm::translate(renderMatrix, glm::vec3(0,0, 0)));
+
+
+			shader->setUniformVec4("colorMult", glm::vec4(100, 0, 0, 1));
+			shader->setUniformMatrix4("modelMatrix", glm::mat4());
+			gl::VertexP3N3T2 v;
+			std::vector<vrlib::gl::VertexP3N3T2> verts;
+			setN3(v, glm::vec3(0, 1, 0));
+			setP3(v, pointerRay.mOrigin);							setT2(v, glm::vec2(0.5f, 0));			verts.push_back(v);
+			setP3(v, pointerRay.mOrigin + 3.0f * pointerRay.mDir);	setT2(v, glm::vec2(0.5f, 0));			verts.push_back(v);			
+			glBindVertexArray(0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			gl::setAttributes<gl::VertexP3N3T2>(verts.data());
+			glLineWidth(10.0f);
+			glDrawArrays(GL_LINES, 0, 2);
+			glDisableVertexAttribArray(0);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(2);
+			shader->setUniformVec4("colorMult", glm::vec4(1, 1, 1, 1));
+
 		}
 
 
@@ -69,6 +89,11 @@ namespace vrlib
 				c->hover = false;
 			});
 
+			rootPanel->foreachWithMatrix([this](const glm::mat4 &parentMatrix, components::Component* c)
+			{
+				if (c->getBoundingBox(parentMatrix).hasRayCollision(pointerRayInWindowSpace, 0, 100))
+					c->hover = true;
+			});
 
 		}
 

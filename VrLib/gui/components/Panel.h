@@ -18,6 +18,8 @@ namespace vrlib
 				virtual void draw(const glm::mat4 &parentMatrix) override;
 				void Panel::loadJson(const json::Value &config);
 
+				virtual void foreachWithMatrix(const std::function<void(const glm::mat4 &matrix, Component*) > &callback, const glm::mat4 &parentMatrix = glm::mat4()) override;
+
 
 			};
 		}
