@@ -31,6 +31,13 @@ namespace vrlib
 			float px, py, pz;
 			float nx, ny, nz;
 			float tx, ty;
+			VertexP3N3T2() {};
+			VertexP3N3T2(const glm::vec3& position, const glm::vec3 &normal, const glm::vec2 &texCoord)
+			{
+				px = position.x;	py = position.y;	pz = position.z;
+				nx = normal.x;		ny = normal.y;		pz = normal.z;
+				tx = texCoord.x;	ty = texCoord.y;
+			}
 		};
 
 
