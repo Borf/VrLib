@@ -8,6 +8,8 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <VrLib/gl/Vertex.h>
+#include <VrLib/math/Polygon.h>
 
 typedef struct FT_LibraryRec_  *FT_Library;
 typedef struct FT_FaceRec_*  FT_Face;
@@ -32,7 +34,8 @@ namespace vrlib
 
 			glm::vec2 advance;
 
-			std::vector<std::vector<glm::vec2>> vertices;
+			std::vector<math::Polygon2> vertices;
+			std::vector<gl::VertexP3N3> verts;
 		};
 	private:
 		std::map<char, Glyph*> glyphs;

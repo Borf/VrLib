@@ -243,6 +243,12 @@
     <ClInclude Include="externals\poly2tri\sweep\sweep.h">
       <Filter>externals\poly2tri</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math\Triangle.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\math\Polygon.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -433,6 +439,12 @@
     </ClCompile>
     <ClCompile Include="externals\poly2tri\sweep\sweep.cc">
       <Filter>externals\poly2tri</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\Triangle.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\Polygon.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

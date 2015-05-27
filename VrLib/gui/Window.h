@@ -41,8 +41,7 @@ namespace vrlib
 					return static_cast<T*>(rootPanel->getComponent(name));
 				return NULL;
 			}
-
-
+			
 			void draw(const glm::mat4& projectionMatrix, const glm::mat4 &viewMatrix);
 			void setSelector(const vrlib::math::Ray& ray);
 			void setRootPanel(components::Panel* panel);

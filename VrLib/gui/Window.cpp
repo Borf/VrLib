@@ -55,8 +55,12 @@ namespace vrlib
 				shader->setUniformMatrix4("modelMatrix", mat * matrix);
 			});*/
 
+			glm::mat4 mat = renderMatrix;
+			mat = glm::scale(mat, glm::vec3(1, -1, 1));
 
-			rootPanel->draw(glm::translate(renderMatrix, glm::vec3(0,0, 0)));
+			glCullFace(GL_FRONT);
+			rootPanel->draw(glm::translate(mat, glm::vec3(0,0, 0)));
+			glCullFace(GL_BACK);
 
 
 			shader->setUniformVec4("colorMult", glm::vec4(100, 0, 0, 1));
@@ -83,28 +87,38 @@ namespace vrlib
 		void Window::setSelector(const vrlib::math::Ray& ray)
 		{
 			this->pointerRay = ray;
-			pointerRayInWindowSpace = glm::inverse(renderMatrix) * ray;
-
-			rootPanel->foreach([](components::Component* c) {
-				c->hover = false;
-			});
+			pointerRayInWindowSpace = glm::inverse(glm::scale(renderMatrix, glm::vec3(1, -1, 1))) * ray;
 
 			rootPanel->foreachWithMatrix([this](const glm::mat4 &parentMatrix, components::Component* c)
 			{
 				if (c->getBoundingBox(parentMatrix).hasRayCollision(pointerRayInWindowSpace, 0, 100))
 					c->hover = true;
+				else
+					c->hover = false;
 			});
 
 		}
 
 		void Window::mouseDown()
 		{
-
+			rootPanel->foreachWithMatrix([this](const glm::mat4 &parentMatrix, components::Component* c)
+			{
+				if (c->getBoundingBox(parentMatrix).hasRayCollision(pointerRayInWindowSpace, 0, 100))
+					c->mousedown = true;
+				else
+					c->mousedown = false;
+			});
 		}
 
 		void Window::mouseUp()
 		{
-
+			rootPanel->foreachWithMatrix([this](const glm::mat4 &parentMatrix, components::Component* c)
+			{
+				if (c->getBoundingBox(parentMatrix).hasRayCollision(pointerRayInWindowSpace, 0, 100))
+					if (c->mousedown)
+						c->click();
+				c->mousedown = false;
+			});
 		}
 
 		void Window::setRootPanel(components::Panel* panel)

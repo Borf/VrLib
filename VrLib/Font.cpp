@@ -114,6 +114,83 @@ namespace vrlib
 		FT_Done_Glyph((FT_Glyph)g);
 
 
+		gl::VertexP3N3 v;
+		for (std::vector<glm::vec2> line : newGlyph->vertices)
+		{
+			for (int i = 0; i < (int)line.size(); i++)
+			{
+				int ii = (i + 1) % line.size();
+
+				glm::vec2 normal = glm::normalize(line[ii] - line[i]);
+				normal = glm::vec2(-normal.y, normal.x);
+
+
+				setN3(v, glm::vec3(normal.x, normal.y, 0));
+
+				setP3(v, glm::vec3(line[i].x, line[i].y, 0));					newGlyph->verts.push_back(v);
+				setP3(v, glm::vec3(line[ii].x, line[ii].y, 0));					newGlyph->verts.push_back(v);
+				setP3(v, glm::vec3(line[i].x, line[i].y, thickness));			newGlyph->verts.push_back(v);
+
+				setP3(v, glm::vec3(line[ii].x, line[ii].y, 0));					newGlyph->verts.push_back(v);
+				setP3(v, glm::vec3(line[ii].x, line[ii].y, thickness));			newGlyph->verts.push_back(v);
+				setP3(v, glm::vec3(line[i].x, line[i].y, thickness));			newGlyph->verts.push_back(v);
+			}
+		}
+
+
+
+		std::vector<p2t::Point*> polyline;
+		if (!newGlyph->vertices.empty())
+		{
+			for (int i = 0; i < (int)newGlyph->vertices[0].size() - 1; i++)
+			{
+				polyline.push_back(new p2t::Point(newGlyph->vertices[0][i].x, newGlyph->vertices[0][i].y));
+			}
+		}
+
+		if (!polyline.empty())
+		{
+			p2t::CDT* cdt = new p2t::CDT(polyline);;
+
+			for (size_t ii = 1; ii < newGlyph->vertices.size(); ii++)
+			{
+				std::vector<p2t::Point*> holeLine;
+				for (int iii = 0; iii < ((int)newGlyph->vertices[ii].size()) - 1; iii++)
+				{
+					holeLine.push_back(new p2t::Point(newGlyph->vertices[ii][iii].x, newGlyph->vertices[ii][iii].y));
+				}
+				cdt->AddHole(holeLine);
+			}
+
+			cdt->Triangulate();
+			std::vector<p2t::Triangle*> triangles = cdt->GetTriangles();
+			for (auto triangle : triangles)
+			{
+				for (int ii = 0; ii < 3; ii++)
+				{
+					setN3(v, glm::vec3(0, 0, -1));
+					setP3(v, glm::vec3(triangle->GetPoint(ii)->x, triangle->GetPoint(ii)->y, 0));						newGlyph->verts.push_back(v);
+				}
+
+				for (int ii = 0; ii < 3; ii++)
+				{
+					setN3(v, glm::vec3(0, 0, 1));
+					setP3(v, glm::vec3(triangle->GetPoint(ii)->x, triangle->GetPoint(ii)->y, thickness));						newGlyph->verts.push_back(v);
+				}
+
+			}
+
+			delete cdt;
+		}
+		for (p2t::Point* p : polyline)
+			delete p;
+		polyline.clear();
+
+
+
+
+
+
 		glyphs[charCode] = newGlyph;
 
 	}
@@ -146,82 +223,13 @@ namespace vrlib
 
 
 			Glyph* g = glyphs[c];
-			
-
-
-			for (std::vector<glm::vec2> line : g->vertices)
+			for (const gl::VertexP3N3& p : g->verts)
 			{
-				for (int i = 0; i < (int)line.size(); i++)
-				{
-					int ii = (i + 1) % line.size();
-
-					glm::vec2 normal = glm::normalize(line[ii] - line[i]);
-					normal = glm::vec2(-normal.y, normal.x);
-
-
-					setN3(v, glm::vec3(normal.x, normal.y, 0));
-
-					setP3(v, pos + glm::vec3(line[i].x, line[i].y, 0));						vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[ii].x, line[ii].y, 0));					vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[i].x, line[i].y, thickness));				vertices.push_back(v);
-
-					setP3(v, pos + glm::vec3(line[ii].x, line[ii].y, 0));					vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[ii].x, line[ii].y, thickness));			vertices.push_back(v);
-					setP3(v, pos + glm::vec3(line[i].x, line[i].y, thickness));				vertices.push_back(v);
-				}
+				setP3(v, pos + glm::vec3(p.px, p.py, p.pz));
+				setN3(v, glm::vec3(p.nx, p.ny, p.nz));
+				vertices.push_back(v);
 			}
-
-			std::vector<p2t::Point*> polyline;
-			if (!g->vertices.empty())
-			{
-				for (int i = 0; i < (int)g->vertices[0].size()-1; i++)
-				{
-					polyline.push_back(new p2t::Point(g->vertices[0][i].x, g->vertices[0][i].y));
-				}
-			}
-
-			if (!polyline.empty())
-			{
-				p2t::CDT* cdt = new p2t::CDT(polyline);;
-
-				for (int ii = 1; ii < g->vertices.size(); ii++)
-				{
-					std::vector<p2t::Point*> holeLine;
-					for (int iii = 0; iii < ((int)g->vertices[ii].size()) - 1; iii++)
-					{
-						holeLine.push_back(new p2t::Point(g->vertices[ii][iii].x, g->vertices[ii][iii].y));
-					}
-					cdt->AddHole(holeLine);
-				}
-
-				cdt->Triangulate();
-				std::vector<p2t::Triangle*> triangles = cdt->GetTriangles();
-				for (auto triangle : triangles)
-				{
-					for (int ii = 0; ii < 3; ii++)
-					{
-						setN3(v, glm::vec3(0, 0, -1));
-						setP3(v, pos + glm::vec3(triangle->GetPoint(ii)->x, triangle->GetPoint(ii)->y, 0));						vertices.push_back(v);
-					}
-
-					for (int ii = 0; ii < 3; ii++)
-					{
-						setN3(v, glm::vec3(0, 0, 1));
-						setP3(v, pos + glm::vec3(triangle->GetPoint(ii)->x, triangle->GetPoint(ii)->y, thickness));						vertices.push_back(v);
-					}
-
-				}
-
-				delete cdt;
-			}
-			for (p2t::Point* p : polyline)
-				delete p;
-			polyline.clear();
-
-
 			pos += glm::vec3(g->advance.x, g->advance.y, 0);
-
-
 		}
 
 		gl::VBO<gl::VertexP3N3T2> vbo;

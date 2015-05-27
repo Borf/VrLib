@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <list>
 #include <glm/glm.hpp>
 #include <vrlib/math/aabb.h>
 
@@ -12,13 +13,16 @@ namespace vrlib
 		{
 			class Component
 			{
+				std::list<std::function<void(void)>> clickHandlers;
 			public:
 				glm::vec2 position;
 				glm::vec2 size;
 				std::string name;
 				bool hover = false;
+				bool mousedown = false;
 
 				void addClickHandler(const std::function<void(void)>& callback);
+				void click();
 				void setBounds(const glm::vec2 &position, const glm::vec2 &size);
 				virtual void draw(const glm::mat4 &parentMatrix) = 0;
 

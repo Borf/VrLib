@@ -12,7 +12,7 @@ namespace vrlib
 
 			void Component::addClickHandler(const std::function<void(void)>& callback)
 			{
-
+				clickHandlers.push_back(callback);
 			}
 
 			void Component::setBounds(const glm::vec2 &position, const glm::vec2 &size)
@@ -31,6 +31,12 @@ namespace vrlib
 
 				return math::AABB(glm::vec3(matrix * p1), glm::vec3(matrix * p2));
 
+			}
+
+			void Component::click()
+			{
+				for (const std::function<void(void)>& handler : clickHandlers)
+					handler();
 			}
 
 		}

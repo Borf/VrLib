@@ -142,7 +142,9 @@
     <ClInclude Include="VrLib\Log.h" />
     <ClInclude Include="VrLib\math.h" />
     <ClInclude Include="VrLib\math\aabb.h" />
+    <ClInclude Include="VrLib\math\Polygon.h" />
     <ClInclude Include="VrLib\math\Ray.h" />
+    <ClInclude Include="VrLib\math\Triangle.h" />
     <ClInclude Include="VrLib\Model.h" />
     <ClInclude Include="VrLib\models\AssimpModel.h" />
     <ClInclude Include="VrLib\models\SimpleModel.h" />
@@ -208,7 +210,9 @@
     <ClCompile Include="VrLib\Log.cpp" />
     <ClCompile Include="VrLib\math.cpp" />
     <ClCompile Include="VrLib\math\aabb.cpp" />
+    <ClCompile Include="VrLib\math\Polygon.cpp" />
     <ClCompile Include="VrLib\math\Ray.cpp" />
+    <ClCompile Include="VrLib\math\Triangle.cpp" />
     <ClCompile Include="VrLib\Model.cpp" />
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />
     <ClCompile Include="VrLib\models\SimpleModel.cpp" />
