@@ -288,6 +288,8 @@ namespace vrlib
 
 
 
+		static int lineNumber;
+
 		static void ltrim(std::istream& stream);
 		static void eatComment(std::istream& stream);
 		static Value eatString(std::istream& stream);
@@ -304,6 +306,8 @@ namespace vrlib
 			char c = stream.peek();
 			while (c == ' ' || c == '\t' || c == '\n' || c == '\r')
 			{
+				if (c == '\n')
+					lineNumber++;
 				stream.get();
 				c = stream.peek();
 			}
@@ -480,13 +484,14 @@ namespace vrlib
 		{
 			std::stringstream stream;
 			stream << data;
+			lineNumber = 1;
 			return eatValue(stream);
 		}
 
 		Value readJson(std::istream &stream)
 		{
 			assert(!stream.eof() && stream.good() && !stream.bad());
-
+			lineNumber = 1;
 			return eatValue(stream);
 		}
 
@@ -675,6 +680,22 @@ namespace vrlib
 				break;
 			}
 			return stream;
+		}
+
+		const Value& Value::get(const char* key, const Value& default) const
+		{
+			if (isMember(key))
+				return (*this)[key];
+			return default;
+		}
+
+
+		std::string& operator <<(std::string &string, const Value& value)
+		{
+			std::stringstream stream;
+			stream << value;
+			string += stream.str();
+			return string;
 		}
 
 

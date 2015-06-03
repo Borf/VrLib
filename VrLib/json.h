@@ -84,6 +84,8 @@ namespace vrlib
 			virtual Value& operator [] (const std::string &key) const;
 			virtual Value& operator [] (const char* key) const;
 
+			virtual const Value& get (const char* key, const Value& default) const;
+
 			virtual bool operator == (const std::string &other) { return asString() == other; }
 			virtual bool operator == (const int other) { return asInt() == other; }
 			virtual bool operator == (const float other) { return asFloat() == other; }
@@ -124,6 +126,9 @@ namespace vrlib
 		Value readJson(const std::string &data);
 		Value readJson(std::istream &stream);
 		std::ostream &operator << (std::ostream &stream, const Value& value);	//serializes json data
+		std::string &operator << (std::string &stream, const Value& value);	//serializes json data
+
+
 
 
 	}

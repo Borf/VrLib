@@ -35,7 +35,7 @@ namespace vrlib
 			VertexP3N3T2(const glm::vec3& position, const glm::vec3 &normal, const glm::vec2 &texCoord)
 			{
 				px = position.x;	py = position.y;	pz = position.z;
-				nx = normal.x;		ny = normal.y;		pz = normal.z;
+				nx = normal.x;		ny = normal.y;		nz = normal.z;
 				tx = texCoord.x;	ty = texCoord.y;
 			}
 		};
@@ -55,7 +55,7 @@ namespace vrlib
 
 
 		//// WATCH OUT, NEEDS TO BE SPECIALIZED IN THE RIGHT ORDER
-		template<class T>	inline int setAttribute(int& attributeIndex, int totalSize, int offset)	{}
+		template<class T>	inline int setAttribute(int& attributeIndex, int totalSize, int offset)	{ return 0;  }
 		template<>			inline int setAttribute<VertexP3>(int& attributeIndex, int totalSize, int offset)
 		{
 			int prevSize = 0;

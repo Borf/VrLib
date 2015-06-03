@@ -249,6 +249,15 @@
     <ClInclude Include="VrLib\math\Polygon.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math\Plane.h">
+      <Filter>math</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\TextureAtlas.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\gl\Cubemap.h">
+      <Filter>gl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -445,6 +454,15 @@
     </ClCompile>
     <ClCompile Include="VrLib\math\Polygon.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\Plane.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\TextureAtlas.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\gl\Cubemap.cpp">
+      <Filter>gl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -120,6 +120,7 @@
     <ClInclude Include="VrLib\drivers\Vrpn.h" />
     <ClInclude Include="VrLib\drivers\XBOXController.h" />
     <ClInclude Include="VrLib\Font.h" />
+    <ClInclude Include="VrLib\gl\Cubemap.h" />
     <ClInclude Include="VrLib\gl\FBO.h" />
     <ClInclude Include="VrLib\gl\shader.h" />
     <ClInclude Include="VrLib\gl\VAO.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="VrLib\Log.h" />
     <ClInclude Include="VrLib\math.h" />
     <ClInclude Include="VrLib\math\aabb.h" />
+    <ClInclude Include="VrLib\math\Plane.h" />
     <ClInclude Include="VrLib\math\Polygon.h" />
     <ClInclude Include="VrLib\math\Ray.h" />
     <ClInclude Include="VrLib\math\Triangle.h" />
@@ -152,6 +154,7 @@
     <ClInclude Include="VrLib\PerfMon.h" />
     <ClInclude Include="VrLib\stb_image.h" />
     <ClInclude Include="VrLib\Texture.h" />
+    <ClInclude Include="VrLib\TextureAtlas.h" />
     <ClInclude Include="VrLib\User.h" />
     <ClInclude Include="VrLib\util.h" />
     <ClInclude Include="VrLib\util\mutex.h" />
@@ -188,6 +191,7 @@
     <ClCompile Include="VrLib\eye.cpp" />
     <ClCompile Include="VrLib\face.cpp" />
     <ClCompile Include="VrLib\Font.cpp" />
+    <ClCompile Include="VrLib\gl\Cubemap.cpp" />
     <ClCompile Include="VrLib\gl\FBO.cpp" />
     <ClCompile Include="VrLib\gl\Shader.cpp" />
     <ClCompile Include="VrLib\gl\VAO.cpp" />
@@ -210,6 +214,7 @@
     <ClCompile Include="VrLib\Log.cpp" />
     <ClCompile Include="VrLib\math.cpp" />
     <ClCompile Include="VrLib\math\aabb.cpp" />
+    <ClCompile Include="VrLib\math\Plane.cpp" />
     <ClCompile Include="VrLib\math\Polygon.cpp" />
     <ClCompile Include="VrLib\math\Ray.cpp" />
     <ClCompile Include="VrLib\math\Triangle.cpp" />
@@ -219,6 +224,7 @@
     <ClCompile Include="VrLib\PerfMon.cpp" />
     <ClCompile Include="VrLib\stb_image.c" />
     <ClCompile Include="VrLib\Texture.cpp" />
+    <ClCompile Include="VrLib\TextureAtlas.cpp" />
     <ClCompile Include="VrLib\User.cpp" />
     <ClCompile Include="VrLib\util.cpp" />
     <ClCompile Include="VrLib\util\mutex.cpp" />
