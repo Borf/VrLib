@@ -289,7 +289,7 @@ namespace vrlib
 			DeviceDriver* driver = drivers[config["devices"][i]["driver"].asString()];
 			if (!driver)
 				continue;
-			adaptors[config["devices"][i]["name"].asString()] = driver->getAdaptor(config["devices"][i]["src"].asString());
+			adaptors[config["devices"][i]["name"].asString()] = driver->getAdaptor(config["devices"][i].get("src", "").asString());
 		}
 	}
 
