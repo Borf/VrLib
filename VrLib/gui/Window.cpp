@@ -128,5 +128,11 @@ namespace vrlib
 			rootPanel = panel;
 		}
 
+		void Window::setComponent(const std::string &name, components::Component* component)
+		{
+			if (rootPanel)
+				rootPanel->setComponent(name, component);
+		}
+
 	}
 }

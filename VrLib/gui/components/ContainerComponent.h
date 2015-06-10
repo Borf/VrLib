@@ -14,7 +14,15 @@ namespace vrlib
 			{
 			public:
 				virtual void draw(const glm::mat4 &parentMatrix) override;
-				Component* getComponent(const std::string &name);
+				template<class T = Component>
+				T* getComponent(const std::string &name)
+				{
+					return static_cast<T*>(getComponent_internal(name));
+				}
+
+
+				Component* getComponent_internal(const std::string &name);
+				void setComponent(const std::string &name, Component* component);
 
 				void foreach(const std::function<void(Component*)> &callback);
 				virtual void foreachWithMatrix(const std::function<void(const glm::mat4 &matrix, Component*)> &callback, const glm::mat4 &parentMatrix = glm::mat4());

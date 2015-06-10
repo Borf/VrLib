@@ -12,7 +12,7 @@ namespace vrlib
 	namespace math { class Ray;  }
 	namespace gui
 	{
-		namespace components { class Panel; }
+		namespace components { class Panel; class Component;  }
 
 		class Window
 		{
@@ -41,6 +41,8 @@ namespace vrlib
 					return static_cast<T*>(rootPanel->getComponent(name));
 				return NULL;
 			}
+
+			void setComponent(const std::string &name, components::Component* component);
 			
 			void draw(const glm::mat4& projectionMatrix, const glm::mat4 &viewMatrix);
 			void setSelector(const vrlib::math::Ray& ray);

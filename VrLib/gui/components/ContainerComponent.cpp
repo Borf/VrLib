@@ -18,7 +18,7 @@ namespace vrlib
 					c->draw(matrix);
 			}
 
-			Component* ContainerComponent::getComponent(const std::string &name)
+			Component* ContainerComponent::getComponent_internal(const std::string &name)
 			{
 				Component* subEl = NULL;
 
@@ -26,10 +26,21 @@ namespace vrlib
 					if (el->name == name)
 						return el;
 					else if (dynamic_cast<ContainerComponent*>(el))
-						if (subEl = dynamic_cast<ContainerComponent*>(el)->getComponent(name))
+						if (subEl = dynamic_cast<ContainerComponent*>(el)->getComponent_internal(name))
 							return subEl;
 				return NULL;
 			}
+
+
+			void ContainerComponent::setComponent(const std::string &name, Component* component)
+			{
+				for (size_t i = 0; i < std::vector<Component*>::size(); i++)
+					if ((*this)[i]->name == name)
+						(*this)[i] = component;
+					else if (dynamic_cast<ContainerComponent*>((*this)[i]))
+						dynamic_cast<ContainerComponent*>((*this)[i])->setComponent(name, component);
+			}
+
 
 			void ContainerComponent::foreach(const std::function<void(Component*)> &callback)
 			{

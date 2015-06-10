@@ -6,6 +6,7 @@
 
 namespace vrlib
 {
+	class Model;
 	namespace gui
 	{
 		namespace components
@@ -14,12 +15,15 @@ namespace vrlib
 			{
 			protected:
 				float min, max;
+				static Model* backModel;
+				static Model* sliderModel;
+
 			public:
 				float value;
 
 				Slider(float minValue, float maxValue, float startValue);
 				void drag(const glm::vec3 &intersect); //TODO: use callback
-				virtual void draw(const glm::mat4 &parentMatrix) override {};
+				virtual void draw(const glm::mat4 &parentMatrix) override;
 			};
 		}
 	}

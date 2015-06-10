@@ -52,8 +52,13 @@ namespace vrlib
 						component = new Panel();
 						if (element.isMember("components"))
 							((Panel*)component)->loadJson(element["components"]);
-
 					}
+					else if (element["type"] == "label")
+					{
+						component = new Label(element["value"]);
+					}
+					else if (element["type"] == "slider")
+						component = new Slider(element["min"], element["max"], element["value"]);
 					else
 						logger << "Unknown panel element type: " << element["type"].asString() << Log::newline;
 
