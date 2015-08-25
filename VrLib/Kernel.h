@@ -20,8 +20,8 @@
 
 #ifdef _DEBUG
 #pragma comment(lib, "libovrd.lib")
-#pragma comment(lib, "sixensed.lib")
-#pragma comment(lib, "sixense_utilsd.lib")
+#pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed
+#pragma comment(lib, "sixense_utils.lib")	// debug version needs vs debug installed
 #pragma comment(lib, "fgloved.lib")
 #pragma comment(lib, "vrpn.lib")
 #pragma comment(lib, "freetype255d.lib")
