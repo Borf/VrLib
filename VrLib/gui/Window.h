@@ -43,6 +43,7 @@ namespace vrlib
 			}
 
 			void setComponent(const std::string &name, components::Component* component);
+			void setSize(const glm::vec2 size);
 			
 			void draw(const glm::mat4& projectionMatrix, const glm::mat4 &viewMatrix);
 			void setSelector(const vrlib::math::Ray& ray);

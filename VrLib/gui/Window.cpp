@@ -7,6 +7,7 @@
 #include <VrLib/gl/shader.h>
 #include <VrLib/gui/components/Panel.h>
 #include <VrLib/Font.h>
+#include <VrLib/math/Plane.h>
 
 
 namespace vrlib
@@ -92,7 +93,20 @@ namespace vrlib
 			rootPanel->foreachWithMatrix([this](const glm::mat4 &parentMatrix, components::Component* c)
 			{
 				if (c->getBoundingBox(parentMatrix).hasRayCollision(pointerRayInWindowSpace, 0, 100))
+				{
 					c->hover = true;
+
+					if (c->mousedown)
+					{
+						math::AABB bb = c->getBoundingBox(parentMatrix);
+						math::Plane plane(glm::vec3(0, 0, -1), bb.bounds[1].z);
+						glm::vec3 clickPos = plane.getCollisionPoint(pointerRayInWindowSpace);
+
+						clickPos = glm::vec3(glm::inverse(parentMatrix) * glm::vec4(clickPos,0));
+
+						c->drag(clickPos);
+					}
+				}
 				else
 					c->hover = false;
 			});
@@ -132,6 +146,11 @@ namespace vrlib
 		{
 			if (rootPanel)
 				rootPanel->setComponent(name, component);
+		}
+
+		void Window::setSize(const glm::vec2 size)
+		{
+			this->size = size;
 		}
 
 	}

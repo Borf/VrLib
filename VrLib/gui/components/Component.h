@@ -25,7 +25,7 @@ namespace vrlib
 				void click();
 				void setBounds(const glm::vec2 &position, const glm::vec2 &size);
 				virtual void draw(const glm::mat4 &parentMatrix) = 0;
-
+				virtual void drag(const glm::vec3 &point) {};
 				math::AABB getBoundingBox(const glm::mat4& parentMatrix) const;
 
 			};

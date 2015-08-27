@@ -4,15 +4,25 @@
 
 #pragma warning (disable: 4251)
 
-class Plane
+namespace vrlib
 {
-	glm::vec3 normal;
-	float f;
-public:
-	Plane(glm::vec3 a, glm::vec3 b, glm::vec3 c);
-	Plane(glm::vec3 normal, float f);
+	namespace math
+	{
+		class Ray;
 
-	glm::vec3 getNormal();
-	float		getOffset();
+		class Plane
+		{
+			glm::vec3 normal;
+			float f;
+		public:
+			Plane(glm::vec3 a, glm::vec3 b, glm::vec3 c);
+			Plane(glm::vec3 normal, float f);
 
-};
+			glm::vec3 getNormal() const;
+			float		getOffset() const;
+
+			glm::vec3 getCollisionPoint(const Ray &) const;
+
+		};
+	}
+}

@@ -31,7 +31,8 @@ namespace vrlib
 
 			void Slider::drag(const glm::vec3 &intersect)
 			{
-
+				float fac = (intersect.x - position.x) / size.x;
+				this->value = min + fac * (this->max - this->min);
 			}
 
 			void Slider::draw(const glm::mat4 &parentMatrix)
