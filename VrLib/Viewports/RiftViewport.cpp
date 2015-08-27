@@ -131,9 +131,9 @@ namespace vrlib
 			fb_ovr_tex[i].OGL.Header.TextureSize.w = fbo->getWidth();
 			fb_ovr_tex[i].OGL.Header.TextureSize.h = fbo->getHeight();
 			/* this next field is the only one that differs between the two eyes */
-			fb_ovr_tex[i].OGL.Header.RenderViewport.Pos.x = i == 0 ? 0 : totalSize.w / 2.0f;
+			fb_ovr_tex[i].OGL.Header.RenderViewport.Pos.x = i == 0 ? 0 : (int)( totalSize.w / 2.0f );
 			fb_ovr_tex[i].OGL.Header.RenderViewport.Pos.y = fbo->getHeight() - totalSize.h;
-			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.w = totalSize.w / 2.0;
+			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.w = (int)(totalSize.w / 2.0);
 			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.h = totalSize.h;
 			fb_ovr_tex[i].OGL.TexId = fbo->texid;	/* both eyes will use the same texture id */
 		}
@@ -216,7 +216,7 @@ namespace vrlib
 			* note that libovr matrices are the transpose of what OpenGL expects, so we have to
 			* use glLoadTransposeMatrixf instead of glLoadMatrixf to load it.
 			*/
-			proj = ovrMatrix4f_Projection((*oculusDriver->hmd)->DefaultEyeFov[eye], 0.05, 700.0, 1);
+			proj = ovrMatrix4f_Projection((*oculusDriver->hmd)->DefaultEyeFov[eye], 0.05f, 700.0f, 1);
 			glMatrixMode(GL_PROJECTION);
 			glLoadTransposeMatrixf(proj.M[0]);
 
@@ -234,7 +234,7 @@ namespace vrlib
 			/* translate the view matrix with the positional tracking */
 			glTranslatef(-pose[eye].Position.x, -pose[eye].Position.y, -pose[eye].Position.z);
 			/* move the camera to the eye level of the user */
-			glTranslatef(0, -ovrHmd_GetFloat((*oculusDriver->hmd), OVR_KEY_EYE_HEIGHT, 1.65) + 1.5, 0);
+			glTranslatef(0, -ovrHmd_GetFloat((*oculusDriver->hmd), OVR_KEY_EYE_HEIGHT, 1.65f) + 1.5f, 0);
 
 			/* finally draw the scene for this eye */
 			//		draw_scene();
@@ -263,7 +263,7 @@ namespace vrlib
 			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(oculusDriver->eye_rdesc[eye].ViewAdjust.x, oculusDriver->eye_rdesc[eye].ViewAdjust.y, oculusDriver->eye_rdesc[eye].ViewAdjust.z));
 			modelviewMatrix *= glm::make_mat4(rot_mat);
 			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(-pose[eye].Position.x, -pose[eye].Position.y, -pose[eye].Position.z));
-			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, -ovrHmd_GetFloat((*oculusDriver->hmd), OVR_KEY_EYE_HEIGHT, 1.65) + 1.5, 0));
+			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, -ovrHmd_GetFloat((*oculusDriver->hmd), OVR_KEY_EYE_HEIGHT, 1.65f) + 1.5f, 0));
 
 			application->draw(projectionMatrix, modelviewMatrix);
 

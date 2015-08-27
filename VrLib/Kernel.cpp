@@ -135,7 +135,7 @@ namespace vrlib
 					mergeConfig(config[it.key()], it.value());
 				else if (config[it.key()].isArray())
 				{
-					for (int ii = 0; ii < newConfig[it.key()].size(); ii++)
+					for (size_t ii = 0; ii < newConfig[it.key()].size(); ii++)
 						config[it.key()].push_back(it.value()[ii]);
 				}
 				else

@@ -55,7 +55,7 @@ namespace vrlib
 		bool buttonsPressed[KEY_UNDEFINED];
 
 		std::map<int, KeyboardDeviceDriver::KeyboardButton> buttonLookup;
-		static struct keymap { KeyboardButton btn; std::string configValue; int vk; };
+		struct keymap { KeyboardButton btn; std::string configValue; int vk; };
 		static keymap keyMapping[];
 	public:
 

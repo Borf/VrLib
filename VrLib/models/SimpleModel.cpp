@@ -43,7 +43,7 @@ namespace vrlib
 			setP3(v, glm::vec3(1.5f, -1.5f, -1.5f));	setT2(v, glm::vec2(1.0f, 0));		verts.push_back(v);
 
 			indices.clear();
-			for (size_t i = 0; i < verts.size(); i += 4)
+			for (unsigned short i = 0; i < verts.size(); i += 4)
 			{
 				indices.push_back(i + 2);
 				indices.push_back(i + 1);
@@ -94,7 +94,7 @@ namespace vrlib
 			setP3(v, glm::vec3(-1.5f, -1.5f, 1.5f));	setT2(v, glm::vec2(0.5f, 0));		verts.push_back(v);
 
 			indices.clear();
-			for (size_t i = 0; i < verts.size(); i += 4)
+			for (unsigned short i = 0; i < verts.size(); i += 4)
 			{
 				indices.push_back(i + 0);
 				indices.push_back(i + 1);
@@ -148,7 +148,7 @@ namespace vrlib
 				}
 			}
 			indices.clear();
-			for (size_t i = 0; i < verts.size(); i += 4)
+			for (unsigned short i = 0; i < verts.size(); i += 4)
 			{
 				indices.push_back(i + 0);
 				indices.push_back(i + 1);

@@ -23,7 +23,7 @@ namespace vrlib
 
 	DeviceDriverAdaptor* RaceWheelDriver::getAdaptor(std::string options)
 	{
-		WheelButtons  pressedButton;
+//		WheelButtons  pressedButton;
 
 		if (options == "upperLeft")
 			return new WheelDeviceDriverAdaptor(this, UpperLeft);
@@ -521,9 +521,9 @@ namespace vrlib
 		_stprintf_s( strText, 512, TEXT( "%lu" ), js.rgdwPOV[3] );
 		SetWindowText( GetDlgItem( hDlg, IDC_POV3 ), strText );
 		*/
-		setAxis(Xaxis, js.lX);
-		setAxis(Yaxis, js.lY);
-		setAxis(Dpad, js.rgdwPOV[0]);
+		setAxis(Xaxis, (float)js.lX);
+		setAxis(Yaxis, (float)js.lY);
+		setAxis(Dpad, (float)js.rgdwPOV[0]);
 
 		// Fill up text with which buttons are pressed
 		_tcscpy_s(strText, 512, TEXT(""));
