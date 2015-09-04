@@ -22,5 +22,7 @@ namespace vrlib
 		Texture(const std::string &fileName);
 		void load();
 		void bind();
+
+		void loadDds(const std::string &fileName);
 	};
 }

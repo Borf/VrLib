@@ -14,11 +14,11 @@ namespace vrlib
 			class Slider : public Component
 			{
 			protected:
-				float min, max;
 				static Model* backModel;
 				static Model* sliderModel;
 
 			public:
+				float min, max;
 				float value;
 
 				Slider(float minValue, float maxValue, float startValue);

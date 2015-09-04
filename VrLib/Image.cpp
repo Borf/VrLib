@@ -5,19 +5,23 @@
 
 namespace vrlib
 {
-
-
-
-
 	Image::Image(const std::string &filename)
 	{
-		data = stbi_load(filename.c_str(), &width, &height, &depth, 4);
-		if (!data)
+		if (filename.substr(filename.size() - 4) == ".dds")
 		{
-			const char* err = stbi_failure_reason();
-			std::cout << "Error loading file " << filename << std::endl;
-			std::cout << err << std::endl;
-			return;
+			throw "cannot be loaded";
+
+		}
+		else
+		{
+			data = stbi_load(filename.c_str(), &width, &height, &depth, 4);
+			if (!data)
+			{
+				const char* err = stbi_failure_reason();
+				std::cout << "Error loading file " << filename << std::endl;
+				std::cout << err << std::endl;
+				return;
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "models/SimpleModel.h"
 #include "models/AssimpModel.h"
+#include "models/LoLModel.h"
 #include "Log.h"
 #include <algorithm>
 #include <climits>
@@ -19,6 +20,10 @@ namespace vrlib
 		if (extension == ".shape")
 		{
 			return new SimpleModel<VertexFormat>(fileName, options);
+		}
+		else if (extension == ".skn")
+		{
+			return new LoLModel<VertexFormat>(fileName, options);
 		}
 		else
 			return new AssimpModel<VertexFormat>(fileName, options);

@@ -258,6 +258,9 @@
     <ClInclude Include="VrLib\gl\Cubemap.h">
       <Filter>gl</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\models\LoLModel.h">
+      <Filter>models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -463,6 +466,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\gl\Cubemap.cpp">
       <Filter>gl</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\models\LoLModel.cpp">
+      <Filter>models</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
