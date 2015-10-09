@@ -17,6 +17,8 @@ namespace vrlib
 			this->image = new vrlib::Image(fileName);
 			loaded = false;
 		}
+
+		load();
 	}
 
 	void Texture::load()

@@ -165,6 +165,9 @@ namespace vrlib
 		vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
 
 		vao->unBind();
+
+//		indices.clear();
+//		vertices.clear();
 	}
 
 

@@ -365,6 +365,8 @@ namespace vrlib
 				token = stream.get();
 				if (token == '}')
 					break;
+				if (token != ',')
+					throw "arg";
 				assert(token == ',');
 			}
 			return obj;
@@ -400,7 +402,7 @@ namespace vrlib
 			while (!stream.eof())
 			{
 				char token = stream.peek();
-				if ((token >= '0' && token <= '9') || token == '.' || token == '-')
+				if ((token >= '0' && token <= '9') || token == '.' || token == '-' || token == 'E')
 					numeric += stream.get();
 				else
 					break;
