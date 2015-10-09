@@ -133,7 +133,7 @@ namespace vrlib
 		std::vector<VertexFormat> verts;
 
 		std::ifstream pFile(fileName.c_str(), std::ios_base::binary);
-		if (pFile.bad() || !pFile.good())
+		if (pFile.bad() || !pFile.good() || !pFile.is_open())
 		{
 			throw(("Could not open " + fileName).c_str());
 			return;
@@ -206,11 +206,14 @@ namespace vrlib
 			vbo.bind();
 			vbo.setData(verts.size(), &verts[0], GL_STATIC_DRAW);
 
-
-			vao = new gl::VAO<VertexFormat>(&vbo);
-			vio.bind();
-			vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
-			vao->unBind();
+			vao = NULL;
+			if (!indices.empty())
+			{
+				vao = new gl::VAO<VertexFormat>(&vbo);
+				vio.bind();
+				vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
+				vao->unBind();
+			}
 		}
 		else
 			vao = NULL;

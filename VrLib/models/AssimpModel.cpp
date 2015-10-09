@@ -27,7 +27,7 @@ namespace vrlib
 			std::vector<glm::vec3> vertexNormals;
 			if (!mesh->HasNormals())
 			{
-				logger<<"Mesh does not have normals...calculating" << Log::newline;
+				//logger<<"Mesh does not have normals...calculating" << Log::newline;
 				for (unsigned int ii = 0; ii < mesh->mNumFaces; ii++)
 				{
 					const struct aiFace* face = &mesh->mFaces[ii];
@@ -83,19 +83,8 @@ namespace vrlib
 				if (mesh->HasNormals())
 					setN3(v, glm::vec3(mesh->mNormals[ii].x, mesh->mNormals[ii].y, mesh->mNormals[ii].z)); //matrix?
 				else
-					setN3(v, vertexNormals[i]); //matrix?
-
-				/*		//boneIDs
-				data["vertices"].push_back(-1);
-				data["vertices"].push_back(-1);
-				data["vertices"].push_back(-1);
-				data["vertices"].push_back(-1);
-				//weights
-				data["vertices"].push_back(0.0f);
-				data["vertices"].push_back(0.0f);
-				data["vertices"].push_back(0.0f);
-				data["vertices"].push_back(0.0f);*/
-
+					//setN3(v, vertexNormals[ii]); //matrix?
+					setN3(v, glm::vec3(0, 0, 1));
 				vertices.push_back(v);
 			}
 			
@@ -104,10 +93,14 @@ namespace vrlib
 			for (unsigned int ii = 0; ii < mesh->mNumFaces; ii++)
 			{
 				const struct aiFace* face = &mesh->mFaces[ii];
-				assert(face->mNumIndices == 3);
+				if (face->mNumIndices < 3)
+					continue;
 
 				for (int iii = 0; iii < 3; iii++)
+				{
+					assert(face->mIndices[iii] >= 0 && face->mIndices[iii] < mesh->mNumVertices);
 					indices.push_back(vertexStart + (int)face->mIndices[iii]);
+				}
 			}
 			m.indexCount = indices.size() - m.indexStart;
 			m.matrix = transform;
@@ -119,8 +112,16 @@ namespace vrlib
 				m.material.texture = new vrlib::Texture(path + "/" + texPath.C_Str());
 			else
 				m.material.texture = NULL;
+			aiColor4D color;
+			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_AMBIENT, &color) == aiReturn_SUCCESS)
+				m.material.color.ambient = glm::vec4(color.r, color.g, color.b, color.a);
+			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &color) == aiReturn_SUCCESS)
+				m.material.color.diffuse = glm::vec4(color.r, color.g, color.b, color.a);
+			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_SPECULAR, &color) == aiReturn_SUCCESS)
+				m.material.color.specular = glm::vec4(color.r, color.g, color.b, color.a);
 
-			meshes.push_back(m);
+			if(m.indexCount > 0)
+				meshes.push_back(m);
 		}
 
 
@@ -137,7 +138,7 @@ namespace vrlib
 	AssimpModel<VertexFormat>::AssimpModel(const std::string &fileName, const ModelLoadOptions& options)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality | aiProcess_OptimizeMeshes | aiProcess_RemoveRedundantMaterials | aiProcess_OptimizeGraph);
+		const aiScene* scene = importer.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality);
 		if (!scene)
 		{
 			logger<<"Error loading file : " << importer.GetErrorString() << Log::newline;
@@ -185,7 +186,6 @@ namespace vrlib
 	void AssimpModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback)
 	{
 		vao->bind();
-
 		for (const Mesh& mesh : meshes)
 		{
 			if (modelviewMatrixCallback)
@@ -197,7 +197,9 @@ namespace vrlib
 				if (mesh.material.texture)
 					mesh.material.texture->bind();
 			}
-			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_SHORT, (void*)mesh.indexStart);
+			if (mesh.indexCount == 0)
+				continue;
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_SHORT, (void*)(mesh.indexStart * sizeof(unsigned short)));
 		}
 		vao->unBind();
 	}
