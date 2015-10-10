@@ -1,15 +1,28 @@
 #include "Texture.h"
 #include "Image.h"
 
+#include <VrLib/Log.h>
 #include <glm/glm.hpp>
 
 #include <assert.h>
 
 namespace vrlib
 {
+	std::map<std::string, Texture*> Texture::cache;
+	Texture* Texture::loadCached(const std::string &fileName)
+	{
+		if (cache.find(fileName) == cache.end())
+			cache[fileName] = new Texture(fileName);
+		return cache[fileName];
+	}
+
+
 
 	Texture::Texture(const std::string &fileName)
 	{
+#ifdef _DEBUG
+		logger << "Loading " << fileName << Log::newline;
+#endif
 		if (fileName.substr(fileName.size() - 4) == ".dds")
 			loadDds(fileName);
 		else

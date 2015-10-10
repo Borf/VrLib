@@ -9,36 +9,37 @@
 #include <string>
 
 #pragma warning(push)
-#pragma warning(disable : 4251)
-
-class TASubTexture
+//#pragma warning(disable : 4251)
+namespace vrlib
 {
-	std::string filename;
-	glm::vec2 startPosition;
-	glm::vec2 dimensions;
+	class TASubTexture
+	{
+		std::string filename;
+		glm::vec2 startPosition;
+		glm::vec2 dimensions;
 
-public:
-	TASubTexture(std::string filename, glm::vec2 startPosition, glm::vec2 dimensions);
-	~TASubTexture();
+	public:
+		TASubTexture(std::string filename, glm::vec2 startPosition, glm::vec2 dimensions);
+		~TASubTexture();
 
-	std::string getFilename();
-	glm::vec2 getStartPosition();
-	glm::vec2 getDimensions();
-};
+		std::string getFilename();
+		glm::vec2 getStartPosition();
+		glm::vec2 getDimensions();
+	};
 
-class TextureAtlas
-{
-	GLuint textureID;
-	std::map<std::string, TASubTexture*> subTextures;
-	int currentX, currentY, maxY;
+	class TextureAtlas
+	{
+		GLuint textureID;
+		std::map<std::string, TASubTexture*> subTextures;
+		int currentX, currentY, maxY;
 
-public:
-	TextureAtlas();
-	~TextureAtlas();
+	public:
+		TextureAtlas();
+		~TextureAtlas();
 
-	TASubTexture* addTexture(std::string filename);
-	int getTextureSize();
-	void bind();
-};
-
+		TASubTexture* addTexture(std::string filename);
+		int getTextureSize();
+		void bind();
+	};
+}
 #pragma warning(pop)

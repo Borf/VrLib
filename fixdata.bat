@@ -4,7 +4,7 @@ echo Project is in %2
 cd %~DP0
 IF NOT EXIST ..\..\..\Runtime GOTO byebye
 echo Detected we're in VrEnvironment
-xcopy /y "%1" ..\..\..\Runtime > robocopy.log
-robocopy /nc /ns /np /njh /njs /nfl /e "%~2data" "..\..\..\Runtime\data" > robocopy.log
-del robocopy.log
+xcopy /q /y "%1" ..\..\..\Runtime
+robocopy /nc /ns /np /njh /njs /nfl /ndl /e "%~2data" "..\..\..\Runtime\data"
 :byebye
+exit 0

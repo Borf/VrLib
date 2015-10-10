@@ -2,15 +2,21 @@
 
 #include <gl/glew.h>
 #include <string>
+#include <map>
 
 namespace vrlib
 {
 	class Image;
 	class Texture
 	{
-	public:
-		Image* image;
 		GLuint texid;
+		Texture(const std::string &fileName);
+
+	public:
+		static std::map<std::string, Texture*> cache;
+		static Texture* loadCached(const std::string &fileName);
+
+		Image* image;
 		
 		bool loaded;
 		bool unloadImageAfterLoad = true;
@@ -19,7 +25,6 @@ namespace vrlib
 		bool nearestFilter = false;
 		
 
-		Texture(const std::string &fileName);
 		void load();
 		void bind();
 

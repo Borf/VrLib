@@ -229,6 +229,13 @@ namespace vrlib
 	}
 
 	template<class VertexFormat>
+	std::vector<glm::vec3> LoLModel<VertexFormat>::getTriangles() const
+	{
+		return vertices;
+	}
+
+
+	template<class VertexFormat>
 	void LoLModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
 		if (vao)

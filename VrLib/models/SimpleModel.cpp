@@ -196,6 +196,16 @@ namespace vrlib
 	}
 
 	template<class VertexFormat>
+	std::vector<glm::vec3> SimpleModel<VertexFormat>::getTriangles() const
+	{
+		std::vector<glm::vec3> ret;
+		for (size_t i = 0; i < indices.size(); i++)
+			ret.push_back(vertices[indices[i]]);
+		return ret;
+	}
+
+
+	template<class VertexFormat>
 	void SimpleModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
 	{
 		if (vao)

@@ -25,7 +25,7 @@ namespace vrlib
 
 			std::vector<glm::vec3> faceNormals;
 			std::vector<glm::vec3> vertexNormals;
-			if (!mesh->HasNormals())
+			/*if (!mesh->HasNormals())
 			{
 				//logger<<"Mesh does not have normals...calculating" << Log::newline;
 				for (unsigned int ii = 0; ii < mesh->mNumFaces; ii++)
@@ -64,7 +64,7 @@ namespace vrlib
 						normal = glm::normalize(normal);
 					vertexNormals.push_back(normal);
 				}
-			}
+			}*/
 
 
 
@@ -109,7 +109,7 @@ namespace vrlib
 			aiString texPath;
 			
 			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == aiReturn_SUCCESS)
-				m.material.texture = new vrlib::Texture(path + "/" + texPath.C_Str());
+				m.material.texture = vrlib::Texture::loadCached(path + "/" + texPath.C_Str());
 			else
 				m.material.texture = NULL;
 			aiColor4D color;
@@ -150,7 +150,16 @@ namespace vrlib
 			path = fileName.substr(0, fileName.rfind("/"));
 		
 		
+		int numVerts = 0;
+		int numIndices = 0;
+		for (size_t i = 0; i < scene->mNumMeshes; i++)
+		{
+			numVerts += scene->mMeshes[i]->mNumVertices;
+			numIndices += scene->mMeshes[i]->mNumFaces * 3;
+		}
 
+		vertices.reserve(numVerts);
+		indices.reserve(numIndices);
 
 		import(glm::mat4(), scene, scene->mRootNode);
 		handleModelLoadOptions(vertices, options);
@@ -176,14 +185,53 @@ namespace vrlib
 	std::vector<glm::vec3> AssimpModel<VertexFormat>::getVertices(int amount) const
 	{
 		std::vector<glm::vec3> ret;
-		for (const VertexFormat& v : vertices)
-			ret.push_back(glm::vec3(v.px, v.py, v.pz));
+		for (const Mesh& mesh : meshes)
+		{
+			for (int i = mesh.indexStart; i < mesh.indexStart + mesh.indexCount; i++)
+			{
+				glm::vec3 v = glm::make_vec3(&vertices[indices[i]].px);
+				v = glm::vec3(mesh.matrix * glm::vec4(v, 1));
+				ret.push_back(glm::vec3(v.x, v.y, v.z));
+			}
+		}
 		
-		auto last = std::unique(ret.begin(), ret.end(), [](const glm::vec3 &a, const glm::vec3 &b) { return glm::distance(a, b) < 0.075f;  });
+		auto last = std::unique(ret.begin(), ret.end(), [](const glm::vec3 &a, const glm::vec3 &b) { return glm::distance(a, b) < 0.0001f;  });
 		ret = std::vector<glm::vec3>(ret.begin(), last);
 
 		return ret;
 	}
+
+
+	template<class VertexFormat>
+	std::vector<glm::vec3> AssimpModel<VertexFormat>::getTriangles() const
+	{
+		std::vector<glm::vec3> ret;
+		for (const Mesh& mesh : meshes)
+		{
+			for (int i = mesh.indexStart; i < mesh.indexStart + mesh.indexCount; i++)
+			{
+				glm::vec3 v = glm::make_vec3(&vertices[indices[i]].px);
+				v = glm::vec3(mesh.matrix * glm::vec4(v, 1));
+				ret.push_back(glm::vec3(v.x, v.y, v.z));
+			}
+		}
+		return ret;
+	}
+
+
+	template<class VertexFormat>
+	std::pair<std::vector<unsigned short>, std::vector<glm::vec3>> AssimpModel<VertexFormat>::getIndexedTriangles() const
+	{
+		std::pair<std::vector<unsigned short>, std::vector<glm::vec3>> ret;
+
+		ret.first = indices;
+		for (size_t i = 0; i < vertices.size(); i++)
+			ret.second.push_back(glm::make_vec3(&vertices[i].px));
+
+		return ret;
+	}
+
+
 
 	template<class VertexFormat>
 	void AssimpModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback)
