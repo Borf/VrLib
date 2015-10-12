@@ -138,10 +138,16 @@ namespace vrlib
 	AssimpModel<VertexFormat>::AssimpModel(const std::string &fileName, const ModelLoadOptions& options)
 	{
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality);
-		if (!scene)
-		{
-			logger<<"Error loading file : " << importer.GetErrorString() << Log::newline;
+		aiScene* scene = NULL;
+		try {
+			scene = (aiScene*)importer.ReadFile(fileName, aiProcessPreset_TargetRealtime_Quality);
+			if (!scene)
+			{
+				logger<<"Error loading file : " << importer.GetErrorString() << Log::newline;
+				return;
+			}
+		} catch (char e) {
+			logger << "Error loading file : " << importer.GetErrorString() << Log::newline;
 			return;
 		}
 

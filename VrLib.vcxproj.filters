@@ -264,6 +264,12 @@
     <ClInclude Include="VrLib\drivers\LeapMotion.h">
       <Filter>drivers</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\util\RestApi.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\ServerConnection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -475,6 +481,12 @@
     </ClCompile>
     <ClCompile Include="VrLib\drivers\LeapMotion.cpp">
       <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\util\RestApi.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\ServerConnection.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

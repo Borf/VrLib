@@ -7,6 +7,8 @@
 
 namespace vrlib
 {
+	class Log;
+
 	namespace json
 	{
 		enum class Type
@@ -127,7 +129,7 @@ namespace vrlib
 		Value readJson(std::istream &stream);
 		std::ostream &operator << (std::ostream &stream, const Value& value);	//serializes json data
 		std::string &operator << (std::string &stream, const Value& value);	//serializes json data
-
+		Log& operator << (Log &log, const Value& value);
 
 
 

@@ -23,6 +23,7 @@
 #include <VrLib/drivers/HydraDriver.h>
 #include <VrLib/drivers/LeapMotion.h>
 #include <VrLib/PerfMon.h>
+#include <VrLib/ServerConnection.h>
 
 #include <GL/glew.h>
 #include <GL/wglew.h>
@@ -46,6 +47,7 @@ namespace vrlib
 		simPositionDriver = NULL;
 		raceWheelDriver = NULL;
 		oculusDriver = NULL;
+		serverConnection = NULL;
 	}
 
 
@@ -82,6 +84,7 @@ namespace vrlib
 			return;
 		}
 		setLocalConfig();
+		serverConnection = new ServerConnection();
 		loadDeviceDrivers();
 		loadCluster();
 		createWindow();
@@ -113,6 +116,7 @@ namespace vrlib
 			if (lastFps + 10000 < time)
 			{
 				lastFps = time;
+				serverConnection->sendFps(frameCount / 10.0f);
 				logger << "FPS: " << frameCount / 10.0f << Log::newline;
 				frameCount = 0;
 			}
@@ -327,13 +331,13 @@ namespace vrlib
 	void Kernel::tick(double frameTime, double time)
 	{
 		checkForNewApp();
-
+		serverConnection->update(frameTime);
 		double startTime = PerfMon::getInstance()->getTime();
 
 		if (oculusDriver)
 			oculusDriver->beginFrame();
 
-		syncDevices();
+		syncDevices(frameTime);
 
 		if (PerfMon::getInstance()->getTime() - startTime > 10)
 			logger << "Cluster sync 1: " << PerfMon::getInstance()->getTime() - startTime << Log::newline;
@@ -389,10 +393,10 @@ namespace vrlib
 		return NULL;
 	}
 
-	void Kernel::syncDevices()
+	void Kernel::syncDevices(double frameTime)
 	{
 		if (simPositionDriver && keyboardDriver)
-			simPositionDriver->update(keyboardDriver);
+			simPositionDriver->update(keyboardDriver, frameTime);
 
 		if (oculusDriver && keyboardDriver)
 			oculusDriver->update(keyboardDriver);

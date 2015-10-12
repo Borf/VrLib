@@ -55,6 +55,7 @@ namespace vrlib
 	class OculusDeviceDriver;
 	class Oculus;
 	class XBOXDeviceDriver;
+	class ServerConnection;
 	namespace json { class Value; }
 
 
@@ -71,7 +72,7 @@ namespace vrlib
 
 		Application* currentApplication;
 		Application* newApplication;
-
+		ServerConnection* serverConnection;
 
 
 		PositionalDevice* headDevice;									//TODO: fix this properly
@@ -114,7 +115,7 @@ namespace vrlib
 
 		void syncClusterData();
 
-		void syncDevices();
+		void syncDevices(double frameTime);
 
 		void registerDevice(Device* device);
 		DeviceDriverAdaptor* getDeviceDriverAdaptor(std::string name);

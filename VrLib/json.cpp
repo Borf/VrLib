@@ -1,3 +1,4 @@
+#include "Log.h"
 #include "json.h"
 #include <iomanip>
 #include <sstream>
@@ -698,6 +699,14 @@ namespace vrlib
 			stream << value;
 			string += stream.str();
 			return string;
+		}
+
+		Log& operator <<(Log &log, const Value& value)
+		{
+			std::stringstream stream;
+			stream << value;
+			log<<stream.str();
+			return log;
 		}
 
 

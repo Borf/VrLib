@@ -57,7 +57,7 @@ namespace vrlib
 	}
 
 
-	void SimPositionDeviceDriver::update(KeyboardDeviceDriver* keyboardDriver)
+	void SimPositionDeviceDriver::update(KeyboardDeviceDriver* keyboardDriver, double elapsedTime)
 	{
 		if (mouseOffsetX != 0 || mouseOffsetY != 0)
 		{
@@ -74,6 +74,7 @@ namespace vrlib
 			mouseOffsetY = 0;
 		}
 
+		float speed = 0.1 * elapsedTime;
 		for (std::map<std::string, std::list<keyhandler> >::iterator it = keyHandlers.begin(); it != keyHandlers.end(); it++)
 		{
 			for (std::list<keyhandler>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
@@ -84,19 +85,19 @@ namespace vrlib
 				{
 					switch (kh.first)
 					{
-					case TRANS_X_NEG: data[it->first].position += data[it->first].isCamera ? (glm::vec3(-0.1f, 0, 0) * data[it->first].rotation) : glm::vec3(-0.1f, 0, 0); break;
-					case TRANS_X_POS: data[it->first].position += data[it->first].isCamera ? (glm::vec3(0.1f, 0, 0) * data[it->first].rotation) : glm::vec3(0.1f, 0, 0); break;
-					case TRANS_Y_NEG: data[it->first].position += data[it->first].isCamera ? (glm::vec3(0, -0.1f, 0) * data[it->first].rotation) : glm::vec3(0, -0.1f, 0); break;
-					case TRANS_Y_POS: data[it->first].position += data[it->first].isCamera ? (glm::vec3(0, 0.1f, 0) * data[it->first].rotation) : glm::vec3(0, 0.1f, 0); break;
-					case TRANS_Z_NEG: data[it->first].position += data[it->first].isCamera ? (glm::vec3(0, 0, -0.1f) * data[it->first].rotation) : glm::vec3(0, 0, -0.1f); break;
-					case TRANS_Z_POS: data[it->first].position += data[it->first].isCamera ? (glm::vec3(0, 0, 0.1f) * data[it->first].rotation) : glm::vec3(0, 0, 0.1f); break;
+					case TRANS_X_NEG: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(-0.1f, 0, 0) * data[it->first].rotation) : glm::vec3(-0.1f, 0, 0)); break;
+					case TRANS_X_POS: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0.1f, 0, 0) * data[it->first].rotation) : glm::vec3(0.1f, 0, 0)); break;
+					case TRANS_Y_NEG: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0, -0.1f, 0) * data[it->first].rotation) : glm::vec3(0, -0.1f, 0)); break;
+					case TRANS_Y_POS: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0, 0.1f, 0) * data[it->first].rotation) : glm::vec3(0, 0.1f, 0)); break;
+					case TRANS_Z_NEG: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0, 0, -0.1f) * data[it->first].rotation) : glm::vec3(0, 0, -0.1f)); break;
+					case TRANS_Z_POS: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0, 0, 0.1f) * data[it->first].rotation) : glm::vec3(0, 0, 0.1f)); break;
 
-					case ROT_X_NEG: data[it->first].rotation = data[it->first].rotation * glm::quat(glm::vec3(-.02f, 0, 0)); break;
-					case ROT_X_POS: data[it->first].rotation = data[it->first].rotation * glm::quat(glm::vec3(.02f, 0, 0)); break;
-					case ROT_Y_NEG: data[it->first].rotation = data[it->first].rotation * glm::quat(glm::vec3(0, -.02f, 0)); break;
-					case ROT_Y_POS: data[it->first].rotation = data[it->first].rotation * glm::quat(glm::vec3(0, .02f, 0)); break;
-					case ROT_Z_NEG: data[it->first].rotation = data[it->first].rotation * glm::quat(glm::vec3(0, 0, -.02f)); break;
-					case ROT_Z_POS: data[it->first].rotation = data[it->first].rotation * glm::quat(glm::vec3(0, 0, .02f)); break;
+					case ROT_X_NEG: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(-.02f, 0, 0))); break;
+					case ROT_X_POS: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(.02f, 0, 0))); break;
+					case ROT_Y_NEG: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, -.02f, 0))); break;
+					case ROT_Y_POS: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, .02f, 0))); break;
+					case ROT_Z_NEG: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, 0, -.02f))); break;
+					case ROT_Z_POS: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, 0, .02f))); break;
 					}
 				}
 

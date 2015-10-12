@@ -78,7 +78,7 @@ namespace vrlib
 
 	public:
 		SimPositionDeviceDriver(json::Value config);
-		void update(KeyboardDeviceDriver* keyboardDriver);
+		void update(KeyboardDeviceDriver* keyboardDriver, double elapsedTime);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 		void mouseMove(int xOffset, int yOffset);
 	};
