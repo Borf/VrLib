@@ -100,9 +100,13 @@ namespace vrlib
 			middleButtonDown = true;
 			lastX = GET_X_LPARAM(lParam);
 			lastY = GET_Y_LPARAM(lParam);
+			if (mouseDriver)
+				mouseDriver->mouseDown(MouseButtonDeviceDriver::Middle);
 			break;
 		case WM_MBUTTONUP:
 			middleButtonDown = false;
+			if (mouseDriver)
+				mouseDriver->mouseUp(MouseButtonDeviceDriver::Middle);
 			break;
 		case WM_MOUSEMOVE:
 			if (middleButtonDown && simPositionDriver)
@@ -113,6 +117,9 @@ namespace vrlib
 				lastX = x;
 				lastY = y;
 			}
+			if (mouseDriver)
+				mouseDriver->mouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+
 			break;
 		case WM_ACTIVATE:
 			if (raceWheelDriver == NULL)
@@ -243,7 +250,8 @@ namespace vrlib
 		logger << "Using OpenGL " << (const char*)glGetString(GL_VERSION) << Log::newline;
 		logger << "Using OpenGL " << glVersion[0] << "." << glVersion[1] << Log::newline; // Output which version of OpenGL we are using
 
-		ShowCursor(FALSE);
+		if(!localConfig["window"].isMember("cursor") || localConfig["window"]["cursor"].asBool() == false)
+			ShowCursor(FALSE);
 		ShowWindow(hWnd, SW_SHOW);
 		UpdateWindow(hWnd);
 

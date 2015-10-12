@@ -72,7 +72,6 @@ namespace vrlib
 
 		Application* currentApplication;
 		Application* newApplication;
-		ServerConnection* serverConnection;
 
 
 		PositionalDevice* headDevice;									//TODO: fix this properly
@@ -129,9 +128,12 @@ namespace vrlib
 		friend class OculusDeviceDriver;								//needs access to the adaptors
 		friend class ConfigPanel;										//needs access to the adaptors
 		template <class R, class T> friend class DeviceImpl;			//devices need to be able to register itself
+		friend class NormalApp;
 
 		Kernel();
 	public:
+		ServerConnection* serverConnection;
+
 		virtual ~Kernel();
 		RaceWheelDriver* raceWheelDriver; // this one is public so that you can sent an effect to it
 		static Kernel* getInstance();	//IS DEFINED IN KERNEL_WINDOWS.CPP

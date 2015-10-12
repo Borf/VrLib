@@ -270,6 +270,9 @@
     <ClInclude Include="VrLib\ServerConnection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\NormalApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -486,6 +489,9 @@
       <Filter>util</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\ServerConnection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\NormalApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

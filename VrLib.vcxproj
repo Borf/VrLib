@@ -153,6 +153,7 @@
     <ClInclude Include="VrLib\models\LoLModel.h" />
     <ClInclude Include="VrLib\models\SimpleModel.h" />
     <ClInclude Include="VrLib\Multiton.h" />
+    <ClInclude Include="VrLib\NormalApp.h" />
     <ClInclude Include="VrLib\PerfMon.h" />
     <ClInclude Include="VrLib\ServerConnection.h" />
     <ClInclude Include="VrLib\stb_image.h" />
@@ -227,6 +228,7 @@
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />
     <ClCompile Include="VrLib\models\LoLModel.cpp" />
     <ClCompile Include="VrLib\models\SimpleModel.cpp" />
+    <ClCompile Include="VrLib\NormalApp.cpp" />
     <ClCompile Include="VrLib\PerfMon.cpp" />
     <ClCompile Include="VrLib\ServerConnection.cpp" />
     <ClCompile Include="VrLib\stb_image.c" />

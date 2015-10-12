@@ -84,10 +84,10 @@ namespace vrlib
 			return;
 		}
 		setLocalConfig();
-		serverConnection = new ServerConnection();
 		loadDeviceDrivers();
 		loadCluster();
 		createWindow();
+		serverConnection = new ServerConnection();
 
 		User* user = new User("MainUser");
 		users.push_back(user);
@@ -100,8 +100,13 @@ namespace vrlib
 		double time = 0;
 		double frameTime;
 		double lastFps = 0;
-		headDevice = new PositionalDevice();
-		headDevice->init(config["users"][0u]["src"].asString());
+		if (config.isMember("users"))
+		{
+			headDevice = new PositionalDevice();
+			headDevice->init(config["users"][0u]["src"].asString());
+		}
+		else
+			headDevice = NULL;
 
 		PerfMon::getInstance()->resetTimer();
 
@@ -264,11 +269,12 @@ namespace vrlib
 		char hostname[1024];
 		gethostname(hostname, 1024);
 		localConfig = json::Value::null;
-		for (size_t i = 0; i < config["computers"].size(); i++)
-		{
-			if (config["computers"][i]["host"].asString() == hostname)
-				localConfig = config["computers"][i];
-		}
+		if(config.isMember("computers"))
+			for (size_t i = 0; i < config["computers"].size(); i++)
+			{
+				if (config["computers"][i]["host"].asString() == hostname)
+					localConfig = config["computers"][i];
+			}
 		if (localConfig.isNull() && config.isMember("local"))
 			localConfig = config["local"];
 
@@ -282,6 +288,8 @@ namespace vrlib
 
 	void Kernel::loadDeviceDrivers()
 	{
+		if (!config.isMember("devices"))
+			return;
 		for (size_t i = 0; i < config["devices"].size(); i++)
 		{
 			if (drivers.find(config["devices"][i]["driver"].asString()) == drivers.end())
@@ -320,6 +328,8 @@ namespace vrlib
 
 	void Kernel::createViewports(User* user)
 	{
+		if (!localConfig.isMember("viewports"))
+			return;
 		for (size_t i = 0; i < localConfig["viewports"].size(); i++)
 		{
 			Viewport* viewport = Viewport::createViewport(this, localConfig["viewports"][i], config["computers"]);
@@ -342,7 +352,8 @@ namespace vrlib
 		if (PerfMon::getInstance()->getTime() - startTime > 10)
 			logger << "Cluster sync 1: " << PerfMon::getInstance()->getTime() - startTime << Log::newline;
 
-		(*users.begin())->matrix = headDevice->getData();
+		if(headDevice)
+			(*users.begin())->matrix = headDevice->getData();
 		currentApplication->preFrame(frameTime, time);
 
 

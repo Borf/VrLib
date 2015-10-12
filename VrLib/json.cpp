@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cfloat>
 #include <set>
+#include <regex>
 
 namespace vrlib
 {
@@ -33,6 +34,13 @@ namespace vrlib
 
 		Value::Value(int value)
 		{
+			type = Type::intValue;
+			this->value.intValue = value;
+		}
+
+		Value::Value(__int64 value)
+		{
+			//todo: value too big ?
 			type = Type::intValue;
 			this->value.intValue = value;
 		}
@@ -727,8 +735,12 @@ namespace vrlib
 				stream << (value.value.boolValue ? "true" : "false");
 				break;
 			case Type::stringValue:
-				stream << "\"" << *value.value.stringValue << "\""; //TODO: escape \'s
+			{
+				std::string escaped = *value.value.stringValue;
+				escaped = std::regex_replace(escaped, std::regex("\\\\"), "\\\\");
+				stream << "\"" << escaped << "\""; //TODO: escape \'s
 				break;
+			}
 			case Type::arrayValue:
 			{
 				stream << "[";

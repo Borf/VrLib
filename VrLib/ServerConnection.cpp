@@ -2,17 +2,37 @@
 
 #include <VrLib/Log.h>
 #include <VrLib/json.h>
+#include <Gl/glew.h>
+#include <ctime>
 
 namespace vrlib
 {
+	const unsigned char* renderer;
 	ServerConnection::ServerConnection() : running(true), backgroundThread(&ServerConnection::thread, this)
 	{
 		s = 0;
+
+		callbacks["session/start"] = [](const json::Value &) { };
+		renderer = glGetString(GL_RENDERER);
+		logger << (char*)renderer << Log::newline;
 	}
 
 
 	void ServerConnection::thread()
 	{
+		char hostname[1024];
+		gethostname(hostname, 1024);
+		char applicationName[MAX_PATH];
+		::GetModuleFileName(0, applicationName, MAX_PATH);
+
+		char username[1024];
+		DWORD username_len = 1024;
+		GetUserName(username, &username_len);
+
+
+		std::time_t startTime = std::time(nullptr);
+
+
 		while (running)
 		{
 			struct sockaddr_in addr;
@@ -50,13 +70,65 @@ namespace vrlib
 
 			logger << "Connected to remote API" << Log::newline;
 
+			json::Value packet;
+			packet["id"] = "session/start";
+			packet["data"]["host"] = hostname;
+			packet["data"]["file"] = applicationName;
+			packet["data"]["renderer"] = std::string((char*)renderer);
+			packet["data"]["starttime"] = startTime;
+			packet["data"]["user"] = username;
+			send(packet);
+
+			std::string buffer;
+			char buf[1024];
 			while (running && s != 0)
 			{
-				Sleep(1000);
+				int rc = recv(s, buf, 1024, 0);
+				if (rc < 0)
+				{
+					closesocket(s);
+					s = 0;
+					break;
+				}
+				buffer += std::string(buf, rc);
+				while (buffer.size() > 4)
+				{
+					unsigned int len = *((unsigned int*)&buffer[0]);
+					if (buffer.size() >= len + 4)
+					{
+						json::Value data = json::readJson(buffer.substr(4, len));
+						buffer = buffer.substr(4 + len);
 
+						if (!data.isMember("id"))
+						{
+							logger << "Invalid packet from server" << Log::newline;
+							logger << data << Log::newline;
+							closesocket(s);
+							s = 0;
+							break;
+						}
 
-
+						if (callbacks.find(data["id"]) != callbacks.end())
+							callbacks[data["id"]](data);
+						else if (singleCallbacks.find(data["id"]) != singleCallbacks.end())
+						{
+							singleCallbacks[data["id"]](data);
+							singleCallbacks.erase(singleCallbacks.find(data["id"]));
+						}
+						else
+						{
+							logger << "Invalid packet from server" << Log::newline;
+							logger << data << Log::newline;
+							closesocket(s);
+							s = 0;
+							break;
+						}
+					}
+					else
+						break;
+				}
 			}
+			logger << "Disconnected...." << Log::newline;
 		}
 	}
 
@@ -64,7 +136,7 @@ namespace vrlib
 	{
 		std::string data;
 		data << value;
-		int len = data.size();
+		unsigned int len = data.size();
 		int rc = ::send(s, (char*)&len, 4, 0);
 		if (rc < 0)
 		{
@@ -82,6 +154,29 @@ namespace vrlib
 	}
 
 
+	void ServerConnection::callBackOnce(const std::string &action, std::function<void(const json::Value &)> callback)
+	{
+		singleCallbacks[action] = callback;
+	}
+
+	json::Value ServerConnection::call(const std::string &action, const json::Value& data)
+	{
+		json::Value result;
+		bool done = false;
+		callBackOnce(action, [&done, &result](const vrlib::json::Value &data)
+		{
+			result = data["data"];
+			done = true;
+		});
+		json::Value packet;
+		packet["id"] = action;
+		packet["data"] = data;
+		send(packet);
+		while (!done)
+			Sleep(2);
+		return result;
+	}
+
 	void ServerConnection::update(double frameTime)
 	{
 	}
@@ -90,8 +185,8 @@ namespace vrlib
 	void ServerConnection::sendFps(float fps)
 	{
 		json::Value v;
-		v["action"] = "fps";
-		v["data"] = fps;
+		v["id"] = "session/report";
+		v["data"]["fps"] = fps;
 		send(v);
 	}
 

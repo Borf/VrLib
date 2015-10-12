@@ -41,6 +41,7 @@ namespace vrlib
 			Value();
 			Value(Type type);
 			Value(int value);
+			Value(__int64 value);
 			Value(float value);
 			Value(bool value);
 			Value(const std::string &value);
