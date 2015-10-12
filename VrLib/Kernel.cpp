@@ -20,8 +20,9 @@
 #include <VrLib/drivers/GloveDriver.h>
 #include <VrLib/drivers/RaceWheelDriver.h>
 #include <VrLib/drivers/Oculus.h>
-#include <VrLib/PerfMon.h>
 #include <VrLib/drivers/HydraDriver.h>
+#include <VrLib/drivers/LeapMotion.h>
+#include <VrLib/PerfMon.h>
 
 #include <GL/glew.h>
 #include <GL/wglew.h>
@@ -184,13 +185,13 @@ namespace vrlib
 			return driver;
 		}
 		else if (name == "vrpn")
-		{
 			return new VrpnDeviceDriver();
-		}
 		else if (name == "glove")
-		{
 			return new GloveDeviceDriver();
-		}
+		else if (name == "hydra")
+			return new HydraDeviceDriver();
+		else if (name == "leapmotion")
+			return new LeapMotionDeviceDriver();
 		else if (name == "wheel")
 		{
 
@@ -216,10 +217,6 @@ namespace vrlib
 			if (!oculusDriver)
 				oculusDriver = new OculusDeviceDriver(config["driverconfig"]["Oculus"]);
 			return oculusDriver;
-		}
-		else if (name == "hydra")
-		{
-			return new HydraDeviceDriver();
 		}
 		else
 		{

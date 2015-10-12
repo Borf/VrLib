@@ -261,6 +261,9 @@
     <ClInclude Include="VrLib\models\LoLModel.h">
       <Filter>models</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\drivers\LeapMotion.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -469,6 +472,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\models\LoLModel.cpp">
       <Filter>models</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\LeapMotion.cpp">
+      <Filter>drivers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

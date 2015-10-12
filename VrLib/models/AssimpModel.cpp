@@ -224,10 +224,7 @@ namespace vrlib
 	{
 		std::pair<std::vector<unsigned short>, std::vector<glm::vec3>> ret;
 
-		ret.first = indices;
-		for (size_t i = 0; i < vertices.size(); i++)
-			ret.second.push_back(glm::make_vec3(&vertices[i].px));
-
+//TODO
 		return ret;
 	}
 

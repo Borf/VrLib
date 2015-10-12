@@ -16,6 +16,7 @@
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "assimp.lib")
+#pragma comment(lib, "leap.lib")
 
 
 #ifdef _DEBUG
