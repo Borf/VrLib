@@ -135,7 +135,7 @@ namespace vrlib
 			fb_ovr_tex[i].OGL.Header.RenderViewport.Pos.y = fbo->getHeight() - totalSize.h;
 			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.w = (int)(totalSize.w / 2.0);
 			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.h = totalSize.h;
-			fb_ovr_tex[i].OGL.TexId = fbo->texid;	/* both eyes will use the same texture id */
+			fb_ovr_tex[i].OGL.TexId = fbo->texid[0];	/* both eyes will use the same texture id */
 		}
 		memset(&glcfg, 0, sizeof glcfg);
 		glcfg.OGL.Header.API = ovrRenderAPI_OpenGL;

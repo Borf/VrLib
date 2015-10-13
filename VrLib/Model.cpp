@@ -53,28 +53,27 @@ namespace vrlib
 	template<class VertexFormat>
 	void vrlib::Model::handleModelLoadOptions(std::vector<VertexFormat> &vertices, const ModelLoadOptions &options)
 	{
-		calculateAABB(vertices);
 		if (options.size > 0)
 			scaleToSize(vertices, options.size);
 		if ((options.options & ModelLoadOptions::RepositionToCenter) != 0)
 			recenterToCenter(vertices);
 		if ((options.options & ModelLoadOptions::RepositionToCenterBottom) != 0)
 			recenterToCenterBottom(vertices);
+		calculateAABB(getVertices(100));
 	}
 
 
 
 
-	template<class VertexFormat>
-	void Model::calculateAABB(const std::vector<VertexFormat> &vertices)
+	void Model::calculateAABB(const std::vector<glm::vec3> &verts)
 	{
 		aabb.bounds[0] = glm::vec3(FLT_MAX, FLT_MAX, FLT_MAX);
 		aabb.bounds[1] = glm::vec3(FLT_MIN, FLT_MIN, FLT_MIN);
 
-		for (const VertexFormat &v : vertices)
+		for (const glm::vec3 &v : verts)
 		{
-			aabb.bounds[0] = glm::min(aabb.bounds[0], glm::vec3(v.px, v.py, v.pz));
-			aabb.bounds[1] = glm::max(aabb.bounds[1], glm::vec3(v.px, v.py, v.pz));
+			aabb.bounds[0] = glm::min(aabb.bounds[0], v);
+			aabb.bounds[1] = glm::max(aabb.bounds[1], v);
 		}
 	}
 
@@ -96,7 +95,7 @@ namespace vrlib
 			v.py /= fac;
 			v.pz /= fac;
 		}
-		calculateAABB(vertices);
+		calculateAABB(getVertices(100));
 	}
 
 
@@ -113,7 +112,7 @@ namespace vrlib
 			v.py = v.py - aabb.bounds[0].y - diff.y;
 			v.pz = v.pz - aabb.bounds[0].z - diff.z;
 		}
-		calculateAABB(vertices);
+		calculateAABB(getVertices(100));
 	}
 	template<class VertexFormat>
 	void Model::recenterToCenterBottom(std::vector<VertexFormat> &vertices)
@@ -126,7 +125,7 @@ namespace vrlib
 			v.py = v.py - aabb.bounds[0].y;
 			v.pz = v.pz - aabb.bounds[0].z - diff.z;
 		}
-		calculateAABB(vertices);
+		calculateAABB(getVertices(100));
 	}
 
 
@@ -141,10 +140,6 @@ namespace vrlib
 	template void Model::handleModelLoadOptions< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices, const ModelLoadOptions &options);
 	template void Model::handleModelLoadOptions< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices, const ModelLoadOptions &options);
 	template void Model::handleModelLoadOptions< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices, const ModelLoadOptions &options);
-
-	template void Model::calculateAABB< gl::VertexP3 >(const std::vector<gl::VertexP3> &vertices);
-	template void Model::calculateAABB< gl::VertexP3N3 >(const std::vector<gl::VertexP3N3> &vertices);
-	template void Model::calculateAABB< gl::VertexP3N3T2 >(const std::vector<gl::VertexP3N3T2> &vertices);
 
 	template void Model::scaleToSize< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices, float maxSize);
 	template void Model::scaleToSize< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices, float maxSize);

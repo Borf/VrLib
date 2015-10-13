@@ -9,6 +9,12 @@
 namespace vrlib
 {
 	namespace json { class Value; }
+
+	class Tunnel
+	{
+	public:
+	};
+
 	class ServerConnection
 	{
 		const std::string apiHost = "127.0.0.1";
@@ -31,8 +37,8 @@ namespace vrlib
 
 
 		void callBackOnce(const std::string &action, std::function<void(const json::Value &)> callback);
-
 		json::Value call(const std::string &action, const json::Value& data = json::Value::null);
+		Tunnel* createTunnel(const std::string &sessionId);
 
 		void sendFps(float fps);
 

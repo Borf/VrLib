@@ -23,8 +23,9 @@ namespace vrlib
 			int height;
 			GLuint fbo;
 			GLuint depthBuffer;
+			int textureCount;
 		public:
-			FBO(int width, int height, bool depth = false);
+			FBO(int width, int height, bool depth = false, int textureCount = 1);
 
 			//~FBO();
 
@@ -34,7 +35,7 @@ namespace vrlib
 
 			void use();
 
-			GLuint texid;
+			GLuint texid[5];
 
 			int getHeight();
 			int getWidth();

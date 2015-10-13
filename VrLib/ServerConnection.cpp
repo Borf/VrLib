@@ -32,7 +32,7 @@ namespace vrlib
 
 		std::time_t startTime = std::time(nullptr);
 
-
+		bool lastConnected = true;
 		while (running)
 		{
 			struct sockaddr_in addr;
@@ -62,12 +62,14 @@ namespace vrlib
 			rc = ::connect(s, (struct sockaddr*) &addr, siz);
 			if (rc < 0)
 			{
-				logger << "Could not connect to api host: " << apiHost << Log::newline;
+				if(lastConnected)
+					logger << "Could not connect to api host: " << apiHost << Log::newline;
+				lastConnected = false;
 				closesocket(s);
 				Sleep(1000);
 				continue;
 			}
-
+			lastConnected = true;
 			logger << "Connected to remote API" << Log::newline;
 
 			json::Value packet;
@@ -128,6 +130,7 @@ namespace vrlib
 						break;
 				}
 			}
+			lastConnected = false;
 			logger << "Disconnected...." << Log::newline;
 		}
 	}
@@ -162,6 +165,8 @@ namespace vrlib
 	json::Value ServerConnection::call(const std::string &action, const json::Value& data)
 	{
 		json::Value result;
+		if (s == 0)
+			return result;
 		bool done = false;
 		callBackOnce(action, [&done, &result](const vrlib::json::Value &data)
 		{
@@ -172,8 +177,12 @@ namespace vrlib
 		packet["id"] = action;
 		packet["data"] = data;
 		send(packet);
-		while (!done)
+		int i = 0;
+		while (!done && i < 1000)
+		{
 			Sleep(2);
+			i++;
+		}
 		return result;
 	}
 
@@ -190,4 +199,15 @@ namespace vrlib
 		send(v);
 	}
 
+
+
+	Tunnel* ServerConnection::createTunnel(const std::string &sessionId)
+	{
+		json::Value data;
+		data["session"] = sessionId;
+		json::Value result = call("tunnel/create", data);
+
+
+		return NULL;
+	}
 }

@@ -146,8 +146,9 @@ namespace vrlib
 				logger<<"Error loading file : " << importer.GetErrorString() << Log::newline;
 				return;
 			}
-		} catch (char e) {
+		} catch (char* e) {
 			logger << "Error loading file : " << importer.GetErrorString() << Log::newline;
+			logger << e << Log::newline;
 			return;
 		}
 

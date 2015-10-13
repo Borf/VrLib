@@ -40,18 +40,44 @@ namespace vrlib
 			}
 		};
 
+		struct VertexP2
+		{
+			float px, py;
+			VertexP2() {};
+			VertexP2(const glm::vec2& position)
+			{
+				px = position.x;	py = position.y;
+			}
+		};
+		struct VertexP2T2
+		{
+			float px, py;
+			float tx, ty;
+
+			VertexP2T2() {};
+			VertexP2T2(const glm::vec2& position, const glm::vec2 &texCoord)
+			{
+				px = position.x;	py = position.y;
+				tx = texCoord.x;	ty = texCoord.y;
+			}
+		};
+
+
+		template<class T>	inline void setP2(T& vertex, const glm::vec2 &p) {	}
+		template<>			inline void setP2<VertexP2T2>(VertexP2T2& vertex, const glm::vec2 &p)			{ vertex.px = p.x;		vertex.py = p.y;	 }
 
 		template<class T>	inline void setP3(T& vertex, const glm::vec3 &p)								{	}
 		template<>			inline void setP3<VertexP3>(VertexP3& vertex, const glm::vec3 &p)				{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &p)		{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
-
+		
 		template<class T>	inline void setN3(T& vertex, const glm::vec3 &n)								{	}
 		template<>			inline void setN3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &n)			{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
 		template<>			inline void setN3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &n)		{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
 
 		template<class T>	inline void setT2(T& vertex, const glm::vec2 &t)								{	}
-		template<>			inline void setT2(VertexP3N3T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y;  }
+		template<>			inline void setT2(VertexP3N3T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
+		template<>			inline void setT2(VertexP2T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
 
 
 		//// WATCH OUT, NEEDS TO BE SPECIALIZED IN THE RIGHT ORDER
@@ -85,7 +111,22 @@ namespace vrlib
 
 
 
-
+		template<>			inline int setAttribute<VertexP2>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = 0;
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 2, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 2 * sizeof(float);
+		}
+		template<>			inline int setAttribute<VertexP2T2>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = setAttribute<VertexP2>(attributeIndex, totalSize, offset);
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 2, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 2 * sizeof(float);
+		}
 
 
 		template<class T>	inline void setAttributes(void* offset)											

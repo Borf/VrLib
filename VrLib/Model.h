@@ -76,8 +76,7 @@ namespace vrlib
 		template<class VertexFormat>
 		void handleModelLoadOptions(std::vector<VertexFormat> &vertices, const ModelLoadOptions& options);
 
-		template<class VertexFormat>
-		void calculateAABB(const std::vector<VertexFormat> &vertices);
+		void calculateAABB(const std::vector<glm::vec3> &vertices);
 
 		template<class VertexFormat>
 		void scaleToSize(std::vector<VertexFormat> &vertices, float maxSize);

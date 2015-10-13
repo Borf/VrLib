@@ -5,28 +5,32 @@ namespace vrlib
 	namespace gl
 	{
 
-		FBO::FBO(int width, int height, bool depth /*= false*/)
+		FBO::FBO(int width, int height, bool depth /*= false*/, int textureCount)
 		{
+			this->textureCount = textureCount;
 			depthBuffer = 0;
-			texid = 0;
 			fbo = 0;
 			this->width = width;
 			this->height = height;
 
-
-			glGenTextures(1, &texid);
-			glBindTexture(GL_TEXTURE_2D, texid);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-			//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
-
-
 			glGenFramebuffers(1, &fbo);
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texid, 0);
+
+			glGenTextures(textureCount, texid);
+			for (int i = 0; i < textureCount; i++)
+			{
+				glBindTexture(GL_TEXTURE_2D, texid[i]);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+				//glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texid[i], 0);
+			}
+
+
+
 
 			if (depth)
 			{
@@ -47,6 +51,9 @@ namespace vrlib
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+			static GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
+			if (textureCount > 0)
+				glDrawBuffers(textureCount, buffers);
 		}
 
 		void FBO::unbind()
@@ -54,11 +61,17 @@ namespace vrlib
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, 0);
+			static GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
+			glDrawBuffers(1, buffers);
 		}
 
 		void FBO::use()
 		{
-			glBindTexture(GL_TEXTURE_2D, texid);
+			for (int i = 0; i < textureCount; i++)
+			{
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, texid[i]);
+			}
 		}
 
 		int FBO::getHeight()
