@@ -3,6 +3,8 @@
 #include "models/SimpleModel.h"
 #include "models/AssimpModel.h"
 #include "models/LoLModel.h"
+
+#include <vrlib/math/Ray.h>
 #include "Log.h"
 #include <algorithm>
 #include <climits>
@@ -59,7 +61,7 @@ namespace vrlib
 			recenterToCenter(vertices);
 		if ((options.options & ModelLoadOptions::RepositionToCenterBottom) != 0)
 			recenterToCenterBottom(vertices);
-		calculateAABB(getVertices(100));
+		calculateAABB(getTriangles());
 	}
 
 
@@ -95,7 +97,7 @@ namespace vrlib
 			v.py /= fac;
 			v.pz /= fac;
 		}
-		calculateAABB(getVertices(100));
+		calculateAABB(getTriangles());
 	}
 
 
@@ -112,7 +114,7 @@ namespace vrlib
 			v.py = v.py - aabb.bounds[0].y - diff.y;
 			v.pz = v.pz - aabb.bounds[0].z - diff.z;
 		}
-		calculateAABB(getVertices(100));
+		calculateAABB(getTriangles());
 	}
 	template<class VertexFormat>
 	void Model::recenterToCenterBottom(std::vector<VertexFormat> &vertices)
@@ -125,10 +127,22 @@ namespace vrlib
 			v.py = v.py - aabb.bounds[0].y;
 			v.pz = v.pz - aabb.bounds[0].z - diff.z;
 		}
-		calculateAABB(getVertices(100));
+		calculateAABB(getTriangles());
 	}
 
+	std::vector<glm::vec3> Model::collisions(const math::Ray &ray)
+	{
+		std::vector<glm::vec3> result;
+		if (!aabb.hasRayCollision(ray, 0, 10000))
+			return result;
+		std::vector<glm::vec3> verts = getTriangles();
 
+		float f = 0;
+		for (size_t i = 0; i < verts.size(); i += 3)
+			if (ray.LineIntersectPolygon(&verts[i], 3, f))
+				result.push_back(ray.mOrigin + f * ray.mDir);
+		return result;
+	}
 
 
 

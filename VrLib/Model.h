@@ -86,5 +86,7 @@ namespace vrlib
 
 		template<class VertexFormat>
 		void recenterToCenterBottom(std::vector<VertexFormat> &vertices);
+
+		std::vector<glm::vec3> collisions(const vrlib::math::Ray &ray);
 	};
 }

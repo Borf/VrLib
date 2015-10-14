@@ -19,16 +19,6 @@ namespace vrlib
 			this->f = f;
 		}
 
-		glm::vec3 Plane::getNormal() const
-		{
-			return normal;
-		}
-
-		float Plane::getOffset() const
-		{
-			return f;
-		}
-
 		glm::vec3 Plane::getCollisionPoint(const Ray& ray) const
 		{
 			float Denominator = glm::dot(ray.mDir, this->normal);

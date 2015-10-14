@@ -7,6 +7,7 @@ namespace vrlib
 {
 	namespace math
 	{
+		class Plane;
 
 		class Ray
 		{
@@ -19,6 +20,8 @@ namespace vrlib
 			Ray() {}
 			Ray(const glm::vec3 &origin, const glm::vec3 &dir);
 
+			bool planeIntersection(const Plane &plane, float &t) const;
+			bool LineIntersectPolygon(const glm::vec3* vertices, int count, float &t) const;
 		};
 
 		Ray operator * (const glm::mat4& matrix, const Ray& ray);

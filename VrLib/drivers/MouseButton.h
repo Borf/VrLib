@@ -23,7 +23,7 @@ namespace vrlib
 			MouseButtonDeviceDriverAdaptor(MouseButtonDeviceDriver*, MouseButton button);
 			virtual DigitalState getData();
 		};
-
+	protected:
 		bool left;
 		bool middle;
 		bool right;
