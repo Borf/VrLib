@@ -52,11 +52,12 @@ namespace vrlib
 			virtual DigitalState getData();
 		};
 
-		bool buttonsPressed[KEY_UNDEFINED];
 
 		std::map<int, KeyboardDeviceDriver::KeyboardButton> buttonLookup;
 		struct keymap { KeyboardButton btn; std::string configValue; int vk; };
 		static keymap keyMapping[];
+	protected:
+		bool buttonsPressed[KEY_UNDEFINED];
 	public:
 
 

@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "Font.h"
 #include <ft2build.h>
+#include <fstream>
 #include FT_FREETYPE_H
 #include FT_OUTLINE_H
 #include FT_GLYPH_H
@@ -11,6 +12,8 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/gl/VBO.h>
 #include <VrLib/gl/VAO.h>
+#include <VrLib/Texture.h>
+#include <VrLib/Image.h>
 
 namespace vrlib
 {
@@ -280,4 +283,194 @@ namespace vrlib
 
 		return length;
 	}
+
+
+
+
+
+
+	///////////////////////////////////////////////////////////////btimapfont
+
+
+	std::map<std::string, BitmapFont*> BitmapFont::fonts;
+
+	BitmapFont* BitmapFont::getFontInstance(std::string name)
+	{
+		std::map<std::string, BitmapFont*>::iterator it = fonts.find(name);
+		if (it == fonts.end())
+		{
+			BitmapFont* font = new BitmapFont(name);
+			fonts[name] = font;
+			return font;
+		}
+		return it->second;
+	}
+
+	void BitmapFont::clearCache()
+	{
+		for (std::map<std::string, BitmapFont*>::iterator it = fonts.begin(); it != fonts.end(); it++)
+			delete it->second;
+		fonts.clear();
+	}
+
+
+	static std::vector<std::string> split(std::string value, std::string seperator)
+	{
+		std::vector<std::string> ret;
+		while (value.find(seperator) != std::string::npos)
+		{
+			int index = value.find(seperator);
+			if (index != 0)
+				ret.push_back(value.substr(0, index));
+			value = value.substr(index + seperator.length());
+		}
+		ret.push_back(value);
+		return ret;
+	}
+
+
+
+	BitmapFont::BitmapFont(std::string fileName)
+	{
+		std::ifstream file(fileName);
+		if (!file.is_open())
+		{
+			logger << "Could not open font file: " << fileName << Log::newline;
+			return;
+		}
+		std::string textureFileName;
+
+		std::string path = "";
+		if (fileName.find('/') != std::string::npos)
+			path = fileName.substr(0, fileName.rfind('/'));
+		if (fileName.find('\\') != std::string::npos)
+			path = fileName.substr(0, fileName.rfind('\\'));
+
+		while (!file.eof())
+		{
+			std::string line;
+			std::getline(file, line);
+			if (line.length() < 5)
+				continue;
+
+			if (line.substr(0, 5) == "page ")
+			{
+				textureFileName = line.substr(16);
+				textureFileName = path + "/" + textureFileName.substr(0, textureFileName.length() - 1);
+			}
+			if (line.substr(0, 5) == "char ")
+			{
+				std::vector<std::string> params = split(line.substr(5), " ");
+				Glyph* glyph = new Glyph();
+				glyph->id = 0;
+
+				for (size_t i = 0; i < params.size(); i++)
+				{
+					std::string name = params[i].substr(0, params[i].find("="));
+					if (name == "id")			glyph->id = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "x")			glyph->x = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "y")			glyph->y = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "width")		glyph->width = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "height")		glyph->height = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "xoffset")		glyph->xoffset = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "yoffset")		glyph->yoffset = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "xadvance")		glyph->xadvance = atoi(params[i].substr(name.length() + 1).c_str());
+					else if (name == "page" || name == "chnl") {}
+					else
+						logger << "Didn't parse " << name << Log::newline;
+				}
+
+				if (glyph->id != 0)
+					charmap[glyph->id] = glyph;
+				else
+					delete glyph;
+			}
+		}
+
+		logger << "Loaded font " << fileName << ", " << charmap.size() << " glyphs" << Log::newline;
+
+		texture = vrlib::Texture::loadCached(textureFileName);
+	}
+
+	BitmapFont::~BitmapFont()
+	{
+		for (std::map<char, Glyph*>::iterator it = charmap.begin(); it != charmap.end(); it++)
+			delete it->second;
+		charmap.clear();
+	}
+
+
+
+	float BitmapFont::textlen(std::string text)
+	{
+		float scale = 1;//0.00075f;
+
+		float posX = 0;
+
+		for (size_t i = 0; i < text.size(); i++)
+		{
+			if (charmap.find(text[i]) == charmap.end())
+				continue;
+			Glyph* g = charmap[text[i]];
+			posX += g->xadvance * scale;
+
+		}
+		return posX;
+	}
+
+	const BitmapFont::Glyph* BitmapFont::getGlyph(const char &character) const
+	{
+		return charmap.find(character)->second;
+	}
+
+
+	template <class T>
+	void BitmapFont::drawText(const std::string &text)
+	{
+		glm::vec2 cursor;
+		int wrapWidth = -1;
+		std::vector<T> verts;
+		
+		glm::vec2 texFactor(1.0f / texture->image->width, 1.0f / texture->image->height);
+
+		float x = cursor.x;
+		float y = cursor.y;
+		int lineHeight = 12;
+		for (size_t i = 0; i < text.size(); i++)
+		{
+			if (text[i] == '\n' || (x > wrapWidth && wrapWidth != -1))
+			{
+				x = 0;
+				y += lineHeight;
+				lineHeight = 12;
+			}
+			if (charmap.find(text[i]) == charmap.end())
+				continue;
+			const Glyph* g = getGlyph(text[i]);
+			lineHeight = glm::max(lineHeight, g->height);
+
+			T v;
+			gl::setP2(v, glm::vec2(x + g->xoffset, y + g->yoffset));						gl::setT2(v, glm::vec2(g->x*texFactor.x, g->y*texFactor.y));
+			verts.push_back(v);
+			gl::setP2(v, glm::vec2(x + g->xoffset + g->width, y + g->yoffset));				gl::setT2(v, glm::vec2((g->x + g->width)*texFactor.x, g->y*texFactor.y));
+			verts.push_back(v);
+			gl::setP2(v, glm::vec2(x + g->xoffset + g->width, y + g->yoffset + g->height));	gl::setT2(v, glm::vec2((g->x + g->width)*texFactor.x, (g->y + g->height)*texFactor.y));
+			verts.push_back(v);
+			gl::setP2(v, glm::vec2(x + g->xoffset, y + g->yoffset + g->height));			gl::setT2(v, glm::vec2(g->x*texFactor.x, (g->y + g->height)*texFactor.y));
+			verts.push_back(v);			
+			x += g->xadvance;
+		}
+		
+		gl::setAttributes<T>(&verts);
+ 
+		glDrawArrays(GL_QUADS, 0, verts.size());
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+	}
+
+
+
+	template void BitmapFont::drawText<vrlib::gl::VertexP2T2>(const std::string &text);
 }

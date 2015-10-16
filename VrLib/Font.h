@@ -1,6 +1,8 @@
 #pragma once
 
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #include <Windows.h>
 #include <gl/glew.h>
@@ -53,7 +55,33 @@ namespace vrlib
 
 		void render(const char *fmt, ...);
 		float getLength(const char *fmt, ...);
+	};
 
+	class Texture;
+
+	class BitmapFont 
+	{
+		class Glyph
+		{
+		public:
+			int id, x, y, width, height, xoffset, yoffset, xadvance;
+		};
+
+		static std::map<std::string, BitmapFont*> fonts;
+		static void clearCache();
+		//	void render(std::string text, float scale);
+		std::map<char, Glyph*> charmap;
+		Texture* texture;
+		BitmapFont(std::string file);
+		~BitmapFont();
+
+		const Glyph* getGlyph(const char &character) const;
+	public:
+		static BitmapFont* getFontInstance(std::string name);
+		float textlen(std::string text);
+
+		template<class T>
+		void drawText(const std::string &text);
 
 	};
 }

@@ -15,5 +15,7 @@ namespace vrlib
 		Image(const std::string &filename);
 		Image(int width, int height);
 		~Image();
+		void unload();
+
 	};
 }

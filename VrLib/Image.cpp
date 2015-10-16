@@ -33,4 +33,11 @@ namespace vrlib
 		data = NULL;
 	}
 
+	void Image::unload()
+	{
+		if (data)
+			stbi_image_free(data);
+		data = NULL;
+	}
+
 }

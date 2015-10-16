@@ -71,8 +71,7 @@ namespace vrlib
 
 		if (unloadImageAfterLoad)
 		{
-			delete image;
-			image = NULL;
+			image->unload();
 		}
 
 	}
