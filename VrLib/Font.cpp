@@ -425,7 +425,7 @@ namespace vrlib
 
 
 	template <class T>
-	void BitmapFont::drawText(const std::string &text)
+	void BitmapFont::drawText(const std::string &text, const T &base)
 	{
 		glm::vec2 cursor;
 		int wrapWidth = -1;
@@ -449,7 +449,7 @@ namespace vrlib
 			const Glyph* g = getGlyph(text[i]);
 			lineHeight = glm::max(lineHeight, g->height);
 
-			T v;
+			T v = base;
 			gl::setP2(v, glm::vec2(x + g->xoffset, y + g->yoffset));						gl::setT2(v, glm::vec2(g->x*texFactor.x, g->y*texFactor.y));
 			verts.push_back(v);
 			gl::setP2(v, glm::vec2(x + g->xoffset + g->width, y + g->yoffset));				gl::setT2(v, glm::vec2((g->x + g->width)*texFactor.x, g->y*texFactor.y));
@@ -461,16 +461,16 @@ namespace vrlib
 			x += g->xadvance;
 		}
 		
-		gl::setAttributes<T>(&verts);
+		texture->bind();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		gl::setAttributes<T>(&verts[0]);
  
 		glDrawArrays(GL_QUADS, 0, verts.size());
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
 	}
 
 
 
-	template void BitmapFont::drawText<vrlib::gl::VertexP2T2>(const std::string &text);
+	template void BitmapFont::drawText<vrlib::gl::VertexP2T2>(const std::string &text, const vrlib::gl::VertexP2T2 &base);
 }

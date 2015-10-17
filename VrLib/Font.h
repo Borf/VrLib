@@ -81,7 +81,7 @@ namespace vrlib
 		float textlen(std::string text);
 
 		template<class T>
-		void drawText(const std::string &text);
+		void drawText(const std::string &text, const T& base = T());
 
 	};
 }

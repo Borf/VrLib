@@ -61,7 +61,7 @@ namespace vrlib
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, 0);
-			static GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4 };
+			static GLenum buffers[] = { GL_BACK };
 			glDrawBuffers(1, buffers);
 		}
 

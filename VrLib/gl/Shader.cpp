@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include <fstream>
 #include <glm/gtc/type_ptr.hpp>
+#include <VrLib/Log.h>
 
 namespace vrlib
 {
@@ -224,6 +225,8 @@ namespace vrlib
 			if ((int)uniformLocations.size() <= id)
 				uniformLocations.resize(id + 1, -1);
 			uniformLocations[id] = glGetUniformLocation(programId, value.c_str());
+			if (uniformLocations[id] <= 0)
+				logger << "Error registering uniform " << value << Log::newline;
 		}
 
 		void UntypedShader::setUniform(int id, int value)
