@@ -25,7 +25,8 @@ namespace vrlib
 
 			std::vector<glm::vec3> faceNormals;
 			std::vector<glm::vec3> vertexNormals;
-			/*if (!mesh->HasNormals())
+			if (!mesh->HasNormals())
+			if (!mesh->HasNormals())
 			{
 				//logger<<"Mesh does not have normals...calculating" << Log::newline;
 				for (unsigned int ii = 0; ii < mesh->mNumFaces; ii++)
@@ -36,9 +37,9 @@ namespace vrlib
 						glm::vec3 v1(mesh->mVertices[face->mIndices[0]].x, mesh->mVertices[face->mIndices[0]].y, mesh->mVertices[face->mIndices[0]].z);
 						glm::vec3 v2(mesh->mVertices[face->mIndices[1]].x, mesh->mVertices[face->mIndices[1]].y, mesh->mVertices[face->mIndices[1]].z);
 						glm::vec3 v3(mesh->mVertices[face->mIndices[2]].x, mesh->mVertices[face->mIndices[2]].y, mesh->mVertices[face->mIndices[2]].z);
-						v1 = glm::vec3(glm::vec4(v1, 1) * matrix);
-						v2 = glm::vec3(glm::vec4(v2, 1) * matrix);
-						v3 = glm::vec3(glm::vec4(v3, 1) * matrix);
+						//v1 = glm::vec3(glm::vec4(v1, 1) * transform);
+						//v2 = glm::vec3(glm::vec4(v2, 1) * transform);
+						//v3 = glm::vec3(glm::vec4(v3, 1) * transform);
 
 						glm::vec3 normal = glm::normalize(glm::cross(v2 - v1, v3 - v1));
 						faceNormals.push_back(normal);
@@ -64,9 +65,7 @@ namespace vrlib
 						normal = glm::normalize(normal);
 					vertexNormals.push_back(normal);
 				}
-			}*/
-
-
+			}
 
 			int vertexStart = vertices.size();
 			for (unsigned int ii = 0; ii < mesh->mNumVertices; ii++)
@@ -83,8 +82,8 @@ namespace vrlib
 				if (mesh->HasNormals())
 					setN3(v, glm::vec3(mesh->mNormals[ii].x, mesh->mNormals[ii].y, mesh->mNormals[ii].z)); //matrix?
 				else
-					//setN3(v, vertexNormals[ii]); //matrix?
-					setN3(v, glm::vec3(0, 0, 1));
+					setN3(v, vertexNormals[ii]); //matrix?
+//					setN3(v, glm::vec3(0, 0, 1));
 				vertices.push_back(v);
 			}
 			
@@ -93,7 +92,7 @@ namespace vrlib
 			for (unsigned int ii = 0; ii < mesh->mNumFaces; ii++)
 			{
 				const struct aiFace* face = &mesh->mFaces[ii];
-				if (face->mNumIndices < 3)
+				if (face->mNumIndices != 3)
 					continue;
 
 				for (int iii = 0; iii < 3; iii++)
@@ -227,9 +226,9 @@ namespace vrlib
 
 
 	template<class VertexFormat>
-	std::pair<std::vector<unsigned short>, std::vector<glm::vec3>> AssimpModel<VertexFormat>::getIndexedTriangles() const
+	std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> AssimpModel<VertexFormat>::getIndexedTriangles() const
 	{
-		std::pair<std::vector<unsigned short>, std::vector<glm::vec3>> ret;
+		std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> ret;
 
 //TODO
 		return ret;
@@ -254,7 +253,7 @@ namespace vrlib
 			}
 			if (mesh.indexCount == 0)
 				continue;
-			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_SHORT, (void*)(mesh.indexStart * sizeof(unsigned short)));
+			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (void*)(mesh.indexStart * sizeof(unsigned int)));
 		}
 		vao->unBind();
 	}

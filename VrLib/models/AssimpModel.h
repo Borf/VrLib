@@ -9,7 +9,6 @@
 struct aiScene;
 struct aiNode;
 
-
 namespace vrlib
 {
 	template<class VertexFormat>
@@ -38,7 +37,7 @@ namespace vrlib
 		void import(const glm::mat4 &matrix, const aiScene* scene, aiNode* node);
 		virtual std::vector<glm::vec3> getVertices(int amount) const override;
 		virtual std::vector<glm::vec3> getTriangles() const override;
-		virtual std::pair<std::vector<unsigned short>, std::vector<glm::vec3>> getIndexedTriangles() const override;
+		virtual std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> getIndexedTriangles() const override;
 		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback) override;
 		virtual ModelInstance* getInstance() override;
 
@@ -47,10 +46,10 @@ namespace vrlib
 
 		std::vector<Mesh> meshes;
 		std::vector<VertexFormat> vertices;
-		std::vector<unsigned short> indices;
+		std::vector<unsigned int> indices;
 
 		gl::VBO<VertexFormat> vbo;
-		gl::VIO<unsigned short> vio;
+		gl::VIO<unsigned int> vio;
 		gl::VAO<VertexFormat>* vao;
 
 	};

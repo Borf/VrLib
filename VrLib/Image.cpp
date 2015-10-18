@@ -14,6 +14,9 @@ namespace vrlib
 		}
 		else
 		{
+			width = -1;
+			height = -1;
+			depth = -1;
 			data = stbi_load(filename.c_str(), &width, &height, &depth, 4);
 			if (!data)
 			{

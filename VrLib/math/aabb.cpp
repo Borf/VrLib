@@ -8,6 +8,12 @@ namespace vrlib
 {
 	namespace math
 	{
+
+		glm::vec3 AABB::center() const
+		{
+			return (bounds[0] + bounds[1]) / 2.0f;
+		}
+
 		/*
 		Check if a ray has collision with this boundingbox. Thanks to http://www.cs.utah.edu/~awilliam/box/box.pdf
 		Author: Bas Rops - 09-06-2014

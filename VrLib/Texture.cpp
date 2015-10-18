@@ -12,7 +12,14 @@ namespace vrlib
 	Texture* Texture::loadCached(const std::string &fileName)
 	{
 		if (cache.find(fileName) == cache.end())
+		{
 			cache[fileName] = new Texture(fileName);
+			if (cache[fileName]->image->width < 0)
+			{
+				delete cache[fileName];
+				cache[fileName] = NULL;
+			}
+		}
 		return cache[fileName];
 	}
 

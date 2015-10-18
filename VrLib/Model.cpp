@@ -23,14 +23,23 @@ namespace vrlib
 
 		if (extension == ".shape")
 		{
-			return new SimpleModel<VertexFormat>(fileName, options);
+			SimpleModel<VertexFormat>* m = new SimpleModel<VertexFormat>(fileName, options);
+			return m;
 		}
 		else if (extension == ".skn")
 		{
 			return new LoLModel<VertexFormat>(fileName, options);
 		}
 		else
-			return new AssimpModel<VertexFormat>(fileName, options);
+		{
+			AssimpModel<VertexFormat>* m = new AssimpModel<VertexFormat>(fileName, options);
+			if (!m->vao)
+			{
+				delete m;
+				m = NULL;
+			}
+			return m;
+		}
 
 
 

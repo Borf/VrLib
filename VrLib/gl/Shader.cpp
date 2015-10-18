@@ -225,7 +225,7 @@ namespace vrlib
 			if ((int)uniformLocations.size() <= id)
 				uniformLocations.resize(id + 1, -1);
 			uniformLocations[id] = glGetUniformLocation(programId, value.c_str());
-			if (uniformLocations[id] <= 0)
+			if (uniformLocations[id] < 0)
 				logger << "Error registering uniform " << value << Log::newline;
 		}
 
