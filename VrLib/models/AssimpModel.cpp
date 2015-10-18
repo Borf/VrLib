@@ -136,6 +136,7 @@ namespace vrlib
 	template<class VertexFormat>
 	AssimpModel<VertexFormat>::AssimpModel(const std::string &fileName, const ModelLoadOptions& options)
 	{
+		vao = NULL;
 		Assimp::Importer importer;
 		aiScene* scene = NULL;
 		try {
