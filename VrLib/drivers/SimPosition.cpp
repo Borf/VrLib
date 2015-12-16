@@ -92,12 +92,12 @@ namespace vrlib
 					case TRANS_Z_NEG: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0, 0, -0.1f) * data[it->first].rotation) : glm::vec3(0, 0, -0.1f)); break;
 					case TRANS_Z_POS: data[it->first].position += speed * (data[it->first].isCamera ? (glm::vec3(0, 0, 0.1f) * data[it->first].rotation) : glm::vec3(0, 0, 0.1f)); break;
 
-					case ROT_X_NEG: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(-.02f, 0, 0))); break;
-					case ROT_X_POS: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(.02f, 0, 0))); break;
-					case ROT_Y_NEG: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, -.02f, 0))); break;
-					case ROT_Y_POS: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, .02f, 0))); break;
-					case ROT_Z_NEG: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, 0, -.02f))); break;
-					case ROT_Z_POS: data[it->first].rotation = speed * (data[it->first].rotation * glm::quat(glm::vec3(0, 0, .02f))); break;
+					case ROT_X_NEG: data[it->first].rotation = (data[it->first].rotation * glm::quat(glm::vec3(-.02f * speed, 0, 0))); break;
+					case ROT_X_POS: data[it->first].rotation = (data[it->first].rotation * glm::quat(glm::vec3(.02f * speed, 0, 0))); break;
+					case ROT_Y_NEG: data[it->first].rotation = (data[it->first].rotation * glm::quat(glm::vec3(0, -.02f * speed, 0))); break;
+					case ROT_Y_POS: data[it->first].rotation = (data[it->first].rotation * glm::quat(glm::vec3(0, .02f * speed, 0))); break;
+					case ROT_Z_NEG: data[it->first].rotation = (data[it->first].rotation * glm::quat(glm::vec3(0, 0, -.02f * speed))); break;
+					case ROT_Z_POS: data[it->first].rotation = (data[it->first].rotation * glm::quat(glm::vec3(0, 0, .02f * speed))); break;
 					}
 				}
 

@@ -167,9 +167,11 @@ namespace vrlib
 
 		if (!verts.empty())
 		{
+			for (size_t i = 0; i < verts.size(); i++)
+				vertices.push_back(glm::vec3(verts[i].px, verts[i].py, verts[i].pz));
 			handleModelLoadOptions(verts, options);
 
-
+			vertices.clear();
 			for (size_t i = 0; i < verts.size(); i++)
 				vertices.push_back(glm::vec3(verts[i].px, verts[i].py, verts[i].pz));
 

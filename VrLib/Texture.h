@@ -13,8 +13,9 @@ namespace vrlib
 		Texture(const std::string &fileName);
 
 	public:
-		static std::map<std::string, Texture*> cache;
+		static std::map<std::string, std::pair<Texture*, int>> cache;
 		static Texture* loadCached(const std::string &fileName);
+		static void unloadCached(Texture* texture);
 
 		Image* image;
 		

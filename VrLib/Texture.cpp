@@ -8,25 +8,44 @@
 
 namespace vrlib
 {
-	std::map<std::string, Texture*> Texture::cache;
+	std::map<std::string, std::pair<Texture*, int>> Texture::cache;
 	Texture* Texture::loadCached(const std::string &fileName)
 	{
 		if (cache.find(fileName) == cache.end())
 		{
-			cache[fileName] = new Texture(fileName);
-			if (cache[fileName]->image->width < 0)
+			cache[fileName] = std::pair<Texture*, int>(new Texture(fileName), 0);
+			if (cache[fileName].first->image && cache[fileName].first->image->width < 0)
 			{
-				delete cache[fileName];
-				cache[fileName] = NULL;
+				delete cache[fileName].first;
+				cache[fileName].second = NULL;
 			}
 		}
-		return cache[fileName];
+		cache[fileName].second++;
+		return cache[fileName].first;
 	}
 
 
 
+	void Texture::unloadCached(Texture* texture)
+	{
+		for (std::map<std::string, std::pair<Texture*, int>>::iterator i = cache.begin(); i != cache.end(); i++)
+		{
+			if (i->second.first == texture)
+			{
+				i->second.second--;
+				if (i->second.second <= 0)
+				{
+					delete texture;
+					cache.erase(i);
+					return;
+				}
+			}
+		}
+	}
+
 	Texture::Texture(const std::string &fileName)
 	{
+		image = NULL;
 #ifdef _DEBUG
 		logger << "Loading " << fileName << Log::newline;
 #endif
@@ -36,9 +55,9 @@ namespace vrlib
 		{
 			this->image = new vrlib::Image(fileName);
 			loaded = false;
+			load();
 		}
 
-		load();
 	}
 
 	void Texture::load()

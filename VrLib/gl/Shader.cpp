@@ -25,7 +25,7 @@ namespace vrlib
 				{
 					printf("%s\n", fileName.c_str());
 					printf("%s\n", infoLog);
-					getchar();
+				//	getchar();
 				}
 				free(infoLog);
 			}
@@ -46,7 +46,7 @@ namespace vrlib
 				{
 					printf("%s\n", fileName.c_str());
 					printf("%s\n", infoLog);
-					getchar();
+				//	getchar();
 				}
 				free(infoLog);
 			}

@@ -64,6 +64,7 @@ namespace vrlib
 	template<class VertexFormat>
 	void vrlib::Model::handleModelLoadOptions(std::vector<VertexFormat> &vertices, const ModelLoadOptions &options)
 	{
+		calculateAABB(getTriangles());
 		if (options.size > 0)
 			scaleToSize(vertices, options.size);
 		if ((options.options & ModelLoadOptions::RepositionToCenter) != 0)
@@ -106,7 +107,7 @@ namespace vrlib
 			v.py /= fac;
 			v.pz /= fac;
 		}
-		calculateAABB(getTriangles());
+//		calculateAABB(getTriangles());
 	}
 
 
