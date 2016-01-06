@@ -5,6 +5,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <VrLib\Kernel.h>
+#include <VrLib\Log.h>
 #include <iostream>
 
 namespace vrlib
@@ -32,78 +33,33 @@ namespace vrlib
 
 	void OculusDeviceDriver::update(KeyboardDeviceDriver* keyboardDriver)
 	{
-		/*for (std::map<std::string, std::list<keyhandler> >::iterator it = keyHandlers.begin(); it != keyHandlers.end(); it++)
-		{
-		for (std::list<keyhandler>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
-		{
-		keyhandler& kh = *it2;
-
-		if (keyboardDriver->isPressed(kh.second.first) && keyboardDriver->isModPressed(kh.second.second))
-		{
-		switch (kh.first)
-		{
-		case RESET:
-		resetSensor();
-		break;
-		case INCREASE_EYE_DISTANCE:
-		increaseEyeDistance(0.0002f);
-		break;
-		case DECREASE_EYE_DISTANCE:
-		increaseEyeDistance(-0.0002f);
-		break;
-		case TOGGLE_CONFIG:
-		toggleConfigPanel(true);
-		break;
-		default:
-		toggleConfigPanel(false);
-		break;
-		}
-		}
-		else
-		toggleConfigPanel(false);
-		}
-		}*/
+		
 	}
 
 	DeviceDriverAdaptor* OculusDeviceDriver::getAdaptor(std::string options)
 	{
-		ovr_Initialize();
+		ovrResult result = ovr_Initialize(nullptr);
+		if (!OVR_SUCCESS(result))
+			logger << "Failed to initialize libOVR." << Log::newline;
 
 		OculusDeviceDriverAdaptor* adaptor = new OculusDeviceDriverAdaptor(config["Settings"]);
 		hmd = &adaptor->hmd;
 		adaptor->eye_rdesc = &eye_rdesc[0];
 		return adaptor;
 
-
-		/*OVR::System::Init();
-		OculusDeviceDriverAdaptor* adaptor = new OculusDeviceDriverAdaptor(config["Settings"]);
-		hmdInfo = &adaptor->hmdInfo;
-		stereoConfig = &adaptor->stereoConfig;
-		return adaptor;*/
 	}
 
 	OculusDeviceDriver::OculusDeviceDriverAdaptor::OculusDeviceDriverAdaptor(json::Value config)
 	{
-		hmd = ovrHmd_Create(0);
-		if (!hmd)
+		ovrGraphicsLuid luid;
+		ovrResult result = ovr_Create(&hmd, &luid);
+		if (!OVR_SUCCESS(result))
 		{
-			printf("No HMD found");
-			hmd = ovrHmd_CreateDebug(ovrHmd_DK1);
+			logger << "Could not create ovr" << Log::newline;
+			return;
 		}
-
-		ovrHmd_SetEnabledCaps(hmd, ovrHmdCap_LowPersistence | ovrHmdCap_DynamicPrediction);
-		ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, 0);
 	}
 
-
-	/*static glm::vec3 getEulerAngles(OVR::Quatf & in) {
-		glm::vec3 eulerAngles;
-		in.GetEulerAngles<
-		OVR::Axis_X, OVR::Axis_Y, OVR::Axis_Z,
-		OVR::Rotate_CW, OVR::Handed_R
-		>(&eulerAngles.x, &eulerAngles.y, &eulerAngles.z);
-		return eulerAngles;
-		}*/
 
 	glm::vec3 OculusDeviceDriver::OculusDeviceDriverAdaptor::getDirection()
 	{
@@ -121,7 +77,7 @@ namespace vrlib
 				*/
 
 
-		ovrPosef pose;
+/*		ovrPosef pose;
 		pose = ovrHmd_GetEyePose(hmd, ovrEye_Left);
 
 		glm::mat4 ret = glm::translate(glm::mat4(), glm::vec3(eye_rdesc[ovrEye_Left].ViewAdjust.x, eye_rdesc[ovrEye_Left].ViewAdjust.y, eye_rdesc[ovrEye_Left].ViewAdjust.z));
@@ -129,7 +85,7 @@ namespace vrlib
 		quat_to_matrix(&pose.Orientation.x, glm::value_ptr(rotMatrix));
 
 
-		return ret * rotMatrix;
+		return ret * rotMatrix;*/
 
 		return glm::translate(glm::mat4(), glm::vec3(0, 0, 0));
 	}
@@ -139,65 +95,5 @@ namespace vrlib
 		//sensorFusion.Reset();
 	}
 
-	void OculusDeviceDriver::OculusDeviceDriverAdaptor::increaseEyeDistance(float distanceToAdd)
-	{
-		/*float newInterpupillaryDistance = hmdInfo.InterpupillaryDistance + distanceToAdd;
-
-		if (newInterpupillaryDistance < minInterpupillaryDistance)
-		newInterpupillaryDistance = minInterpupillaryDistance;
-		else if (newInterpupillaryDistance > maxInterpupillaryDistance)
-		newInterpupillaryDistance = maxInterpupillaryDistance;
-
-		int tmpValue = newInterpupillaryDistance * 10000;
-		newInterpupillaryDistance = tmpValue / 10000.0f;
-
-		hmdInfo.InterpupillaryDistance = newInterpupillaryDistance;
-		stereoConfig.SetHMDInfo(hmdInfo);*/
-	}
-
-	float OculusDeviceDriver::OculusDeviceDriverAdaptor::getEyeDistance()
-	{
-		return 0;
-		//return hmdInfo.InterpupillaryDistance;
-	}
-
-	glm::vec3 OculusDeviceDriver::getDirection()
-	{
-		return glm::vec3();
-		//return ((OculusDeviceDriverAdaptor*)Kernel::getInstance()->getDeviceDriverAdaptor("MainUserHead"))->getDirection();
-	}
-
-	void OculusDeviceDriver::resetSensor()
-	{
-		//((OculusDeviceDriverAdaptor*)Kernel::getInstance()->getDeviceDriverAdaptor("MainUserHead"))->resetSensor();
-	}
-
-	void OculusDeviceDriver::increaseEyeDistance(float distanceToAdd)
-	{
-		/*toggleConfigPanel(true);
-		((OculusDeviceDriverAdaptor*)Kernel::getInstance()->getDeviceDriverAdaptor("MainUserHead"))->increaseEyeDistance(distanceToAdd);*/
-	}
-
-	float OculusDeviceDriver::getEyeDistance()
-	{
-		//return ((OculusDeviceDriverAdaptor*)Kernel::getInstance()->getDeviceDriverAdaptor("MainUserHead"))->getEyeDistance();
-		return 0;
-	}
-
-	void OculusDeviceDriver::toggleConfigPanel(bool value)
-	{
-		this->showConfigPanel = value;
-	}
-
-	bool OculusDeviceDriver::configPanelIsShown()
-	{
-		return this->showConfigPanel;
-	}
-
-	void OculusDeviceDriver::beginFrame()
-	{
-		/* the drawing starts with a call to ovrHmd_BeginFrame */
-		ovrHmd_BeginFrame(*hmd, 0);
-	}
 
 }

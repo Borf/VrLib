@@ -9,16 +9,17 @@
 
 #include <VrLib/gl/FBO.h>
 #include <VrLib/gl/Shader.h>
+#include <VrLib/Log.h>
 
 #include <gl/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define OVR_OS_WIN32
-#include <OVR_CAPI.h>
+#include <GL/wglew.h>
 #include <OVR_CAPI_GL.h>
-#include <CAPI/CAPI_HMDState.h>
+#include <Extras/OVR_Math.h>
+
 //OVR_EXPORT void ovrhmd_EnableHSWDisplaySDKRender(ovrHmd hmd, ovrBool enable);
 
 
@@ -48,132 +49,57 @@ namespace vrlib
 	}
 
 
-	// Renders textures to frame buffer
-	void ovrHmd_EndFrame_noswap(ovrHmd hmddesc,
-		const ovrPosef renderPose[2],
-		const ovrTexture eyeTexture[2])
-	{
-		using namespace OVR::CAPI;
-
-		HMDState* hmds = (HMDState*)hmddesc->Handle;
-		if (!hmds) return;
-
-		hmds->SubmitEyeTextures(renderPose, eyeTexture);
-
-		// Debug state checks: Must be in BeginFrame, on the same thread.
-		//	hmds->checkBeginFrameScope("ovrHmd_EndFrame");
-		//	ThreadChecker::Scope checkScope(&hmds->RenderAPIThreadChecker, "ovrHmd_EndFrame");
-
-		hmds->pRenderer->SetLatencyTestColor(hmds->LatencyTestActive ? hmds->LatencyTestDrawColor : NULL);
-
-		ovrHmd_GetLatencyTest2DrawColor(hmddesc, NULL); // We don't actually need to draw color, so send NULL
-
-		if (hmds->pRenderer)
-		{
-			hmds->pRenderer->SaveGraphicsState();
-
-			// See if we need to show the HSWDisplay.
-			if (hmds->pHSWDisplay) // Until we know that these are valid, assume any of them can't be.
-			{
-				ovrHSWDisplayState hswDisplayState;
-				hmds->pHSWDisplay->TickState(&hswDisplayState);  // This may internally call HASWarning::Display.
-
-				if (hswDisplayState.Displayed)
-				{
-					hmds->pHSWDisplay->Render(ovrEye_Left, &eyeTexture[ovrEye_Left]);
-					hmds->pHSWDisplay->Render(ovrEye_Right, &eyeTexture[ovrEye_Right]);
-				}
-			}
-
-			hmds->pRenderer->EndFrame(false);
-			hmds->pRenderer->RestoreGraphicsState();
-		}
-		// Call after present
-		ovrHmd_EndFrameTiming(hmddesc);
-
-		// Out of BeginFrame
-		hmds->BeginFrameThreadId = 0;
-		hmds->BeginFrameCalled = false;
-	}
-
-
 	int fb_width, fb_height;
 
 	RiftViewport::RiftViewport(User* user, OculusDeviceDriver* oculusDriver, Kernel* kernel) : Viewport(user)
 	{
+		mirrorTexture = nullptr;
+		mirrorFBO = 0;
+
+		ovrResult result;
+
 		this->eye = eye;
 		this->oculusDriver = oculusDriver;
 
 		ovrHmd hmd = *oculusDriver->hmd;
-
-		/*	fbo = new FBO(640, 800, true);
-
-			shader = new ShaderProgram("data/VrCave/shaders/rift.vert","data/VrCave/shaders/rift.frag");
-			shader->bindAttributeLocation("a_position", 0);
-			shader->bindAttributeLocation("a_texture", 1);
-			shader->link();*/
+		hmdDesc = ovr_GetHmdDesc(hmd);
+		ovrSizei windowSize = { hmdDesc.Resolution.w / 2, hmdDesc.Resolution.h / 2 };
+		logger << "Window size: " << windowSize.w << ", " << windowSize.h << Log::newline;
 
 
-		ovrGLConfig glcfg;
+		// Make eye render buffers
+		for (int eye = 0; eye < 2; ++eye)
+		{
+			ovrSizei idealTextureSize = ovr_GetFovTextureSize(hmd, ovrEyeType(eye), hmdDesc.DefaultEyeFov[eye], 1);
+			eyeRenderTexture[eye] = new TextureBuffer(hmd, true, true, idealTextureSize, 1, NULL, 1);
+			eyeDepthBuffer[eye] = new DepthBuffer(eyeRenderTexture[eye]->GetSize(), 0);
 
-		ovrSizei sizeLeft = ovrHmd_GetFovTextureSize(*oculusDriver->hmd, ovrEye_Left, (*oculusDriver->hmd)->DefaultEyeFov[0], 1.0f);
-		ovrSizei sizeRight = ovrHmd_GetFovTextureSize(*oculusDriver->hmd, ovrEye_Right, (*oculusDriver->hmd)->DefaultEyeFov[1], 1.0f);
-		ovrSizei totalSize{ sizeLeft.w + sizeRight.w, glm::max(sizeLeft.h, sizeRight.h) };
-
-		fb_width = totalSize.w;
-		fb_height = totalSize.h;
-
-		fbo = new gl::FBO(totalSize.w, totalSize.w, true);
-
-		/* fill in the ovrGLTexture structures that describe our render target texture */
-		for (int i = 0; i < 2; i++) {
-			fb_ovr_tex[i].OGL.Header.API = ovrRenderAPI_OpenGL;
-			fb_ovr_tex[i].OGL.Header.TextureSize.w = fbo->getWidth();
-			fb_ovr_tex[i].OGL.Header.TextureSize.h = fbo->getHeight();
-			/* this next field is the only one that differs between the two eyes */
-			fb_ovr_tex[i].OGL.Header.RenderViewport.Pos.x = i == 0 ? 0 : (int)( totalSize.w / 2.0f );
-			fb_ovr_tex[i].OGL.Header.RenderViewport.Pos.y = fbo->getHeight() - totalSize.h;
-			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.w = (int)(totalSize.w / 2.0);
-			fb_ovr_tex[i].OGL.Header.RenderViewport.Size.h = totalSize.h;
-			fb_ovr_tex[i].OGL.TexId = fbo->texid[0];	/* both eyes will use the same texture id */
+			if (!eyeRenderTexture[eye]->TextureSet)
+			{
+				logger<<"Failed to create texture."<<Log::newline;
+			}
 		}
-		memset(&glcfg, 0, sizeof glcfg);
-		glcfg.OGL.Header.API = ovrRenderAPI_OpenGL;
-		glcfg.OGL.Header.RTSize = hmd->Resolution;
-		glcfg.OGL.Header.Multisample = 1;
 
-		if (hmd->HmdCaps & ovrHmdCap_ExtendDesktop) {
-			printf("running in \"extended desktop\" mode\n");
+		// Create mirror texture and an FBO used to copy mirror texture to back buffer
+		result = ovr_CreateMirrorTextureGL(hmd, GL_SRGB8_ALPHA8, windowSize.w, windowSize.h, reinterpret_cast<ovrTexture**>(&mirrorTexture));
+		if (!OVR_SUCCESS(result))
+		{
+			logger << "Failed to create mirror texture." << Log::newline;
 		}
-		else {
-			/* to sucessfully draw to the HMD display in "direct-hmd" mode, we have to
-			* call ovrHmd_AttachToWindow
-			* XXX: this doesn't work properly yet due to bugs in the oculus 0.4.1 sdk/driver
-			*/
-#ifdef WIN32
-			HWND sys_win = GetActiveWindow();
-			glcfg.OGL.Window = sys_win;
-			glcfg.OGL.DC = wglGetCurrentDC();
-			ovrHmd_AttachToWindow(hmd, sys_win, 0, 0);
-#endif
-			printf("running in \"direct-hmd\" mode\n");
-		}
-		/* enable low-persistence display and dynamic prediction for lattency compensation */
-		ovrHmd_SetEnabledCaps(hmd, ovrHmdCap_LowPersistence | ovrHmdCap_DynamicPrediction);
 
-		/* configure SDK-rendering and enable chromatic abberation correction, vignetting, and
-		* timewrap, which shifts the image before drawing to counter any lattency between the call
-		* to ovrHmd_GetEyePose and ovrHmd_EndFrame.
-		*/
-		unsigned int dcaps = ovrDistortionCap_Chromatic | ovrDistortionCap_Vignette | ovrDistortionCap_TimeWarp |
-			ovrDistortionCap_Overdrive;
-		if (!ovrHmd_ConfigureRendering(hmd, &glcfg.Config, dcaps, hmd->DefaultEyeFov, oculusDriver->eye_rdesc)) {
-			fprintf(stderr, "failed to configure distortion renderer\n");
-		}
-		/* disable the retarded "health and safety warning" */
-		//ovrhmd_EnableHSWDisplaySDKRender(hmd, 0);
+		// Configure the mirror read buffer
+		glGenFramebuffers(1, &mirrorFBO);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, mirrorFBO);
+		glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mirrorTexture->OGL.TexId, 0);
+		glFramebufferRenderbuffer(GL_READ_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
-		kernel->windowMoveTo(hmd->WindowsPos.x, hmd->WindowsPos.y);
+
+		EyeRenderDesc[0] = ovr_GetRenderDesc(hmd, ovrEye_Left, hmdDesc.DefaultEyeFov[0]);
+		EyeRenderDesc[1] = ovr_GetRenderDesc(hmd, ovrEye_Right, hmdDesc.DefaultEyeFov[1]);
+
+		// Turn off vsync to let the compositor do its magic
+		wglSwapIntervalEXT(0);
 
 	}
 
@@ -187,57 +113,42 @@ namespace vrlib
 
 	void RiftViewport::draw(Application* application)
 	{
+		ovrHmd hmd = *oculusDriver->hmd;
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
 
-		int i;
-		ovrMatrix4f proj;
-		ovrPosef pose[2];
 		float rot_mat[16];
 
 
-		/* start drawing onto our texture render target */
-		fbo->bind();
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// Get eye poses, feeding in correct IPD offset
+		ovrVector3f               ViewOffset[2] = { EyeRenderDesc[0].HmdToEyeViewOffset,
+			EyeRenderDesc[1].HmdToEyeViewOffset };
+		ovrPosef                  EyeRenderPose[2];
+		double           ftiming = ovr_GetPredictedDisplayTime(hmd, 0);
+		// Keeping sensorSampleTime as close to ovr_GetTrackingState as possible - fed into the layer
+		double           sensorSampleTime = ovr_GetTimeInSeconds();
+		ovrTrackingState hmdState = ovr_GetTrackingState(hmd, ftiming, ovrTrue);
+		ovr_CalcEyePoses(hmdState.HeadPose.ThePose, ViewOffset, EyeRenderPose);
+		for (int eye = 0; eye < 2; eye++)
+		{
+			// Increment to use next texture, just before writing
+			eyeRenderTexture[eye]->TextureSet->CurrentIndex = (eyeRenderTexture[eye]->TextureSet->CurrentIndex + 1) % eyeRenderTexture[eye]->TextureSet->TextureCount;
 
-		/* for each eye ... */
-		for (i = 0; i < 2; i++) {
-			ovrEyeType eye = (*oculusDriver->hmd)->EyeRenderOrder[i];
+			// Switch to eye render target
+			eyeRenderTexture[eye]->SetAndClearRenderSurface(eyeDepthBuffer[eye]);
 
-			/* -- viewport transformation --
-			* setup the viewport to draw in the left half of the framebuffer when we're
-			* rendering the left eye's view (0, 0, width/2, height), and in the right half
-			* of the framebuffer for the right eye's view (width/2, 0, width/2, height)
-			*/
-			glViewport(eye == ovrEye_Left ? 0 : fb_width / 2, 0, fb_width / 2, fb_height);
+			static OVR::Vector3f Pos2(0.0f, 1.6f, -5.0f);
+			Pos2.y = ovr_GetFloat(hmd, OVR_KEY_EYE_HEIGHT, Pos2.y);
 
-			/* -- projection transformation --
-			* we'll just have to use the projection matrix supplied by the oculus SDK for this eye
-			* note that libovr matrices are the transpose of what OpenGL expects, so we have to
-			* use glLoadTransposeMatrixf instead of glLoadMatrixf to load it.
-			*/
-			proj = ovrMatrix4f_Projection((*oculusDriver->hmd)->DefaultEyeFov[eye], 0.05f, 700.0f, 1);
-			glMatrixMode(GL_PROJECTION);
-			glLoadTransposeMatrixf(proj.M[0]);
+			// Get view and projection matrices
+			OVR::Matrix4f rollPitchYaw = OVR::Matrix4f::RotationY(0);// Yaw);
+			OVR::Matrix4f finalRollPitchYaw = rollPitchYaw * OVR::Matrix4f(EyeRenderPose[eye].Orientation);
+			OVR::Vector3f finalUp = finalRollPitchYaw.Transform(OVR::Vector3f(0, 1, 0));
+			OVR::Vector3f finalForward = finalRollPitchYaw.Transform(OVR::Vector3f(0, 0, -1));
+			OVR::Vector3f shiftedEyePos = Pos2 + rollPitchYaw.Transform(EyeRenderPose[eye].Position);
 
-			/* -- view/camera transformation --
-			* we need to construct a view matrix by combining all the information provided by the oculus
-			* SDK, about the position and orientation of the user's head in the world.
-			*/
-			pose[eye] = ovrHmd_GetEyePose((*oculusDriver->hmd), eye);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glTranslatef(oculusDriver->eye_rdesc[eye].ViewAdjust.x, oculusDriver->eye_rdesc[eye].ViewAdjust.y, oculusDriver->eye_rdesc[eye].ViewAdjust.z);
-			/* retrieve the orientation quaternion and convert it to a rotation matrix */
-			quat_to_matrix(&pose[eye].Orientation.x, rot_mat);
-			glMultMatrixf(rot_mat);
-			/* translate the view matrix with the positional tracking */
-			glTranslatef(-pose[eye].Position.x, -pose[eye].Position.y, -pose[eye].Position.z);
-			/* move the camera to the eye level of the user */
-			glTranslatef(0, -ovrHmd_GetFloat((*oculusDriver->hmd), OVR_KEY_EYE_HEIGHT, 1.65f) + 1.5f, 0);
-
-			/* finally draw the scene for this eye */
-			//		draw_scene();
+			OVR::Matrix4f view = OVR::Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+			OVR::Matrix4f proj = ovrMatrix4f_Projection(hmdDesc.DefaultEyeFov[eye], 0.2f, 500.0f, ovrProjection_RightHanded);
 
 			glm::mat4 projectionMatrix(proj.M[0][0],
 				proj.M[0][1],
@@ -257,28 +168,76 @@ namespace vrlib
 				proj.M[0][15]
 				);
 
+			float quat[] = { EyeRenderPose[eye].Orientation.x, EyeRenderPose[eye].Orientation.y, EyeRenderPose[eye].Orientation.z, EyeRenderPose[eye].Orientation.w };
+			quat_to_matrix(quat, rot_mat);
+
 			projectionMatrix = glm::transpose(projectionMatrix);
 
 			glm::mat4 modelviewMatrix;
-			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(oculusDriver->eye_rdesc[eye].ViewAdjust.x, oculusDriver->eye_rdesc[eye].ViewAdjust.y, oculusDriver->eye_rdesc[eye].ViewAdjust.z));
 			modelviewMatrix *= glm::make_mat4(rot_mat);
-			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(-pose[eye].Position.x, -pose[eye].Position.y, -pose[eye].Position.z));
-			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, -ovrHmd_GetFloat((*oculusDriver->hmd), OVR_KEY_EYE_HEIGHT, 1.65f) + 1.5f, 0));
+			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(-EyeRenderPose->Position.x, -EyeRenderPose->Position.y, -EyeRenderPose->Position.z));
+			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, 0, -0.5f));
+
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glLoadMatrixf(glm::value_ptr(projectionMatrix));
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glLoadMatrixf(glm::value_ptr(modelviewMatrix));
+
+
+
 
 			application->draw(projectionMatrix, modelviewMatrix);
-
+			// Avoids an error when calling SetAndClearRenderSurface during next iteration.
+			// Without this, during the next while loop iteration SetAndClearRenderSurface
+			// would bind a framebuffer with an invalid COLOR_ATTACHMENT0 because the texture ID
+			// associated with COLOR_ATTACHMENT0 had been unlocked by calling wglDXUnlockObjectsNV.
+			eyeRenderTexture[eye]->UnsetRenderSurface();
 
 		}
 
-		/* after drawing both eyes into the texture render target, revert to drawing directly to the
-		* display, and we call ovrHmd_EndFrame, to let the Oculus SDK draw both images properly
-		* compensated for lens distortion and chromatic abberation onto the HMD screen.
-		*/
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+		// Do distortion rendering, Present and flush/sync
 
-		ovrHmd_EndFrame_noswap(*oculusDriver->hmd, pose, &fb_ovr_tex[0].Texture);
-		//ovrHmd_EndFrame(*oculusDriver->hmd, pose, &fb_ovr_tex[0].Texture);
+		// Set up positional data.
+		ovrViewScaleDesc viewScaleDesc;
+		viewScaleDesc.HmdSpaceToWorldScaleInMeters = 1.0f;
+		viewScaleDesc.HmdToEyeViewOffset[0] = ViewOffset[0];
+		viewScaleDesc.HmdToEyeViewOffset[1] = ViewOffset[1];
+
+		ovrLayerEyeFov ld;
+		ld.Header.Type = ovrLayerType_EyeFov;
+		ld.Header.Flags = ovrLayerFlag_TextureOriginAtBottomLeft;   // Because OpenGL.
+
+		for (int eye = 0; eye < 2; ++eye)
+		{
+			ld.ColorTexture[eye] = eyeRenderTexture[eye]->TextureSet;
+			ld.Viewport[eye] = ovrRecti{ ovrVector2i {0,0}, eyeRenderTexture[eye]->GetSize() };
+			ld.Fov[eye] = hmdDesc.DefaultEyeFov[eye];
+			ld.RenderPose[eye] = EyeRenderPose[eye];
+			ld.SensorSampleTime = sensorSampleTime;
+		}
+
+		ovrLayerHeader* layers = &ld.Header;
+		ovrResult result = ovr_SubmitFrame(hmd, 0, &viewScaleDesc, &layers, 1);
+		// exit the rendering loop if submit returns an error, will retry on ovrError_DisplayLost
+		if (!OVR_SUCCESS(result))
+		{
+			logger << "Error submitting frame" << Log::newline;
+			return;
+		}
+
+		bool isVisible = (result == ovrSuccess);
+
+		// Blit mirror texture to back buffer
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, mirrorFBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		GLint w = mirrorTexture->OGL.Header.TextureSize.w;
+		GLint h = mirrorTexture->OGL.Header.TextureSize.h;
+		glBlitFramebuffer(0, h, w, 0,
+			0, 0, w, h,
+			GL_COLOR_BUFFER_BIT, GL_NEAREST);
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
 		assert(glGetError() == GL_NO_ERROR);
 

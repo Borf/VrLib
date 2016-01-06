@@ -15,7 +15,6 @@ namespace vrlib
 		virtual void createWindow();
 		virtual void tick(double frameTime, double time);
 		virtual void swapBuffer();
-		virtual void windowMoveTo(int x, int y);
 
 		LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 		friend LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

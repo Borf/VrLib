@@ -59,6 +59,5 @@ namespace vrlib
 		bool configPanelIsShown();
 		float getEyeDistance();
 		glm::vec3 getDirection();
-		void beginFrame();
 	};
 }

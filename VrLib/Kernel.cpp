@@ -344,8 +344,6 @@ namespace vrlib
 		serverConnection->update(frameTime);
 		double startTime = PerfMon::getInstance()->getTime();
 
-		if (oculusDriver)
-			oculusDriver->beginFrame();
 
 		syncDevices(frameTime);
 

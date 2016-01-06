@@ -17,17 +17,16 @@
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "assimp.lib")
 #pragma comment(lib, "leap.lib")
+#pragma comment(lib, "libovr.lib")
 
 
 #ifdef _DEBUG
-#pragma comment(lib, "libovrd.lib")
 #pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed
 #pragma comment(lib, "sixense_utils.lib")	// debug version needs vs debug installed
 #pragma comment(lib, "fgloved.lib")
 #pragma comment(lib, "vrpn.lib")
 #pragma comment(lib, "freetype255d.lib")
 #else
-#pragma comment(lib, "libovr.lib")
 #pragma comment(lib, "sixense.lib")
 #pragma comment(lib, "sixense_utils.lib")
 #pragma comment(lib, "fglove.lib")
@@ -145,7 +144,6 @@ namespace vrlib
 		{
 			return windowWidth;
 		}
-		virtual void windowMoveTo(int x, int y) = 0;
 
 		void loadConfig(std::string fileName);
 		void setApp(Application* application);
@@ -157,3 +155,4 @@ namespace vrlib
 
 	};
 }
+

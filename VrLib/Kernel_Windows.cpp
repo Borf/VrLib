@@ -301,11 +301,6 @@ namespace vrlib
 		}
 		Kernel::tick(frameTime, time);
 	}
-
-	void KernelWindows::windowMoveTo(int x, int y)
-	{
-		SetWindowPos(hWnd, HWND_TOP, x, y, windowWidth, windowHeight, SWP_NOSIZE);
-	}
 }
 
 	#endif

@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GLM_FORCE_RADIANS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
     <Link>

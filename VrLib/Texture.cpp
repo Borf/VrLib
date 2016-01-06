@@ -62,6 +62,8 @@ namespace vrlib
 
 	void Texture::load()
 	{
+		if (!image)
+			return;
 		glGenTextures(1, &texid);
 		glBindTexture(GL_TEXTURE_2D, texid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
