@@ -8,18 +8,40 @@
 namespace vrlib
 {
 	const unsigned char* renderer;
-	ServerConnection::ServerConnection() : running(true), backgroundThread(&ServerConnection::thread, this)
+	ServerConnection::ServerConnection() : running(false), backgroundThread(&ServerConnection::thread, this)
 	{
 		s = 0;
+		tunnelCallback = nullptr;
 
 		callbacks["session/start"] = [](const json::Value &) { };
+		callbacks["tunnel/connect"] = [this](const json::Value & data)
+		{
+			Tunnel* t = new Tunnel(data["data"]["id"].asString(), this);
+			tunnels[t->id] = t;
+			if (tunnelCallback)
+				tunnelCallback(t);
+		};
+		callbacks["tunnel/send"] = [this](const json::Value & data)
+		{
+			if (tunnels.find(data["data"]["id"]) == tunnels.end())
+			{
+				logger << "Got data for a tunnel that doesn't exist" << Log::newline;
+				return;
+			}
+			tunnels[data["data"]["id"]]->mtx.lock();
+			tunnels[data["data"]["id"]]->queue.push_back(data["data"]["data"]);
+			tunnels[data["data"]["id"]]->mtx.unlock();
+
+		};
 		renderer = glGetString(GL_RENDERER);
-		logger << (char*)renderer << Log::newline;
+		running = true;
 	}
 
 
 	void ServerConnection::thread()
 	{
+		while (!running)
+			Sleep(1);
 		char hostname[1024];
 		gethostname(hostname, 1024);
 		char applicationName[MAX_PATH];
@@ -121,9 +143,9 @@ namespace vrlib
 						{
 							logger << "Invalid packet from server" << Log::newline;
 							logger << data << Log::newline;
-							closesocket(s);
-							s = 0;
-							break;
+							//closesocket(s);
+							//s = 0;
+							//break;
 						}
 					}
 					else
@@ -132,6 +154,7 @@ namespace vrlib
 			}
 			lastConnected = false;
 			logger << "Disconnected...." << Log::newline;
+			Sleep(1000);
 		}
 	}
 
@@ -191,6 +214,11 @@ namespace vrlib
 	}
 
 
+	bool ServerConnection::isConnected()
+	{
+		return s != 0;
+	}
+
 	void ServerConnection::sendFps(float fps)
 	{
 		json::Value v;
@@ -207,7 +235,50 @@ namespace vrlib
 		data["session"] = sessionId;
 		json::Value result = call("tunnel/create", data);
 
+		if (result["status"] == "ok")
+		{
+			Tunnel* t = new Tunnel(result["id"], this);
+			tunnels[t->id] = t;
+			return t;
+		}
 
+		logger<<"Could not create tunnel!\n"<< result << Log::newline;
 		return NULL;
 	}
+
+	void ServerConnection::onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel)
+	{
+		json::Value v;
+		v["id"] = "session/enable";
+		v["data"].push_back("tunnel");
+		send(v);
+		tunnelCallback = onTunnel;
+	}
+
+	void Tunnel::send(const json::Value &data)
+	{
+		json::Value packet;
+		packet["id"] = "tunnel/send";
+		packet["data"]["dest"] = id;
+		packet["data"]["data"] = data;
+		connection->send(packet);
+	}
+
+	json::Value Tunnel::recv()
+	{
+		mtx.lock();
+		json::Value res = queue.front();
+		queue.pop_front();
+		mtx.unlock();
+		return res;
+	}
+
+	int Tunnel::available()
+	{
+		mtx.lock();
+		int size = queue.size();
+		mtx.unlock();
+		return size;
+	}
+
 }
