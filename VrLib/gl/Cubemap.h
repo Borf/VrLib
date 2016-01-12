@@ -29,11 +29,11 @@ namespace vrlib
 			int components;
 
 		public:
-			vrlib::gl::Cubemap(vrlib::gl::ShaderProgram* shader, std::string filenames[6], const std::vector<glm::vec3>* cubemapVertices);
+			vrlib::gl::Cubemap(vrlib::gl::ShaderProgram* shader, std::string filenames[6], const std::vector<glm::vec3> &cubemapVertices);
 			~Cubemap(void);
 
 			void bindTexture();
-			void draw(glm::mat4* projectionMatrix, glm::mat4* viewMatrix);
+			void draw(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix);
 		};
 
 	}

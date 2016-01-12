@@ -22,7 +22,7 @@ namespace vrlib
 		Author: Bas Rops - 22-05-2014
 		Last edit: <name> - dd-mm-yyyy
 		*/
-		Cubemap::Cubemap(ShaderProgram* shader, std::string filenames[6], const std::vector<glm::vec3>* cubemapVertices)
+		Cubemap::Cubemap(ShaderProgram* shader, std::string filenames[6], const std::vector<glm::vec3> &cubemapVertices)
 		{
 			if (shader != NULL)
 				this->shader = shader;
@@ -66,7 +66,7 @@ namespace vrlib
 			//Add all vertices of the cubemap to a VBO
 			std::vector<VertexPosition> vertices;
 
-			for each (glm::vec3 vertex in *cubemapVertices)
+			for(const glm::vec3 &vertex : cubemapVertices)
 			{
 				vertices.push_back(VertexPosition(vertex));
 			}
@@ -104,12 +104,12 @@ namespace vrlib
 		Author: Bas Rops - 22-05-2014
 		Last edit: <name> - dd-mm-yyyy
 		*/
-		void Cubemap::draw(glm::mat4* projectionMatrix, glm::mat4* viewMatrix)
+		void Cubemap::draw(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix)
 		{
 			if (shader)
 			{
 				//Remove the translation from the viewMatrix
-				glm::mat4 viewMatrixNoTranslation = *viewMatrix;
+				glm::mat4 viewMatrixNoTranslation = viewMatrix;
 				viewMatrixNoTranslation[3][0] = 1;
 				viewMatrixNoTranslation[3][1] = 1;
 				viewMatrixNoTranslation[3][2] = 1;
@@ -118,11 +118,12 @@ namespace vrlib
 				glDepthMask(GL_FALSE);
 				shader->use();
 				bindTexture();
-				shader->setUniformMatrix4("viewProjectionMatrix", *projectionMatrix * viewMatrixNoTranslation);
+				shader->setUniformMatrix4("viewProjectionMatrix", projectionMatrix * viewMatrixNoTranslation);
 				vbo->bind();
-				vbo->setPointer();
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(2);
+				vbo->setVAO();
 				glDrawArrays(GL_TRIANGLES, 0, vbo->getLength());
-				vbo->unsetPointer();
 				vbo->unBind();
 				glDepthMask(GL_TRUE);
 			}
