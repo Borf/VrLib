@@ -167,6 +167,10 @@ namespace vrlib
 				EndDialog(hWnd, 0);
 				return TRUE;
 			}
+		case WM_MOUSEWHEEL:
+			if (mouseDriver)
+				mouseDriver->mouseScroll(GET_WHEEL_DELTA_WPARAM(wParam));
+			break;
 		}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);

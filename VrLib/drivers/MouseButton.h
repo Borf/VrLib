@@ -32,7 +32,8 @@ namespace vrlib
 		MouseButtonDeviceDriver();
 		virtual void mouseDown(MouseButton button);
 		virtual void mouseUp(MouseButton button);
-		virtual void mouseMove(int x, int y) { }
+		virtual void mouseMove(int x, int y) { };
+		virtual void mouseScroll(int offset) {};
 
 		bool isPressed(MouseButton button);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);

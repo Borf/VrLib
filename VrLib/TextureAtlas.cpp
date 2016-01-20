@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-#define TEXTURE_ATLAS_SIZE 2048
+#define TEXTURE_ATLAS_SIZE 4096
 
 namespace vrlib
 {
