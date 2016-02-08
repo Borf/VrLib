@@ -28,7 +28,7 @@ namespace vrlib
 		glm::mat4 camera = cameraDevice->getData();
 
 		float aspect = (windowWidth * this->width()) / (windowHeight * this->height());
-		return glm::perspective(glm::radians(45.0f), aspect, 0.2f, 100.0f) * camera;
+		return glm::perspective(glm::radians(45.0f), aspect, 0.2f, 1000.0f) * camera;
 	}
 
 #define HEADSIZE 0.1f
