@@ -273,6 +273,9 @@
     <ClInclude Include="VrLib\NormalApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\drivers\Sim2dInput.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -493,6 +496,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\NormalApp.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\Sim2dInput.cpp">
+      <Filter>drivers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
