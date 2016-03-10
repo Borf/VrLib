@@ -108,7 +108,21 @@ namespace vrlib
 			aiString texPath;
 			
 			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == aiReturn_SUCCESS)
-				m.material.texture = vrlib::Texture::loadCached(path + "/" + texPath.C_Str());
+			{
+				std::string file = texPath.C_Str();
+				m.material.texture = vrlib::Texture::loadCached(path + "/" + file);
+				while (!m.material.texture && file.find("/") != std::string::npos)
+				{
+					file = file.substr(file.find("/") + 1);
+					m.material.texture = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				while(!m.material.texture && file.find("\\") != std::string::npos)
+				{
+					file = file.substr(file.find("\\") + 1);
+					m.material.texture = vrlib::Texture::loadCached(path + "/" + file);
+				}
+
+			}
 			else
 				m.material.texture = NULL;
 			aiColor4D color;
