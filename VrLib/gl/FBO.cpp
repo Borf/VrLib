@@ -7,6 +7,7 @@ namespace vrlib
 
 		FBO::FBO(int width, int height, bool depth /*= false*/, int textureCount)
 		{
+			oldFBO = 0;
 			this->textureCount = textureCount;
 			depthBuffer = 0;
 			fbo = 0;
@@ -48,6 +49,9 @@ namespace vrlib
 
 		void FBO::bind()
 		{
+			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+			if (oldFBO < 0)
+				oldFBO = 0;
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
@@ -58,7 +62,7 @@ namespace vrlib
 
 		void FBO::unbind()
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, 0);
 			static GLenum buffers[] = { GL_BACK };

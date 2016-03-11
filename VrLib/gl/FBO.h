@@ -24,6 +24,7 @@ namespace vrlib
 			GLuint fbo;
 			GLuint depthBuffer;
 			int textureCount;
+			GLint oldFBO;
 		public:
 			FBO(int width, int height, bool depth = false, int textureCount = 1);
 
