@@ -30,5 +30,7 @@ namespace vrlib
 		void bind();
 
 		void loadDds(const std::string &fileName);
+
+		void setNearestFilter();
 	};
 }
