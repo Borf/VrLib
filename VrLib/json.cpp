@@ -442,6 +442,9 @@ namespace vrlib
 		};
 		static Value eatNull(std::istream& stream)
 		{
+			stream.get(); // u
+			stream.get(); // l
+			stream.get(); // l
 			return Value(Type::nullValue);
 		};
 
