@@ -23,6 +23,8 @@ void onDebug(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei len
 
 	if (type == 33361) //VBO setdata
 		return;
+	if (type == 33357) //deprication warning
+		return;
 	printf("%s\n", message);
 }
 namespace vrlib

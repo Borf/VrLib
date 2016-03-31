@@ -60,6 +60,14 @@ namespace vrlib
 			addFragmentShader(fragShader);
 		}
 
+		ShaderProgram::ShaderProgram(std::string vertShader, std::string fragShader, std::string geoShader)
+		{
+			programId = glCreateProgram();
+			addVertexShader(vertShader);
+			addFragmentShader(fragShader);
+			addGeometryShader(geoShader);
+		}
+
 		ShaderProgram::~ShaderProgram(void)
 		{
 		}
@@ -95,6 +103,13 @@ namespace vrlib
 		void ShaderProgram::addFragmentShader(std::string filename)
 		{
 			Shader* s = new Shader(filename, GL_FRAGMENT_SHADER);
+			shaders.push_back(s);
+			glAttachShader(programId, s->shaderId);
+		}
+
+		void ShaderProgram::addGeometryShader(std::string filename)
+		{
+			Shader* s = new Shader(filename, GL_GEOMETRY_SHADER);
 			shaders.push_back(s);
 			glAttachShader(programId, s->shaderId);
 		}
@@ -198,6 +213,15 @@ namespace vrlib
 			addShader(vertShader, GL_VERTEX_SHADER);
 			addShader(fragShader, GL_FRAGMENT_SHADER);
 			printProgramInfoLog(vertShader + "/" + fragShader, programId);
+		}
+
+		UntypedShader::UntypedShader(std::string vertShader, std::string fragShader, std::string geoShader)
+		{
+			programId = glCreateProgram();
+			addShader(vertShader, GL_VERTEX_SHADER);
+			addShader(fragShader, GL_FRAGMENT_SHADER);
+			addShader(geoShader, GL_GEOMETRY_SHADER);
+			printProgramInfoLog(vertShader + "/" + fragShader + "/" + geoShader, programId);
 		}
 
 		void UntypedShader::bindAttributeLocation(std::string name, int position)
