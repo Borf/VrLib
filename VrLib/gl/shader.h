@@ -28,11 +28,12 @@ namespace vrlib
 
 		public:
 			ShaderProgram(std::string vertShader, std::string fragShader);
+			ShaderProgram(std::string vertShader, std::string fragShader, std::string geometryShader);
 			~ShaderProgram();
 
 			void addVertexShader(std::string filename);
 			void addFragmentShader(std::string filename);
-
+			void addGeometryShader(std::string filename);
 			//attributes
 			void bindAttributeLocation(std::string name, int position);
 			void bindFragLocation(std::string name, int position);
@@ -60,6 +61,7 @@ namespace vrlib
 			std::vector<int> uniformLocations;
 		public:
 			UntypedShader(std::string vertShader, std::string fragShader);
+			UntypedShader(std::string vertShader, std::string fragShader, std::string geoShader);
 			virtual ~UntypedShader() {};
 			void addShader(std::string fileName, int shaderType);
 
@@ -86,6 +88,10 @@ namespace vrlib
 		{
 		public:
 			Shader(std::string vertShader, std::string fragShader) : UntypedShader(vertShader, fragShader)
+			{
+			}
+
+			Shader(std::string vertShader, std::string fragShader, std::string geoShader) : UntypedShader(vertShader, fragShader, geoShader)
 			{
 			}
 
