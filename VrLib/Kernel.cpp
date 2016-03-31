@@ -15,6 +15,7 @@
 #include <VrLib/drivers/MouseButton.h>
 #include <VrLib/drivers/Keyboard.h>
 #include <VrLib/drivers/SimPosition.h>
+#include <VrLib/drivers/Sim2dInput.h>
 #include <VrLib/drivers/XBOXController.h>
 #include <VrLib/drivers/Vrpn.h>
 #include <VrLib/drivers/GloveDriver.h>
@@ -45,6 +46,7 @@ namespace vrlib
 		mouseDriver = NULL;
 		keyboardDriver = NULL;
 		simPositionDriver = NULL;
+		sim2dInputDriver = NULL;
 		raceWheelDriver = NULL;
 		oculusDriver = NULL;
 		serverConnection = NULL;
@@ -167,6 +169,14 @@ namespace vrlib
 			if (simPositionDriver)
 				logger << "Double simpositiondriver" << Log::newline;
 			simPositionDriver = driver;
+			return driver;
+		}
+		else if (name == "Sim2d")
+		{
+			Sim2dInputDeviceDriver* driver = new Sim2dInputDeviceDriver(config["driverconfig"]["Sim2d"]);
+			if (sim2dInputDriver)
+				logger << "Double sim2dDriver" << Log::newline;
+			sim2dInputDriver = driver;
 			return driver;
 		}
 		else if (name == "XBOX")
@@ -406,6 +416,8 @@ namespace vrlib
 	{
 		if (simPositionDriver && keyboardDriver)
 			simPositionDriver->update(keyboardDriver, frameTime);
+		if (sim2dInputDriver && keyboardDriver)
+			sim2dInputDriver->update(keyboardDriver, frameTime);
 
 		if (oculusDriver && keyboardDriver)
 			oculusDriver->update(keyboardDriver);

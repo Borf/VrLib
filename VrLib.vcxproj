@@ -117,6 +117,7 @@
     <ClInclude Include="VrLib\drivers\MouseButton.h" />
     <ClInclude Include="VrLib\drivers\Oculus.h" />
     <ClInclude Include="VrLib\drivers\RaceWheelDriver.h" />
+    <ClInclude Include="VrLib\drivers\Sim2dInput.h" />
     <ClInclude Include="VrLib\drivers\SimPosition.h" />
     <ClInclude Include="VrLib\drivers\Vrpn.h" />
     <ClInclude Include="VrLib\drivers\XBOXController.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="VrLib\drivers\MouseButton.cpp" />
     <ClCompile Include="VrLib\drivers\Oculus.cpp" />
     <ClCompile Include="VrLib\drivers\RaceWheelDriver.cpp" />
+    <ClCompile Include="VrLib\drivers\Sim2dInput.cpp" />
     <ClCompile Include="VrLib\drivers\SimPosition.cpp" />
     <ClCompile Include="VrLib\drivers\Vrpn.cpp" />
     <ClCompile Include="VrLib\drivers\XBOXController.cpp" />

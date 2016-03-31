@@ -14,10 +14,10 @@ namespace vrlib
 		if (cache.find(fileName) == cache.end())
 		{
 			cache[fileName] = std::pair<Texture*, int>(new Texture(fileName), 0);
-			if (cache[fileName].first->image && cache[fileName].first->image->width < 0)
+			if (!cache[fileName].first->loaded || (cache[fileName].first->image && cache[fileName].first->image->width < 0))
 			{
 				delete cache[fileName].first;
-				cache[fileName].second = NULL;
+				cache[fileName].first = NULL;
 			}
 		}
 		cache[fileName].second++;
@@ -62,7 +62,7 @@ namespace vrlib
 
 	void Texture::load()
 	{
-		if (!image)
+		if (!image || !image->data)
 			return;
 		glGenTextures(1, &texid);
 		glBindTexture(GL_TEXTURE_2D, texid);
@@ -436,6 +436,14 @@ namespace vrlib
 		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipMapCount - 1);
 		loaded = true;
+	}
+
+	void Texture::setNearestFilter()
+	{
+		nearestFilter = true;
+		bind();
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	}
 
 }

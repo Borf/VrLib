@@ -80,7 +80,12 @@ namespace vrlib
 		{ KeyboardDeviceDriver::KEY_Y		,		"y",			'Y' },
 		{ KeyboardDeviceDriver::KEY_Z		,		"z",			'Z' },
 		{ KeyboardDeviceDriver::KEY_SPACEBAR,		"spacebar",		' ' },
+		{ KeyboardDeviceDriver::KEY_TAB		,		"tab",			VK_TAB },
 
+		{ KeyboardDeviceDriver::KEY_ARROW_UP,		"arrowup",		VK_UP },
+		{ KeyboardDeviceDriver::KEY_ARROW_DOWN,		"arrowdown",	VK_DOWN },
+		{ KeyboardDeviceDriver::KEY_ARROW_LEFT,		"arrowleft",	VK_LEFT },
+		{ KeyboardDeviceDriver::KEY_ARROW_RIGHT,	"arrowright",	VK_RIGHT },
 
 
 	

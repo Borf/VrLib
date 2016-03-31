@@ -55,6 +55,7 @@ namespace vrlib
 	class Oculus;
 	class XBOXDeviceDriver;
 	class ServerConnection;
+	class Sim2dInputDeviceDriver;
 	namespace json { class Value; }
 
 
@@ -89,6 +90,7 @@ namespace vrlib
 		MouseButtonDeviceDriver* mouseDriver;
 		KeyboardDeviceDriver* keyboardDriver;
 		SimPositionDeviceDriver* simPositionDriver;
+		Sim2dInputDeviceDriver* sim2dInputDriver;
 
 		OculusDeviceDriver* oculusDriver;
 		XBOXDeviceDriver* xboxDriver;

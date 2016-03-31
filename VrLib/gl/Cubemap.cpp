@@ -115,16 +115,21 @@ namespace vrlib
 				viewMatrixNoTranslation[3][2] = 1;
 				viewMatrixNoTranslation[3][3] = 1;
 
+				glBindVertexArray(0);
 				glDepthMask(GL_FALSE);
 				shader->use();
 				bindTexture();
 				shader->setUniformMatrix4("viewProjectionMatrix", projectionMatrix * viewMatrixNoTranslation);
 				vbo->bind();
+				glEnableVertexAttribArray(0);
 				glDisableVertexAttribArray(1);
 				glDisableVertexAttribArray(2);
 				vbo->setVAO();
 				glDrawArrays(GL_TRIANGLES, 0, vbo->getLength());
 				vbo->unBind();
+				glDisableVertexAttribArray(0);
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(2);
 				glDepthMask(GL_TRUE);
 			}
 		}
