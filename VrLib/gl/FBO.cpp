@@ -1,12 +1,15 @@
 #include "FBO.h"
+#include <VrLib/Log.h>
+using vrlib::Log;
 
 namespace vrlib
 {
 	namespace gl
 	{
 
-		FBO::FBO(int width, int height, bool depth /*= false*/, int textureCount)
+		FBO::FBO(int width, int height, bool depth /*= false*/, int textureCount, bool hasDepthTexture)
 		{
+			this->depthTexture = 0;
 			oldFBO = 0;
 			this->textureCount = textureCount;
 			depthBuffer = 0;
@@ -18,9 +21,9 @@ namespace vrlib
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 
-			glGenTextures(textureCount, texid);
 			for (int i = 0; i < textureCount; i++)
 			{
+				glGenTextures(1, &texid[i]);
 				glBindTexture(GL_TEXTURE_2D, texid[i]);
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -44,7 +47,24 @@ namespace vrlib
 #endif
 				glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 			}
+
+			if (hasDepthTexture)
+			{
+				glGenTextures(1, &texid[textureCount]);
+				glBindTexture(GL_TEXTURE_2D, texid[textureCount]);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
+				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texid[textureCount], 0);
+				glDrawBuffer(GL_NONE); // No color buffer is drawn to.
+			}
 			unbind();
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
 		void FBO::bind()
