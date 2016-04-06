@@ -27,7 +27,8 @@ namespace vrlib
 				struct sockaddr_in addr;
 				struct hostent* host;
 
-				host = gethostbyname(n[i].second.c_str());
+				//host = gethostbyname(n[i].second.c_str());
+				host = gethostbyname(nodes[i]->hostname.c_str());
 				if (host == NULL)
 				{
 					logger << "Could not look up host " << n[i].second << "', are you connected to the internet?";

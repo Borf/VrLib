@@ -283,7 +283,10 @@ namespace vrlib
 			for (size_t i = 0; i < config["computers"].size(); i++)
 			{
 				if (config["computers"][i]["host"].asString() == hostname)
+				{
 					localConfig = config["computers"][i];
+					logger << "Found config: " << hostname << Log::newline;
+				}
 			}
 		if (localConfig.isNull() && config.isMember("local"))
 			localConfig = config["local"];

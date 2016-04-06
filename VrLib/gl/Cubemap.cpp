@@ -108,11 +108,17 @@ namespace vrlib
 		{
 			if (shader)
 			{
+				glm::mat4 projectionMatrixNoTranslation = projectionMatrix;
+				projectionMatrixNoTranslation[3][0] = 0;
+				projectionMatrixNoTranslation[3][1] = 0;
+				projectionMatrixNoTranslation[3][2] = 0;
+				projectionMatrixNoTranslation[3][3] = 1;
+
 				//Remove the translation from the viewMatrix
 				glm::mat4 viewMatrixNoTranslation = viewMatrix;
-				viewMatrixNoTranslation[3][0] = 1;
-				viewMatrixNoTranslation[3][1] = 1;
-				viewMatrixNoTranslation[3][2] = 1;
+				viewMatrixNoTranslation[3][0] = 0;
+				viewMatrixNoTranslation[3][1] = 0;
+				viewMatrixNoTranslation[3][2] = 0;
 				viewMatrixNoTranslation[3][3] = 1;
 
 				glBindVertexArray(0);
