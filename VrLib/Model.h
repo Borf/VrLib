@@ -49,6 +49,8 @@ namespace vrlib
 
 		ModelInstance(Model* model);
 
+		
+		virtual void update(double elapsedTime) {};
 		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr);
 
 	};

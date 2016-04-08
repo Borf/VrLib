@@ -6,6 +6,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/quaternion.hpp>
+
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
@@ -90,7 +92,7 @@ namespace vrlib
 				for (unsigned int ii = 0; ii < mesh->mNumBones; ii++)
 				{
 					const aiBone* bone = mesh->mBones[ii];
-					for (unsigned int iii = 0; iii < bone->mNumWeights; iii++)
+					for (unsigned int iii = 0; iii < bone->mNumWeights; iii++)	// setup the vertices
 					{
 						const aiVertexWeight& weight = bone->mWeights[iii];
 						int index = (vertexStart + weight.mVertexId);
@@ -100,6 +102,19 @@ namespace vrlib
 							break; //TODO: if index iiii is already filled in, don't overwrite it, but use proper weights etc
 						}
 					}
+
+					std::string name = bone->mName.C_Str();
+
+					Bone* b = rootBone->find([&name](Bone* c) { return c->name == name; });
+					if (b)
+					{
+						b->index = ii;
+						b->offset = glm::transpose(glm::make_mat4((float*)&bone->mOffsetMatrix));
+					}
+					if (bones.size() <= ii)
+						bones.resize(ii + 1, nullptr);
+					bones[ii] = b;
+
 				}
 			}
 
@@ -199,8 +214,41 @@ namespace vrlib
 
 		vertices.reserve(numVerts);
 		indices.reserve(numIndices);
-
+		rootBone = buildSkeleton(scene->mRootNode);
 		import(glm::mat4(), scene, scene->mRootNode);
+
+
+		if (scene->HasAnimations())
+		{
+			for (unsigned int i = 0; i < scene->mNumAnimations; i++)
+			{
+				const aiAnimation* animation = scene->mAnimations[i];
+				float tps = (float)animation->mTicksPerSecond;
+				if (tps == 0) tps = 25;				
+				Animation* a = new Animation();
+				a->name = animation->mName.C_Str();
+				a->totalTime = (float)(animation->mDuration / tps);
+
+				for (unsigned int ii = 0; ii < animation->mNumChannels; ii++)
+				{
+					const aiNodeAnim* stream = animation->mChannels[ii];
+					Animation::Stream s(rootBone->find([stream](Bone* b) { return b->name == stream->mNodeName.C_Str();  }));
+					for (unsigned int iii = 0; iii < stream->mNumPositionKeys; iii++)
+						s.positions.push_back(Animation::Stream::Frame<glm::vec3>((float)(stream->mPositionKeys[iii].mTime / tps), glm::vec3(stream->mPositionKeys[iii].mValue.x, stream->mPositionKeys[iii].mValue.y, stream->mPositionKeys[iii].mValue.z)));
+					for (unsigned int iii = 0; iii < stream->mNumScalingKeys; iii++)
+						s.scales.push_back(Animation::Stream::Frame<glm::vec3>((float)(stream->mScalingKeys[iii].mTime / tps), glm::vec3(stream->mScalingKeys[iii].mValue.x, stream->mScalingKeys[iii].mValue.y, stream->mScalingKeys[iii].mValue.z)));
+					for (unsigned int iii = 0; iii < stream->mNumRotationKeys; iii++)
+						s.rotations.push_back(Animation::Stream::Frame<glm::quat>((float)(stream->mRotationKeys[iii].mTime / tps), glm::quat(stream->mRotationKeys[iii].mValue.w, stream->mRotationKeys[iii].mValue.x, stream->mRotationKeys[iii].mValue.y, stream->mRotationKeys[iii].mValue.z)));
+
+
+					a->streams.push_back(s);
+				}
+
+
+				animations[a->name] = a;
+			}
+		}
+
 		handleModelLoadOptions(vertices, options);
 
 
@@ -216,6 +264,18 @@ namespace vrlib
 
 //		indices.clear();
 //		vertices.clear();
+	}
+
+	template<class T>
+	Bone* AssimpModel<T>::buildSkeleton(const aiNode* node, Bone* parent) const
+	{
+		Bone* bone = new Bone();
+		bone->parent = parent;
+		bone->name = node->mName.C_Str();
+		bone->matrix = glm::transpose(glm::make_mat4((float*)&node->mTransformation));
+		for (unsigned int i = 0; i < node->mNumChildren; i++)
+			bone->children.push_back(buildSkeleton(node->mChildren[i]));
+		return bone;
 	}
 
 
@@ -302,14 +362,219 @@ namespace vrlib
 	////////animation stuff
 
 
-	State::State(Model* model) : vrlib::ModelInstance(model)
+	State::State(AnimatedAssimpModel* model) : vrlib::ModelInstance(model)
 	{
+		this->model = model;
+		boneMatrices.resize(model->bones.size());
+		
 		//static_cast<AssimpModel<vrlib::gl::VertexP3N3T2B4B4>*>(model)->bones;
 	}
 
 
+	void State::update(double elapsedTime)
+	{
+		if (animations.empty())
+		{
+			model->rootBone->update(this->boneMatrices, 0, NULL);
+		}
+		for (auto a : animations)
+		{
+			a->time += elapsedTime;
+			if (a->playCount != 0)
+				if (a->time > a->animation->totalTime)
+					a->playCount--;
+			a->time = fmod(a->time, a->animation->totalTime);
+		}
+		//TODO blib::linq::deletewhere(animations, [](AnimationState* a) { return a->playCount == 0; });
 
 
+		for (int i = 0; i < (int)faders.size(); i++)
+		{
+			faders[i]->elapsedTime += (float)elapsedTime;
+			float fac = glm::min(1.0f, faders[i]->elapsedTime / faders[i]->time);
+			faders[i]->animationState->blendFactor = faders[i]->begin + fac * (faders[i]->end - faders[i]->begin);
+			if (faders[i]->elapsedTime > faders[i]->time)
+			{
+				if (faders[i]->stopWhenDone)
+				{
+					for (size_t ii = 0; ii < animations.size(); ii++)
+						if (animations[ii] == faders[i]->animationState)
+							animations.erase(animations.begin() + ii);
+					delete faders[i]->animationState;
+				}
+				delete faders[i];
+				faders.erase(faders.begin() + i);
+				i--;
+			}
+		}
+
+
+		model->rootBone->update(this->boneMatrices, 0, NULL);
+		float totalFac = 0;//TODO blib::linq::sum<float>(animations, [](AnimationState* s) { return s->blendFactor; });
+		for (size_t ii = 0; ii < boneMatrices.size(); ii++)
+			boneMatrices[ii] = boneMatrices[ii] * (1 - totalFac);
+		std::vector<glm::mat4> tmpMatrices = boneMatrices;
+		for (size_t i = 0; i < animations.size(); i++)
+		{
+			model->rootBone->update(tmpMatrices, (float)animations[i]->time, animations[i]->animation);
+			for (size_t ii = 0; ii < boneMatrices.size(); ii++)
+			{
+				boneMatrices[ii] += tmpMatrices[ii] * animations[i]->blendFactor;
+			}
+		}
+	}
+
+	void State::draw(const std::function<void(const glm::mat4&)>& modelviewMatrixCallback, const std::function<void(const Material&)>& materialCallback)
+	{
+		model->draw(modelviewMatrixCallback, materialCallback);
+	}
+
+
+
+	void Bone::update(std::vector<glm::mat4> &boneMatrices, float time, Animation* animation, const glm::mat4& parentMatrix) const
+	{
+		glm::mat4 globalMatrix = parentMatrix * getMatrix(animation, time);
+		if (index >= 0)
+			boneMatrices[index] = globalMatrix * offset;
+		for (auto c : children)
+			c->update(boneMatrices, time, animation, globalMatrix);
+	}
+
+	glm::mat4 Bone::getMatrix(Animation* animation, float time) const
+	{
+		if (!animation)
+			return matrix;
+		Animation::Stream* s = animation->getStream(this); //TODO: cache this?
+		if (!s)
+			return matrix;
+
+		glm::vec3 pos;
+		glm::vec3 scale;
+		glm::quat rot;
+		{
+			unsigned int rotFrameIndex = 0;
+			while (rotFrameIndex < s->rotations.size() - 1 && time > s->rotations[rotFrameIndex + 1].time)
+				rotFrameIndex++;
+			int next = (rotFrameIndex + 1) % s->rotations.size();
+			float timeDiff = s->rotations[next].time - s->rotations[rotFrameIndex].time;
+			float offset = time - s->rotations[rotFrameIndex].time;
+			float fac = offset / timeDiff;
+			if (timeDiff == 0)
+				fac = 0;
+			assert(fac >= 0 && fac <= 1);
+			rot = glm::slerp(s->rotations[rotFrameIndex].value, s->rotations[next].value, fac);
+		}
+
+		{
+			unsigned int posFrameIndex = 0;
+			while (posFrameIndex < s->positions.size() - 1 && time > s->positions[posFrameIndex + 1].time)
+				posFrameIndex++;
+			int next = (posFrameIndex + 1) % s->positions.size();
+			float timeDiff = s->positions[next].time - s->positions[posFrameIndex].time;
+			float offset = time - s->positions[posFrameIndex].time;
+			float fac = offset / timeDiff;
+			if (timeDiff == 0)
+				fac = 0;
+			assert(fac >= 0 && fac <= 1);
+			pos = glm::mix(s->positions[posFrameIndex].value, s->positions[next].value, fac);
+		}
+
+		{
+			unsigned int scaleFrameIndex = 0;
+			while (scaleFrameIndex < s->scales.size() - 1 && time > s->scales[scaleFrameIndex + 1].time)
+				scaleFrameIndex++;
+			int next = (scaleFrameIndex + 1) % s->scales.size();
+			float timeDiff = s->scales[next].time - s->scales[scaleFrameIndex].time;
+			float offset = time - s->scales[scaleFrameIndex].time;
+			float fac = offset / timeDiff;
+			if (timeDiff == 0)
+				fac = 0;
+			assert(fac >= 0 && fac <= 1);
+			scale = glm::mix(s->scales[scaleFrameIndex].value, s->scales[next].value, fac);
+		}
+		glm::mat4 animMatrix;
+		animMatrix = glm::translate(animMatrix, pos);
+		animMatrix = animMatrix * glm::toMat4(rot);
+		animMatrix = glm::scale(animMatrix, scale);
+
+		return animMatrix;
+	}
+
+	Animation::Stream* Animation::getStream(const Bone* bone)
+	{
+		for (size_t i = 0; i < streams.size(); i++)
+			if (streams[i].bone == bone)
+				return &streams[i];
+		return NULL;
+	}
+	void State::playAnimation(const std::string& animation, float fadeInTime, bool playOnce)
+	{
+		for (size_t i = 0; i < animations.size(); i++)
+			if (animations[i]->animation->name == animation)
+				return;
+		if (model->animations.find(animation) == model->animations.end())
+			return;
+
+		AnimationState* anim = new AnimationState();
+		anim->animation = model->animations[animation];
+		anim->blendFactor = fadeInTime == 0 ? 1.0f : 0.0f;
+		anim->playCount = playOnce ? 1 : -1;
+		anim->time = 0;
+		animations.push_back(anim);
+
+		if (fadeInTime > 0)
+		{
+			Fader* fader = new Fader();
+			fader->animationState = anim;
+			fader->begin = 0;
+			fader->end = 1;
+			fader->time = fadeInTime;
+			fader->elapsedTime = 0;
+			fader->stopWhenDone = false;
+			faders.push_back(fader);
+		}
+
+
+	}
+
+	void State::stopAnimation(const std::string& animation, float fadeOutTime)
+	{
+		for (int i = 0; i < (int)faders.size(); i++)
+		{
+			if (faders[i]->animationState->animation->name == animation && faders[i]->end == 0)
+				return;
+			if (faders[i]->animationState->animation->name == animation)
+			{
+				delete faders[i];
+				faders.erase(faders.begin() + i);
+				i--;
+				continue;
+			}
+
+		}
+
+		for (size_t i = 0; i < animations.size(); i++)
+		{
+			if (animations[i]->animation->name == animation)
+			{
+				if (fadeOutTime > 0)
+				{
+					Fader* fader = new Fader();
+					fader->animationState = animations[i];
+					fader->begin = 1;
+					fader->end = 0;
+					fader->time = fadeOutTime;
+					fader->elapsedTime = 0;
+					fader->stopWhenDone = true;
+					faders.push_back(fader);
+					return;
+				}
+				//		delete animations[i];
+				animations.erase(animations.begin() + i);
+				return;
+			}
+		}
+	}
 
 
 
@@ -317,5 +582,19 @@ namespace vrlib
 	template class AssimpModel < gl::VertexP3N3 >;
 	template class AssimpModel < gl::VertexP3N3T2 >;
 	template class AssimpModel < gl::VertexP3N3T2B4B4 >;
+
+	inline Bone * Bone::find(std::function<bool(Bone*)> callback)
+	{
+		if (callback(this))
+			return this;
+		for (auto b : children)
+		{
+			Bone* f = b->find(callback);
+			if (f)
+				return f;
+		}
+		return nullptr;
+	}
+
 
 }

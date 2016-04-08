@@ -8,23 +8,32 @@
 #include <list>
 #include <map>
 #include <vector>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
 struct aiScene;
 struct aiNode;
 
 namespace vrlib
 {
 	class Animation;
+	class AnimatedAssimpModel;
+
 	class Bone
 	{
 	public:
 		std::list<Bone*> children;
-		Bone* parent;
+		Bone* parent = nullptr;
 		std::string name;
 		glm::mat4 matrix;
 
-		int index;
-		glm::mat4* offset;
+		int index = -1;
+		glm::mat4 offset;
 		glm::mat4 getMatrix(Animation* animation, float time) const;
+		void update(std::vector<glm::mat4> &boneMatrices, float time, Animation* animation, const glm::mat4& parentMatrix = glm::mat4()) const;
+
+		Bone* find(std::function<bool(Bone*)> callback);
 	};
 
 	class Animation
@@ -39,9 +48,11 @@ namespace vrlib
 			public:
 				float time;
 				T value;
+
+				Frame(float time, T value) { this->time = time; this->value = value; }
 			};
 
-			Stream(Bone* rootBone);
+			Stream(Bone* rootBone) { this->bone = rootBone; }
 
 			Bone* bone;
 			std::vector<Frame<glm::vec3> >		positions;
@@ -79,7 +90,9 @@ namespace vrlib
 			bool stopWhenDone;
 		};
 
-		State(Model* model);
+
+		AnimatedAssimpModel* model;
+		State(AnimatedAssimpModel* model);
 
 		std::vector<glm::mat4> boneMatrices;
 		std::vector<AnimationState*> animations;
@@ -88,14 +101,23 @@ namespace vrlib
 
 		void playAnimation(const std::string& animation, float fadeInTime = 0, bool playOnce = false);
 		void stopAnimation(const std::string& animation, float fadeOutTime = 0);
-		void update(float elapsedTime);
-		void draw() const;
+		void update(double elapsedTime);
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback = nullptr);
 		void drawSkeleton();
 	};
 
 
+	class AnimatedAssimpModel : public Model
+	{
+	public:
+		Bone* rootBone;
+		std::vector<Bone*> bones;
+		std::map<std::string, Animation*> animations;
+		std::vector<State*> states;
+	};
+
 	template<class VertexFormat>
-	class AssimpModel : public Model
+	class AssimpModel : public  AnimatedAssimpModel
 	{
 	public:
 		class Material : public vrlib::Material
@@ -120,6 +142,7 @@ namespace vrlib
 		AssimpModel(const std::string &fileName, const ModelLoadOptions& options);
 
 		void import(const glm::mat4 &matrix, const aiScene* scene, aiNode* node);
+		Bone* buildSkeleton(const aiNode* node, Bone* parent = nullptr) const;
 		virtual std::vector<glm::vec3> getVertices(int amount) const override;
 		virtual std::vector<glm::vec3> getTriangles() const override;
 		virtual std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> getIndexedTriangles() const override;
@@ -138,10 +161,7 @@ namespace vrlib
 		gl::VAO<VertexFormat>* vao;
 
 
-		Bone* rootBone;
-		std::vector<Bone*> bones;
-		std::map<std::string, Animation*> animations;
-		std::vector<State*> states;
+
 
 
 

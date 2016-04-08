@@ -9,6 +9,9 @@ echo Detected we're in VrEnvironment
 xcopy /q /y "%1" ..\..\..\Runtime
 robocopy /nc /ns /np /njh /njs /nfl /ndl /e "%~2data" "..\..\..\Runtime\data"
 if NOT EXIST w: GOTO byebye
+if NOT EXIST x: GOTO byebye
+if NOT EXIST y: GOTO byebye
+if NOT EXIST z: GOTO byebye
 xcopy /q /y "%1" w:\Runtime
 xcopy /q /y "%1" x:\Runtime
 xcopy /q /y "%1" y:\Runtime

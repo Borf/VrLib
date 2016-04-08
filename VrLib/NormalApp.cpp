@@ -27,8 +27,8 @@ namespace vrlib
 		kernel->config["local"]["window"]["title"] = title;
 		kernel->config["local"]["window"]["x"] = 0;
 		kernel->config["local"]["window"]["y"] = 0;
-		kernel->config["local"]["window"]["width"] = 1024;
-		kernel->config["local"]["window"]["height"] = 768;
+		kernel->config["local"]["window"]["width"] = 1920;
+		kernel->config["local"]["window"]["height"] = 1080;
 		kernel->config["local"]["window"]["border"] = true;
 		kernel->config["local"]["window"]["vsync"] = false;
 		kernel->config["local"]["window"]["cursor"] = true;
