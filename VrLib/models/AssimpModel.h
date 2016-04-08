@@ -5,12 +5,95 @@
 #include <VrLib/gl/VIO.h>
 #include <VrLib/Model.h>
 #include <functional>
-
+#include <list>
+#include <map>
+#include <vector>
 struct aiScene;
 struct aiNode;
 
 namespace vrlib
 {
+	class Animation;
+	class Bone
+	{
+	public:
+		std::list<Bone*> children;
+		Bone* parent;
+		std::string name;
+		glm::mat4 matrix;
+
+		int index;
+		glm::mat4* offset;
+		glm::mat4 getMatrix(Animation* animation, float time) const;
+	};
+
+	class Animation
+	{
+	public:
+		class Stream
+		{
+		public:
+			template<class T>
+			class Frame
+			{
+			public:
+				float time;
+				T value;
+			};
+
+			Stream(Bone* rootBone);
+
+			Bone* bone;
+			std::vector<Frame<glm::vec3> >		positions;
+			std::vector < Frame<glm::vec3> >	scales;
+			std::vector< Frame<glm::quat> >		rotations;
+		};
+
+		Animation::Stream* getStream(const Bone* bone);
+		std::vector<Stream> streams;
+		float totalTime;
+		std::string name;
+	};
+
+
+
+	class State : public vrlib::ModelInstance
+	{
+	public:
+		class AnimationState
+		{
+		public:
+			double time;
+			Animation* animation;
+			float blendFactor;
+			int playCount;
+		};
+		class Fader
+		{
+		public:
+			AnimationState* animationState;
+			float begin;
+			float end;
+			float time;
+			float elapsedTime;
+			bool stopWhenDone;
+		};
+
+		State(Model* model);
+
+		std::vector<glm::mat4> boneMatrices;
+		std::vector<AnimationState*> animations;
+		std::vector<Fader*> faders;
+
+
+		void playAnimation(const std::string& animation, float fadeInTime = 0, bool playOnce = false);
+		void stopAnimation(const std::string& animation, float fadeOutTime = 0);
+		void update(float elapsedTime);
+		void draw() const;
+		void drawSkeleton();
+	};
+
+
 	template<class VertexFormat>
 	class AssimpModel : public Model
 	{
@@ -26,9 +109,11 @@ namespace vrlib
 		public:
 			int indexStart;
 			int indexCount;
-			glm::mat4 matrix;
+			glm::mat4 localTransform;
+			glm::mat4 globalTransform;
 			Material material;
 		};
+
 
 
 
@@ -51,6 +136,14 @@ namespace vrlib
 		gl::VBO<VertexFormat> vbo;
 		gl::VIO<unsigned int> vio;
 		gl::VAO<VertexFormat>* vao;
+
+
+		Bone* rootBone;
+		std::vector<Bone*> bones;
+		std::map<std::string, Animation*> animations;
+		std::vector<State*> states;
+
+
 
 	};
 }

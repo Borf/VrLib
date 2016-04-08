@@ -81,6 +81,8 @@ namespace vrlib
 			void setUniform(int id, const glm::mat3 &value);
 			void setUniform(int id, const glm::mat4 &value);
 
+			void setUniform(int id, const std::vector<glm::mat4> &value);
+
 		};
 
 		template<class T>

@@ -26,7 +26,6 @@ namespace vrlib
 			std::vector<glm::vec3> faceNormals;
 			std::vector<glm::vec3> vertexNormals;
 			if (!mesh->HasNormals())
-			if (!mesh->HasNormals())
 			{
 				//logger<<"Mesh does not have normals...calculating" << Log::newline;
 				for (unsigned int ii = 0; ii < mesh->mNumFaces; ii++)
@@ -74,7 +73,6 @@ namespace vrlib
 				
 				setP3(v, glm::vec3(mesh->mVertices[ii].x, mesh->mVertices[ii].y, mesh->mVertices[ii].z));
 //				vertex = vertex * matrix;
-
 				if (mesh->HasTextureCoords(0))
 					setT2(v, glm::vec2(mesh->mTextureCoords[0][ii].x, 1 - mesh->mTextureCoords[0][ii].y));
 
@@ -86,6 +84,25 @@ namespace vrlib
 //					setN3(v, glm::vec3(0, 0, 1));
 				vertices.push_back(v);
 			}
+
+			if (mesh->HasBones())
+			{
+				for (unsigned int ii = 0; ii < mesh->mNumBones; ii++)
+				{
+					const aiBone* bone = mesh->mBones[ii];
+					for (unsigned int iii = 0; iii < bone->mNumWeights; iii++)
+					{
+						const aiVertexWeight& weight = bone->mWeights[iii];
+						int index = (vertexStart + weight.mVertexId);
+						for (unsigned int iiii = 0; iiii < 4; iiii++)
+						{
+							vrlib::gl::setB4(vertices[index], iiii, ii, weight.mWeight);
+							break; //TODO: if index iiii is already filled in, don't overwrite it, but use proper weights etc
+						}
+					}
+				}
+			}
+
 			
 			Mesh m;
 			m.indexStart = indices.size();
@@ -102,7 +119,8 @@ namespace vrlib
 				}
 			}
 			m.indexCount = indices.size() - m.indexStart;
-			m.matrix = transform;
+			m.localTransform = glm::transpose(glm::make_mat4((float*)&node->mTransformation));
+			m.globalTransform = transform;
 
 			
 			aiString texPath;
@@ -211,7 +229,7 @@ namespace vrlib
 			for (int i = mesh.indexStart; i < mesh.indexStart + mesh.indexCount; i++)
 			{
 				glm::vec3 v = glm::make_vec3(&vertices[indices[i]].px);
-				v = glm::vec3(mesh.matrix * glm::vec4(v, 1));
+				v = glm::vec3(mesh.globalTransform * glm::vec4(v, 1));
 				ret.push_back(glm::vec3(v.x, v.y, v.z));
 			}
 		}
@@ -232,7 +250,7 @@ namespace vrlib
 			for (int i = mesh.indexStart; i < mesh.indexStart + mesh.indexCount; i++)
 			{
 				glm::vec3 v = glm::make_vec3(&vertices[indices[i]].px);
-				v = glm::vec3(mesh.matrix * glm::vec4(v, 1));
+				v = glm::vec3(mesh.globalTransform * glm::vec4(v, 1));
 				ret.push_back(glm::vec3(v.x, v.y, v.z));
 			}
 		}
@@ -258,7 +276,7 @@ namespace vrlib
 		for (const Mesh& mesh : meshes)
 		{
 			if (modelviewMatrixCallback)
-				modelviewMatrixCallback(mesh.matrix);
+				modelviewMatrixCallback(mesh.globalTransform);
 			if (materialCallback)
 				materialCallback(mesh.material);
 			else
@@ -276,8 +294,21 @@ namespace vrlib
 	template<class VertexFormat>
 	ModelInstance* AssimpModel<VertexFormat>::getInstance()
 	{
-		return NULL;
+		return new State(this);
 	}
+
+
+
+	////////animation stuff
+
+
+	State::State(Model* model) : vrlib::ModelInstance(model)
+	{
+		//static_cast<AssimpModel<vrlib::gl::VertexP3N3T2B4B4>*>(model)->bones;
+	}
+
+
+
 
 
 
@@ -285,5 +316,6 @@ namespace vrlib
 	template class AssimpModel < gl::VertexP3 > ;
 	template class AssimpModel < gl::VertexP3N3 >;
 	template class AssimpModel < gl::VertexP3N3T2 >;
+	template class AssimpModel < gl::VertexP3N3T2B4B4 >;
 
 }

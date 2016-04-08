@@ -259,6 +259,7 @@ namespace vrlib
 
 	template class LoLModel < gl::VertexP3 >;
 	template class LoLModel < gl::VertexP3N3 >;
-	template class LoLModel < gl::VertexP3N3T2 > ;
+	template class LoLModel < gl::VertexP3N3T2 >;
+	template class LoLModel < gl::VertexP3N3T2B4B4 >;
 
 }

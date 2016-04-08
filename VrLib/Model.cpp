@@ -155,9 +155,20 @@ namespace vrlib
 	}
 
 
+#define prototypes(x) \
+	template Model* Model::getModel< gl::x >(const std::string &fileName, const ModelLoadOptions &options); \
+	template void Model::handleModelLoadOptions< gl::x >(std::vector<gl::x> &vertices, const ModelLoadOptions &options); \
+	template void Model::scaleToSize< gl::x >(std::vector<gl::x> &vertices, float maxSize); \
+	template void Model::recenterToCenter< gl::x >(std::vector<gl::x> &vertices);
 
 
-	template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
+	prototypes(VertexP3);
+	prototypes(VertexP3N3);
+	prototypes(VertexP3N3T2);
+	prototypes(VertexP3N3T2B4B4);
+
+
+	/*template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
 	template Model* Model::getModel< gl::VertexP3N3 >(const std::string &fileName, const ModelLoadOptions &options);
 	template Model* Model::getModel< gl::VertexP3N3T2 >(const std::string &fileName, const ModelLoadOptions &options);
 
@@ -175,5 +186,5 @@ namespace vrlib
 
 	template void Model::recenterToCenterBottom< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices);
 	template void Model::recenterToCenterBottom< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices);
-	template void Model::recenterToCenterBottom< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices);
+	template void Model::recenterToCenterBottom< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices);*/
 }

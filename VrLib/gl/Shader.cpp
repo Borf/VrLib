@@ -286,6 +286,15 @@ namespace vrlib
 		{
 			glUniformMatrix4fv(uniformLocations[id], 1, 0, glm::value_ptr(value));
 		}
+		void UntypedShader::setUniform(int id, const std::vector<glm::mat4> &values)
+		{
+			float* data = new float[values.size() * 16];
+			for (size_t i = 0; i < values.size(); i++)
+				memcpy(&data[i * 16], glm::value_ptr(values[i]), 4*4*4);
+
+			glUniformMatrix4fv(uniformLocations[id], values.size(), 0, data);
+			delete[] data;
+		}
 
 	}
 }
