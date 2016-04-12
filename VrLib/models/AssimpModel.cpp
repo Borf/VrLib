@@ -98,8 +98,11 @@ namespace vrlib
 						int index = (vertexStart + weight.mVertexId);
 						for (unsigned int iiii = 0; iiii < 4; iiii++)
 						{
+							if(vrlib::gl::getBoneId(vertices[index], iiii) == -1)
+							{
 							vrlib::gl::setB4(vertices[index], iiii, ii, weight.mWeight);
 							break; //TODO: if index iiii is already filled in, don't overwrite it, but use proper weights etc
+							}
 						}
 					}
 
@@ -513,7 +516,14 @@ namespace vrlib
 			if (animations[i]->animation->name == animation)
 				return;
 		if (model->animations.find(animation) == model->animations.end())
+		{
+			logger << "Could not find animation " << animation << Log::newline <<"Animations ("<<model->animations.size()<<"): ";
+			for (auto a : model->animations)
+				logger << a.first << ", ";
+			logger << Log::newline;
+
 			return;
+		}
 
 		AnimationState* anim = new AnimationState();
 		anim->animation = model->animations[animation];
