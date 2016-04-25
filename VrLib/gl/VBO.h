@@ -51,6 +51,11 @@ namespace vrlib
 					glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(T) * length, data, usage);
 			}
 
+			void updateData(int size, int offset, T* data)
+			{
+				bind();
+				glBufferSubData(GL_ARRAY_BUFFER, offset * sizeof(T), size * sizeof(T), data);
+			}
 
 			void bind()
 			{
