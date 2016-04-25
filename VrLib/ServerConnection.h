@@ -59,7 +59,7 @@ namespace vrlib
 
 		void update(double frameTime);
 		bool isConnected();
-		void send(const json::Value &value);
+		void send(const json::Value &value, int sock = 0);
 
 
 		void callBackOnce(const std::string &action, std::function<void(const json::Value &)> callback);

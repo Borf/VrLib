@@ -71,7 +71,9 @@ namespace vrlib
 			addr.sin_port = htons(apiPort);
 			memset(addr.sin_zero, 0, 8);
 
-			if ((s = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+			SOCKET tempSocket = 0;
+
+			if ((tempSocket = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 			{
 				logger << "Cannot create socket, try a reboot" << Log::newline;
 				closesocket(s);
@@ -81,13 +83,13 @@ namespace vrlib
 
 			int rc;
 			int siz = sizeof(addr);
-			rc = ::connect(s, (struct sockaddr*) &addr, siz);
+			rc = ::connect(tempSocket, (struct sockaddr*) &addr, siz);
 			if (rc < 0)
 			{
 				if(lastConnected)
 					logger << "Could not connect to api host: " << apiHost << Log::newline;
 				lastConnected = false;
-				closesocket(s);
+				closesocket(tempSocket);
 				Sleep(1000);
 				continue;
 			}
@@ -101,7 +103,9 @@ namespace vrlib
 			packet["data"]["renderer"] = std::string((char*)renderer);
 			packet["data"]["starttime"] = startTime;
 			packet["data"]["user"] = username;
-			send(packet);
+			send(packet, tempSocket);
+
+			s = tempSocket;
 
 			std::string buffer;
 			char buf[1024];
@@ -158,19 +162,21 @@ namespace vrlib
 		}
 	}
 
-	void ServerConnection::send(const json::Value &value)
+	void ServerConnection::send(const json::Value &value, int sock)
 	{
+		while (s == 0 && sock == 0)
+			Sleep(10);
 		std::string data;
 		data << value;
 		unsigned int len = data.size();
-		int rc = ::send(s, (char*)&len, 4, 0);
+		int rc = ::send(sock == 0 ? s : sock, (char*)&len, 4, 0);
 		if (rc < 0)
 		{
 			closesocket(s);
 			s = 0;
 			return;
 		}
-		::send(s, data.c_str(), data.size(), 0);
+		::send(sock == 0 ? s : sock, data.c_str(), data.size(), 0);
 		if (rc < 0)
 		{
 			closesocket(s);
