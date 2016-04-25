@@ -125,7 +125,7 @@ namespace vrlib
 				glDepthMask(GL_FALSE);
 				shader->use();
 				bindTexture();
-				shader->setUniformMatrix4("viewProjectionMatrix", projectionMatrix * viewMatrixNoTranslation);
+				shader->setUniformMatrix4("viewProjectionMatrix", projectionMatrixNoTranslation * viewMatrixNoTranslation);
 				vbo->bind();
 				glEnableVertexAttribArray(0);
 				glDisableVertexAttribArray(1);
