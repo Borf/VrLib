@@ -173,10 +173,12 @@ namespace vrlib
 
 			projectionMatrix = glm::transpose(projectionMatrix);
 
+
 			glm::mat4 modelviewMatrix;
 			modelviewMatrix *= glm::make_mat4(rot_mat);
 			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(-EyeRenderPose->Position.x, -EyeRenderPose->Position.y, -EyeRenderPose->Position.z));
 			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, 0, -0.5f));
+			user->matrix = glm::inverse(modelviewMatrix);
 
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
@@ -188,7 +190,7 @@ namespace vrlib
 
 
 
-			application->draw(projectionMatrix, modelviewMatrix);
+			application->draw(projectionMatrix, modelviewMatrix, user->matrix);
 			// Avoids an error when calling SetAndClearRenderSurface during next iteration.
 			// Without this, during the next while loop iteration SetAndClearRenderSurface
 			// would bind a framebuffer with an invalid COLOR_ATTACHMENT0 because the texture ID

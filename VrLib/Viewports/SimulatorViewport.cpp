@@ -35,6 +35,8 @@ namespace vrlib
 
 	void SimulatorViewport::draw(Application* application)
 	{
+		User* user = Kernel::getInstance()->users.front();
+
 		glm::mat4 projectionMatrix = getProjectionMatrix();
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
@@ -42,7 +44,7 @@ namespace vrlib
 		glLoadMatrixf(glm::value_ptr(projectionMatrix));
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		application->draw(projectionMatrix, glm::mat4());
+		application->draw(projectionMatrix, glm::mat4(), user->matrix);
 
 
 		glBindVertexArray(0);
@@ -62,7 +64,7 @@ namespace vrlib
 
 		glLightfv(GL_LIGHT0, GL_POSITION, glm::value_ptr(cameraDevice->getData() * glm::vec4(0, 0, 0, 1)));
 
-		glLoadMatrixf(glm::value_ptr((*Kernel::getInstance()->users.begin())->matrix));
+		glLoadMatrixf(glm::value_ptr(user->matrix));
 
 
 
