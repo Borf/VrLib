@@ -65,7 +65,7 @@ namespace vrlib
 		glLightfv(GL_LIGHT0, GL_POSITION, glm::value_ptr(cameraDevice->getData() * glm::vec4(0, 0, 0, 1)));
 
 		glLoadMatrixf(glm::value_ptr(user->matrix));
-
+		glRotatef(90, 0, 0, 1);
 
 
 
