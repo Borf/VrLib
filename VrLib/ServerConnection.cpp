@@ -164,8 +164,6 @@ namespace vrlib
 
 	void ServerConnection::send(const json::Value &value, int sock)
 	{
-		while (s == 0 && sock == 0)
-			Sleep(10);
 		std::string data;
 		data << value;
 		unsigned int len = data.size();
@@ -183,6 +181,12 @@ namespace vrlib
 			s = 0;
 			return;
 		}
+	}
+
+	void ServerConnection::waitForConnection()
+	{
+		while (s == 0)
+			Sleep(10);
 	}
 
 
@@ -237,6 +241,7 @@ namespace vrlib
 
 	Tunnel* ServerConnection::createTunnel(const std::string &sessionId)
 	{
+		waitForConnection();
 		json::Value data;
 		data["session"] = sessionId;
 		json::Value result = call("tunnel/create", data);
@@ -254,6 +259,7 @@ namespace vrlib
 
 	void ServerConnection::onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel)
 	{
+		waitForConnection();
 		json::Value v;
 		v["id"] = "session/enable";
 		v["data"].push_back("tunnel");
