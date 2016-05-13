@@ -18,7 +18,7 @@
 #pragma comment(lib, "assimp-vc140-mt.lib")
 #pragma comment(lib, "leap.lib")
 #pragma comment(lib, "libovr.lib")
-
+#pragma comment(lib, "openvr_api.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed
@@ -52,6 +52,7 @@ namespace vrlib
 	class PositionalDevice;
 	class RaceWheelDriver;
 	class OculusDeviceDriver;
+	class OpenVRDriver;
 	class Oculus;
 	class XBOXDeviceDriver;
 	class ServerConnection;
@@ -93,6 +94,7 @@ namespace vrlib
 		Sim2dInputDeviceDriver* sim2dInputDriver;
 
 		OculusDeviceDriver* oculusDriver;
+		OpenVRDriver* openvrDriver;
 		XBOXDeviceDriver* xboxDriver;
 
 		int windowWidth;

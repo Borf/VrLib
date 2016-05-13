@@ -276,6 +276,12 @@
     <ClInclude Include="VrLib\drivers\Sim2dInput.h">
       <Filter>drivers</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\drivers\OpenVR.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Viewports\OpenVRViewport.h">
+      <Filter>Viewports</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -499,6 +505,12 @@
     </ClCompile>
     <ClCompile Include="VrLib\drivers\Sim2dInput.cpp">
       <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\drivers\OpenVR.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Viewports\OpenVRViewport.cpp">
+      <Filter>Viewports</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@
       <PreprocessorDefinitions>NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\Windows\win32\$(Configuration)\VS2015;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\assimp;$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;$(SolutionDir)\Libraries\VrLib\externals\leap\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\Windows\win32\$(Configuration)\VS2015;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\assimp;$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;$(SolutionDir)\Libraries\VrLib\externals\leap\lib;$(SolutionDir)\Libraries\VrLib\externals\openvr\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>

@@ -21,6 +21,7 @@
 #include <VrLib/drivers/GloveDriver.h>
 #include <VrLib/drivers/RaceWheelDriver.h>
 #include <VrLib/drivers/Oculus.h>
+#include <VrLib/drivers/OpenVR.h>
 #include <VrLib/drivers/HydraDriver.h>
 #include <VrLib/drivers/LeapMotion.h>
 #include <VrLib/PerfMon.h>
@@ -40,16 +41,17 @@ namespace vrlib
 
 	Kernel::Kernel(void)
 	{
-		currentApplication = NULL;
-		newApplication = NULL;
+		currentApplication = nullptr;
+		newApplication = nullptr;
 
-		mouseDriver = NULL;
-		keyboardDriver = NULL;
-		simPositionDriver = NULL;
-		sim2dInputDriver = NULL;
-		raceWheelDriver = NULL;
-		oculusDriver = NULL;
-		serverConnection = NULL;
+		mouseDriver = nullptr;
+		keyboardDriver = nullptr;
+		simPositionDriver = nullptr;
+		sim2dInputDriver = nullptr;
+		raceWheelDriver = nullptr;
+		oculusDriver = nullptr;
+		openvrDriver = nullptr;
+		serverConnection = nullptr;
 	}
 
 
@@ -236,6 +238,12 @@ namespace vrlib
 			if (!oculusDriver)
 				oculusDriver = new OculusDeviceDriver(config["driverconfig"]["Oculus"]);
 			return oculusDriver;
+		}
+		else if (name == "openvr")
+		{
+			if(!openvrDriver)
+				openvrDriver = new OpenVRDriver(config["driverconfig"]["openvr"]);
+			return openvrDriver;
 		}
 		else
 		{

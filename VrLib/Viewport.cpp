@@ -5,6 +5,7 @@
 #include <VrLib/Viewports/ProjectionViewport.h>
 #include <VrLib/Viewports/SimulatorViewport.h>
 #include <VrLib/Viewports/RiftViewport.h>
+#include <VrLib/Viewports/OpenVRViewport.h>
 #include <VrLib/json.h>
 
 
@@ -48,14 +49,14 @@ namespace vrlib
 			if (viewportConfig["eye"].asString() == "right")
 				eye = 2;
 
-			ProjectionViewport* port = new ProjectionViewport(Kernel::getInstance()->getUser(viewportConfig["user"].asString()), eye, tl, tr, bl, br);
+			ProjectionViewport* port = new ProjectionViewport(kernel->getUser(viewportConfig["user"].asString()), eye, tl, tr, bl, br);
 			viewport = port;
 		}
 		else if (viewportConfig["type"].asString() == "simulator")
 		{
 			PositionalDevice* simCamera = new PositionalDevice();
 			simCamera->init(viewportConfig["camera"].asString());
-			SimulatorViewport* port = new SimulatorViewport(Kernel::getInstance()->getUser(viewportConfig["user"].asString()), simCamera);
+			SimulatorViewport* port = new SimulatorViewport(kernel->getUser(viewportConfig["user"].asString()), simCamera);
 			port->setWindowSize(kernel->windowWidth, kernel->windowHeight);
 			for (size_t ii = 0; ii < otherConfigs.size(); ii++)
 			{
@@ -76,7 +77,12 @@ namespace vrlib
 		}
 		else if (viewportConfig["type"].asString() == "riftviewport")
 		{
-			RiftViewport* port = new RiftViewport(Kernel::getInstance()->getUser(viewportConfig["user"].asString()), Kernel::getInstance()->oculusDriver, kernel);
+			RiftViewport* port = new RiftViewport(kernel->getUser(viewportConfig["user"].asString()), kernel->oculusDriver, kernel);
+			viewport = port;
+		}
+		else if (viewportConfig["type"].asString() == "openvr")
+		{
+			OpenVRViewport* port = new OpenVRViewport(kernel->getUser(viewportConfig["user"].asString()), kernel->openvrDriver, kernel);
 			viewport = port;
 		}
 		else

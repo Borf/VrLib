@@ -2,7 +2,7 @@
 
 #include <VrLib/VrLib.h>
 #include <glm/glm.hpp>
-#
+
 namespace vrlib
 {
 	class Application
