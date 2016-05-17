@@ -368,7 +368,7 @@ namespace vrlib
 
 		syncDevices(frameTime);
 
-		if (PerfMon::getInstance()->getTime() - startTime > 10)
+		if (PerfMon::getInstance()->getTime() - startTime > 14)
 			logger << "Cluster sync 1: " << PerfMon::getInstance()->getTime() - startTime << Log::newline;
 
 		if(headDevice)

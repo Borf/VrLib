@@ -18,9 +18,11 @@ namespace vrlib
 	{
 		class OpenVrDeviceDriverAdaptor : public PositionalDeviceDriverAdaptor
 		{
+			std::string src;
+			OpenVRDriver* driver;
 		public:
-			OpenVrDeviceDriverAdaptor(const std::string &config);
-			glm::mat4 getData() { return glm::mat4(); }
+			OpenVrDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config);
+			glm::mat4 getData();
 			
 		};
 
@@ -29,9 +31,21 @@ namespace vrlib
 	public:
 		vr::IVRSystem *m_pHMD;
 		vr::IVRRenderModels *m_pRenderModels;
+		
+		std::vector<int> controllers;
+		int hmdIndex;
+		std::vector<int> lighthouses;
+
+
+		glm::mat4 hmd;
+		glm::mat4 controller0;
+		glm::mat4 controller1;
+		glm::mat4 lighthouse0;
+		glm::mat4 lighthouse1;
 
 
 		OpenVRDriver(json::Value config);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
+		virtual void update();
 	};
 }

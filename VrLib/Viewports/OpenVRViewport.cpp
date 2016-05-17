@@ -25,6 +25,7 @@ namespace vrlib
 
 	OpenVRViewport::OpenVRViewport(User* user, OpenVRDriver* driver, Kernel* kernel) : Viewport(user)
 	{
+		this->openVRDriver = driver;
 		m_pHMD = driver->m_pHMD;
 
 		m_pHMD->GetRecommendedRenderTargetSize(&m_nRenderWidth, &m_nRenderHeight);
@@ -61,42 +62,8 @@ namespace vrlib
 		glGetIntegerv(GL_VIEWPORT, viewport);
 
 
-		glm::mat4 hmdMatrix;
+		glm::mat4 hmdMatrix = glm::inverse(openVRDriver->hmd);
 
-		vr::TrackedDevicePose_t m_rTrackedDevicePose[vr::k_unMaxTrackedDeviceCount];
-		vr::VRCompositor()->WaitGetPoses(m_rTrackedDevicePose, vr::k_unMaxTrackedDeviceCount, NULL, 0);
-
-		int m_iValidPoseCount = 0;
-		std::string m_strPoseClasses = "";
-		for (int nDevice = 0; nDevice < vr::k_unMaxTrackedDeviceCount; ++nDevice)
-		{
-			if (m_rTrackedDevicePose[nDevice].bPoseIsValid)
-			{
-				m_iValidPoseCount++;
-				m_rmat4DevicePose[nDevice] = glm::transpose(glm::mat4(glm::make_mat3x4((float*)m_rTrackedDevicePose[nDevice].mDeviceToAbsoluteTracking.m)));
-/*				if (m_rDevClassChar[nDevice] == 0)
-				{
-					switch (m_pHMD->GetTrackedDeviceClass(nDevice))
-					{
-					case vr::TrackedDeviceClass_Controller:        m_rDevClassChar[nDevice] = 'C'; break;
-					case vr::TrackedDeviceClass_HMD:               m_rDevClassChar[nDevice] = 'H'; break;
-					case vr::TrackedDeviceClass_Invalid:           m_rDevClassChar[nDevice] = 'I'; break;
-					case vr::TrackedDeviceClass_Other:             m_rDevClassChar[nDevice] = 'O'; break;
-					case vr::TrackedDeviceClass_TrackingReference: m_rDevClassChar[nDevice] = 'T'; break;
-					default:                                       m_rDevClassChar[nDevice] = '?'; break;
-					}
-				}
-				m_strPoseClasses += m_rDevClassChar[nDevice];*/
-
-				if (m_pHMD->GetTrackedDeviceClass(nDevice) == vr::TrackedDeviceClass_HMD)
-					hmdMatrix = glm::inverse(m_rmat4DevicePose[nDevice]);
-			}
-		}
-
-//		if (m_rTrackedDevicePose[vr::k_unTrackedDeviceIndex_Hmd].bPoseIsValid)
-//		{
-			//glm::mat4 hmdMatrix = m_rmat4DevicePose[vr::k_unTrackedDeviceIndex_Hmd];
-//		}
 
 		glBindVertexArray(0);
 		glDisableVertexAttribArray(0);
@@ -111,7 +78,7 @@ namespace vrlib
 		glViewport(0, 0, m_nRenderWidth, m_nRenderHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-		application->draw(projectionLeft, hmdMatrix * viewLeft, glm::mat4());
+		application->draw(projectionLeft, viewLeft * hmdMatrix, glm::mat4());
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glDisable(GL_MULTISAMPLE);
@@ -133,7 +100,7 @@ namespace vrlib
 		glViewport(0, 0, m_nRenderWidth, m_nRenderHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-		application->draw(projectionRight, hmdMatrix * viewRight, glm::mat4());
+		application->draw(projectionRight, viewRight * hmdMatrix, glm::mat4());
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glDisable(GL_MULTISAMPLE);
