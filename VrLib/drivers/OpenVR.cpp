@@ -37,6 +37,12 @@ namespace vrlib
 
 
 
+		if (!vr::VRCompositor())
+		{
+			printf("Compositor initialization failed. See log file for details\n");
+			return;
+		}
+
 	}
 
 	DeviceDriverAdaptor* OpenVRDriver::getAdaptor(std::string options)
