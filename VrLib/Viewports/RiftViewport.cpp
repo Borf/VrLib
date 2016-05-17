@@ -27,7 +27,7 @@ namespace vrlib
 {
 
 	/* convert a quaternion to a rotation matrix */
-	void quat_to_matrix(const float *quat, float *mat)
+	static void quat_to_matrix(const float *quat, float *mat)
 	{
 		mat[0] = 1.0f - 2.0f * quat[1] * quat[1] - 2.0f * quat[2] * quat[2];
 		mat[4] = 2.0f * quat[0] * quat[1] + 2.0f * quat[3] * quat[2];
@@ -61,7 +61,7 @@ namespace vrlib
 		this->eye = eye;
 		this->oculusDriver = oculusDriver;
 
-		ovrHmd hmd = *oculusDriver->hmd;
+		ovrHmd &hmd = oculusDriver->hmd;
 		hmdDesc = ovr_GetHmdDesc(hmd);
 		ovrSizei windowSize = { hmdDesc.Resolution.w / 2, hmdDesc.Resolution.h / 2 };
 		logger << "Window size: " << windowSize.w << ", " << windowSize.h << Log::newline;
@@ -113,7 +113,7 @@ namespace vrlib
 
 	void RiftViewport::draw(Application* application)
 	{
-		ovrHmd hmd = *oculusDriver->hmd;
+		ovrHmd &hmd = oculusDriver->hmd;
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -177,7 +177,7 @@ namespace vrlib
 			glm::mat4 modelviewMatrix;
 			modelviewMatrix *= glm::make_mat4(rot_mat);
 			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(-EyeRenderPose->Position.x, -EyeRenderPose->Position.y, -EyeRenderPose->Position.z));
-			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, 0, -0.5f));
+			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, -1.5f, -0.5f));
 			user->matrix = glm::inverse(modelviewMatrix);
 
 			resetOpenGL();
@@ -239,8 +239,7 @@ namespace vrlib
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		GLint w = mirrorTexture->OGL.Header.TextureSize.w;
 		GLint h = mirrorTexture->OGL.Header.TextureSize.h;
-		glBlitFramebuffer(0, h, w, 0,
-			0, 0, w, h,
+		glBlitFramebuffer(0, h, w, 0,	viewport[0], viewport[1], viewport[2], viewport[3],
 			GL_COLOR_BUFFER_BIT, GL_NEAREST);
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 

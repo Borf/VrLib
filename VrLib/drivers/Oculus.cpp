@@ -7,52 +7,25 @@
 #include <VrLib\Kernel.h>
 #include <VrLib\Log.h>
 #include <iostream>
+#include <OVR_CAPI_GL.h>
+#include <Extras/OVR_Math.h>
 
 namespace vrlib
 {
+	static void quat_to_matrix(const float *quat, float *mat);
+
+
 	OculusDeviceDriver::OculusDeviceDriver(json::Value config)
 	{
-		this->showConfigPanel = false;
 		this->config = config;
 
-//		Json::Value::Members configMembers = config.getMemberNames();
-		/*for (size_t i = 0; i < configMembers.size(); i++)
-		{
-		static struct ActionMapping { std::string str; Action action; } actionMapping[] = {
-		{ "reset", RESET },
-		{ "inceyedist", INCREASE_EYE_DISTANCE },
-		{ "deceyedist", DECREASE_EYE_DISTANCE },
-		{ "toggleconf", TOGGLE_CONFIG }
-		};
-
-		for (int ii = 0; ii < sizeof(actionMapping) / sizeof(ActionMapping); ii++)
-		if (config[configMembers[i]].isMember(actionMapping[ii].str))
-		keyHandlers[configMembers[i]].push_back(keyhandler(actionMapping[ii].action, KeyboardDeviceDriver::parseString(config[configMembers[i]][actionMapping[ii].str].asString())));
-		}*/
-	}
-
-	void OculusDeviceDriver::update(KeyboardDeviceDriver* keyboardDriver)
-	{
-		
-	}
-
-	DeviceDriverAdaptor* OculusDeviceDriver::getAdaptor(std::string options)
-	{
 		ovrResult result = ovr_Initialize(nullptr);
 		if (!OVR_SUCCESS(result))
 			logger << "Failed to initialize libOVR." << Log::newline;
 
-		OculusDeviceDriverAdaptor* adaptor = new OculusDeviceDriverAdaptor(config["Settings"]);
-		hmd = &adaptor->hmd;
-		adaptor->eye_rdesc = &eye_rdesc[0];
-		return adaptor;
 
-	}
-
-	OculusDeviceDriver::OculusDeviceDriverAdaptor::OculusDeviceDriverAdaptor(json::Value config)
-	{
 		ovrGraphicsLuid luid;
-		ovrResult result = ovr_Create(&hmd, &luid);
+		result = ovr_Create(&hmd, &luid);
 		if (!OVR_SUCCESS(result))
 		{
 			logger << "Could not create ovr" << Log::newline;
@@ -60,40 +33,73 @@ namespace vrlib
 		}
 	}
 
-
-	glm::vec3 OculusDeviceDriver::OculusDeviceDriverAdaptor::getDirection()
+	void OculusDeviceDriver::update(KeyboardDeviceDriver* keyboardDriver)
 	{
-		//return getEulerAngles(sensorFusion.GetPredictedOrientation());
-		return glm::vec3();
+		ovrVector3f               ViewOffset[2] = { { 0,0,0 },{ 0,0,0 } };
+		ovrPosef                  EyeRenderPose[2];
+		double           ftiming = ovr_GetPredictedDisplayTime(hmd, 0);
+		double           sensorSampleTime = ovr_GetTimeInSeconds();
+		ovrTrackingState hmdState = ovr_GetTrackingState(hmd, ftiming, ovrTrue);
+		ovr_CalcEyePoses(hmdState.HeadPose.ThePose, ViewOffset, EyeRenderPose);
+		static OVR::Vector3f Pos2(0.0f, 1.6f, -5.0f);
+
+
+		// Get view and projection matrices
+		OVR::Matrix4f rollPitchYaw = OVR::Matrix4f::RotationY(0);// Yaw);
+		OVR::Matrix4f finalRollPitchYaw = rollPitchYaw * OVR::Matrix4f(EyeRenderPose[0].Orientation);
+		OVR::Vector3f finalUp = finalRollPitchYaw.Transform(OVR::Vector3f(0, 1, 0));
+		OVR::Vector3f finalForward = finalRollPitchYaw.Transform(OVR::Vector3f(0, 0, -1));
+		OVR::Vector3f shiftedEyePos = Pos2 + rollPitchYaw.Transform(EyeRenderPose[0].Position);
+
+		OVR::Matrix4f view = OVR::Matrix4f::LookAtRH(shiftedEyePos, shiftedEyePos + finalForward, finalUp);
+		float quat[] = { EyeRenderPose[0].Orientation.x, EyeRenderPose[0].Orientation.y, EyeRenderPose[0].Orientation.z, EyeRenderPose[0].Orientation.w };
+		float rot_mat[16];
+		quat_to_matrix(quat, rot_mat);
+
+		glm::mat4 modelviewMatrix;
+		modelviewMatrix *= glm::make_mat4(rot_mat);
+		modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(-EyeRenderPose->Position.x, -EyeRenderPose->Position.y, -EyeRenderPose->Position.z));
+		modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, -1.5f, -0.5f));
+
+		headMatrix = glm::inverse(modelviewMatrix);
 	}
 
-	void quat_to_matrix(const float *quat, float *mat);
+	DeviceDriverAdaptor* OculusDeviceDriver::getAdaptor(std::string options)
+	{
+		OculusDeviceDriverAdaptor* adaptor = new OculusDeviceDriverAdaptor(this, options);
+		return adaptor;
 
+	}
+
+	OculusDeviceDriver::OculusDeviceDriverAdaptor::OculusDeviceDriverAdaptor(OculusDeviceDriver* driver, const std::string &src)
+	{
+		this->driver = driver;
+	}
+
+
+	static void quat_to_matrix(const float *quat, float *mat)
+	{
+		mat[0] = 1.0f - 2.0f * quat[1] * quat[1] - 2.0f * quat[2] * quat[2];
+		mat[4] = 2.0f * quat[0] * quat[1] + 2.0f * quat[3] * quat[2];
+		mat[8] = 2.0f * quat[2] * quat[0] - 2.0f * quat[3] * quat[1];
+		mat[12] = 0.0f;
+
+		mat[1] = 2.0f * quat[0] * quat[1] - 2.0f * quat[3] * quat[2];
+		mat[5] = 1.0f - 2.0f * quat[0] * quat[0] - 2.0f * quat[2] * quat[2];
+		mat[9] = 2.0f * quat[1] * quat[2] + 2.0f * quat[3] * quat[0];
+		mat[13] = 0.0f;
+
+		mat[2] = 2.0f * quat[2] * quat[0] + 2.0f * quat[3] * quat[1];
+		mat[6] = 2.0f * quat[1] * quat[2] - 2.0f * quat[3] * quat[0];
+		mat[10] = 1.0f - 2.0f * quat[0] * quat[0] - 2.0f * quat[1] * quat[1];
+		mat[14] = 0.0f;
+
+		mat[3] = mat[7] = mat[11] = 0.0f;
+		mat[15] = 1.0f;
+	}
 	glm::mat4 OculusDeviceDriver::OculusDeviceDriverAdaptor::getData()
 	{
-		/*	if (useTracker) {
-				return glm::mat4_cast(glm::quat(getEulerAngles(sensorFusion.GetPredictedOrientation())));
-				}
-				*/
-
-
-/*		ovrPosef pose;
-		pose = ovrHmd_GetEyePose(hmd, ovrEye_Left);
-
-		glm::mat4 ret = glm::translate(glm::mat4(), glm::vec3(eye_rdesc[ovrEye_Left].ViewAdjust.x, eye_rdesc[ovrEye_Left].ViewAdjust.y, eye_rdesc[ovrEye_Left].ViewAdjust.z));
-		glm::mat4 rotMatrix;
-		quat_to_matrix(&pose.Orientation.x, glm::value_ptr(rotMatrix));
-
-
-		return ret * rotMatrix;*/
-
-		return glm::translate(glm::mat4(), glm::vec3(0, 0, 0));
+		return driver->headMatrix;
 	}
-
-	void OculusDeviceDriver::OculusDeviceDriverAdaptor::resetSensor()
-	{
-		//sensorFusion.Reset();
-	}
-
 
 }
