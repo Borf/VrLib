@@ -180,6 +180,9 @@ namespace vrlib
 			modelviewMatrix = glm::translate(modelviewMatrix, glm::vec3(0, 0, -0.5f));
 			user->matrix = glm::inverse(modelviewMatrix);
 
+			resetOpenGL();
+
+
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
 			glLoadMatrixf(glm::value_ptr(projectionMatrix));

@@ -6,6 +6,7 @@
 
 #include <VrLib/gl/VBO.h>
 #include <VrLib/gl/Vertex.h>
+#include <VrLib/Model.h>
 
 #include <gl/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
@@ -20,6 +21,16 @@ namespace vrlib
 	SimulatorViewport::SimulatorViewport(User* user, PositionalDevice* cameraDevice) : Viewport(user)
 	{
 		this->cameraDevice = cameraDevice;
+		this->faceModel = vrlib::Model::getModel<vrlib::gl::VertexP3N3>("data/vrlib/rendermodels/face/face.obj");
+
+		shader = new vrlib::gl::Shader<Uniforms>("data/vrlib/SimViewShader.vert", "data/vrlib/SimViewShader.frag");
+		shader->bindAttributeLocation("a_position", 0);
+		shader->bindAttributeLocation("a_normal", 1);
+		shader->link();
+		shader->registerUniform(Uniforms::projectionMatrix, "projectionMatrix");
+		shader->registerUniform(Uniforms::viewMatrix, "viewMatrix");
+	//	shader->registerUniform(Uniforms::modelMatrix, "modelMatrix");
+
 	}
 
 
@@ -35,8 +46,9 @@ namespace vrlib
 
 	void SimulatorViewport::draw(Application* application)
 	{
-		User* user = Kernel::getInstance()->users.front();
+		resetOpenGL();
 
+		User* user = Kernel::getInstance()->users.front();
 		glm::mat4 projectionMatrix = getProjectionMatrix();
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
@@ -46,29 +58,17 @@ namespace vrlib
 		glLoadIdentity();
 		application->draw(projectionMatrix, glm::mat4(), user->matrix);
 
+		resetOpenGL();
 
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		shader->use();
+		shader->setUniform(Uniforms::projectionMatrix, projectionMatrix);
+		shader->setUniform(Uniforms::viewMatrix, glm::scale(glm::mat4(), glm::vec3(0.1f, 0.1f, 0.1f)));
+		faceModel->draw([this](const glm::mat4& modelMatrix)
+		{
 
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
-		glDisableClientState(GL_COLOR_ARRAY);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		});
 
-		glUseProgram(0);
-		glEnable(GL_DEPTH_TEST);
-		glLoadIdentity();
-
-		glColor4f(1, 1, 1, 1);
-
-		glLightfv(GL_LIGHT0, GL_POSITION, glm::value_ptr(cameraDevice->getData() * glm::vec4(0, 0, 0, 1)));
-
-		glLoadMatrixf(glm::value_ptr(user->matrix));
-		glRotatef(90, 0, 0, 1);
-
-
-
+		/*
 		static gl::VBO<gl::VertexPositionNormal>* faceVBO = NULL;
 		if (faceVBO == NULL)
 		{
@@ -172,7 +172,7 @@ namespace vrlib
 		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
-
+		*/
 
 	}
 

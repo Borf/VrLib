@@ -1,12 +1,14 @@
 #pragma once
 
 #include <VrLib/Viewport.h>
+#include <VrLib/gl/shader.h>
 #include <glm/glm.hpp>
 
 
 namespace vrlib
 {
 	class PositionalDevice;
+	class Model;
 
 	class SimulatorViewport : public Viewport
 	{
@@ -29,6 +31,16 @@ namespace vrlib
 		PositionalDevice* cameraDevice;
 		int windowWidth;
 		int windowHeight;
+
+		Model* faceModel;
+		enum class Uniforms
+		{
+			projectionMatrix,
+	//		modelMatrix,
+			viewMatrix,
+		};
+		gl::Shader<Uniforms>* shader;
+
 	public:
 		SimulatorViewport(User* user, PositionalDevice* cameraDevice);
 
