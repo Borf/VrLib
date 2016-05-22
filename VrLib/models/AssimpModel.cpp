@@ -169,6 +169,10 @@ namespace vrlib
 			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_SPECULAR, &color) == aiReturn_SUCCESS)
 				m.material.color.specular = glm::vec4(color.r, color.g, color.b, color.a);
 
+			float opacity;
+			if (aiGetMaterialFloat(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_OPACITY, &opacity) == aiReturn_SUCCESS)
+				m.material.color.diffuse.a = opacity;
+
 			if(m.indexCount > 0)
 				meshes.push_back(m);
 		}
