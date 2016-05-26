@@ -146,6 +146,7 @@
     <ClInclude Include="VrLib\Log.h" />
     <ClInclude Include="VrLib\math.h" />
     <ClInclude Include="VrLib\math\aabb.h" />
+    <ClInclude Include="VrLib\math\HermiteCurve.h" />
     <ClInclude Include="VrLib\math\Plane.h" />
     <ClInclude Include="VrLib\math\Polygon.h" />
     <ClInclude Include="VrLib\math\Ray.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="VrLib\Log.cpp" />
     <ClCompile Include="VrLib\math.cpp" />
     <ClCompile Include="VrLib\math\aabb.cpp" />
+    <ClCompile Include="VrLib\math\HermiteCurve.cpp" />
     <ClCompile Include="VrLib\math\Plane.cpp" />
     <ClCompile Include="VrLib\math\Polygon.cpp" />
     <ClCompile Include="VrLib\math\Ray.cpp" />
