@@ -1,3 +1,4 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <VrLib/ClusterManagers/ClusterManagerMaster.h>
 #include <VrLib/Log.h>
 #include <VrLib/BinaryStream.h>

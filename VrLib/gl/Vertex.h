@@ -83,6 +83,7 @@ namespace vrlib
 
 
 		template<class T>	inline void setP2(T& vertex, const glm::vec2 &p) {	}
+		template<>			inline void setP2<VertexP2>(VertexP2& vertex, const glm::vec2 &p)				{ vertex.px = p.x;		vertex.py = p.y; }
 		template<>			inline void setP2<VertexP2T2>(VertexP2T2& vertex, const glm::vec2 &p)			{ vertex.px = p.x;		vertex.py = p.y;	 }
 
 		template<class T>	inline void setP3(T& vertex, const glm::vec3 &p)								{	}

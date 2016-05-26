@@ -32,6 +32,7 @@ namespace vrlib
 		virtual void draw(Application* application) = 0;
 		virtual glm::mat4 getProjectionMatrix() = 0;
 
+		void resetOpenGL();
 
 		static Viewport* createViewport(Kernel* kernel, json::Value viewportConfig, json::Value otherConfigs);
 	};

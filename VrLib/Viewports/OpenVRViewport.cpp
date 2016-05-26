@@ -27,6 +27,8 @@ namespace vrlib
 	{
 		this->openVRDriver = driver;
 		m_pHMD = driver->m_pHMD;
+		if (!m_pHMD)
+			return;
 
 		m_pHMD->GetRecommendedRenderTargetSize(&m_nRenderWidth, &m_nRenderHeight);
 
@@ -58,20 +60,14 @@ namespace vrlib
 
 	void OpenVRViewport::draw(Application* application)
 	{
+		if (!m_pHMD)
+			return;
 		GLint viewport[4];
 		glGetIntegerv(GL_VIEWPORT, viewport);
 
 
 		glm::mat4 hmdMatrix = glm::inverse(openVRDriver->hmd);
-
-
-		glBindVertexArray(0);
-		glDisableVertexAttribArray(0);
-		glDisableVertexAttribArray(1);
-		glDisableVertexAttribArray(2);
-		glDisable(GL_CULL_FACE);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+		resetOpenGL();
 
 		glEnable(GL_MULTISAMPLE);
 		glBindFramebuffer(GL_FRAMEBUFFER, leftEyeDesc.m_nRenderFramebufferId);
@@ -94,6 +90,7 @@ namespace vrlib
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 		glEnable(GL_MULTISAMPLE);
+		resetOpenGL();
 
 		// Right Eye
 		glBindFramebuffer(GL_FRAMEBUFFER, rightEyeDesc.m_nRenderFramebufferId);
