@@ -290,7 +290,8 @@
     </ClInclude>
     <ClInclude Include="VrLib\math\HermiteCurve.h">
       <Filter>math</Filter>
-    <ClInclude Include="VrLib\tien\Node.h">
+	</ClInclude>
+	<ClInclude Include="VrLib\tien\Node.h">
       <Filter>tien</Filter>
     </ClInclude>
     <ClInclude Include="VrLib\tien\Renderer.h">
@@ -313,7 +314,6 @@
     </ClInclude>
     <ClInclude Include="VrLib\tien\components\Camera.h">
       <Filter>tien\components</Filter>
->>>>>>> c4e8af596a926536afededf490d4f3bf5992a2a6
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -547,7 +547,8 @@
     </ClCompile>
     <ClCompile Include="VrLib\math\HermiteCurve.cpp">
       <Filter>math</Filter>
-    <ClCompile Include="VrLib\tien\Renderer.cpp">
+	</ClCompile>
+	<ClCompile Include="VrLib\tien\Renderer.cpp">
       <Filter>tien</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\tien\Component.cpp">
@@ -570,7 +571,6 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\Camera.cpp">
       <Filter>tien\components</Filter>
->>>>>>> c4e8af596a926536afededf490d4f3bf5992a2a6
     </ClCompile>
   </ItemGroup>
 </Project>
