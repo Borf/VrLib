@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <VrLib/gl/shader.h>
+#include <VrLib/Device.h>
 
 #include "Node.h"
 
@@ -16,6 +17,7 @@ namespace vrlib
 			virtual void setTreeDirty() override;
 
 			std::list<Node*> renderables;
+			std::list<Node*> lights;
 			void updateRenderables();
 
 			enum class RenderUniform
@@ -32,7 +34,9 @@ namespace vrlib
 			
 			enum class PostLightingUniform
 			{
+				lightType,
 				lightPosition,
+				lightDirection,
 				lightColor,
 				lightRange,
 				s_color,
@@ -42,6 +46,9 @@ namespace vrlib
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			vrlib::gl::FBO* gbuffers;
 			Node* cameraNode;
+
+			vrlib::PositionalDevice mHead;
+
 		public:
 			Renderer();
 
