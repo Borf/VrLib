@@ -96,6 +96,65 @@ namespace vrlib
 			return files;
 		}
 
+		glm::vec3 randomHsv()
+		{
+			glm::vec3 in((rand() / (float)RAND_MAX) * 360, 1, 1);
+			glm::vec3 out;
+			float      hh, p, q, t, ff;
+			long        i;
+
+			if (in.y <= 0.0) {       // < is bogus, just shuts up warnings
+				out.r = in.z;
+				out.g = in.z;
+				out.b = in.z;
+				return out;
+			}
+			hh = in.x;
+			if (hh >= 360.0) hh = 0.0;
+			hh /= 60.0;
+			i = (long)hh;
+			ff = hh - i;
+			p = in.z * (1.0 - in.y);
+			q = in.z * (1.0 - (in.y * ff));
+			t = in.z * (1.0 - (in.y * (1.0 - ff)));
+
+			switch (i) {
+			case 0:
+				out.r = in.z;
+				out.g = t;
+				out.b = p;
+				break;
+			case 1:
+				out.r = q;
+				out.g = in.z;
+				out.b = p;
+				break;
+			case 2:
+				out.r = p;
+				out.g = in.z;
+				out.b = t;
+				break;
+
+			case 3:
+				out.r = p;
+				out.g = q;
+				out.b = in.z;
+				break;
+			case 4:
+				out.r = t;
+				out.g = p;
+				out.b = in.z;
+				break;
+			case 5:
+			default:
+				out.r = in.z;
+				out.g = p;
+				out.b = q;
+				break;
+			}
+			return out;
+		}
+
 	}
 
 }

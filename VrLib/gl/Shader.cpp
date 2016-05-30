@@ -168,7 +168,8 @@ namespace vrlib
 			return GLEW_VERSION_1_5 == GL_TRUE;
 		}
 
-		ShaderProgram::Shader::Shader(std::string fileName, GLenum type)
+
+		std::string getFileData(const std::string &fileName)
 		{
 			std::string data = "";
 			std::string line;
@@ -176,9 +177,26 @@ namespace vrlib
 			while (!pFile.eof() && pFile.good())
 			{
 				std::getline(pFile, line);
+				if (line.substr(0, 8) == "#include")
+				{
+					std::string path = "";
+					if (fileName.find("/") != std::string::npos)
+						path = fileName.substr(0, fileName.rfind("/")+1);
+					if (fileName.find("\\") != std::string::npos)
+						path = fileName.substr(0, fileName.rfind("\\")+1);
+					
+					std::string includeFile = "";
+					includeFile = line.substr(10, line.size() - 11); //heel vies
+					line = getFileData(path + includeFile);
+				}
 				data += line + "\n";
 			}
+			return data;
+		}
 
+		ShaderProgram::Shader::Shader(std::string fileName, GLenum type)
+		{
+			std::string data = getFileData(fileName);
 			shaderId = glCreateShader(type);
 			const char* d2 = data.c_str();
 			glShaderSource(shaderId, 1, &d2, NULL);
@@ -189,15 +207,7 @@ namespace vrlib
 
 		void UntypedShader::addShader(std::string fileName, int shaderType)
 		{
-			std::string data = "";
-			std::string line;
-			std::ifstream pFile(fileName);
-			while (!pFile.eof() && pFile.good())
-			{
-				std::getline(pFile, line);
-				data += line + "\n";
-			}
-
+			std::string data = getFileData(fileName);
 			GLuint shaderId = glCreateShader(shaderType);
 			const char* d2 = data.c_str();
 			glShaderSource(shaderId, 1, &d2, NULL);

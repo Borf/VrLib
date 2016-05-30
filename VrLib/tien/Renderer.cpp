@@ -145,9 +145,10 @@ namespace vrlib
 			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+			glEnable(GL_CULL_FACE);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_BLEND);
 
 			for (Node* c : renderables)
 			{
@@ -184,9 +185,9 @@ namespace vrlib
 			std::vector<vrlib::gl::VertexP2> verts;
 			vrlib::gl::VertexP2 vert;
 			vrlib::gl::setP2(vert, glm::vec2(-1, -1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
 			vrlib::gl::setP2(vert, glm::vec2(1, -1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
 			glDisableVertexAttribArray(0);
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
@@ -194,7 +195,7 @@ namespace vrlib
 			gbuffers->use();
 			postLightingShader->use();
 			vrlib::gl::setAttributes<vrlib::gl::VertexP2>(&verts[0]);
-			glEnable(GL_BLEND);
+			glDisable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
 
 			for (Node* c : lights)
@@ -206,7 +207,9 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, glm::vec3(t->globalTransform * glm::vec4(0, 0, 0, 1)));
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
+				//todo: only draw volumes for point lights
 				glDrawArrays(GL_QUADS, 0, 4);
+				glEnable(GL_BLEND);
 			}
 			
 
