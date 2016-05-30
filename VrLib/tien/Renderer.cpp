@@ -91,9 +91,9 @@ namespace vrlib
 			std::vector<vrlib::gl::VertexP2> verts;
 			vrlib::gl::VertexP2 vert;
 			vrlib::gl::setP2(vert, glm::vec2(-1, -1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
 			vrlib::gl::setP2(vert, glm::vec2(1, -1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
 			overlayVerts = new vrlib::gl::VBO<vrlib::gl::VertexP2>();
 			overlayVerts->setData(verts.size(), verts.data(), GL_STATIC_DRAW);
 			glDisableVertexAttribArray(0);
@@ -160,7 +160,6 @@ namespace vrlib
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
-			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_BLEND);
 
