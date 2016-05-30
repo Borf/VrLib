@@ -1,8 +1,11 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <VrLib/gl/shader.h>
 #include <VrLib/Device.h>
+#include <VrLib/gl/shader.h>
+#include <VrLib/gl/VBO.h>
+#include <VrLib/gl/VAO.h>
+#include <VrLib/gl/Vertex.h>
 
 #include "Node.h"
 
@@ -45,6 +48,10 @@ namespace vrlib
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			vrlib::gl::FBO* gbuffers;
+
+			vrlib::gl::VBO<gl::VertexP2>* overlayVerts;
+			vrlib::gl::VAO<gl::VertexP2>* overlayVao;
+
 			Node* cameraNode;
 
 			vrlib::PositionalDevice mHead;

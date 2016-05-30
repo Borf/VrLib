@@ -6,6 +6,7 @@
 #include "components/Light.h"
 
 #include <VrLib/gl/FBO.h>
+#include <VrLib/gl/VAO.h>
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
@@ -86,6 +87,19 @@ namespace vrlib
 			//TODO: change resolution of FBO to match target
 			gbuffers = new vrlib::gl::FBO(2048, 2048, true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal, vrlib::gl::FBO::Position);
 
+
+			std::vector<vrlib::gl::VertexP2> verts;
+			vrlib::gl::VertexP2 vert;
+			vrlib::gl::setP2(vert, glm::vec2(-1, -1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
+			vrlib::gl::setP2(vert, glm::vec2(1, -1));	verts.push_back(vert);
+			overlayVerts = new vrlib::gl::VBO<vrlib::gl::VertexP2>();
+			overlayVerts->setData(verts.size(), verts.data(), GL_STATIC_DRAW);
+			glDisableVertexAttribArray(0);
+			glDisableVertexAttribArray(1);
+			glDisableVertexAttribArray(2);
+			overlayVao = new vrlib::gl::VAO<vrlib::gl::VertexP2>(overlayVerts);
 
 			mHead.init("MainUserHead");
 
@@ -182,19 +196,10 @@ namespace vrlib
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glDisable(GL_DEPTH_TEST);
-			std::vector<vrlib::gl::VertexP2> verts;
-			vrlib::gl::VertexP2 vert;
-			vrlib::gl::setP2(vert, glm::vec2(-1, -1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(1, -1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
-			glDisableVertexAttribArray(0);
-			glDisableVertexAttribArray(1);
-			glDisableVertexAttribArray(2);
 
 			gbuffers->use();
 			postLightingShader->use();
-			vrlib::gl::setAttributes<vrlib::gl::VertexP2>(&verts[0]);
+			overlayVao->bind();
 			glDisable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
 
