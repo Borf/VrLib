@@ -55,7 +55,6 @@ namespace vrlib
 			renderShader->link();
 			renderShader->bindFragLocation("fragColor", 0);
 			renderShader->bindFragLocation("fragNormal", 1);
-			renderShader->bindFragLocation("fragPosition", 2);
 			//shader->bindFragLocation("fragColor", 0);
 			renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
 			renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
@@ -72,9 +71,13 @@ namespace vrlib
 			postLightingShader->bindAttributeLocation("a_position", 0);
 			postLightingShader->link();
 			postLightingShader->bindFragLocation("fragColor", 0);
+			postLightingShader->registerUniform(PostLightingUniform::modelViewMatrix, "modelViewMatrix");
+			postLightingShader->registerUniform(PostLightingUniform::projectionMatrix, "projectionMatrix");
+			postLightingShader->registerUniform(PostLightingUniform::modelViewMatrixInv, "modelViewMatrixInv");
+			postLightingShader->registerUniform(PostLightingUniform::projectionMatrixInv, "projectionMatrixInv");
 			postLightingShader->registerUniform(PostLightingUniform::s_color, "s_color");
 			postLightingShader->registerUniform(PostLightingUniform::s_normal, "s_normal");
-			postLightingShader->registerUniform(PostLightingUniform::s_position, "s_position");
+			postLightingShader->registerUniform(PostLightingUniform::s_depth, "s_depth");
 			postLightingShader->registerUniform(PostLightingUniform::lightType, "lightType");
 			postLightingShader->registerUniform(PostLightingUniform::lightPosition, "lightPosition");
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
@@ -83,23 +86,22 @@ namespace vrlib
 			postLightingShader->use();
 			postLightingShader->setUniform(PostLightingUniform::s_color, 0);
 			postLightingShader->setUniform(PostLightingUniform::s_normal, 1);
-			postLightingShader->setUniform(PostLightingUniform::s_position, 2);
-			//TODO: change resolution of FBO to match target
-			gbuffers = new vrlib::gl::FBO(2048, 2048, true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal, vrlib::gl::FBO::Position);
+			postLightingShader->setUniform(PostLightingUniform::s_depth, 2);
+			gbuffers = nullptr;
 
 
-			std::vector<vrlib::gl::VertexP2> verts;
-			vrlib::gl::VertexP2 vert;
-			vrlib::gl::setP2(vert, glm::vec2(-1, -1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(1, -1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
-			vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
-			overlayVerts = new vrlib::gl::VBO<vrlib::gl::VertexP2>();
+			std::vector<vrlib::gl::VertexP3> verts;
+			vrlib::gl::VertexP3 vert;
+			vrlib::gl::setP3(vert, glm::vec3(-1, -1, 0));	verts.push_back(vert);
+			vrlib::gl::setP3(vert, glm::vec3(1, -1, 0));	verts.push_back(vert);
+			vrlib::gl::setP3(vert, glm::vec3(1, 1, 0));	verts.push_back(vert);
+			vrlib::gl::setP3(vert, glm::vec3(-1, 1,0));	verts.push_back(vert);
+			overlayVerts = new vrlib::gl::VBO<vrlib::gl::VertexP3>();
 			overlayVerts->setData(verts.size(), verts.data(), GL_STATIC_DRAW);
 			glDisableVertexAttribArray(0);
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
-			overlayVao = new vrlib::gl::VAO<vrlib::gl::VertexP2>(overlayVerts);
+			overlayVao = new vrlib::gl::VAO<vrlib::gl::VertexP3>(overlayVerts);
 
 			mHead.init("MainUserHead");
 
@@ -146,6 +148,9 @@ namespace vrlib
 		{
 			int viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
+			if(!gbuffers)
+				gbuffers = new vrlib::gl::FBO(viewport[2] - viewport[0], viewport[3] - viewport[1], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
+
 
 			components::Camera* camera = cameraNode->getComponent<components::Camera>();
 
@@ -198,6 +203,12 @@ namespace vrlib
 
 			gbuffers->use();
 			postLightingShader->use();
+			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
+			postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, modelViewMatrix);
+			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
+			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
+
+
 			overlayVao->bind();
 			glDisable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);

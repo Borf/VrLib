@@ -37,6 +37,10 @@ namespace vrlib
 			
 			enum class PostLightingUniform
 			{
+				modelViewMatrix,
+				projectionMatrix,
+				modelViewMatrixInv,
+				projectionMatrixInv,
 				lightType,
 				lightPosition,
 				lightDirection,
@@ -44,13 +48,13 @@ namespace vrlib
 				lightRange,
 				s_color,
 				s_normal,
-				s_position
+				s_depth,
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			vrlib::gl::FBO* gbuffers;
 
-			vrlib::gl::VBO<gl::VertexP2>* overlayVerts;
-			vrlib::gl::VAO<gl::VertexP2>* overlayVao;
+			vrlib::gl::VBO<gl::VertexP3>* overlayVerts;
+			vrlib::gl::VAO<gl::VertexP3>* overlayVao;
 
 			Node* cameraNode;
 
