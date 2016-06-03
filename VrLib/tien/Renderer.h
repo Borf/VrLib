@@ -37,6 +37,7 @@ namespace vrlib
 			
 			enum class PostLightingUniform
 			{
+				windowSize,
 				modelViewMatrix,
 				projectionMatrix,
 				modelViewMatrixInv,
@@ -55,6 +56,9 @@ namespace vrlib
 
 			vrlib::gl::VBO<gl::VertexP3>* overlayVerts;
 			vrlib::gl::VAO<gl::VertexP3>* overlayVao;
+			glm::ivec2 sphere;
+			glm::ivec2 cone;
+
 
 			Node* cameraNode;
 
