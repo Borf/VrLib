@@ -6,6 +6,7 @@
 #include <WinSock2.h>
 #include <Windows.h>
 #include <algorithm>
+#include <glm/glm.hpp>
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -145,7 +146,7 @@ namespace vrlib
 		size_t sent = 0;
 		while (sent < request.size())
 		{
-			int rc = send(s, request.c_str() + sent, min(request.size()-sent, 1024), 0);
+			int rc = send(s, request.c_str() + sent, glm::min(request.size()-sent, 1024u), 0);
 			if (rc <= 0)
 			{
 				logger << "Error sending to socket" << Log::newline;

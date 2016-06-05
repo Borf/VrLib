@@ -91,6 +91,39 @@ namespace vrlib
 			gbuffers = nullptr;
 
 
+			skydome = vrlib::Model::getModel<vrlib::gl::VertexP3>("data/vrlib/tien/models/skydome.obj");
+			skydomeShader = new vrlib::gl::Shader<SkydomeUniforms>("data/vrlib/tien/shaders/skydome.vert", "data/vrlib/tien/shaders/skydome.frag");
+			skydomeShader->bindAttributeLocation("a_position", 0);
+			skydomeShader->link();
+			skydomeShader->bindFragLocation("fragColor", 0);
+			skydomeShader->registerUniform(SkydomeUniforms::projectionMatrix, "projectionMatrix");
+			skydomeShader->registerUniform(SkydomeUniforms::modelViewMatrix, "modelViewMatrix");
+			skydomeShader->registerUniform(SkydomeUniforms::glow, "glow");
+			skydomeShader->registerUniform(SkydomeUniforms::color, "color");
+			skydomeShader->registerUniform(SkydomeUniforms::sunDirection, "sunDirection");
+			skydomeShader->use();
+			skydomeShader->setUniform(SkydomeUniforms::color, 0);
+			skydomeShader->setUniform(SkydomeUniforms::glow, 1);
+			skydomeColor = vrlib::Texture::loadCached("data/vrlib/tien/Textures/sky.png");
+			skydomeColor->setTextureRepeat(false);
+			skydomeGlow = vrlib::Texture::loadCached("data/vrlib/tien/Textures/glow.png");
+			skydomeGlow->setTextureRepeat(false);
+
+			sun = vrlib::Model::getModel<vrlib::gl::VertexP3N3T2>("data/vrlib/tien/models/sun.obj");
+			moon = vrlib::Model::getModel<vrlib::gl::VertexP3N3T2>("data/vrlib/tien/models/moon.obj");
+			billboardShader = new vrlib::gl::Shader<BillboardUniforms>("data/vrlib/tien/shaders/billboard.vert", "data/vrlib/tien/shaders/billboard.frag");
+			billboardShader->bindAttributeLocation("a_position", 0);
+			billboardShader->bindAttributeLocation("a_texcoord", 2);
+			billboardShader->link();
+			billboardShader->bindFragLocation("fragColor", 0);
+			billboardShader->registerUniform(BillboardUniforms::projectionMatrix, "projectionMatrix");
+			billboardShader->registerUniform(BillboardUniforms::mat, "mat");
+			billboardShader->registerUniform(BillboardUniforms::s_texture, "s_texture");
+			billboardShader->use();
+			billboardShader->setUniform(BillboardUniforms::s_texture, 0);
+
+
+
 			std::vector<vrlib::gl::VertexP3> verts;
 			vrlib::gl::VertexP3 vert;
 			vrlib::gl::setP3(vert, glm::vec3(-1, -1, 0));	verts.push_back(vert);
@@ -442,7 +475,7 @@ namespace vrlib
 
 			fortree([this, &elapsedTime](Node* n)
 			{
-				for (Component* c : components)
+				for (Component* c : n->components)
 					c->update(elapsedTime);
 			});
 
@@ -518,11 +551,17 @@ namespace vrlib
 			gbuffers->unbind();
 
 
-
 			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glDisable(GL_DEPTH_TEST);
+
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
+				viewport[0], viewport[1], viewport[2], viewport[3],
+				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+
 
 			gbuffers->use();
 			postLightingShader->use();
@@ -536,11 +575,19 @@ namespace vrlib
 			glDisable(GL_BLEND);
 			glBlendFunc(GL_ONE, GL_ONE);
 
+			glDepthMask(GL_FALSE);
+
 			for (Node* c : lights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
 				components::Transform* t = c->getComponent<components::Transform>();
 				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
+
+				if(l->type == components::Light::Type::directional)
+					glDisable(GL_DEPTH_TEST);
+				else
+					glEnable(GL_DEPTH_TEST);
+
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
@@ -554,8 +601,57 @@ namespace vrlib
 				glEnable(GL_BLEND);
 			}
 			
+			glDepthMask(GL_TRUE);
+
+			skydomeShader->use();
+			skydomeShader->setUniform(SkydomeUniforms::projectionMatrix, projectionMatrix);
+			skydomeShader->setUniform(SkydomeUniforms::modelViewMatrix, glm::scale(modelViewMatrix, glm::vec3(4.0,4.0,4.0)));
+
+			glActiveTexture(GL_TEXTURE1);
+			skydomeGlow->bind();
+			glActiveTexture(GL_TEXTURE0);
+			skydomeColor->bind();
 
 
+			static float now = 0;
+			now += 0.000125f;
+
+			glm::vec3 sunDirection(0, cos(now), sin(now));
+
+			//lights.front()->getComponent<components::Transform>()->position = sunDirection;
+			//glm::vec3 sunDirection(0, 1, -1);
+			sunDirection = glm::normalize(sunDirection);
+
+			skydomeShader->setUniform(SkydomeUniforms::sunDirection, sunDirection);
+
+			float k = float(glm::max(+glm::cos(glm::radians(now)), 0.0f));
+			float b = float(glm::max(-glm::cos(glm::radians(now)), 0.0f));
+
+			float A[4] = { 0.5f * k,
+				0.5f * k,
+				0.7f * k, 0.0f };
+
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			skydome->draw([](const glm::mat4 &mat) {});
+
+			glm::vec3 cameraPos(modelViewMatrix * glm::vec4(0, 0, 0, 1));
+			glm::vec3 pos = 4*45.0f * sunDirection;
+
+
+			glDisable(GL_CULL_FACE);
+			billboardShader->use();
+			billboardShader->setUniform(BillboardUniforms::projectionMatrix, projectionMatrix);
+			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(5,5,5)));
+			sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
+				material.texture->bind();
+			});
+
+			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(-pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(15, 15, 15)));
+			moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
+				material.texture->bind();
+			});
 
 			//camera->target->bind();
 

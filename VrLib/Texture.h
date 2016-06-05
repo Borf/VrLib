@@ -32,5 +32,6 @@ namespace vrlib
 		void loadDds(const std::string &fileName);
 
 		void setNearestFilter();
+		void setTextureRepeat(bool repeat);
 	};
 }

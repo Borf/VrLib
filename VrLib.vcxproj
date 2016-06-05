@@ -52,7 +52,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GLM_FORCE_RADIANS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GLM_FORCE_RADIANS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;externals/openvr/headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -77,9 +77,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;externals/openvr/headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -168,6 +169,7 @@
     <ClInclude Include="VrLib\tien\components\ModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\RigidBody.h" />
     <ClInclude Include="VrLib\tien\components\Transform.h" />
+    <ClInclude Include="VrLib\tien\components\TransformAttach.h" />
     <ClInclude Include="VrLib\tien\Node.h" />
     <ClInclude Include="VrLib\tien\Renderer.h" />
     <ClInclude Include="VrLib\User.h" />
@@ -255,6 +257,7 @@
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\RigidBody.cpp" />
     <ClCompile Include="VrLib\tien\components\Transform.cpp" />
+    <ClCompile Include="VrLib\tien\components\TransformAttach.cpp" />
     <ClCompile Include="VrLib\tien\Node.cpp" />
     <ClCompile Include="VrLib\tien\Renderer.cpp" />
     <ClCompile Include="VrLib\User.cpp" />

@@ -11,6 +11,8 @@
 
 namespace vrlib
 {
+	class Model;
+	class Texture;
 	namespace gl { class FBO; }
 	namespace tien
 	{
@@ -59,10 +61,34 @@ namespace vrlib
 			glm::ivec2 sphere;
 			glm::ivec2 cone;
 
-
 			Node* cameraNode;
 
 			vrlib::PositionalDevice mHead;
+
+
+			enum class SkydomeUniforms
+			{
+				modelViewMatrix,
+				projectionMatrix,
+				glow,
+				color,
+				sunDirection,
+			};
+			vrlib::gl::Shader<SkydomeUniforms>* skydomeShader;
+			vrlib::Model* skydome;
+			vrlib::Texture* skydomeColor;
+			vrlib::Texture* skydomeGlow;
+
+			enum class BillboardUniforms
+			{
+				projectionMatrix,
+				mat,
+				s_texture
+			};
+			vrlib::gl::Shader<BillboardUniforms>* billboardShader;
+			vrlib::Model* sun;
+			vrlib::Model* moon;
+
 
 		public:
 			Renderer();

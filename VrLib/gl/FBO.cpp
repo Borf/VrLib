@@ -13,12 +13,12 @@ namespace vrlib
 			oldFBO = 0;
 			this->textureCount = textureCount;
 			depthBuffer = 0;
-			fbo = 0;
+			fboId = 0;
 			this->width = width;
 			this->height = height;
 
-			glGenFramebuffers(1, &fbo);
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glGenFramebuffers(1, &fboId);
+			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
 
 
 			for (int i = 0; i < textureCount; i++)
@@ -77,12 +77,12 @@ namespace vrlib
 			oldFBO = 0;
 			this->textureCount = textureCount;
 			depthBuffer = 0;
-			fbo = 0;
+			fboId = 0;
 			this->width = width;
 			this->height = height;
 
-			glGenFramebuffers(1, &fbo);
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glGenFramebuffers(1, &fboId);
+			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
 
 			Type textures[] = { buf1, buf2, buf3, buf4 };
 			textureCount = 0;
@@ -150,7 +150,7 @@ namespace vrlib
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
 			if (oldFBO < 0)
 				oldFBO = 0;
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
 			static GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };

@@ -1,4 +1,6 @@
 #include "Node.h"
+#include "Component.h"
+#include <assert.h>
 
 namespace vrlib
 {
@@ -20,6 +22,13 @@ namespace vrlib
 			callback(this);
 			for (auto c : children)
 				c->fortree(callback);
+		}
+
+		void Node::addComponent(Component* component)
+		{
+			assert(!component->node);
+			components.push_back(component);
+			component->node = this;
 		}
 
 	}

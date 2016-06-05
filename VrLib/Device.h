@@ -31,7 +31,7 @@ namespace vrlib
 		std::string name;
 
 		virtual void init(std::string name) = 0;
-		virtual bool isInitialized() = 0;
+		virtual bool isInitialized() const = 0;
 	};
 
 
@@ -43,8 +43,8 @@ namespace vrlib
 		R	data;
 	public:
 		virtual void init(std::string name);
-		virtual R getData();
-		virtual bool isInitialized() { return driver != NULL; }
+		virtual R getData() const;
+		virtual bool isInitialized() const { return driver != NULL; }
 	};
 
 

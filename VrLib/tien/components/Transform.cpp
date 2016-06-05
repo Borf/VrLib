@@ -23,6 +23,15 @@ namespace vrlib
 
 			}
 
+			void Transform::setGlobalPosition(const glm::vec3 &position)
+			{
+				this->position = position;//TODO
+			}
+
+			void Transform::setGlobalRotation(const glm::quat &rotation)
+			{
+				this->rotation = rotation;//TODO
+			}
 
 			void Transform::buildTransform()
 			{

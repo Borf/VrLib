@@ -14,15 +14,15 @@ namespace vrlib
 		{
 		protected:
 			virtual void setTreeDirty() { parent->setTreeDirty(); };
+			std::vector<Component*> components;
+			friend class Renderer;
 
 		public:
 			std::string name;
-
 			Node* parent;
 			std::list<Node*> children;
 
 
-			std::vector<Component*> components;
 			template<class T> T* getComponent()
 			{
 				for (auto c : components)
@@ -53,7 +53,7 @@ namespace vrlib
 
 
 			void fortree(const std::function<void(Node*)> &callback);
-
+			void addComponent(Component* component);
 		};
 
 	}
