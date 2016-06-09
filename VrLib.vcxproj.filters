@@ -318,6 +318,9 @@
     <ClInclude Include="VrLib\tien\components\TransformAttach.h">
       <Filter>tien\components</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -577,6 +580,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\TransformAttach.cpp">
       <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\stb_image_write.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
