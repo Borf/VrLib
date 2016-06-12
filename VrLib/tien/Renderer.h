@@ -16,15 +16,9 @@ namespace vrlib
 	namespace gl { class FBO; }
 	namespace tien
 	{
-		class Renderer : public Node
+		class Scene;
+		class Renderer
 		{
-			bool treeDirty;
-			virtual void setTreeDirty() override;
-
-			std::list<Node*> renderables;
-			std::list<Node*> lights;
-			void updateRenderables();
-
 			enum class RenderUniform
 			{
 				modelMatrix,
@@ -61,7 +55,6 @@ namespace vrlib
 			glm::ivec2 sphere;
 			glm::ivec2 cone;
 
-			Node* cameraNode;
 
 			vrlib::PositionalDevice mHead;
 
@@ -94,8 +87,10 @@ namespace vrlib
 			Renderer();
 
 			virtual void init();
-			virtual void render(const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix);
-			virtual void update(float elapsedTime);
+
+			void buildOverlay();
+
+			virtual void render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix);
 		};
 	}
 }

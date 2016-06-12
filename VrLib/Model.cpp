@@ -1,4 +1,6 @@
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include "Model.h"
 #include "models/SimpleModel.h"
 #include "models/AssimpModel.h"

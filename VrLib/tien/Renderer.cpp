@@ -1,5 +1,5 @@
 #include "Renderer.h"
-
+#include "Scene.h"
 #include "components/ModelRenderer.h"
 #include "components/Transform.h"
 #include "components/Camera.h"
@@ -19,32 +19,10 @@ namespace vrlib
 	namespace tien
 	{
 
-		Renderer::Renderer() : Node("Root", nullptr)
+		Renderer::Renderer()
 		{
-			cameraNode = nullptr;
 		}
-
-
-		void Renderer::setTreeDirty()
-		{
-			treeDirty = true;
-		}
-
-
-		void Renderer::updateRenderables()
-		{
-			renderables.clear();
-			lights.clear();
-			fortree([this](Node* n)
-			{
-				if (n->getComponent<components::ModelRenderer>())
-					renderables.push_back(n);
-				if (n->getComponent<components::Light>())
-					lights.push_back(n);
-			});
-		}
-
-
+		
 
 		void Renderer::init()
 		{
@@ -124,12 +102,185 @@ namespace vrlib
 
 
 
+			buildOverlay();
+
+
+			mHead.init("MainUserHead");
+
+		}
+
+		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix)
+		{
+			int viewport[4];
+			glGetIntegerv(GL_VIEWPORT, viewport);
+			if(!gbuffers)
+				gbuffers = new vrlib::gl::FBO(viewport[2] - viewport[0], viewport[3] - viewport[1], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
+
+
+			if (!scene.cameraNode)
+				return;
+			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
+
+			renderShader->use();
+			renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
+			renderShader->setUniform(RenderUniform::viewMatrix, modelViewMatrix);
+			renderShader->setUniform(RenderUniform::diffuseColor, glm::vec4(1, 1, 1, 1));
+			renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
+
+			gbuffers->bind();
+			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
+			glClearColor(0, 0, 0, 1);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glEnable(GL_CULL_FACE);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_BLEND);
+
+			for (Node* c : scene.renderables)
+			{
+				components::ModelRenderer* m = c->getComponent<components::ModelRenderer>();
+				components::Transform* t = c->getComponent<components::Transform>();
+
+				m->model->draw([this, t](const glm::mat4 &modelMatrix)
+				{
+					renderShader->setUniform(RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
+					renderShader->setUniform(RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform * modelMatrix))));
+				},
+				[this](const vrlib::Material &material)
+				{
+					if (material.texture)
+					{
+						renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
+						material.texture->bind();
+					}
+					else
+					{
+						renderShader->setUniform(RenderUniform::textureFactor, 0.0f);
+						renderShader->setUniform(RenderUniform::diffuseColor, material.color.diffuse);
+					}
+				});
+			}
+			gbuffers->unbind();
+
+
+			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+			glClearColor(0.1f, 0.1f, 0.1f, 1);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffers->oldFBO);
+			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
+				viewport[0], viewport[1], viewport[2], viewport[3],
+				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+
+
+			gbuffers->use();
+			postLightingShader->use();
+			postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2] - viewport[0], viewport[3] - viewport[1]));
+			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
+			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
+			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
+
+
+			overlayVao->bind();
+			glDisable(GL_BLEND);
+			glBlendFunc(GL_ONE, GL_ONE);
+
+			glDepthMask(GL_FALSE);
+
+			for (Node* c : scene.lights)
+			{
+				components::Light* l = c->getComponent<components::Light>();
+				components::Transform* t = c->getComponent<components::Transform>();
+				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
+
+				if(l->type == components::Light::Type::directional)
+					glDisable(GL_DEPTH_TEST);
+				else
+					glEnable(GL_DEPTH_TEST);
+
+				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
+				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
+				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
+				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
+				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
+				//todo: only draw volumes for point lights
+				if(l->type == components::Light::Type::directional)
+					glDrawArrays(GL_QUADS, 0, 4);
+				else
+					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y-sphere.x);
+				glEnable(GL_BLEND);
+			}
+			
+			glDepthMask(GL_TRUE);
+
+			skydomeShader->use();
+			skydomeShader->setUniform(SkydomeUniforms::projectionMatrix, projectionMatrix);
+			skydomeShader->setUniform(SkydomeUniforms::modelViewMatrix, glm::scale(modelViewMatrix, glm::vec3(4.0,4.0,4.0)));
+
+			glActiveTexture(GL_TEXTURE1);
+			skydomeGlow->bind();
+			glActiveTexture(GL_TEXTURE0);
+			skydomeColor->bind();
+
+
+			static float now = 0;
+			now += 0.000125f;
+
+			glm::vec3 sunDirection(0, cos(now), sin(now));
+
+			//lights.front()->getComponent<components::Transform>()->position = sunDirection;
+			//glm::vec3 sunDirection(0, 1, -1);
+			sunDirection = glm::normalize(sunDirection);
+
+			skydomeShader->setUniform(SkydomeUniforms::sunDirection, sunDirection);
+
+			float k = float(glm::max(+glm::cos(glm::radians(now)), 0.0f));
+			float b = float(glm::max(-glm::cos(glm::radians(now)), 0.0f));
+
+			float A[4] = { 0.5f * k,
+				0.5f * k,
+				0.7f * k, 0.0f };
+
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+			skydome->draw([](const glm::mat4 &mat) {});
+
+			glm::vec3 cameraPos(modelViewMatrix * glm::vec4(0, 0, 0, 1));
+			glm::vec3 pos = 4*45.0f * sunDirection;
+
+
+			glDisable(GL_CULL_FACE);
+			billboardShader->use();
+			billboardShader->setUniform(BillboardUniforms::projectionMatrix, projectionMatrix);
+			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(5,5,5)));
+			sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
+				material.texture->bind();
+			});
+
+			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(-pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(15, 15, 15)));
+			moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
+				material.texture->bind();
+			});
+
+			//camera->target->bind();
+
+			//camera->target->unbind();
+
+			glDisable(GL_BLEND);
+
+		}
+
+
+		void Renderer::buildOverlay()
+		{
 			std::vector<vrlib::gl::VertexP3> verts;
 			vrlib::gl::VertexP3 vert;
 			vrlib::gl::setP3(vert, glm::vec3(-1, -1, 0));	verts.push_back(vert);
 			vrlib::gl::setP3(vert, glm::vec3(1, -1, 0));	verts.push_back(vert);
 			vrlib::gl::setP3(vert, glm::vec3(1, 1, 0));	verts.push_back(vert);
-			vrlib::gl::setP3(vert, glm::vec3(-1, 1,0));	verts.push_back(vert);
+			vrlib::gl::setP3(vert, glm::vec3(-1, 1, 0));	verts.push_back(vert);
 			sphere.x = verts.size();
 			vrlib::gl::setP3(vert, glm::vec3(0.000000, 0.000000, -1.000000)); verts.push_back(vert);
 			vrlib::gl::setP3(vert, glm::vec3(0.425323, -0.309011, -0.850654)); verts.push_back(vert);
@@ -458,207 +609,6 @@ namespace vrlib
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
 			overlayVao = new vrlib::gl::VAO<vrlib::gl::VertexP3>(overlayVerts);
-
-			mHead.init("MainUserHead");
-
-		}
-
-		void Renderer::update(float elapsedTime)
-		{
-			if (treeDirty)
-			{
-				updateRenderables();
-				if (!cameraNode)
-					cameraNode = findNodeWithComponent<components::Camera>();
-				treeDirty = false;
-			}
-
-			fortree([this, &elapsedTime](Node* n)
-			{
-				for (Component* c : n->components)
-					c->update(elapsedTime);
-			});
-
-			//TODO: update transform matrices
-
-			std::function<void(Node*, const glm::mat4 &)> updateTransforms;
-			updateTransforms = [this, &updateTransforms](Node* n, const glm::mat4 &parentTransform)
-			{
-				components::Transform* transform = n->getComponent<components::Transform>();
-				if (transform)
-				{
-					transform->buildTransform();
-					transform->globalTransform = parentTransform * transform->transform;
-					for (auto c : n->children)
-						updateTransforms(c, transform->globalTransform);
-				}
-				else
-					for (auto c : n->children)
-						updateTransforms(c, parentTransform);
-			};
-			updateTransforms(this, glm::mat4());
-		}
-
-
-		void Renderer::render(const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix)
-		{
-			int viewport[4];
-			glGetIntegerv(GL_VIEWPORT, viewport);
-			if(!gbuffers)
-				gbuffers = new vrlib::gl::FBO(viewport[2] - viewport[0], viewport[3] - viewport[1], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
-
-
-			components::Camera* camera = cameraNode->getComponent<components::Camera>();
-
-			renderShader->use();
-			renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
-			renderShader->setUniform(RenderUniform::viewMatrix, modelViewMatrix);
-			renderShader->setUniform(RenderUniform::diffuseColor, glm::vec4(1, 1, 1, 1));
-			renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
-
-			gbuffers->bind();
-			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
-			glClearColor(0, 0, 0, 1);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glEnable(GL_CULL_FACE);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDisable(GL_BLEND);
-
-			for (Node* c : renderables)
-			{
-				components::ModelRenderer* m = c->getComponent<components::ModelRenderer>();
-				components::Transform* t = c->getComponent<components::Transform>();
-
-				m->model->draw([this, t](const glm::mat4 &modelMatrix)
-				{
-					renderShader->setUniform(RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-					renderShader->setUniform(RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform * modelMatrix))));
-				},
-				[this](const vrlib::Material &material)
-				{
-					if (material.texture)
-					{
-						renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
-						material.texture->bind();
-					}
-					else
-					{
-						renderShader->setUniform(RenderUniform::textureFactor, 0.0f);
-						renderShader->setUniform(RenderUniform::diffuseColor, material.color.diffuse);
-					}
-				});
-			}
-			gbuffers->unbind();
-
-
-			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
-				viewport[0], viewport[1], viewport[2], viewport[3],
-				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-
-
-			gbuffers->use();
-			postLightingShader->use();
-			postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2] - viewport[0], viewport[3] - viewport[1]));
-			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
-			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
-			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
-
-
-			overlayVao->bind();
-			glDisable(GL_BLEND);
-			glBlendFunc(GL_ONE, GL_ONE);
-
-			glDepthMask(GL_FALSE);
-
-			for (Node* c : lights)
-			{
-				components::Light* l = c->getComponent<components::Light>();
-				components::Transform* t = c->getComponent<components::Transform>();
-				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
-
-				if(l->type == components::Light::Type::directional)
-					glDisable(GL_DEPTH_TEST);
-				else
-					glEnable(GL_DEPTH_TEST);
-
-				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
-				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
-				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
-				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
-				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
-				//todo: only draw volumes for point lights
-				if(l->type == components::Light::Type::directional)
-					glDrawArrays(GL_QUADS, 0, 4);
-				else
-					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y-sphere.x);
-				glEnable(GL_BLEND);
-			}
-			
-			glDepthMask(GL_TRUE);
-
-			skydomeShader->use();
-			skydomeShader->setUniform(SkydomeUniforms::projectionMatrix, projectionMatrix);
-			skydomeShader->setUniform(SkydomeUniforms::modelViewMatrix, glm::scale(modelViewMatrix, glm::vec3(4.0,4.0,4.0)));
-
-			glActiveTexture(GL_TEXTURE1);
-			skydomeGlow->bind();
-			glActiveTexture(GL_TEXTURE0);
-			skydomeColor->bind();
-
-
-			static float now = 0;
-			now += 0.000125f;
-
-			glm::vec3 sunDirection(0, cos(now), sin(now));
-
-			//lights.front()->getComponent<components::Transform>()->position = sunDirection;
-			//glm::vec3 sunDirection(0, 1, -1);
-			sunDirection = glm::normalize(sunDirection);
-
-			skydomeShader->setUniform(SkydomeUniforms::sunDirection, sunDirection);
-
-			float k = float(glm::max(+glm::cos(glm::radians(now)), 0.0f));
-			float b = float(glm::max(-glm::cos(glm::radians(now)), 0.0f));
-
-			float A[4] = { 0.5f * k,
-				0.5f * k,
-				0.7f * k, 0.0f };
-
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-			skydome->draw([](const glm::mat4 &mat) {});
-
-			glm::vec3 cameraPos(modelViewMatrix * glm::vec4(0, 0, 0, 1));
-			glm::vec3 pos = 4*45.0f * sunDirection;
-
-
-			glDisable(GL_CULL_FACE);
-			billboardShader->use();
-			billboardShader->setUniform(BillboardUniforms::projectionMatrix, projectionMatrix);
-			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(5,5,5)));
-			sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
-				material.texture->bind();
-			});
-
-			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(-pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(15, 15, 15)));
-			moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
-				material.texture->bind();
-			});
-
-			//camera->target->bind();
-
-			//camera->target->unbind();
-
-			glDisable(GL_BLEND);
-
 		}
 
 

@@ -134,7 +134,7 @@ namespace vrlib
 //TODO: either pick one of these depending on if the hasDepthTexture is for a shadow or depth
 		//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 		//		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_NONE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 				glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texid[textureCount], 0);
@@ -163,8 +163,17 @@ namespace vrlib
 			glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, 0);
-			static GLenum buffers[] = { GL_BACK };
-			glDrawBuffers(1, buffers);
+			if (oldFBO == 0)
+			{
+				static GLenum buffers[] = { GL_BACK };
+				glDrawBuffers(1, buffers);
+			}
+			else
+			{
+				static GLenum buffers[] = { GL_COLOR_ATTACHMENT0 };
+				glDrawBuffers(1, buffers);
+
+			}
 		}
 
 		void FBO::use()

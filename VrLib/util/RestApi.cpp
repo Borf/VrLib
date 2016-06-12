@@ -184,7 +184,7 @@ namespace vrlib
 				}
 				buffer = buffer.substr(buffer.find("\r\n\r\n") + 4);
 			}
-			if (headersFound && buffer.size() >= len && len != -1)
+			if (headersFound && (int)buffer.size() >= len && len != -1)
 				break;
 		}
 

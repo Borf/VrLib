@@ -24,9 +24,9 @@ namespace vrlib
 			GLuint depthBuffer;
 			GLuint depthTexture;
 			int textureCount;
-			GLint oldFBO;
 		public:
 			GLuint fboId;
+			GLint oldFBO;
 			enum Type
 			{
 				Color,

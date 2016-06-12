@@ -9,7 +9,7 @@ namespace vrlib
 {
 	namespace tien
 	{
-		class Renderer;
+		class Scene;
 
 		namespace components
 		{
@@ -17,7 +17,7 @@ namespace vrlib
 			{
 			private:
 				void buildTransform();
-				friend class vrlib::tien::Renderer;
+				friend class vrlib::tien::Scene;
 			public:
 				glm::vec3 position;
 				glm::quat rotation;

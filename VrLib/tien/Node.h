@@ -15,11 +15,13 @@ namespace vrlib
 		protected:
 			virtual void setTreeDirty() { parent->setTreeDirty(); };
 			std::vector<Component*> components;
-			friend class Renderer;
+			friend class Scene;
 
+			Node(const Node* original);
 		public:
 			std::string name;
 			Node* parent;
+			const Node* orig;
 			std::list<Node*> children;
 
 
@@ -47,7 +49,6 @@ namespace vrlib
 				}
 				return nullptr;
 			}
-
 
 			Node(const std::string &name, Node* parent);
 
