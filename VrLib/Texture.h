@@ -26,6 +26,8 @@ namespace vrlib
 		bool nearestFilter = false;
 		
 
+		bool usesAlphaChannel;
+
 		void load();
 		void bind();
 

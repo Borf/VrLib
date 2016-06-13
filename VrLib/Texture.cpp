@@ -64,6 +64,7 @@ namespace vrlib
 	{
 		if (!image || !image->data)
 			return;
+		usesAlphaChannel = image->usesAlpha;
 		glGenTextures(1, &texid);
 		glBindTexture(GL_TEXTURE_2D, texid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);

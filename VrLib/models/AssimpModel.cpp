@@ -364,6 +364,20 @@ namespace vrlib
 		return new State(this);
 	}
 
+	template<class VertexFormat>
+	bool AssimpModel<VertexFormat>::hasAlphaMaterial()
+	{
+		for (const auto &mesh : meshes)
+		{
+			if (mesh.material.texture)
+			{
+				if (mesh.material.texture->usesAlphaChannel)
+					return true;
+			}
+		}
+		return false;
+	}
+
 
 
 	////////animation stuff
