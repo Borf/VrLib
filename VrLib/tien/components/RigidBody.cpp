@@ -40,6 +40,8 @@ namespace vrlib
 				body = new btRigidBody(cInfo);
 
 				world->addRigidBody(body);
+				body->setActivationState(DISABLE_DEACTIVATION);
+				body->setActivationState(ACTIVE_TAG);
 
 
 			}

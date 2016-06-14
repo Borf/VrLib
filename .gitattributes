@@ -1,1 +1,0 @@
-externals\assimp\assimp-vc140-mt-static.lib filter=lfs diff=lfs merge=lfs -text
