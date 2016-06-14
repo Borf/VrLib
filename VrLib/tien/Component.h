@@ -6,6 +6,7 @@ namespace vrlib
 	{
 		class Node;
 		class Renderer;
+		class Scene;
 
 		class Component
 		{
@@ -15,7 +16,7 @@ namespace vrlib
 			Node* node;
 			friend class Node;
 		public:
-			virtual void update(float elapsedTime) {};
+			virtual void update(float elapsedTime, Scene& scene) {};
 		};
 	}
 }

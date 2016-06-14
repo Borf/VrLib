@@ -30,11 +30,12 @@ namespace vrlib
 				btRigidBody::btRigidBodyConstructionInfo cInfo(mass, this, shape, fallInertia);
 				body = new btRigidBody(cInfo);
 
+				body->setFriction(1.0f);
+				body->setRestitution(0.0f);
+
 				world->addRigidBody(body);
 				body->setActivationState(DISABLE_DEACTIVATION);
 				body->setActivationState(ACTIVE_TAG);
-
-
 			}
 
 

@@ -38,6 +38,7 @@ namespace vrlib
 			btDefaultCollisionConfiguration*        collisionConfiguration;
 			btCollisionDispatcher*                  dispatcher;
 			btSequentialImpulseConstraintSolver*    solver;
+		public:
 			btDiscreteDynamicsWorld*                world;
 
 		};

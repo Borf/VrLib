@@ -82,7 +82,7 @@ namespace vrlib
 			fortree([this, &elapsedTime](Node* n)
 			{
 				for (Component* c : n->components)
-					c->update(elapsedTime);
+					c->update(elapsedTime, *this);
 			});
 
 			//TODO: update transform matrices
