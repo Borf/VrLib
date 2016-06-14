@@ -2,8 +2,8 @@
 
 #include "../Component.h"
 
-class btRigidBody;
-class btDynamicsWorld;
+#include <btBulletDynamicsCommon.h>
+#include <glm/glm.hpp>
 
 namespace vrlib
 {
@@ -11,16 +11,19 @@ namespace vrlib
 	{
 		namespace components
 		{
-			class RigidBody : public Component
+			class RigidBody : public Component, btMotionState
 			{
 			public:
+
+
 				RigidBody(float mass);
 				btRigidBody* body;
 
 				float mass;
 
 				void init(btDynamicsWorld* world);
-				virtual void update(float elapsedTime) override;
+				virtual void getWorldTransform(btTransform & worldTrans) const override;
+				virtual void setWorldTransform(const btTransform & worldTrans) override;
 			};
 		}
 	}

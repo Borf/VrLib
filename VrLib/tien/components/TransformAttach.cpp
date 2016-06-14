@@ -21,6 +21,8 @@ namespace vrlib
 
 			void TransformAttach::update(float elapsedTime)
 			{
+				if (!device.isInitialized())
+					return;
 				glm::mat4 mat = device.getData();
 
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
@@ -32,9 +34,6 @@ namespace vrlib
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
 				if (rigidBody && rigidBody->body)
 				{
-//					rigidBody->body->setCollisionFlags(rigidBody->body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-
-
 					btTransform transform;
 					rigidBody->body->getMotionState()->getWorldTransform(transform);
 
