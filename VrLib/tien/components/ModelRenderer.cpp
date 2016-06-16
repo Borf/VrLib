@@ -8,9 +8,13 @@ namespace vrlib
 	{
 		namespace components
 		{
+			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
+
 			ModelRenderer::ModelRenderer(const std::string &fileName)
 			{
-				model = vrlib::Model::getModel<vrlib::gl::VertexP3N3T3T2>(fileName);
+				if (cache.find(fileName) == cache.end())
+					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N3T3T2>(fileName);
+				model = cache[fileName];
 			}
 
 			ModelRenderer::~ModelRenderer()

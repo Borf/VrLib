@@ -11,6 +11,7 @@
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
 
+#include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -18,9 +19,9 @@ namespace vrlib
 {
 	namespace tien
 	{
-
 		Renderer::Renderer()
 		{
+			drawPhysicsDebug = false;
 		}
 		
 
@@ -102,6 +103,17 @@ namespace vrlib
 			billboardShader->registerUniform(BillboardUniforms::s_texture, "s_texture");
 			billboardShader->use();
 			billboardShader->setUniform(BillboardUniforms::s_texture, 0);
+
+
+
+			physicsDebugShader = new vrlib::gl::Shader<PhysicsDebugUniform>("data/vrlib/tien/shaders/physicsdebug.vert", "data/vrlib/tien/shaders/physicsdebug.frag");
+			physicsDebugShader->bindAttributeLocation("a_position", 0);
+			physicsDebugShader->bindAttributeLocation("a_color", 1);
+			physicsDebugShader->link();
+			physicsDebugShader->registerUniform(PhysicsDebugUniform::projectionMatrix, "projectionMatrix");
+			physicsDebugShader->registerUniform(PhysicsDebugUniform::modelViewMatrix, "modelViewMatrix");
+
+
 
 			defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
 
@@ -198,17 +210,23 @@ namespace vrlib
 			glBlendFunc(GL_ONE, GL_ONE);
 
 			glDepthMask(GL_FALSE);
-
+			glEnable(GL_CULL_FACE);
 			for (Node* c : scene.lights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
 				components::Transform* t = c->getComponent<components::Transform>();
 				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
 
-				if(l->type == components::Light::Type::directional)
+				//if(l->type == components::Light::Type::directional)
 					glDisable(GL_DEPTH_TEST);
+				//else
+//					glEnable(GL_DEPTH_TEST);
+
+				if (l->type == components::Light::Type::directional)
+					glCullFace(GL_BACK);
 				else
-					glEnable(GL_DEPTH_TEST);
+					glCullFace(GL_FRONT);
+
 
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
@@ -222,7 +240,8 @@ namespace vrlib
 					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y-sphere.x);
 				glEnable(GL_BLEND);
 			}
-			
+			glCullFace(GL_BACK);
+
 			glDepthMask(GL_TRUE);
 			glEnable(GL_DEPTH_TEST);
 
@@ -275,6 +294,28 @@ namespace vrlib
 			moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 				material.texture->bind();
 			});
+
+			if (drawPhysicsDebug)
+			{
+				scene.world->debugDrawWorld();
+				if (scene.debugDrawer->verts.size() > 0)
+				{
+					glBindVertexArray(0);
+					glBindBuffer(GL_ARRAY_BUFFER, 0);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+					physicsDebugShader->use();
+					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix);
+					physicsDebugShader->setUniform(PhysicsDebugUniform::projectionMatrix, projectionMatrix);
+
+					gl::setAttributes<gl::VertexP3C4>(&scene.debugDrawer->verts[0]);
+					glLineWidth(1.0f);
+					glDrawArrays(GL_LINES, 0, scene.debugDrawer->verts.size());
+					scene.debugDrawer->flush();
+				}
+			}
+
+
+
 
 			//camera->target->bind();
 

@@ -13,6 +13,7 @@ namespace vrlib
 {
 	namespace tien
 	{
+
 		Scene::Scene() : Node("Root", nullptr)
 		{
 			cameraNode = nullptr;
@@ -55,7 +56,8 @@ namespace vrlib
 			solver = new btSequentialImpulseConstraintSolver();
 			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 			world->setGravity(btVector3(0, -9.8f, 0));
-
+			world->setDebugDrawer(debugDrawer = new DebugDraw());
+			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
 
 
 			fortree([this](Node* n)
@@ -103,6 +105,32 @@ namespace vrlib
 						updateTransforms(c, parentTransform);
 			};
 			updateTransforms(this, glm::mat4());
+		}
+
+
+
+
+
+		void DebugDraw::flush()
+		{
+			/*if (!verts.empty())
+			{
+				glLineWidth(2);
+				glColor3f(1.0, 0, 0);
+				vrlib::gl::setAttributes<vrlib::gl::VertexP3N3T2>(&verts[0]);
+				glDrawArrays(GL_LINES, 0, verts.size());
+				verts.clear();
+				glDisableVertexAttribArray(0);
+				glDisableVertexAttribArray(1);
+				glDisableVertexAttribArray(2);
+			}*/
+			verts.clear();
+		}
+
+		void DebugDraw::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
+		{
+			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(from.x(), from.y(), from.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
+			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(to.x(), to.y(), to.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
 		}
 
 

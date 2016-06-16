@@ -46,8 +46,7 @@ namespace vrlib
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 				glm::vec3 position = transform->position;
-				if (model && model->model)
-					position += model->model->aabb.center();
+				position += node->getComponent<Collider>()->offset;
 
 				worldTrans.setOrigin(btVector3(position.x, position.y, position.z));
 				worldTrans.setRotation(btQuaternion(transform->rotation.x, transform->rotation.y, transform->rotation.z, transform->rotation.w));
@@ -59,8 +58,7 @@ namespace vrlib
 
 				transform->position = glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z());
 				transform->rotation = glm::quat(worldTrans.getRotation().w(), worldTrans.getRotation().x(), worldTrans.getRotation().y(), worldTrans.getRotation().z());
-				if (model && model->model)
-					transform->position -= model->model->aabb.center();
+				transform->position -= node->getComponent<Collider>()->offset;
 			}
 		}
 	}

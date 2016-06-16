@@ -20,6 +20,10 @@ namespace vrlib
 
 		void Tien::update(float elapsedTime)
 		{
+			SHORT debugKey = GetAsyncKeyState(VK_F1);
+			if ((debugKey & 1) == 1)
+				renderer.drawPhysicsDebug = !renderer.drawPhysicsDebug;
+
 			if (playState == PlayState::Playing)
 				currentRunningScene.update(elapsedTime);
 		}

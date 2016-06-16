@@ -49,6 +49,15 @@ namespace vrlib
 				s_depth,
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
+			enum class PhysicsDebugUniform
+			{
+				projectionMatrix,
+				modelViewMatrix,
+			};
+			vrlib::gl::Shader<PhysicsDebugUniform>* physicsDebugShader;
+
+
+
 			vrlib::gl::FBO* gbuffers;
 			vrlib::Texture* defaultNormalMap;
 
@@ -93,6 +102,10 @@ namespace vrlib
 			void buildOverlay();
 
 			virtual void render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix);
+
+
+			bool drawPhysicsDebug;
+
 		};
 	}
 }

@@ -35,6 +35,10 @@ namespace vrlib
 				if (rigidBody && rigidBody->body && rigidBody->mass > 0)
 				{
 					node->getComponent<Transform>()->setGlobalRotation(rot);
+					btTransform t;
+					rigidBody->body->getMotionState()->getWorldTransform(t);
+					rigidBody->body->setWorldTransform(t);
+
 					if (constraint == nullptr)
 					{
 						rigidBody->body->setGravity(btVector3(0, 0, 0));
@@ -51,6 +55,13 @@ namespace vrlib
 				{
 					node->getComponent<Transform>()->setGlobalPosition(pos);
 					node->getComponent<Transform>()->setGlobalRotation(rot);
+					if (rigidBody && rigidBody->body)
+					{
+						btTransform t;
+						rigidBody->body->getMotionState()->getWorldTransform(t);
+						rigidBody->body->setWorldTransform(t);
+					}
+
 				}
 
 			}

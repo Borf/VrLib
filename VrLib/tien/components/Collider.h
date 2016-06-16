@@ -2,6 +2,8 @@
 
 #include "../Component.h"
 
+#include <glm/glm.hpp>
+
 class btCollisionShape;
 
 namespace vrlib
@@ -13,6 +15,7 @@ namespace vrlib
 			class Collider : public Component
 			{
 			public:
+				glm::vec3 offset;
 				virtual btCollisionShape* getShape() = 0;
 
 			};

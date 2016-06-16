@@ -18,10 +18,16 @@ namespace vrlib
 
 				ModelRenderer* model = n->getComponent<ModelRenderer>();
 				if (model)
+				{
 					size = model->model->aabb.bounds[1] - model->model->aabb.bounds[0];
+					offset = model->model->aabb.center();
+				}
 				Transform* transform = n->getComponent<Transform>();
 				if (transform)
+				{
 					size *= transform->scale;
+					offset *= transform->scale;
+				}
 			}
 
 			BoxCollider::BoxCollider(const glm::vec3 &size)

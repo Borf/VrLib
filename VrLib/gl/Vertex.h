@@ -26,6 +26,21 @@ namespace vrlib
 			float nx, ny, nz;
 		};
 
+		struct VertexP3C4
+		{
+			float px, py, pz;
+			float cr, cg, cb, ca;
+
+			VertexP3C4() {};
+			VertexP3C4(const glm::vec3 &position, const glm::vec4 &color)
+			{
+				px = position.x;	py = position.y;	pz = position.z;
+				cr = color.r;		cg = color.g;		cb = color.b;		ca = color.a;
+
+			}
+
+		};
+
 		struct VertexP3N3T2
 		{
 			float px, py, pz;
@@ -99,6 +114,7 @@ namespace vrlib
 		template<class T>	inline void setP3(T& vertex, const glm::vec3 &p)								{	}
 		template<>			inline void setP3<VertexP3>(VertexP3& vertex, const glm::vec3 &p)				{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3C4>(VertexP3C4& vertex, const glm::vec3 &p) { vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &p)		{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2B4B4>(VertexP3N3T2B4B4& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T3T2>(VertexP3N3T3T2& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
@@ -152,6 +168,14 @@ namespace vrlib
 			glVertexAttribPointer(attributeIndex, 3, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
 			attributeIndex++;
 			return prevSize + 3 * sizeof(float);
+		}
+		template<>			inline int setAttribute<VertexP3C4>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = setAttribute<VertexP3>(attributeIndex, totalSize, offset);
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 4, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 4 * sizeof(float);
 		}
 
 		template<>			inline int setAttribute<VertexP3N3T2>(int& attributeIndex, int totalSize, int offset)
