@@ -105,7 +105,7 @@ namespace vrlib
 			template<class V>
 			void setUniform(T id, const V &value)
 			{
-				assert(uniformLocations[(int)id] != -1);
+				//assert(uniformLocations[(int)id] != -1);
 				UntypedShader::setUniform((int)id, value);
 			}
 		};

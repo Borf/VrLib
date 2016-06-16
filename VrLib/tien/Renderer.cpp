@@ -29,7 +29,8 @@ namespace vrlib
 			renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
 			renderShader->bindAttributeLocation("a_position", 0);
 			renderShader->bindAttributeLocation("a_normal", 1);
-			renderShader->bindAttributeLocation("a_texcoord", 2);
+			renderShader->bindAttributeLocation("a_tangent", 2);
+			renderShader->bindAttributeLocation("a_texture", 3);
 			renderShader->link();
 			renderShader->bindFragLocation("fragColor", 0);
 			renderShader->bindFragLocation("fragNormal", 1);
@@ -39,10 +40,12 @@ namespace vrlib
 			renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
 			renderShader->registerUniform(RenderUniform::normalMatrix, "normalMatrix");
 			renderShader->registerUniform(RenderUniform::s_texture, "s_texture");
+			renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
 			renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
 			renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
 			renderShader->use();
 			renderShader->setUniform(RenderUniform::s_texture, 0);
+			renderShader->setUniform(RenderUniform::s_normalmap, 1);
 
 
 			postLightingShader = new vrlib::gl::Shader<PostLightingUniform>("data/vrlib/tien/shaders/postLighting.vert", "data/vrlib/tien/shaders/postLighting.frag");
@@ -100,7 +103,7 @@ namespace vrlib
 			billboardShader->use();
 			billboardShader->setUniform(BillboardUniforms::s_texture, 0);
 
-
+			defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
 
 			buildOverlay();
 
@@ -151,6 +154,13 @@ namespace vrlib
 					{
 						renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
 						material.texture->bind();
+						glActiveTexture(GL_TEXTURE1);
+						if (material.normalmap)
+							material.normalmap->bind();
+						else
+							defaultNormalMap->bind();
+						glActiveTexture(GL_TEXTURE0);
+
 					}
 					else
 					{
@@ -172,6 +182,7 @@ namespace vrlib
 				viewport[0], viewport[1], viewport[2], viewport[3],
 				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
+			glDisableVertexAttribArray(3);
 
 
 			gbuffers->use();
@@ -213,6 +224,7 @@ namespace vrlib
 			}
 			
 			glDepthMask(GL_TRUE);
+			glEnable(GL_DEPTH_TEST);
 
 			skydomeShader->use();
 			skydomeShader->setUniform(SkydomeUniforms::projectionMatrix, projectionMatrix);
@@ -608,6 +620,7 @@ namespace vrlib
 			glDisableVertexAttribArray(0);
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
+			glDisableVertexAttribArray(3);
 			overlayVao = new vrlib::gl::VAO<vrlib::gl::VertexP3>(overlayVerts);
 		}
 

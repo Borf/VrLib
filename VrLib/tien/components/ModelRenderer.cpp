@@ -10,7 +10,7 @@ namespace vrlib
 		{
 			ModelRenderer::ModelRenderer(const std::string &fileName)
 			{
-				model = vrlib::Model::getModel<vrlib::gl::VertexP3N3T2>(fileName);
+				model = vrlib::Model::getModel<vrlib::gl::VertexP3N3T3T2>(fileName);
 			}
 
 			ModelRenderer::~ModelRenderer()

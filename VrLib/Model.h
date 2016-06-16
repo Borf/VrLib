@@ -33,6 +33,7 @@ namespace vrlib
 	{
 	public:
 		Texture* texture;
+		Texture* normalmap;
 		struct
 		{
 			glm::vec4 diffuse;

@@ -40,6 +40,16 @@ namespace vrlib
 			}
 		};
 
+		struct VertexP3N3T3T2
+		{
+			float px, py, pz;
+			float nx, ny, nz;
+			float tanx, tany, tanz;
+			float tx, ty;
+			VertexP3N3T3T2() {};
+		};
+
+
 		struct VertexP3N3T2B4B4
 		{
 			float px, py, pz;
@@ -91,17 +101,19 @@ namespace vrlib
 		template<>			inline void setP3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &p)		{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2B4B4>(VertexP3N3T2B4B4& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3N3T3T2>(VertexP3N3T3T2& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		
 		template<class T>	inline void setN3(T& vertex, const glm::vec3 &n)								{	}
 		template<>			inline void setN3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &n)			{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
 		template<>			inline void setN3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &n)		{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
 		template<>			inline void setN3<VertexP3N3T2B4B4>(VertexP3N3T2B4B4& vertex, const glm::vec3 &n) { vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
-
+		template<>			inline void setN3<VertexP3N3T3T2>(VertexP3N3T3T2& vertex, const glm::vec3 &n)	{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }
+		
 		template<class T>	inline void setT2(T& vertex, const glm::vec2 &t)								{	}
 		template<>			inline void setT2(VertexP3N3T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
 		template<>			inline void setT2(VertexP2T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
-		template<>			inline void setT2(VertexP3N3T2B4B4& vertex, const glm::vec2 &t) { vertex.tx = t.x;		vertex.ty = t.y; }
-
+		template<>			inline void setT2(VertexP3N3T2B4B4& vertex, const glm::vec2 &t)					{ vertex.tx = t.x;		vertex.ty = t.y; }
+		template<>			inline void setT2(VertexP3N3T3T2& vertex, const glm::vec2 &t)					{ vertex.tx = t.x;		vertex.ty = t.y; }
 
 		template<class T>	inline void setB4(T& vertex, int offset, int boneId, float weight) {	}
 		template<>			inline void setB4(VertexP3N3T2B4B4& vertex, int offset, int boneId, float weight)
@@ -114,6 +126,14 @@ namespace vrlib
 		template<>			inline int getBoneId(VertexP3N3T2B4B4& vertex, int offset) { return vertex.boneIds[offset]; }
 
 
+		template<class T>	inline bool hasTangentsAndBitangents() { return false; }
+		template<>			inline bool hasTangentsAndBitangents<VertexP3N3T3T2>() { return true; }
+
+		template<class T>	inline void setTan3(T& vertex, const glm::vec3 &n) {	}
+		template<>			inline void setTan3<VertexP3N3T3T2>(VertexP3N3T3T2& vertex, const glm::vec3 &n) { vertex.tanx = n.x;		vertex.tany = n.y;	vertex.tanz = n.z; }
+
+//		template<class T>	inline void setBiTan3(T& vertex, const glm::vec3 &n) {	}
+//		template<>			inline void setBiTan3<VertexP3N3T3T2>(VertexP3N3T3T2& vertex, const glm::vec3 &n) { vertex.bitanx = n.x;		vertex.bitany = n.y;	vertex.bitanz = n.z; }
 
 		//// WATCH OUT, NEEDS TO BE SPECIALIZED IN THE RIGHT ORDER
 		template<class T>	inline int setAttribute(int& attributeIndex, int totalSize, int offset) { printf("ERROR! SETTING ATTRIBUTES"); return 0; }
@@ -172,12 +192,31 @@ namespace vrlib
 			return prevSize + 2 * sizeof(float);
 		}
 
+		template<>			inline int setAttribute<VertexP3N3T3T2>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = setAttribute<VertexP3N3>(attributeIndex, totalSize, offset);
+			glEnableVertexAttribArray(attributeIndex); //tangents
+			glVertexAttribPointer(attributeIndex, 3, GL_FLOAT, GL_TRUE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			prevSize += 3 * sizeof(float);
+
+			glEnableVertexAttribArray(attributeIndex); //texcoords
+			glVertexAttribPointer(attributeIndex, 2, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			prevSize += 2 * sizeof(float);
+
+			return prevSize;
+		}
+
+
 
 		template<class T>	inline void setAttributes(void* offset)											
 		{
 			int i = 0;
 			setAttribute<T>(i, sizeof(T), (int)offset);
 		}
+
+
 
 
 

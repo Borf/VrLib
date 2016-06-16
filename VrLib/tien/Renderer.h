@@ -26,6 +26,7 @@ namespace vrlib
 				viewMatrix,
 				normalMatrix,
 				s_texture,
+				s_normalmap,
 				diffuseColor,
 				textureFactor,
 			};
@@ -49,6 +50,7 @@ namespace vrlib
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			vrlib::gl::FBO* gbuffers;
+			vrlib::Texture* defaultNormalMap;
 
 			vrlib::gl::VBO<gl::VertexP3>* overlayVerts;
 			vrlib::gl::VAO<gl::VertexP3>* overlayVao;

@@ -84,6 +84,15 @@ namespace vrlib
 				else
 					setN3(v, vertexNormals[ii]); //matrix?
 //					setN3(v, glm::vec3(0, 0, 1));
+
+				if (mesh->HasTangentsAndBitangents() && gl::hasTangentsAndBitangents<VertexFormat>())
+				{
+					gl::setTan3(v, glm::vec3(mesh->mTangents[ii].x, mesh->mTangents[ii].y, mesh->mTangents[ii].z));
+//					gl::setBiTan3(v, glm::vec3(mesh->mBitangents[ii].x, mesh->mBitangents[ii].y, mesh->mBitangents[ii].z));
+				}
+
+
+
 				vertices.push_back(v);
 			}
 
@@ -120,7 +129,6 @@ namespace vrlib
 
 				}
 			}
-
 			
 			Mesh m;
 			m.indexStart = indices.size();
@@ -157,10 +165,30 @@ namespace vrlib
 					file = file.substr(file.find("\\") + 1);
 					m.material.texture = vrlib::Texture::loadCached(path + "/" + file);
 				}
-
 			}
 			else
 				m.material.texture = NULL;
+
+
+			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_HEIGHT, 0, &texPath) == aiReturn_SUCCESS)
+			{
+				std::string file = texPath.C_Str();
+				m.material.normalmap = vrlib::Texture::loadCached(path + "/" + file);
+				while (!m.material.normalmap && file.find("/") != std::string::npos)
+				{
+					file = file.substr(file.find("/") + 1);
+					m.material.normalmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				while (!m.material.normalmap && file.find("\\") != std::string::npos)
+				{
+					file = file.substr(file.find("\\") + 1);
+					m.material.normalmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+			}
+			else
+				m.material.normalmap = NULL;
+
+
 			aiColor4D color;
 			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_AMBIENT, &color) == aiReturn_SUCCESS)
 				m.material.color.ambient = glm::vec4(color.r, color.g, color.b, color.a);
@@ -610,6 +638,7 @@ namespace vrlib
 	template class AssimpModel < gl::VertexP3N3 >;
 	template class AssimpModel < gl::VertexP3N3T2 >;
 	template class AssimpModel < gl::VertexP3N3T2B4B4 >;
+	template class AssimpModel < gl::VertexP3N3T3T2 >;
 
 	inline Bone * Bone::find(std::function<bool(Bone*)> callback)
 	{
