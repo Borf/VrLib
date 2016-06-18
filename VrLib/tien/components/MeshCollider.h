@@ -10,7 +10,8 @@ namespace vrlib
 		{
 			class MeshCollider : public Collider
 			{
-
+			public:
+				virtual btCollisionShape* getShape() override;
 			};
 		}
 	}

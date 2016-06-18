@@ -345,6 +345,12 @@
     <ClInclude Include="VrLib\tien\Scene.h">
       <Filter>tien</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\tien\Terrain.h">
+      <Filter>tien</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\TerrainRenderer.h">
+      <Filter>tien\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -628,6 +634,12 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\SceneManager.cpp">
       <Filter>tien</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\Terrain.cpp">
+      <Filter>tien</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\TerrainRenderer.cpp">
+      <Filter>tien\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

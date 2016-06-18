@@ -30,8 +30,9 @@ namespace vrlib
 			renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
 			renderShader->bindAttributeLocation("a_position", 0);
 			renderShader->bindAttributeLocation("a_normal", 1);
-			renderShader->bindAttributeLocation("a_tangent", 2);
-			renderShader->bindAttributeLocation("a_texture", 3);
+			renderShader->bindAttributeLocation("a_bitangent", 2);
+			renderShader->bindAttributeLocation("a_tangent", 3);
+			renderShader->bindAttributeLocation("a_texture", 4);
 			renderShader->link();
 			renderShader->bindFragLocation("fragColor", 0);
 			renderShader->bindFragLocation("fragNormal", 1);

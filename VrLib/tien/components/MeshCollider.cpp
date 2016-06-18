@@ -1,4 +1,4 @@
-#include "RigidBody.h"
+#include "MeshCollider.h"
 
 namespace vrlib
 {
@@ -6,6 +6,10 @@ namespace vrlib
 	{
 		namespace components
 		{
+			btCollisionShape* MeshCollider::getShape()
+			{
+				return nullptr;
+			}
 
 		}
 	}

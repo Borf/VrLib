@@ -87,8 +87,8 @@ namespace vrlib
 
 				if (mesh->HasTangentsAndBitangents() && gl::hasTangentsAndBitangents<VertexFormat>())
 				{
-					gl::setTan3(v, glm::vec3(mesh->mTangents[ii].x, mesh->mTangents[ii].y, mesh->mTangents[ii].z));
-//					gl::setBiTan3(v, glm::vec3(mesh->mBitangents[ii].x, mesh->mBitangents[ii].y, mesh->mBitangents[ii].z));
+					gl::setTan3(v, glm::normalize(glm::vec3(mesh->mTangents[ii].x, mesh->mTangents[ii].y, mesh->mTangents[ii].z)));
+					gl::setBiTan3(v, glm::normalize(glm::vec3(mesh->mBitangents[ii].x, mesh->mBitangents[ii].y, mesh->mBitangents[ii].z)));
 				}
 
 
@@ -638,7 +638,7 @@ namespace vrlib
 	template class AssimpModel < gl::VertexP3N3 >;
 	template class AssimpModel < gl::VertexP3N3T2 >;
 	template class AssimpModel < gl::VertexP3N3T2B4B4 >;
-	template class AssimpModel < gl::VertexP3N3T3T2 >;
+	template class AssimpModel < gl::VertexP3N2B2T2T2 >;
 
 	inline Bone * Bone::find(std::function<bool(Bone*)> callback)
 	{

@@ -13,7 +13,7 @@ namespace vrlib
 			ModelRenderer::ModelRenderer(const std::string &fileName)
 			{
 				if (cache.find(fileName) == cache.end())
-					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N3T3T2>(fileName);
+					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 				model = cache[fileName];
 			}
 
