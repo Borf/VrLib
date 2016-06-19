@@ -41,8 +41,16 @@ namespace vrlib
 			lights.clear();
 			fortree([this](Node* n)
 			{
-				if (n->getComponent<components::ModelRenderer>())
+				components::Renderable* renderable;
+				if (renderable = n->getComponent<components::Renderable>())
+				{
 					renderables.push_back(n);
+					if (renderContexts.find(renderable->renderContext) == renderContexts.end())
+					{
+						renderable->renderContext->init(); // TODO: move this to another place?
+						renderContexts.insert(renderable->renderContext);
+					}
+				}
 				if (n->getComponent<components::Light>())
 					lights.push_back(n);
 			});

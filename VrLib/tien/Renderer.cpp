@@ -27,29 +27,6 @@ namespace vrlib
 
 		void Renderer::init()
 		{
-			renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
-			renderShader->bindAttributeLocation("a_position", 0);
-			renderShader->bindAttributeLocation("a_normal", 1);
-			renderShader->bindAttributeLocation("a_bitangent", 2);
-			renderShader->bindAttributeLocation("a_tangent", 3);
-			renderShader->bindAttributeLocation("a_texture", 4);
-			renderShader->link();
-			renderShader->bindFragLocation("fragColor", 0);
-			renderShader->bindFragLocation("fragNormal", 1);
-			//shader->bindFragLocation("fragColor", 0);
-			renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
-			renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
-			renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
-			renderShader->registerUniform(RenderUniform::normalMatrix, "normalMatrix");
-			renderShader->registerUniform(RenderUniform::s_texture, "s_texture");
-			renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
-			renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
-			renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
-			renderShader->use();
-			renderShader->setUniform(RenderUniform::s_texture, 0);
-			renderShader->setUniform(RenderUniform::s_normalmap, 1);
-
-
 			postLightingShader = new vrlib::gl::Shader<PostLightingUniform>("data/vrlib/tien/shaders/postLighting.vert", "data/vrlib/tien/shaders/postLighting.frag");
 			postLightingShader->bindAttributeLocation("a_position", 0);
 			postLightingShader->link();
@@ -116,7 +93,6 @@ namespace vrlib
 
 
 
-			defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
 
 			buildOverlay();
 
@@ -136,13 +112,7 @@ namespace vrlib
 			if (!scene.cameraNode)
 				return;
 			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
-
-			renderShader->use();
-			renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
-			renderShader->setUniform(RenderUniform::viewMatrix, modelViewMatrix);
-			renderShader->setUniform(RenderUniform::diffuseColor, glm::vec4(1, 1, 1, 1));
-			renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
-
+			//TODO: use camera
 			gbuffers->bind();
 			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
 			glClearColor(0, 0, 0, 1);
@@ -151,39 +121,13 @@ namespace vrlib
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_BLEND);
 
+
+			for (components::Renderable::RenderContext* context : scene.renderContexts)
+				context->frameSetup(projectionMatrix, modelViewMatrix);
+
 			for (Node* c : scene.renderables)
-			{
-				components::ModelRenderer* m = c->getComponent<components::ModelRenderer>();
-				components::Transform* t = c->getComponent<components::Transform>();
-
-				m->model->draw([this, t](const glm::mat4 &modelMatrix)
-				{
-					renderShader->setUniform(RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-					renderShader->setUniform(RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform * modelMatrix))));
-				},
-				[this](const vrlib::Material &material)
-				{
-					if (material.texture)
-					{
-						renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
-						material.texture->bind();
-						glActiveTexture(GL_TEXTURE1);
-						if (material.normalmap)
-							material.normalmap->bind();
-						else
-							defaultNormalMap->bind();
-						glActiveTexture(GL_TEXTURE0);
-
-					}
-					else
-					{
-						renderShader->setUniform(RenderUniform::textureFactor, 0.0f);
-						renderShader->setUniform(RenderUniform::diffuseColor, material.color.diffuse);
-					}
-				});
-			}
+				c->getComponent<components::Renderable>()->draw();
 			gbuffers->unbind();
-
 
 			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glClearColor(0.1f, 0.1f, 0.1f, 1);

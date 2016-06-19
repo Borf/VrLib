@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Node.h"
+#include <set>
 #include <vrlib/gl/Vertex.h>
 #include <btBulletDynamicsCommon.h>
-
+#include "components/Renderable.h"
 
 
 namespace vrlib
@@ -34,6 +35,7 @@ namespace vrlib
 
 		private:
 			bool treeDirty;
+			std::set<components::Renderable::RenderContext*> renderContexts;
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
 

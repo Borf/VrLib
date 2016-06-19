@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Component.h"
+#include "Renderable.h"
 
 #include <VrLib/gl/VIO.h>
 #include <VrLib/gl/VBO.h>
@@ -14,7 +14,7 @@ namespace vrlib
 		class Terrain;
 		namespace components
 		{
-			class TerrainRenderer : public Component
+			class TerrainRenderer : public Renderable
 			{
 				gl::VBO<gl::VertexP3N2B2T2T2> vbo;
 				gl::VIO<unsigned int> vio;

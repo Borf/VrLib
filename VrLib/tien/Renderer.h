@@ -59,7 +59,6 @@ namespace vrlib
 
 
 			vrlib::gl::FBO* gbuffers;
-			vrlib::Texture* defaultNormalMap;
 
 			vrlib::gl::VBO<gl::VertexP3>* overlayVerts;
 			vrlib::gl::VAO<gl::VertexP3>* overlayVao;
