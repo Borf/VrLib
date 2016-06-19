@@ -13,8 +13,6 @@ namespace vrlib
 
 		class Tien
 		{
-			Scene currentRunningScene;
-
 			enum class PlayState
 			{
 				Stopped,
@@ -28,6 +26,7 @@ namespace vrlib
 
 			Renderer renderer;
 			Scene currentScene;
+			Scene currentRunningScene;
 
 			void start();
 			void pause();

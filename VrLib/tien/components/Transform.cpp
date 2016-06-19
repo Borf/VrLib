@@ -40,6 +40,36 @@ namespace vrlib
 				transform = transform * glm::toMat4(rotation);
 				transform = glm::scale(transform, scale);
 			}
+
+
+			void Transform::lookAt(const glm::vec3 &target, const glm::vec3 &up)
+			{
+				glm::mat4 mat = glm::lookAt(position, target, up);
+				rotation = glm::quat(mat);
+			}
+
+			bool Transform::moveTo(const glm::vec3 &target, float speed)
+			{
+				glm::vec3 diff = target - position;
+				float len = glm::length(diff);
+				if (len < speed)
+				{
+					position = target;
+					return true;
+				}
+				else
+				{
+					diff /= len;
+					diff *= speed;
+					position += diff;
+					return false;
+				}
+			}
+
+			void Transform::rotate(const glm::vec3 &angles)
+			{
+				rotation *= glm::quat(angles);
+			}
 		}
 	}
 }

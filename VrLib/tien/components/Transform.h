@@ -26,15 +26,19 @@ namespace vrlib
 				glm::mat4 transform;
 				glm::mat4 globalTransform;
 
-				Transform(const glm::vec3 &position = glm::vec3(0,0,0), const glm::quat &rotation = glm::quat(), const glm::vec3 &scale = glm::vec3(1, 1, 1));
+				Transform(const glm::vec3 &position = glm::vec3(0, 0, 0), const glm::quat &rotation = glm::quat(), const glm::vec3 &scale = glm::vec3(1, 1, 1));
 				~Transform();
 
 
 				void lookAt(const glm::vec3 &position, const glm::vec3 &target, const glm::vec3 &up);
+				void lookAt(const glm::vec3 &target, const glm::vec3 &up);
 				void setGlobalPosition(const glm::vec3 &position);
 				void setGlobalRotation(const glm::quat &rotation);
 				void setGlobalScale(const glm::vec3 &scale);
 
+
+				bool moveTo(const glm::vec3 &target, float speed);
+				void rotate(const glm::vec3 &angle);
 
 
 			};

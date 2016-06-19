@@ -18,6 +18,7 @@ namespace vrlib
 		{
 			cameraNode = nullptr;
 			world = nullptr;
+			isPreparedForRunning = false;
 		}
 
 		Scene::Scene(const Scene& other) : Node(&other)
@@ -25,12 +26,20 @@ namespace vrlib
 			cameraNode = other.cameraNode;
 			treeDirty = true;
 			world = nullptr;
+			isPreparedForRunning = false;
 			update(0);
 		}
 
 
-		void Scene::setTreeDirty()
+		void Scene::setTreeDirty(Node* newNode)
 		{
+			if (isPreparedForRunning && newNode)
+			{ 
+				//TODO: this is not going to work..... :(
+				components::RigidBody* rigidBody;
+				if (rigidBody = newNode->getComponent<components::RigidBody>())
+					rigidBody->init(world);
+			}
 			treeDirty = true;
 		}
 
@@ -74,6 +83,7 @@ namespace vrlib
 				if (rigidBody = n->getComponent<components::RigidBody>())
 					rigidBody->init(world);
 			});
+			isPreparedForRunning = true;
 		}
 
 

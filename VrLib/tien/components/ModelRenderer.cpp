@@ -32,6 +32,7 @@ namespace vrlib
 				components::Transform* t = node->getComponent<Transform>();
 
 				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);
+				context->renderShader->use(); //TODO: only call this once!
 
 				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
 				{

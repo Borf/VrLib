@@ -39,7 +39,8 @@ namespace vrlib
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
 
-			virtual void setTreeDirty() override;
+			bool isPreparedForRunning;
+			virtual void setTreeDirty(Node* newNode) override;
 			void updateRenderables();
 			void prepareForRun();
 			void update(float elapsedTime);

@@ -13,7 +13,7 @@ namespace vrlib
 			this->parent = parent;
 			if (parent)
 			{
-				parent->setTreeDirty();
+				parent->setTreeDirty(this);
 				parent->children.push_back(this);
 			}
 		}
@@ -22,6 +22,7 @@ namespace vrlib
 		{
 			orig = original;
 			name = original->name;
+			parent = nullptr;
 
 			components = original->components;
 
@@ -30,6 +31,17 @@ namespace vrlib
 				Node* newChild = new Node(c);
 				children.push_back(newChild);
 				newChild->parent = this;
+			}
+		}
+
+		Node::~Node()
+		{
+			if (parent)
+			{
+				parent->children.erase(std::find(parent->children.begin(), parent->children.end(), this));
+				parent->setTreeDirty(nullptr);
+				for (auto c : components)
+					delete c;
 			}
 		}
 
