@@ -53,25 +53,36 @@ namespace vrlib
 					for (int y = 0; y < terrain.height - 1; y++)
 					{
 						gl::VertexP3N2B2T2T2 v;
-						gl::setTan3(v, glm::vec3(1, 0, 0));
-						gl::setBiTan3(v, glm::vec3(0, 0, 1));
+						glm::vec3 tan;
 
 						gl::setN3(v, normals[x][y]);
+						tan = glm::normalize(glm::cross(normals[x][y], glm::vec3(0, 0, 1)));
+						gl::setTan3(v, tan);
+						gl::setBiTan3(v, glm::normalize(glm::cross(tan, normals[x][y])));
 						gl::setP3(v, glm::vec3(x, terrain[x][y], y));
-						gl::setT2(v, glm::vec2(x, y)/10.0f);
+ 						gl::setT2(v, glm::vec2(x, y)/10.0f);
 						vertices.push_back(v);
 
 						gl::setN3(v, normals[x][y+1]);
+						tan = glm::normalize(glm::cross(normals[x][y+1], glm::vec3(0, 0, 1)));
+						gl::setTan3(v, tan);
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x][y+1], tan)));
 						gl::setP3(v, glm::vec3(x, terrain[x][y+1], y + 1));
 						gl::setT2(v, glm::vec2(x, y + 1) / 10.0f);
 						vertices.push_back(v);
 
 						gl::setN3(v, normals[x+1][y+1]);
+						tan = glm::normalize(glm::cross(normals[x+1][y+1], glm::vec3(0, 0, 1)));
+						gl::setTan3(v, tan);
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x+1][y+1], tan)));
 						gl::setP3(v, glm::vec3(x+1, terrain[x+1][y+1], y+1));
 						gl::setT2(v, glm::vec2(x+1, y+1) / 10.0f);
 						vertices.push_back(v);
 
 						gl::setN3(v, normals[x+1][y]);
+						tan = glm::normalize(glm::cross(normals[x+1][y], glm::vec3(0, 0, 1)));
+						gl::setTan3(v, tan);
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x+1][y], tan)));
 						gl::setP3(v, glm::vec3(x + 1, terrain[x+1][y], y));
 						gl::setT2(v, glm::vec2(x + 1, y) / 10.0f);
 						vertices.push_back(v);
@@ -107,18 +118,27 @@ namespace vrlib
 
 				vao->bind();
 				glDisable(GL_BLEND);
+				glActiveTexture(GL_TEXTURE0);
 				context->black->bind();
+				glActiveTexture(GL_TEXTURE1);
+				context->black->bind();
+				glActiveTexture(GL_TEXTURE2);
+				context->white->bind();
+
 				glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
 
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glEnablei(GL_BLEND, 0);
+				glEnablei(GL_BLEND, 1);
+				glBlendFunci(0, GL_ONE, GL_ONE);
+				glBlendFunci(1, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDepthFunc(GL_EQUAL);
-
-
+				
 				for (size_t i = 0; i < materials.size(); i++)
 				{
 					glActiveTexture(GL_TEXTURE0);
 					materials[i].diffuse->bind();
+					glActiveTexture(GL_TEXTURE1);
+					materials[i].normal->bind();
 					glActiveTexture(GL_TEXTURE2);
 					materials[i].mask->bind();
 					glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
@@ -167,7 +187,7 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);
 				renderShader->setUniform(RenderUniform::s_mask, 2);
 
-				//defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
+				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/emptyNormalMap.png");
 				black = vrlib::Texture::loadCached("data/vrlib/tien/textures/black.png");
 				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 			}

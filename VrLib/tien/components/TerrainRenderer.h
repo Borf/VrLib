@@ -38,6 +38,7 @@ namespace vrlib
 
 					vrlib::Texture* black;
 					vrlib::Texture* white;
+					vrlib::Texture* defaultNormalMap;
 				};
 
 				gl::VBO<gl::VertexP3N2B2T2T2> vbo;

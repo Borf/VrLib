@@ -156,6 +156,11 @@ namespace vrlib
 
 			glDepthMask(GL_FALSE);
 			glEnable(GL_CULL_FACE);
+			glDisable(GL_DEPTH_TEST);
+
+			if (!scene.lights.empty() && scene.lights.front()->getComponent<components::Light>()->type != components::Light::Type::directional)
+				glEnable(GL_BLEND);
+
 			for (Node* c : scene.lights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
@@ -163,7 +168,6 @@ namespace vrlib
 				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
 
 				//if(l->type == components::Light::Type::directional)
-					glDisable(GL_DEPTH_TEST);
 				//else
 //					glEnable(GL_DEPTH_TEST);
 
