@@ -1,4 +1,6 @@
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 #include "Model.h"
 #include "models/SimpleModel.h"
 #include "models/AssimpModel.h"
@@ -166,7 +168,7 @@ namespace vrlib
 	prototypes(VertexP3N3);
 	prototypes(VertexP3N3T2);
 	prototypes(VertexP3N3T2B4B4);
-
+	prototypes(VertexP3N2B2T2T2);
 
 	/*template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
 	template Model* Model::getModel< gl::VertexP3N3 >(const std::string &fileName, const ModelLoadOptions &options);

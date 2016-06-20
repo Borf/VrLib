@@ -4,14 +4,19 @@ namespace vrlib
 {
 	namespace tien
 	{
+		class Node;
+		class Renderer;
+		class Scene;
+
 		class Component
 		{
 		protected:
-			Component() {}
+			Component() { node = nullptr; }
 			virtual ~Component() {}
-
+			Node* node;
+			friend class Node;
 		public:
-			virtual void update(float elapsedTime) {};
+			virtual void update(float elapsedTime, Scene& scene) {};
 		};
 	}
 }

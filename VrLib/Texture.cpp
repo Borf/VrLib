@@ -64,9 +64,11 @@ namespace vrlib
 	{
 		if (!image || !image->data)
 			return;
+		usesAlphaChannel = image->usesAlpha;
 		glGenTextures(1, &texid);
 		glBindTexture(GL_TEXTURE_2D, texid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		if (nearestFilter)
 		{
@@ -75,7 +77,7 @@ namespace vrlib
 		}
 		else
 		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 
@@ -444,6 +446,14 @@ namespace vrlib
 		bind();
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+
+	void Texture::setTextureRepeat(bool repeat)
+	{
+		textureRepeat = repeat;
+		bind();
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
 	}
 
 }

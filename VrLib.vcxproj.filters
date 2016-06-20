@@ -55,6 +55,9 @@
     <Filter Include="tien\components">
       <UniqueIdentifier>{73779c50-32ec-4b37-b87e-cff2bb98b028}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tien\components\colliders">
+      <UniqueIdentifier>{2ff233f3-4a7d-463c-a1e8-e5578f81ebe3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VrLib\VrLib.h">
@@ -288,6 +291,9 @@
     <ClInclude Include="VrLib\Viewports\OpenVRViewport.h">
       <Filter>Viewports</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math\HermiteCurve.h">
+      <Filter>math</Filter>
+    </ClInclude>
     <ClInclude Include="VrLib\tien\Node.h">
       <Filter>tien</Filter>
     </ClInclude>
@@ -310,6 +316,39 @@
       <Filter>tien\components</Filter>
     </ClInclude>
     <ClInclude Include="VrLib\tien\components\Camera.h">
+      <Filter>tien\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\TransformAttach.h">
+      <Filter>tien\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\stb_image_write.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\Collider.h">
+      <Filter>tien\components\colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\MeshCollider.h">
+      <Filter>tien\components\colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\BoxCollider.h">
+      <Filter>tien\components\colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\SphereCollider.h">
+      <Filter>tien\components\colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\SceneManager.h">
+      <Filter>tien</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\Tien.h">
+      <Filter>tien</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\Scene.h">
+      <Filter>tien</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\Terrain.h">
+      <Filter>tien</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\TerrainRenderer.h">
       <Filter>tien\components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -542,6 +581,9 @@
     <ClCompile Include="VrLib\Viewports\OpenVRViewport.cpp">
       <Filter>Viewports</Filter>
     </ClCompile>
+    <ClCompile Include="VrLib\math\HermiteCurve.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
     <ClCompile Include="VrLib\tien\Renderer.cpp">
       <Filter>tien</Filter>
     </ClCompile>
@@ -564,6 +606,39 @@
       <Filter>tien\components</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\Camera.cpp">
+      <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\TransformAttach.cpp">
+      <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\stb_image_write.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\Collider.cpp">
+      <Filter>tien\components\colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\MeshCollider.cpp">
+      <Filter>tien\components\colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\SphereCollider.cpp">
+      <Filter>tien\components\colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\BoxCollider.cpp">
+      <Filter>tien\components\colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\Tien.cpp">
+      <Filter>tien</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\Scene.cpp">
+      <Filter>tien</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\SceneManager.cpp">
+      <Filter>tien</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\Terrain.cpp">
+      <Filter>tien</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\TerrainRenderer.cpp">
       <Filter>tien\components</Filter>
     </ClCompile>
   </ItemGroup>

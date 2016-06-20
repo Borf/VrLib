@@ -68,7 +68,7 @@ namespace vrlib
 	}
 
 	template <class R, class T>
-	R DeviceImpl<R, T>::getData()
+	R DeviceImpl<R, T>::getData() const
 	{
 		if (driver != NULL)
 			return driver->data;

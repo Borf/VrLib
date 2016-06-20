@@ -1,12 +1,31 @@
 #pragma once
-
-template <class T>
-class Singleton
+namespace vrlib
 {
-public:
-	static T* getInstance()
+	template <class T>
+	class Singleton
 	{
-		static T* t = new T();
-		return t;
-	}
-};
+	public:
+		static T* getInstance()
+		{
+			static T* t = new T();
+			return t;
+		}
+	};
+
+
+	template <class T>
+	class AutoSingleton
+	{
+		T* object;
+	public:
+		AutoSingleton()
+		{
+			object = T->getInstance();
+		}
+		
+		T* operator -> ()
+		{
+			return object;
+		}
+	};
+}

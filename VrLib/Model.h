@@ -33,6 +33,7 @@ namespace vrlib
 	{
 	public:
 		Texture* texture;
+		Texture* normalmap;
 		struct
 		{
 			glm::vec4 diffuse;
@@ -73,7 +74,7 @@ namespace vrlib
 		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
 
 		virtual ModelInstance* getInstance() = 0;
-
+		virtual bool hasAlphaMaterial() = 0;
 
 		template<class VertexFormat>
 		void handleModelLoadOptions(std::vector<VertexFormat> &vertices, const ModelLoadOptions& options);

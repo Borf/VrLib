@@ -26,11 +26,14 @@ namespace vrlib
 		bool nearestFilter = false;
 		
 
+		bool usesAlphaChannel;
+
 		void load();
 		void bind();
 
 		void loadDds(const std::string &fileName);
 
 		void setNearestFilter();
+		void setTextureRepeat(bool repeat);
 	};
 }

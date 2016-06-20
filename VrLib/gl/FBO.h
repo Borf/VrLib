@@ -21,12 +21,12 @@ namespace vrlib
 		{
 			int width;
 			int height;
-			GLuint fbo;
 			GLuint depthBuffer;
 			GLuint depthTexture;
 			int textureCount;
-			GLint oldFBO;
 		public:
+			GLuint fboId;
+			GLint oldFBO;
 			enum Type
 			{
 				Color,

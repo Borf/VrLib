@@ -1,4 +1,6 @@
 #include "Node.h"
+#include "Component.h"
+#include <assert.h>
 
 namespace vrlib
 {
@@ -7,11 +9,39 @@ namespace vrlib
 		Node::Node(const std::string &name, Node* parent) :
 			name(name)
 		{
+			this->orig = nullptr;
 			this->parent = parent;
 			if (parent)
 			{
-				parent->setTreeDirty();
+				parent->setTreeDirty(this);
 				parent->children.push_back(this);
+			}
+		}
+
+		Node::Node(const Node* original)
+		{
+			orig = original;
+			name = original->name;
+			parent = nullptr;
+
+			components = original->components;
+
+			for (auto c : original->children)
+			{
+				Node* newChild = new Node(c);
+				children.push_back(newChild);
+				newChild->parent = this;
+			}
+		}
+
+		Node::~Node()
+		{
+			if (parent)
+			{
+				parent->children.erase(std::find(parent->children.begin(), parent->children.end(), this));
+				parent->setTreeDirty(nullptr);
+				for (auto c : components)
+					delete c;
 			}
 		}
 
@@ -20,6 +50,13 @@ namespace vrlib
 			callback(this);
 			for (auto c : children)
 				c->fortree(callback);
+		}
+
+		void Node::addComponent(Component* component)
+		{
+			assert(!component->node);
+			components.push_back(component);
+			component->node = this;
 		}
 
 	}

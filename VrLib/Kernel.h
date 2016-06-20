@@ -15,7 +15,6 @@
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "opengl32.lib")
-#pragma comment(lib, "assimp-vc140-mt.lib")
 #pragma comment(lib, "leap.lib")
 #pragma comment(lib, "libovr.lib")
 #pragma comment(lib, "openvr_api.lib")
@@ -26,12 +25,14 @@
 #pragma comment(lib, "fgloved.lib")
 #pragma comment(lib, "vrpn.lib")
 #pragma comment(lib, "freetype255d.lib")
+#pragma comment(lib, "assimp-vc140-mt.lib")
 #else
 #pragma comment(lib, "sixense.lib")
 #pragma comment(lib, "sixense_utils.lib")
 #pragma comment(lib, "fglove.lib")
 #pragma comment(lib, "vrpn.lib")
 #pragma comment(lib, "freetype255.lib")
+#pragma comment(lib, "assimp-vc140-mt-static.lib") //so that you don't get annoying dll trouble
 #endif
 
 

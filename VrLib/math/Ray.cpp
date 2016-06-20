@@ -56,7 +56,7 @@ namespace vrlib
 
 			/*	if (Intersection == EndLine)
 			return false;*/
-			for (size_t vertex = 0; vertex < count; vertex++)
+			for (int vertex = 0; vertex < count; vertex++)
 			{
 				Plane edgePlane;
 				int NextVertex = (vertex + 1) % count;
