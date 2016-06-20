@@ -14,9 +14,10 @@ namespace vrlib
 			class RigidBody : public Component, btMotionState
 			{
 			public:
-
+				btDynamicsWorld* world;
 
 				RigidBody(float mass);
+				~RigidBody();
 				btRigidBody* body;
 
 				float mass;

@@ -13,7 +13,7 @@ namespace vrlib
 		class Node
 		{
 		protected:
-			virtual void setTreeDirty(Node* newNode) { parent->setTreeDirty(newNode); };
+			virtual void setTreeDirty(Node* newNode, bool isNewNode) { parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
 

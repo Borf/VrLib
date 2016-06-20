@@ -351,6 +351,9 @@
     <ClInclude Include="VrLib\tien\components\TerrainRenderer.h">
       <Filter>tien\components</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\HtcVive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -640,6 +643,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\TerrainRenderer.cpp">
       <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\HtcVive.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

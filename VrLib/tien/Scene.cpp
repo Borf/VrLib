@@ -31,15 +31,20 @@ namespace vrlib
 		}
 
 
-		void Scene::setTreeDirty(Node* newNode)
+		void Scene::setTreeDirty(Node* newNode, bool isNewNode)
 		{
-			if (isPreparedForRunning && newNode)
+			if (isPreparedForRunning)
 			{ 
-				//TODO: this is not going to work..... :(
-				components::RigidBody* rigidBody;
-				if (rigidBody = newNode->getComponent<components::RigidBody>())
-					rigidBody->init(world);
+				if(isNewNode)
+					toInit.push_back(newNode);
+				else
+				{
+					auto a = std::find(toInit.begin(), toInit.end(), newNode);
+					if (a != toInit.end())
+						toInit.erase(a);
+				}
 			}
+			
 			treeDirty = true;
 		}
 
@@ -97,6 +102,18 @@ namespace vrlib
 					cameraNode = findNodeWithComponent<components::Camera>();
 				treeDirty = false;
 			}
+
+			if (!toInit.empty())
+			{
+				for (auto newNode : toInit)
+				{
+					components::RigidBody* rigidBody;
+					if (rigidBody = newNode->getComponent<components::RigidBody>())
+						rigidBody->init(world);
+				}
+				toInit.clear();
+			}
+
 			if(world)
 				world->stepSimulation(elapsedTime);
 			fortree([this, &elapsedTime](Node* n)
@@ -123,6 +140,30 @@ namespace vrlib
 						updateTransforms(c, parentTransform);
 			};
 			updateTransforms(this, glm::mat4());
+		}
+
+		
+		
+
+		class CollisionTest : public btCollisionWorld::ContactResultCallback
+		{
+		public:
+			bool collision = false;
+			virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) override
+			{
+				collision = true;
+				return 0;
+			}
+		};
+		bool Scene::testBodyCollision(Node * n1, Node * n2)
+		{
+			if (!n1 || !n2)
+				return false;
+			CollisionTest test;
+			world->contactPairTest(n1->getComponent<vrlib::tien::components::RigidBody>()->body,
+				n2->getComponent<vrlib::tien::components::RigidBody>()->body,
+				test);
+			return test.collision;
 		}
 
 

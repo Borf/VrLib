@@ -39,8 +39,10 @@ namespace vrlib
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
 
+			std::list<Node*> toInit;
+
 			bool isPreparedForRunning;
-			virtual void setTreeDirty(Node* newNode) override;
+			virtual void setTreeDirty(Node* newNode, bool isNewNode) override;
 			void updateRenderables();
 			void prepareForRun();
 			void update(float elapsedTime);
@@ -56,6 +58,10 @@ namespace vrlib
 		public:
 			btDiscreteDynamicsWorld*                world;
 			DebugDraw*								debugDrawer;
+
+
+			bool testBodyCollision(Node* n1, Node* n2);
+
 
 		};
 	}

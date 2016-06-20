@@ -1,0 +1,24 @@
+#pragma once
+
+#include <VrLib/Device.h>
+
+namespace vrlib
+{
+	class Vive
+	{
+	public:
+		class Controller
+		{
+		public:
+			vrlib::PositionalDevice		transform;
+			vrlib::DigitalDevice		applicationMenuButton;
+			vrlib::DigitalDevice		gripButton;
+			vrlib::DigitalDevice		touchButton;
+			vrlib::DigitalDevice		triggerButton;
+		} controllers[2];
+
+		vrlib::PositionalDevice hmd;
+
+		void init();
+	};
+}

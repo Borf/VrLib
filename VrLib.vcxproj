@@ -140,6 +140,7 @@
     <ClInclude Include="VrLib\gui\components\Panel.h" />
     <ClInclude Include="VrLib\gui\components\Slider.h" />
     <ClInclude Include="VrLib\gui\Window.h" />
+    <ClInclude Include="VrLib\HtcVive.h" />
     <ClInclude Include="VrLib\Image.h" />
     <ClInclude Include="VrLib\json.h" />
     <ClInclude Include="VrLib\Kernel.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="VrLib\gui\components\Panel.cpp" />
     <ClCompile Include="VrLib\gui\components\Slider.cpp" />
     <ClCompile Include="VrLib\gui\Window.cpp" />
+    <ClCompile Include="VrLib\HtcVive.cpp" />
     <ClCompile Include="VrLib\Image.cpp" />
     <ClCompile Include="VrLib\json.cpp" />
     <ClCompile Include="VrLib\Kernel.cpp" />

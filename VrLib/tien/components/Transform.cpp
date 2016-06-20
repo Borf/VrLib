@@ -45,7 +45,7 @@ namespace vrlib
 			void Transform::lookAt(const glm::vec3 &target, const glm::vec3 &up)
 			{
 				glm::mat4 mat = glm::lookAt(position, target, up);
-				rotation = glm::quat(mat);
+				rotation = glm::inverse(glm::quat(mat));
 			}
 
 			bool Transform::moveTo(const glm::vec3 &target, float speed)

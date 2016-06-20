@@ -4,11 +4,9 @@
 
 #include <list>
 #include <vrlib/json.h>
+#include <openvr.h>
 
-namespace vr {
-	class IVRSystem;
-	class IVRRenderModels;
-}
+
 
 namespace vrlib
 {
@@ -16,15 +14,27 @@ namespace vrlib
 
 	class OpenVRDriver : public DeviceDriver
 	{
-		class OpenVrDeviceDriverAdaptor : public PositionalDeviceDriverAdaptor
+		class OpenVrPositionDeviceDriverAdaptor : public PositionalDeviceDriverAdaptor
 		{
 			std::string src;
 			OpenVRDriver* driver;
 		public:
-			OpenVrDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config);
+			OpenVrPositionDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config);
 			glm::mat4 getData();
-			
 		};
+
+		class OpenVrButtonDeviceDriverAdaptor : public DigitalDeviceDriverAdaptor
+		{
+			std::string src;
+			OpenVRDriver* driver;
+			int id;
+			uint64_t bitmask;
+		public:
+			OpenVrButtonDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config);
+			DigitalState getData();
+		};
+
+
 
 		json::Value config;
 
@@ -36,6 +46,8 @@ namespace vrlib
 		int hmdIndex;
 		std::vector<int> lighthouses;
 
+		vr::VRControllerState_t prevControllerStates[16];
+		vr::VRControllerState_t controllerStates[16];
 
 		glm::mat4 hmd;
 		glm::mat4 controller0;
