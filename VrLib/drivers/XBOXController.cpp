@@ -62,7 +62,6 @@ namespace vrlib
 			xboxData = RightTrigger;
 			deviceType = Digital;
 		}
-
 		else if (options == "StartButton") {
 			xboxData = StartButton;
 			deviceType = Digital;
@@ -71,7 +70,14 @@ namespace vrlib
 			xboxData = BackButton;
 			deviceType = Digital;
 		}
-
+		else if (options == "LeftThumbStick") {
+			xboxData = LeftThumbStick;
+			deviceType = Digital;
+		}
+		else if (options == "RightThumbStick") {
+			xboxData = RightThumbStick;
+			deviceType = Digital;
+		}
 		else if (options == "RightThumbStickAngle") {
 			xboxData = RightThumbAngle;
 			deviceType = Analog;
@@ -157,6 +163,10 @@ namespace vrlib
 			return (this->getState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT) != 0;
 		if (button == DPADLeftButton)
 			return (this->getState().Gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT) != 0;
+		if (button == LeftThumbStick)
+			return (this->getState().Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB) != 0;
+		if (button == RightThumbStick)
+			return (this->getState().Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB) != 0;
 		if (button == LeftShoulder)
 			return (this->getState().Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER) != 0;
 		if (button == RightShoulder)
