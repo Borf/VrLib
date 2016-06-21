@@ -2,7 +2,7 @@
 
 #include "Node.h"
 #include <set>
-#include <vrlib/gl/Vertex.h>
+#include <VrLib/gl/Vertex.h>
 #include <btBulletDynamicsCommon.h>
 #include "components/Renderable.h"
 

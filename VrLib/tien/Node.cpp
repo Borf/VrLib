@@ -1,6 +1,7 @@
 #include "Node.h"
 #include "Component.h"
 #include <assert.h>
+#include <algorithm>
 
 namespace vrlib
 {

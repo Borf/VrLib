@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include <VrLib/drivers/RaceWheelDriver.h>
 #include <VrLib/Log.h>
 
@@ -1006,3 +1008,7 @@ namespace vrlib
 		//return driver->data[(int)buttons];
 	}
 }
+
+
+
+#endif

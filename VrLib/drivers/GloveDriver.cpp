@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include <VrLib/drivers/GloveDriver.h>
 #include <VrLib/Log.h>
 
@@ -176,3 +178,5 @@ namespace vrlib
 		return driver->fingerpos[(int)finger];
 	}
 }
+
+#endif

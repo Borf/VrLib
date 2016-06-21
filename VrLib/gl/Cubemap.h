@@ -1,14 +1,13 @@
 #pragma once
-#include <vrlib/gl/VBO.h>
-#include <vrlib/gl/Vertex.h>
-#include <vrlib/gl/shader.h>
-#include <glm\glm.hpp>
+#include <VrLib/gl/VBO.h>
+#include <VrLib/gl/Vertex.h>
+#include <VrLib/gl/shader.h>
+#include <glm/glm.hpp>
 
 #include <string>
 #include <vector>
 
-#include <GL\glew.h>
-#include <gl\GL.h>
+#include <GL/glew.h>
 
 
 namespace vrlib
@@ -29,7 +28,7 @@ namespace vrlib
 			int components;
 
 		public:
-			vrlib::gl::Cubemap(vrlib::gl::ShaderProgram* shader, std::string filenames[6], const std::vector<glm::vec3> &cubemapVertices);
+			Cubemap(ShaderProgram* shader, std::string filenames[6], const std::vector<glm::vec3> &cubemapVertices);
 			~Cubemap(void);
 
 			void bindTexture();

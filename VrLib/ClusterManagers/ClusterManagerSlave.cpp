@@ -4,8 +4,22 @@
 #include <VrLib/BinaryStream.h>
 #include <VrLib/Device.h>
 #include <VrLib/ClusterData.h>
+#include <string.h>
 
+#ifdef WIN32
 #include <WS2tcpip.h> //socklen_t
+#else
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <unistd.h>
+#define closesocket(x) ::close((x))
+typedef int SOCKET;
+#endif
 
 namespace vrlib
 {

@@ -8,7 +8,7 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/Model.h>
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 

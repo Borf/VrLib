@@ -1,8 +1,9 @@
 #pragma once
 
+#ifdef WIN32
 #include <Windows.h>
-#include <gl/glew.h>
-#include <gl/GL.h>
+#endif
+#include <GL/glew.h>
 
 
 namespace vrlib

@@ -1,8 +1,9 @@
 #pragma once
 
-#include <gl/glew.h>
-#include <gl/GL.h>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <VrLib/Log.h>
+using vrlib::Log;
 
 namespace vrlib
 {
@@ -159,7 +160,7 @@ namespace vrlib
 		template<>			inline void setBiTan3<VertexP3N2B2T2T2>(VertexP3N2B2T2T2& vertex, const glm::vec3 &n) { vertex.bitanx = n.x;		vertex.bitany = n.y;  vertex.bitanz = n.z;  }
 
 		//// WATCH OUT, NEEDS TO BE SPECIALIZED IN THE RIGHT ORDER
-		template<class T>	inline int setAttribute(int& attributeIndex, int totalSize, int offset) { printf("ERROR! SETTING ATTRIBUTES"); return 0; }
+		template<class T>	inline int setAttribute(int& attributeIndex, int totalSize, int offset) { logger<<"ERROR! SETTING ATTRIBUTES"<<Log::newline; return 0; }
 		template<>			inline int setAttribute<VertexP3>(int& attributeIndex, int totalSize, int offset)
 		{
 			int prevSize = 0;

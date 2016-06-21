@@ -1,8 +1,8 @@
-#include "AABB.h"
-#include <glm\glm.hpp>
-#include "ray.h"
+#include "aabb.h"
+#include <glm/glm.hpp>
+#include "Ray.h"
 #include <math.h>
-#include <GL\glew.h>
+#include <GL/glew.h>
 
 namespace vrlib
 {

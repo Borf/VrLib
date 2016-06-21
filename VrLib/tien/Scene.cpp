@@ -8,6 +8,8 @@
 
 #include <btBulletDynamicsCommon.h>
 
+#include <algorithm>
+
 
 namespace vrlib
 {

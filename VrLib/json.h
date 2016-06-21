@@ -5,6 +5,12 @@
 #include <vector>
 #include <assert.h>
 
+
+#ifndef WIN32
+typedef int64_t __int64;
+#endif
+
+
 namespace vrlib
 {
 	class Log;
@@ -87,7 +93,7 @@ namespace vrlib
 			virtual Value& operator [] (const std::string &key) const;
 			virtual Value& operator [] (const char* key) const;
 
-			virtual const Value& get (const char* key, const Value& default) const;
+			virtual const Value& get (const char* key, const Value& defaultValue) const;
 
 			virtual bool operator == (const std::string &other) { return asString() == other; }
 			virtual bool operator == (const int other) { return asInt() == other; }

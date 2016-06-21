@@ -1,8 +1,11 @@
-#include <vrlib/log.h>
+#include <VrLib/Log.h>
 #include "thread.h"
+
+#include <glm/glm.hpp>
 
 #ifndef WIN32
 #include <sys/prctl.h>
+#include <unistd.h>
 #endif
 
 namespace vrlib
@@ -49,7 +52,7 @@ namespace vrlib
 	{
 #ifdef WIN32
 #else
-		prctl(PR_SET_NAME, (unsigned long)((Thread*)lpParam)->name.substr(0, math::min(16, (int)((Thread*)lpParam)->name.size())).c_str());
+		prctl(PR_SET_NAME, (unsigned long)((Thread*)lpParam)->name.substr(0, glm::min(16, (int)((Thread*)lpParam)->name.size())).c_str());
 #endif
 		pthread_exit((void*)((Thread*)lpParam)->run());
 	}

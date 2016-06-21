@@ -1,6 +1,8 @@
 #pragma once
 
-#include <vrlib/Device.h>
+#ifdef WIN32
+
+#include <VrLib/Device.h>
 #include <Leap.h>
 
 namespace vrlib
@@ -29,3 +31,6 @@ namespace vrlib
 	};
 
 }
+
+
+#endif

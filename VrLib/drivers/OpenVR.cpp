@@ -4,9 +4,10 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <VrLib\Kernel.h>
-#include <VrLib\Log.h>
+#include <VrLib/Kernel.h>
+#include <VrLib/Log.h>
 #include <iostream>
+#include <algorithm>
 
 
 namespace vrlib

@@ -1,4 +1,6 @@
-#include "Util.h"
+#include "util.h"
+#include "Log.h"
+using vrlib::Log;
 
 #ifdef WIN32
 #include <Windows.h>
@@ -48,7 +50,7 @@ namespace vrlib
 						continue;
 
 					struct stat stFileInfo;
-					stat((directory + "/" + ep->d_name).c_str(), &stFileInfo);
+					stat((path + "/" + ep->d_name).c_str(), &stFileInfo);
 
 					if ((stFileInfo.st_mode & S_IFDIR))// && recursive)
 					{
@@ -66,7 +68,7 @@ namespace vrlib
 				closedir(dp);
 			}
 			else
-				Log::out << "Could not open directory '" << directory << "'" << Log::newline;
+				logger << "Could not open directory '" << path << "'" << Log::newline;
 #else
 			WIN32_FIND_DATA FileData;													// thingy for searching through a directory
 			HANDLE hSearch;

@@ -2,6 +2,8 @@
 #include <VrLib/Log.h>
 namespace vrlib
 {
+
+#ifdef WIN32
 	PerfMon::PerfMon()
 	{
 		LARGE_INTEGER li;
@@ -29,4 +31,6 @@ namespace vrlib
 		QueryPerformanceCounter(&li);
 		startTime = li.QuadPart;
 	}
+#endif
+	
 }

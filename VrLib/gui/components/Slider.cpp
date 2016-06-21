@@ -1,9 +1,9 @@
 #include "Slider.h"
 
-#include <vrlib/gui/Window.h>
-#include <vrlib/gl/shader.h>
-#include <vrlib/gl/Vertex.h>
-#include <vrlib/Model.h>
+#include <VrLib/gui/Window.h>
+#include <VrLib/gl/shader.h>
+#include <VrLib/gl/Vertex.h>
+#include <VrLib/Model.h>
 
 
 #include <glm/gtc/matrix_transform.hpp>

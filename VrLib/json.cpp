@@ -696,11 +696,11 @@ namespace vrlib
 			return stream;
 		}
 
-		const Value& Value::get(const char* key, const Value& default) const
+		const Value& Value::get(const char* key, const Value& defaultValue) const
 		{
 			if (isMember(key))
 				return (*this)[key];
-			return default;
+			return defaultValue;
 		}
 
 

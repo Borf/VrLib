@@ -4,7 +4,13 @@
 #include <map>
 #include <list>
 #include <mutex>
+
+#ifdef WIN32
 #include <windows.h>
+#else
+typedef int SOCKET;
+
+#endif
 
 #include <VrLib/json.h>
 
@@ -49,8 +55,8 @@ namespace vrlib
 		std::map<std::string, Tunnel*> tunnels;
 
 	public:
-		std::thread backgroundThread;
 		bool running;
+		std::thread backgroundThread;
 
 		ServerConnection();
 

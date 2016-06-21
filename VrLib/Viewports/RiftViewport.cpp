@@ -1,5 +1,7 @@
 #define NOMINMAX
 
+#ifdef WIN32
+
 #include "RiftViewport.h"
 
 #include <VrLib/Application.h>
@@ -248,3 +250,6 @@ namespace vrlib
 
 	}
 }
+
+
+#endif

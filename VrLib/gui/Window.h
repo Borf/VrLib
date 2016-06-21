@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <VrLib/math/Ray.h>
+#include "components/Panel.h"
 
 namespace vrlib
 {

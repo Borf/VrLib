@@ -1,8 +1,8 @@
 #include "AssimpModel.h"
 
-#include <vrlib/gl/Vertex.h>
-#include <vrlib/Texture.h>
-#include <vrlib/Log.h>
+#include <VrLib/gl/Vertex.h>
+#include <VrLib/Texture.h>
+#include <VrLib/Log.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>

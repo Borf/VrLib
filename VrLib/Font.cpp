@@ -1,4 +1,7 @@
+#ifdef WIN32
 #include <windows.h>
+#endif
+
 #include "Font.h"
 #include <ft2build.h>
 #include <fstream>
@@ -208,7 +211,11 @@ namespace vrlib
 			return;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
+#ifdef WIN32
 		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
+#else
+		vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
+#endif
 		va_end(ap);											// Results Are Stored In Text
 		int len = strlen(text);
 
@@ -260,7 +267,11 @@ namespace vrlib
 			return 0;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
+#ifdef WIN32
 		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
+#else
+		vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
+#endif
 		va_end(ap);											// Results Are Stored In Text
 		int len = strlen(text);
 

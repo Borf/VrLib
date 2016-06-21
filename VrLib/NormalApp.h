@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vrlib/Application.h>
-#include <vrlib/drivers/Keyboard.h>
-#include <vrlib/drivers/MouseButton.h>
+#include <VrLib/Application.h>
+#include <VrLib/drivers/Keyboard.h>
+#include <VrLib/drivers/MouseButton.h>
 #include <string>
 
 namespace vrlib

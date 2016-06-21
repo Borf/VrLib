@@ -1,3 +1,6 @@
+#ifdef WIN32
+
+
 #include "Oculus.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -103,3 +106,7 @@ namespace vrlib
 	}
 
 }
+
+
+
+#endif

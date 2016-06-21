@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <cctype>
+#include <unistd.h>
 
 #include <VrLib/Application.h>
 #include <VrLib/Log.h>
@@ -16,21 +17,30 @@
 #include <VrLib/drivers/Keyboard.h>
 #include <VrLib/drivers/SimPosition.h>
 #include <VrLib/drivers/Sim2dInput.h>
-#include <VrLib/drivers/XBOXController.h>
 #include <VrLib/drivers/Vrpn.h>
+
+#ifdef WIN32
+#include <VrLib/drivers/XBOXController.h>
 #include <VrLib/drivers/GloveDriver.h>
 #include <VrLib/drivers/RaceWheelDriver.h>
 #include <VrLib/drivers/Oculus.h>
-#include <VrLib/drivers/OpenVR.h>
 #include <VrLib/drivers/HydraDriver.h>
 #include <VrLib/drivers/LeapMotion.h>
+#endif
+
+#include <VrLib/drivers/OpenVR.h>
 #include <VrLib/PerfMon.h>
 #include <VrLib/ServerConnection.h>
 
 #include <GL/glew.h>
-#include <GL/wglew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+
+#ifdef WIN32
+#include <GL/wglew.h>
+#endif
+
 
 namespace vrlib
 {
@@ -131,7 +141,11 @@ namespace vrlib
 			}
 
 			tick(frameTime, time);
+#ifdef WIN32
 			Sleep(0);
+#else
+			sleep(0);
+#endif
 		}
 	}
 
@@ -181,14 +195,6 @@ namespace vrlib
 			sim2dInputDriver = driver;
 			return driver;
 		}
-		else if (name == "XBOX")
-		{
-			XBOXDeviceDriver* driver = new XBOXDeviceDriver();
-			if (xboxDriver)
-				logger << "Double XBOX controller driver" << Log::newline;
-			xboxDriver = driver;
-			return driver;
-		}
 		else if (name == "mouse")
 		{
 			MouseButtonDeviceDriver* driver = new MouseButtonDeviceDriver();
@@ -207,6 +213,15 @@ namespace vrlib
 		}
 		else if (name == "vrpn")
 			return new VrpnDeviceDriver();
+#ifdef WIN32
+		else if (name == "XBOX")
+		{
+			XBOXDeviceDriver* driver = new XBOXDeviceDriver();
+			if (xboxDriver)
+				logger << "Double XBOX controller driver" << Log::newline;
+			xboxDriver = driver;
+			return driver;
+		}
 		else if (name == "glove")
 			return new GloveDeviceDriver();
 		else if (name == "hydra")
@@ -239,6 +254,7 @@ namespace vrlib
 				oculusDriver = new OculusDeviceDriver(config["driverconfig"]["Oculus"]);
 			return oculusDriver;
 		}
+#endif
 		else if (name == "openvr")
 		{
 			if(!openvrDriver)
@@ -430,8 +446,10 @@ namespace vrlib
 		if (sim2dInputDriver && keyboardDriver)
 			sim2dInputDriver->update(keyboardDriver, frameTime);
 
+#ifdef WIN32
 		if (oculusDriver && keyboardDriver)
 			oculusDriver->update(keyboardDriver);
+#endif
 
 		if (isMaster())
 		{
