@@ -31,6 +31,26 @@ namespace vrlib
 		QueryPerformanceCounter(&li);
 		startTime = li.QuadPart;
 	}
+#else
+	PerfMon::PerfMon()
+	{
+	
+	}
+	
+	PerfMon::~PerfMon()
+	{
+	
+	}
+	
+	double PerfMon::getTime()
+	{
+		return 0;
+	}
+	
+	void PerfMon::resetTimer()
+	{
+	
+	}
 #endif
 	
 }

@@ -15,4 +15,10 @@ namespace vrlib
 	{
 		return Kernel::getInstance()->isMaster();
 	}
+	template<>
+	int ClusterData<std::string>::getEstimatedSize()
+	{
+		return 4 + data->size();
+	}
+	
 }

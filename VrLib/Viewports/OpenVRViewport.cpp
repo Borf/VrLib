@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -204,3 +206,6 @@ glUseProgram( 0 );
 	}
 
 }
+
+
+#endif

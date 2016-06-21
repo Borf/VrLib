@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include <VrLib/drivers/Vrpn.h>
 #include <VrLib/Log.h>
 
@@ -58,3 +60,6 @@ namespace vrlib
 		return driver->data[id];
 	}
 }
+
+
+#endif

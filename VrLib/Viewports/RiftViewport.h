@@ -216,7 +216,7 @@ namespace vrlib //STUB
 	class RiftViewport : public Viewport
 	{
 	public:
-		RiftViewport(User* user, OculusDeviceDriver* oculusDriver, Kernel* kernel);
+		RiftViewport(User* user, OculusDeviceDriver* oculusDriver, Kernel* kernel) : Viewport(user) {};
 		virtual void draw(Application* application) {};
 		virtual glm::mat4 getProjectionMatrix() {return glm::mat4(); };
 

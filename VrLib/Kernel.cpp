@@ -17,7 +17,6 @@
 #include <VrLib/drivers/Keyboard.h>
 #include <VrLib/drivers/SimPosition.h>
 #include <VrLib/drivers/Sim2dInput.h>
-#include <VrLib/drivers/Vrpn.h>
 
 #ifdef WIN32
 #include <VrLib/drivers/XBOXController.h>
@@ -26,9 +25,10 @@
 #include <VrLib/drivers/Oculus.h>
 #include <VrLib/drivers/HydraDriver.h>
 #include <VrLib/drivers/LeapMotion.h>
+#include <VrLib/drivers/Vrpn.h>
+#include <VrLib/drivers/OpenVR.h>
 #endif
 
-#include <VrLib/drivers/OpenVR.h>
 #include <VrLib/PerfMon.h>
 #include <VrLib/ServerConnection.h>
 
@@ -211,9 +211,9 @@ namespace vrlib
 			keyboardDriver = driver;
 			return driver;
 		}
+#ifdef WIN32
 		else if (name == "vrpn")
 			return new VrpnDeviceDriver();
-#ifdef WIN32
 		else if (name == "XBOX")
 		{
 			XBOXDeviceDriver* driver = new XBOXDeviceDriver();
@@ -254,13 +254,13 @@ namespace vrlib
 				oculusDriver = new OculusDeviceDriver(config["driverconfig"]["Oculus"]);
 			return oculusDriver;
 		}
-#endif
 		else if (name == "openvr")
 		{
 			if(!openvrDriver)
 				openvrDriver = new OpenVRDriver(config["driverconfig"]["openvr"]);
 			return openvrDriver;
 		}
+#endif
 		else
 		{
 			logger << "Unknown driver requested: '" << name << "'" << Log::newline;

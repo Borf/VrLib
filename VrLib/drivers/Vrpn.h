@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef WIN32
+
 #include <VrLib/Device.h>
 
 #include <glm/glm.hpp>
@@ -38,3 +40,6 @@ namespace vrlib
 
 	};
 }
+
+
+#endif

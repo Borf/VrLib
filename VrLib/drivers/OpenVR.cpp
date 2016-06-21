@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include "OpenVR.h"
 
 #include <glm/gtc/matrix_transform.hpp>
@@ -192,3 +194,5 @@ namespace vrlib
 
 
 }
+
+#endif

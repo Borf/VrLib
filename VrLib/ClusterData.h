@@ -57,9 +57,4 @@ namespace vrlib
 
 	};
 
-	template<>
-	int ClusterData<std::string>::getEstimatedSize()
-	{
-		return 4 + data->size();
-	}
 }

@@ -1,3 +1,4 @@
+#ifdef WIN32
 #pragma once
 
 
@@ -59,3 +60,20 @@ namespace vrlib
 		bool CreateFrameBuffer(int nWidth, int nHeight, FramebufferDesc &framebufferDesc);
 	};
 }
+
+#else
+	#include <VrLib/Viewport.h>
+namespace vrlib
+{
+
+	class OpenVRViewport : public Viewport
+	{
+	public:
+		OpenVRViewport(User* user, OpenVRDriver* openVRDriver, Kernel* kernel) : Viewport(user){};
+		virtual void draw(Application* application) {};
+		virtual glm::mat4 getProjectionMatrix() {return glm::mat4(); };
+
+	
+	};
+}
+#endif

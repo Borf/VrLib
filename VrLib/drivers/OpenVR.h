@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef WIN32
+
 #include <VrLib/Device.h>
 
 #include <list>
@@ -61,3 +63,21 @@ namespace vrlib
 		virtual void update();
 	};
 }
+
+#else
+
+#include <VrLib/Device.h>
+
+namespace vrlib
+{
+	class OpenVRDriver : public DeviceDriver
+	{
+		OpenVRDriver(json::Value config) {}
+		virtual DeviceDriverAdaptor* getAdaptor(std::string options) { return nullptr; }
+		virtual void update() {};
+	
+	}
+
+}
+
+#endif
