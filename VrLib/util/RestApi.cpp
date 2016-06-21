@@ -2,13 +2,29 @@
 #include "RestApi.h"
 
 #include <VrLib/Log.h>
-#include <vrlib/json.h>
-#include <WinSock2.h>
-#include <Windows.h>
+#include <VrLib/json.h>
 #include <algorithm>
 #include <glm/glm.hpp>
+#include <string.h>
+#include <thread>
+#include <chrono>
 
+#ifdef WIN32
+#include <WinSock2.h>
+#include <Windows.h>
 #pragma comment(lib, "ws2_32.lib")
+#else
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <unistd.h>
+#define closesocket(x) ::close((x))
+typedef int SOCKET;
+#endif
 
 namespace vrlib
 {
@@ -52,7 +68,7 @@ namespace vrlib
 			sessionId = ret["success"]["sessionid"].asInt();
 			if (sessionId != 0)
 				break;
-			Sleep(5000);
+			std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
 
 		json::Value session = callApi(GET, "session:" + std::to_string(sessionId), headers, json::Value());

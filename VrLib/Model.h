@@ -3,7 +3,7 @@
 #include <functional>
 #include <vector>
 #include <glm/glm.hpp>
-#include <vrlib/math/aabb.h>
+#include <VrLib/math/aabb.h>
 
 namespace vrlib
 {

@@ -1,5 +1,5 @@
-#include <gl/glew.h>
-#include "Shader.h"
+#include <GL/glew.h>
+#include "shader.h"
 #include <fstream>
 #include <glm/gtc/type_ptr.hpp>
 #include <VrLib/Log.h>

@@ -1,15 +1,12 @@
 #pragma once
 #include <VrLib/VrLib.h>
 
-#include <GL\glew.h>
-#include <gl\GL.h>
-#include <glm\glm.hpp>
+#include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include <map>
 #include <string>
 
-#pragma warning(push)
-//#pragma warning(disable : 4251)
 namespace vrlib
 {
 	class TASubTexture
@@ -42,4 +39,3 @@ namespace vrlib
 		void bind();
 	};
 }
-#pragma warning(pop)

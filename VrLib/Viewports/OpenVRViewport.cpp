@@ -10,16 +10,19 @@
 #include <VrLib/Kernel.h>
 
 #include <VrLib/gl/FBO.h>
-#include <VrLib/gl/Shader.h>
+#include <VrLib/gl/shader.h>
 #include <VrLib/Log.h>
 #include <VrLib/drivers/OpenVR.h>
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#ifdef WIN32
 #include <GL/wglew.h>
+#endif
+
 #include <openvr.h>
 
 namespace vrlib

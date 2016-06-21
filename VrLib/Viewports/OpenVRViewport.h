@@ -3,10 +3,7 @@
 
 #include <VrLib/Viewport.h>
 #include <glm/glm.hpp>
-
-
-#define OVR_OS_WIN32
-#include <gl/glew.h>
+#include <GL/glew.h>
 
 namespace vr
 {

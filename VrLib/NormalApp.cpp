@@ -1,8 +1,10 @@
 #include "NormalApp.h"
 #include <VrLib/Kernel.h>
 #include <VrLib/Viewport.h>
-#include <windows.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 
 namespace vrlib

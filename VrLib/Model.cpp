@@ -6,7 +6,7 @@
 #include "models/AssimpModel.h"
 #include "models/LoLModel.h"
 
-#include <vrlib/math/Ray.h>
+#include <VrLib/math/Ray.h>
 #include "Log.h"
 #include <algorithm>
 #include <climits>

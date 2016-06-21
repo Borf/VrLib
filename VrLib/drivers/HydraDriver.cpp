@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include <VrLib/drivers/HydraDriver.h>
 #include <VrLib/Log.h>
 
@@ -319,3 +321,6 @@ namespace vrlib
 		}
 	}
 }
+
+
+#endif

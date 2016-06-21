@@ -4,8 +4,8 @@
 #define NOMINMAX
 #endif
 
-#include <Windows.h>
-#include <gl/glew.h>
+//#include <Windows.h>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <string>
 #include <map>

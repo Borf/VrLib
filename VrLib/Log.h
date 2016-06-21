@@ -19,6 +19,7 @@ namespace vrlib
 		static EndLine newline;
 
 		Log& operator <<(char* txt);
+		Log& operator <<(const char* txt);
 		Log& operator <<(std::string txt);
 		Log& operator <<(int txt);
 		Log& operator <<(unsigned long txt);

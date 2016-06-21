@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include <VrLib/Device.h>
 #include <glm/glm.hpp>
 #include <windows.h>
@@ -71,3 +73,5 @@ namespace vrlib
 	};
 
 }
+
+#endif

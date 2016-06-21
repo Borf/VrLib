@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef WIN32
 #include <WinSock2.h>
+#else
+typedef int SOCKET;
+#endif
+
 #include <vector>
 #include <VrLib/ClusterManager.h>
 

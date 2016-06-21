@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include "XBOXController.h"
 #include <VrLib/Log.h>
 #include <iostream>
@@ -320,3 +322,6 @@ namespace vrlib
 		return returnValue;
 	}
 }
+
+
+#endif

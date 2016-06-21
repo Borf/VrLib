@@ -29,7 +29,8 @@ namespace vrlib
 
 			Panel::Panel(const std::string &jsonFileName)
 			{
-				json::Value config = json::readJson(std::ifstream(jsonFileName.c_str()));
+				std::ifstream file(jsonFileName.c_str());
+				json::Value config = json::readJson(file);
 				loadJson(config);
 			}
 
@@ -70,7 +71,7 @@ namespace vrlib
 						if (element.isMember("size"))
 							component->size = glm::vec2(element["size"][0], element["size"][1]);
 						if (element.isMember("name"))
-							component->name = element["name"];
+							component->name = element["name"].asString();
 
 						push_back(component);
 					}

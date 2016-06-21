@@ -2,8 +2,24 @@
 
 #include <VrLib/Log.h>
 #include <VrLib/json.h>
-#include <Gl/glew.h>
+#include <GL/glew.h>
 #include <ctime>
+#include <string.h>
+
+
+#ifndef WIN32
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <unistd.h>
+#define closesocket(x) ::close((x))
+typedef int SOCKET;
+#endif
+
 
 namespace vrlib
 {
@@ -41,16 +57,23 @@ namespace vrlib
 	void ServerConnection::thread()
 	{
 		while (!running)
+		{
+		#ifdef WIN32
 			Sleep(1);
-		char hostname[1024];
-		gethostname(hostname, 1024);
-		char applicationName[MAX_PATH];
-		::GetModuleFileName(0, applicationName, MAX_PATH);
+		#else
+			usleep(1000);
+		#endif
+		}
+		char hostname[1024] = "";
+		char applicationName[1024] = "";
+		char username[1024] = "";
 
-		char username[1024];
+		#ifdef WIN32
+		gethostname(hostname, 1024);
+		::GetModuleFileName(0, applicationName, 1024);
 		DWORD username_len = 1024;
 		GetUserName(username, &username_len);
-
+		#endif
 
 		std::time_t startTime = std::time(nullptr);
 
@@ -77,7 +100,11 @@ namespace vrlib
 			{
 				logger << "Cannot create socket, try a reboot" << Log::newline;
 				closesocket(s);
+				#ifdef WIN32
 				Sleep(60000);
+				#else
+				sleep(60);
+				#endif
 				continue;
 			}
 
@@ -90,7 +117,11 @@ namespace vrlib
 					logger << "Could not connect to api host: " << apiHost << Log::newline;
 				lastConnected = false;
 				closesocket(tempSocket);
+				#ifdef WIN32
 				Sleep(1000);
+				#else
+				sleep(1);
+				#endif
 				continue;
 			}
 			lastConnected = true;
@@ -101,7 +132,7 @@ namespace vrlib
 			packet["data"]["host"] = hostname;
 			packet["data"]["file"] = applicationName;
 			packet["data"]["renderer"] = std::string((char*)renderer);
-			packet["data"]["starttime"] = startTime;
+			packet["data"]["starttime"] = (int)startTime;
 			packet["data"]["user"] = username;
 			send(packet, tempSocket);
 
@@ -158,7 +189,11 @@ namespace vrlib
 			}
 			lastConnected = false;
 			logger << "Disconnected...." << Log::newline;
+#ifdef WIN32
 			Sleep(1000);
+#else
+			sleep(1);
+#endif
 		}
 	}
 
@@ -186,7 +221,11 @@ namespace vrlib
 	void ServerConnection::waitForConnection()
 	{
 		while (s == 0)
+#ifdef WIN32
 			Sleep(10);
+#else
+			sleep(0);
+#endif
 	}
 
 
@@ -213,7 +252,11 @@ namespace vrlib
 		int i = 0;
 		while (!done && i < 1000)
 		{
+#ifdef WIN32
 			Sleep(2);
+#else
+			sleep(0);
+#endif
 			i++;
 		}
 		return result;

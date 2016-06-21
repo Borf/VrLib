@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 #include "LeapMotion.h"
 
 #include <vrlib/Log.h>
@@ -38,5 +40,8 @@ namespace vrlib
 	void LeapMotionDeviceDriver::onDeviceChange(const Leap::Controller&)		{	logger << "Leap Devicechange" << Log::newline;	}
 	void LeapMotionDeviceDriver::onServiceConnect(const Leap::Controller&)		{	logger<<"Leap Service connected"<<Log::newline;	}
 	void LeapMotionDeviceDriver::onServiceDisconnect(const Leap::Controller&)	{	logger<<"Leap Service disconnected"<< Log::newline;	}
-
 }
+
+
+
+#endif

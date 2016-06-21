@@ -1,7 +1,7 @@
 #include "ModelRenderer.h"
-#include <vrlib/Model.h>
+#include <VrLib/Model.h>
 #include <VrLib/Texture.h>
-#include <vrlib/gl/Vertex.h>
+#include <VrLib/gl/Vertex.h>
 #include "Transform.h"
 #include "../Node.h"
 

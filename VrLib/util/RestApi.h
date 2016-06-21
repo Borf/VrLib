@@ -1,9 +1,9 @@
 #pragma once
 
 #include <VrLib/Singleton.h>
+#include <VrLib/json.h>
 #include <string>
 #include <vector>
-#include <vrlib/json.h>
 
 
 namespace vrlib

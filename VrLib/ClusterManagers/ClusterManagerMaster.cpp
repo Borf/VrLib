@@ -3,6 +3,21 @@
 #include <VrLib/Log.h>
 #include <VrLib/BinaryStream.h>
 #include <VrLib/PerfMon.h>
+#include <string.h>
+
+#ifndef WIN32
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <unistd.h>
+#define closesocket(x) ::close((x))
+typedef int SOCKET;
+#endif
+
 
 
 namespace vrlib

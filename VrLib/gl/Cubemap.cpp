@@ -1,10 +1,10 @@
 #include "Cubemap.h"
-#include "Shader.h"
+#include "shader.h"
 
-#include <vrlib/stb_image.h>
+#include <VrLib/stb_image.h>
 
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtc\type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 
@@ -50,7 +50,7 @@ namespace vrlib
 				if (pFile)
 				{
 					//Get the data from the texture
-					BYTE* data = stbi_load_from_file(pFile, &width, &height, &components, 4);
+					unsigned char* data = stbi_load_from_file(pFile, &width, &height, &components, 4);
 					//Close the file
 					fclose(pFile);
 
