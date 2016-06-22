@@ -188,6 +188,7 @@ namespace vrlib
 			return TOGGLE_OFF;
 		else
 			logger << "Unknown digital device values? The universe is collapsing" << Log::newline;
+		return OFF;
 	}
 
 

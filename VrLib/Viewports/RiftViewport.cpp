@@ -1,6 +1,8 @@
-#define NOMINMAX
-
 #ifdef WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+
 
 #include "RiftViewport.h"
 

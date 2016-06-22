@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <cctype>
-#include <unistd.h>
 
 #include <VrLib/Application.h>
 #include <VrLib/Log.h>
@@ -27,7 +26,6 @@
 #include <VrLib/drivers/HydraDriver.h>
 #include <VrLib/drivers/LeapMotion.h>
 #endif
-
 #include <VrLib/drivers/OpenVR.h>
 #include <VrLib/PerfMon.h>
 #include <VrLib/ServerConnection.h>
@@ -37,8 +35,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-#ifdef WIN32
-#include <GL/wglew.h>
+#ifndef WIN32
+#include <unistd.h>
 #endif
 
 
