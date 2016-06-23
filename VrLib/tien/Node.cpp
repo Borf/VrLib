@@ -35,6 +35,21 @@ namespace vrlib
 			}
 		}
 
+		Node &Node::operator =(const Node &other)
+		{
+			parent = nullptr;
+			
+			components = other.components;
+
+			for (auto c : other.children)
+			{
+				Node* newChild = new Node(c);
+				children.push_back(newChild);
+				newChild->parent = this;
+			}
+			return *this;
+		}
+
 		Node::~Node()
 		{
 			if (parent)

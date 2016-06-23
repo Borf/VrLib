@@ -6,6 +6,8 @@
 #include "components/RigidBody.h"
 #include "components/Collider.h"
 
+#include <VrLib/math/Ray.h>
+
 #include <btBulletDynamicsCommon.h>
 
 #include <algorithm>
@@ -25,6 +27,8 @@ namespace vrlib
 
 		Scene::Scene(const Scene& other) : Node(&other)
 		{
+			for (auto c : children)
+				c->parent = this;
 			cameraNode = other.cameraNode;
 			treeDirty = true;
 			world = nullptr;
@@ -74,6 +78,7 @@ namespace vrlib
 
 		void Scene::prepareForRun()
 		{
+			name += "( running )";
 			broadphase = new btDbvtBroadphase();
 			collisionConfiguration = new btDefaultCollisionConfiguration();
 			dispatcher = new btCollisionDispatcher(collisionConfiguration);
@@ -161,11 +166,49 @@ namespace vrlib
 		{
 			if (!n1 || !n2)
 				return false;
+			if (!n1->getComponent<vrlib::tien::components::RigidBody>()->body || !n2->getComponent<vrlib::tien::components::RigidBody>()->body)
+				return false;
+
+
 			CollisionTest test;
 			world->contactPairTest(n1->getComponent<vrlib::tien::components::RigidBody>()->body,
 				n2->getComponent<vrlib::tien::components::RigidBody>()->body,
 				test);
 			return test.collision;
+		}
+
+		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback) const
+		{
+			class Callback : public btCollisionWorld::RayResultCallback
+			{
+				std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback;
+				const math::Ray& ray;
+			public:
+				Callback(std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, const math::Ray& ray) : ray(ray)
+				{
+					this->callback = callback;
+				}
+				virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace) override
+				{
+					btVector3 hitNormalWorld;
+					if (normalInWorldSpace)
+						hitNormalWorld = rayResult.m_hitNormalLocal;
+					else
+						hitNormalWorld = m_collisionObject->getWorldTransform().getBasis()*rayResult.m_hitNormalLocal;
+
+
+					bool cont = this->callback(
+						(Node*)rayResult.m_collisionObject->getUserPointer(), 
+						ray.mOrigin + 100 * rayResult.m_hitFraction * ray.mDir,
+						glm::vec3(hitNormalWorld.x(), hitNormalWorld.y(), hitNormalWorld.z()));
+					return cont ? rayResult.m_hitFraction : 1.0;
+				}
+
+			};
+			Callback _callback(callback, ray);
+			glm::vec3 worldTarget = ray.mOrigin + 100.0f * ray.mDir;
+			world->rayTest(btVector3(ray.mOrigin.x, ray.mOrigin.y, ray.mOrigin.z), btVector3(worldTarget.x, worldTarget.y, worldTarget.z), _callback);
+
 		}
 
 

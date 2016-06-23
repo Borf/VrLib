@@ -9,6 +9,7 @@
 
 namespace vrlib
 {
+	namespace math { class Ray; }
 	namespace tien
 	{
 		class DebugDraw : public btIDebugDraw
@@ -61,6 +62,7 @@ namespace vrlib
 
 
 			bool testBodyCollision(Node* n1, Node* n2);
+			void castRay(const math::Ray& ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback) const;
 
 
 		};

@@ -13,11 +13,14 @@ namespace vrlib
 		class Node
 		{
 		protected:
-			virtual void setTreeDirty(Node* newNode, bool isNewNode) { parent->setTreeDirty(newNode, isNewNode); };
+			virtual void setTreeDirty(Node* newNode, bool isNewNode) { if(parent) parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
 
 			Node(const Node* original);
+
+			Node &operator =(const Node &other);
+
 		public:
 			std::string name;
 			Node* parent;
@@ -49,6 +52,20 @@ namespace vrlib
 				}
 				return nullptr;
 			}
+
+			Node* findNodeWithName(const std::string &name)
+			{
+				if (this->name == name)
+					return this;
+				for (auto c : children)
+				{
+					Node* cn = c->findNodeWithName(name);
+					if (cn)
+						return cn;
+				}
+				return nullptr;
+			}
+
 
 			Node(const std::string &name, Node* parent);
 			~Node();

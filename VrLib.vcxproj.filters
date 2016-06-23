@@ -354,6 +354,9 @@
     <ClInclude Include="VrLib\HtcVive.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\tien\components\TerrainCollider.h">
+      <Filter>tien\components\colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -646,6 +649,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\HtcVive.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\TerrainCollider.cpp">
+      <Filter>tien\components\colliders</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

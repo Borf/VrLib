@@ -120,9 +120,10 @@ namespace vrlib
 		else
 			headDevice = NULL;
 
-		PerfMon::getInstance()->resetTimer();
 
 		running = true;
+		tick(0, 0);
+		PerfMon::getInstance()->resetTimer();
 		while (running)
 		{
 			frameTime = PerfMon::getInstance()->getTime();

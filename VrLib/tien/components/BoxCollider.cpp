@@ -25,7 +25,7 @@ namespace vrlib
 				Transform* transform = n->getComponent<Transform>();
 				if (transform)
 				{
-					size *= transform->scale;
+//					size *= transform->scale;
 					offset *= transform->scale;
 				}
 			}

@@ -34,6 +34,8 @@ namespace vrlib
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 				btCollisionShape* shape = collider->getShape();
 
+				shape->setLocalScaling(btVector3(transform->scale.x, transform->scale.y, transform->scale.z));
+
 				btVector3 fallInertia;
 				shape->calculateLocalInertia(mass, fallInertia);
 				btRigidBody::btRigidBodyConstructionInfo cInfo(mass, this, shape, fallInertia);
@@ -41,7 +43,7 @@ namespace vrlib
 
 				body->setFriction(1.0f);
 				body->setRestitution(0.0f);
-				
+				body->setUserPointer(node);
 				if(mass == 0)
 					body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 

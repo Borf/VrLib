@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Collider.h"
+#include "../Terrain.h"
 #include <glm/glm.hpp>
 
 namespace vrlib
