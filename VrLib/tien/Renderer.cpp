@@ -112,6 +112,19 @@ namespace vrlib
 			if (!scene.cameraNode)
 				return;
 			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
+
+
+			for (auto l : scene.lights)
+			{
+				if (l->light->shadow == components::Light::Shadow::shadowmap)
+				{
+					//TODO: generate depthmap for light
+				}
+			}
+
+
+
+
 			//TODO: use camera
 			gbuffers->bind();
 			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());

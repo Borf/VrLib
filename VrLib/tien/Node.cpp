@@ -8,6 +8,7 @@
 #include "components/RigidBody.h"
 #include "components/Renderable.h"
 #include "components/Collider.h"
+#include "components/Light.h"
 
 namespace vrlib
 {
@@ -61,6 +62,8 @@ namespace vrlib
 
 			if(!transform)
 				transform = dynamic_cast<components::Transform*>(component);
+			if (!light)
+				light = dynamic_cast<components::Light*>(component);
 			if (!rigidBody)
 			{
 				rigidBody = dynamic_cast<components::RigidBody*>(component);

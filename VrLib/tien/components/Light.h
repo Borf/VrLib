@@ -17,13 +17,20 @@ namespace vrlib
 					directional = 0,
 					point = 1,
 					spot = 2
-				} type;
+				} type = Type::point;
 
 				enum class Baking
 				{
 					realtime,
 					baked
-				} baking;
+				} baking = Baking::realtime;
+
+				enum class Shadow
+				{
+					none,
+					shadowmap,
+					shadowvolume
+				} shadow = Shadow::none;
 
 				float intensity;
 				glm::vec4 color;

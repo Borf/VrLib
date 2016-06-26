@@ -15,6 +15,7 @@ namespace vrlib
 			class Transform;
 			class RigidBody;
 			class Renderable;
+			class Light;
 		}
 
 		class Node
@@ -27,6 +28,7 @@ namespace vrlib
 			components::Transform* transform;
 			components::RigidBody* rigidBody;
 			components::Renderable* renderAble;
+			components::Light* light;
 
 
 			std::string name;
