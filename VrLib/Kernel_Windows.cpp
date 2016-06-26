@@ -209,8 +209,15 @@ namespace vrlib
 			return;
 		}
 
+		int x = localConfig["window"]["x"];
+		int y = localConfig["window"]["y"];
+		if (x < 0)
+			x = CW_USEDEFAULT;
+		if (y < 0)
+			y = CW_USEDEFAULT;
+
 		hWnd = CreateWindowEx(dwExStyle, title, title, localConfig["window"]["border"].asBool() ? WS_OVERLAPPEDWINDOW : (WS_OVERLAPPED | WS_POPUP),
-			localConfig["window"]["x"].asInt(), localConfig["window"]["y"].asInt(), windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
+			x, y, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
 
 
 		hdc = GetDC(hWnd); // Get the device context for our window

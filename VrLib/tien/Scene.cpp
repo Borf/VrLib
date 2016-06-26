@@ -22,35 +22,41 @@ namespace vrlib
 		{
 			cameraNode = nullptr;
 			world = nullptr;
-			isPreparedForRunning = false;
 		}
 
-		Scene::Scene(const Scene& other) : Node(&other)
+		Scene::Scene(const Scene& other) : Node("", nullptr)
 		{
-			for (auto c : children)
-				c->parent = this;
-			cameraNode = other.cameraNode;
-			treeDirty = true;
-			world = nullptr;
-			isPreparedForRunning = false;
-			update(0);
+			throw "Not allowed";
+		}
+
+		void Scene::init()
+		{
+			broadphase = new btDbvtBroadphase();
+			collisionConfiguration = new btDefaultCollisionConfiguration();
+			dispatcher = new btCollisionDispatcher(collisionConfiguration);
+			solver = new btSequentialImpulseConstraintSolver();
+			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+			world->setGravity(btVector3(0, -9.8f, 0));
+			world->setDebugDrawer(debugDrawer = new DebugDraw());
+			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+		}
+
+
+		void Scene::addRigidBody(Node* node)
+		{
+			node->rigidBody->init(world);
+		}
+		void Scene::addCollider(Node* node)
+		{
+			if (node->rigidBody)
+				node->rigidBody->updateCollider(world);
+			else
+				throw "Not supported yet";
 		}
 
 
 		void Scene::setTreeDirty(Node* newNode, bool isNewNode)
 		{
-			if (isPreparedForRunning)
-			{ 
-				if(isNewNode)
-					toInit.push_back(newNode);
-				else
-				{
-					auto a = std::find(toInit.begin(), toInit.end(), newNode);
-					if (a != toInit.end())
-						toInit.erase(a);
-				}
-			}
-			
 			treeDirty = true;
 		}
 
@@ -74,31 +80,9 @@ namespace vrlib
 				if (n->getComponent<components::Light>())
 					lights.push_back(n);
 			});
+
+			renderables.sort([](Node* a, Node* b) { return (int)a->renderAble->renderContext < (int)b->renderAble->renderContext; });
 		}
-
-		void Scene::prepareForRun()
-		{
-			name += "( running )";
-			broadphase = new btDbvtBroadphase();
-			collisionConfiguration = new btDefaultCollisionConfiguration();
-			dispatcher = new btCollisionDispatcher(collisionConfiguration);
-			solver = new btSequentialImpulseConstraintSolver();
-			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-			world->setGravity(btVector3(0, -9.8f, 0));
-			world->setDebugDrawer(debugDrawer = new DebugDraw());
-			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
-
-
-			fortree([this](Node* n)
-			{
-				components::RigidBody* rigidBody;
-				if (rigidBody = n->getComponent<components::RigidBody>())
-					rigidBody->init(world);
-			});
-			isPreparedForRunning = true;
-		}
-
-
 
 		void Scene::update(float elapsedTime)
 		{
@@ -108,17 +92,6 @@ namespace vrlib
 				if (!cameraNode)
 					cameraNode = findNodeWithComponent<components::Camera>();
 				treeDirty = false;
-			}
-
-			if (!toInit.empty())
-			{
-				for (auto newNode : toInit)
-				{
-					components::RigidBody* rigidBody;
-					if (rigidBody = newNode->getComponent<components::RigidBody>())
-						rigidBody->init(world);
-				}
-				toInit.clear();
 			}
 
 			if(world)
@@ -201,7 +174,7 @@ namespace vrlib
 						(Node*)rayResult.m_collisionObject->getUserPointer(), 
 						ray.mOrigin + 100 * rayResult.m_hitFraction * ray.mDir,
 						glm::vec3(hitNormalWorld.x(), hitNormalWorld.y(), hitNormalWorld.z()));
-					return cont ? rayResult.m_hitFraction : 1.0;
+					return cont ? rayResult.m_hitFraction : 1.0f;
 				}
 
 			};

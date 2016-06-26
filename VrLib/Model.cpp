@@ -169,6 +169,7 @@ namespace vrlib
 	prototypes(VertexP3N3T2);
 	prototypes(VertexP3N3T2B4B4);
 	prototypes(VertexP3N2B2T2T2);
+	prototypes(VertexP3N2B2T2T2B4B4);
 
 	/*template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
 	template Model* Model::getModel< gl::VertexP3N3 >(const std::string &fileName, const ModelLoadOptions &options);

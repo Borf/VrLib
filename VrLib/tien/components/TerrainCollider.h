@@ -4,6 +4,8 @@
 #include "../Terrain.h"
 #include <glm/glm.hpp>
 
+class btHeightfieldTerrainShape;
+
 namespace vrlib
 {
 	namespace tien
@@ -14,6 +16,7 @@ namespace vrlib
 			class TerrainCollider : public Collider
 			{
 				Terrain terrain;
+				btHeightfieldTerrainShape* shape;
 			public:
 				TerrainCollider(Node* n = nullptr);
 

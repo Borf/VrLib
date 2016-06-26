@@ -234,5 +234,6 @@ namespace vrlib
 	template class SimpleModel < gl::VertexP3N3T2 >;
 	template class SimpleModel < gl::VertexP3N3T2B4B4 >;
 	template class SimpleModel < gl::VertexP3N2B2T2T2 >;
+	template class SimpleModel < gl::VertexP3N2B2T2T2B4B4 >;
 
 }

@@ -166,6 +166,7 @@
     <ClInclude Include="VrLib\Texture.h" />
     <ClInclude Include="VrLib\TextureAtlas.h" />
     <ClInclude Include="VrLib\tien\Component.h" />
+    <ClInclude Include="VrLib\tien\components\AnimatedModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\BoxCollider.h" />
     <ClInclude Include="VrLib\tien\components\Camera.h" />
     <ClInclude Include="VrLib\tien\components\Collider.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="VrLib\Texture.cpp" />
     <ClCompile Include="VrLib\TextureAtlas.cpp" />
     <ClCompile Include="VrLib\tien\Component.cpp" />
+    <ClCompile Include="VrLib\tien\components\AnimatedModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\BoxCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\Camera.cpp" />
     <ClCompile Include="VrLib\tien\components\Collider.cpp" />

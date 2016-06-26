@@ -9,6 +9,13 @@ namespace vrlib
 	namespace tien
 	{
 		class Component;
+		class Scene;
+		namespace components
+		{
+			class Transform;
+			class RigidBody;
+			class Renderable;
+		}
 
 		class Node
 		{
@@ -16,17 +23,18 @@ namespace vrlib
 			virtual void setTreeDirty(Node* newNode, bool isNewNode) { if(parent) parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
-
-			Node(const Node* original);
-
-			Node &operator =(const Node &other);
-
 		public:
+			components::Transform* transform;
+			components::RigidBody* rigidBody;
+			components::Renderable* renderAble;
+
+
 			std::string name;
 			Node* parent;
-			const Node* orig;
 			std::list<Node*> children;
 
+			Node::Node(const std::string &name, Node* parent);
+			~Node();
 
 			template<class T> T* getComponent()
 			{
@@ -37,6 +45,17 @@ namespace vrlib
 						return r;
 				}
 				return nullptr;
+			}
+			template<class T> std::vector<T*> getComponents()
+			{
+				std::vector<T*> ret;
+				for (auto c : components)
+				{
+					T* r = dynamic_cast<T*>(c);
+					if (r)
+						ret.push_back(r);
+				}
+				return ret;
 			}
 
 
@@ -67,9 +86,8 @@ namespace vrlib
 			}
 
 
-			Node(const std::string &name, Node* parent);
-			~Node();
 
+			virtual Scene& getScene();
 			void fortree(const std::function<void(Node*)> &callback);
 			void addComponent(Component* component);
 		};

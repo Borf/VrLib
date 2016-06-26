@@ -31,25 +31,28 @@ namespace vrlib
 		{
 		public:
 			Scene();
-			Scene(const Scene& other);
 			Node* cameraNode;
 
 		private:
+			Scene(const Scene& other);
+
 			bool treeDirty;
 			std::set<components::Renderable::RenderContext*> renderContexts;
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
+			
+			void addRigidBody(Node* node);
+			void addCollider(Node* node);
 
-			std::list<Node*> toInit;
-
-			bool isPreparedForRunning;
+			virtual Scene &getScene() override { return *this; }
 			virtual void setTreeDirty(Node* newNode, bool isNewNode) override;
 			void updateRenderables();
-			void prepareForRun();
 			void update(float elapsedTime);
+			void init();
 
 			friend class Renderer;
 			friend class Tien;
+			friend class Node;
 
 
 			btBroadphaseInterface*                  broadphase;
