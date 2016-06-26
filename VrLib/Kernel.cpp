@@ -457,7 +457,8 @@ namespace vrlib
 
 			BinaryStream data(2048);
 			for (std::map<std::string, DeviceDriverAdaptor*>::iterator it = adaptors.begin(); it != adaptors.end(); it++)
-				it->second->updateDataMaster(data);
+				if(it->second)
+					it->second->updateDataMaster(data);
 
 			if (clusterManager)
 				if (!clusterManager->sync(data.str()))

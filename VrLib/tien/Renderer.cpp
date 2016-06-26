@@ -182,7 +182,6 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
-				//todo: only draw volumes for point lights
 				if(l->type == components::Light::Type::directional)
 					glDrawArrays(GL_QUADS, 0, 4);
 				else
