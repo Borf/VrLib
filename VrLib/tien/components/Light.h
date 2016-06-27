@@ -19,6 +19,9 @@ namespace vrlib
 
 				friend class Renderer;
 			public:
+				~Light();
+
+
 				enum class Type
 				{
 					directional = 0,

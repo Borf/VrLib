@@ -33,6 +33,16 @@ namespace vrlib
 				{ GL_TEXTURE_CUBE_MAP_POSITIVE_Z, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f) },
 				{ GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f) }
 			};
+			
+
+
+			Light::~Light()
+			{
+				if (shadowMapDirectional)
+					delete shadowMapDirectional;
+				shadowMapDirectional = nullptr;
+			}
+
 
 			void Light::generateShadowMap()
 			{
