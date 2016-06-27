@@ -92,23 +92,34 @@ namespace vrlib
 			{
 				if (textures[i] == None)
 					continue;
-				glGenTextures(1, &texid[i]);
-				glBindTexture(GL_TEXTURE_2D, texid[i]);
-				if (textures[i] == Color)
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-				else if (textures[i] == Normal)
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
-				else if (textures[i] == Position)
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
-				else if (textures[i] == Depth)
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+				if (textures[i] == Type::ShadowCube)
+				{//http://ogldev.atspace.co.uk/www/tutorial43/tutorial43.html
+					glGenTextures(1, &texid[i]);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, texid[i]);
+					for (int i = 0; i < 6; i++)
+						glTexImage2D(GL_TEXTURE_CUBE_MAP, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+					textureCount++;
+				}
+				else
+				{
+					glGenTextures(1, &texid[i]);
+					glBindTexture(GL_TEXTURE_2D, texid[i]);
+					if (textures[i] == Color)
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+					else if (textures[i] == Normal)
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+					else if (textures[i] == Position)
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+					else if (textures[i] == Depth)
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_R16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
 
-				textureCount++;
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texid[i], 0);
+					textureCount++;
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texid[i], 0);
+				}
 			}
 
 
@@ -160,6 +171,22 @@ namespace vrlib
 				glDrawBuffers(textureCount, buffers);
 		}
 
+		void FBO::bind(int index)
+		{
+			if (oldFBO == 0)
+			{
+				glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
+				if (oldFBO < 0)
+					oldFBO = 0;
+			}
+			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
+			if (depthBuffer > 0)
+				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+			//if (textureCount == 0)
+			//	glDrawBuffer(GL_NONE); // No color buffer is drawn to.
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, index, texid[textureCount], 0);
+		}
+
 		void FBO::unbind()
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
@@ -174,8 +201,8 @@ namespace vrlib
 			{
 				static GLenum buffers[] = { GL_COLOR_ATTACHMENT0 };
 				glDrawBuffers(1, buffers);
-
 			}
+			oldFBO = 0;
 		}
 
 		void FBO::use(int offset)

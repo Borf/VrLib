@@ -33,6 +33,7 @@ namespace vrlib
 				Normal,
 				Position,
 				Depth,
+				ShadowCube,
 				None,
 			};
 
@@ -42,6 +43,7 @@ namespace vrlib
 			//~FBO();
 
 			void bind();
+			void bind(int index);
 			void unbind();
 
 

@@ -195,7 +195,7 @@ namespace vrlib
 				else
 					glCullFace(GL_FRONT);
 
-				if (l->shadow == components::Light::Shadow::shadowmap)
+				if (l->shadow == components::Light::Shadow::shadowmap && l->shadowMapDirectional)
 				{
 					l->shadowMapDirectional->use(3);
 					postLightingShader->setUniform(PostLightingUniform::shadowMatrix, l->projectionMatrix * l->modelViewMatrix);
