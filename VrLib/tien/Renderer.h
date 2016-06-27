@@ -37,6 +37,7 @@ namespace vrlib
 				s_normal,
 				s_depth,
 				s_shadowmap,
+				s_shadowmapcube,
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			enum class PhysicsDebugUniform

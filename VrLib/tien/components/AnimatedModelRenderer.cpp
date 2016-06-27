@@ -165,6 +165,7 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
 				renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
 				renderShader->registerUniform(RenderUniform::boneMatrices, "boneMatrices");
+				renderShader->registerUniform(RenderUniform::outputPosition, "outputPosition");
 			}
 
 			void AnimatedModelRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
@@ -173,6 +174,12 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
 				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
 			}
+			void AnimatedModelRenderer::ModelRenderShadowContext::useCubemap(bool use)
+			{
+				renderShader->use();
+				renderShader->setUniform(RenderUniform::outputPosition, use);
+			}
+
 		}
 	}
 }

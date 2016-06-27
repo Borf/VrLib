@@ -42,6 +42,7 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::s_normal, "s_normal");
 			postLightingShader->registerUniform(PostLightingUniform::s_depth, "s_depth");
 			postLightingShader->registerUniform(PostLightingUniform::s_shadowmap, "s_shadowmap");
+			postLightingShader->registerUniform(PostLightingUniform::s_shadowmapcube, "s_shadowmapcube");
 			postLightingShader->registerUniform(PostLightingUniform::lightType, "lightType");
 			postLightingShader->registerUniform(PostLightingUniform::lightPosition, "lightPosition");
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
@@ -53,6 +54,7 @@ namespace vrlib
 			postLightingShader->setUniform(PostLightingUniform::s_normal, 1);
 			postLightingShader->setUniform(PostLightingUniform::s_depth, 2);
 			postLightingShader->setUniform(PostLightingUniform::s_shadowmap, 3);
+			postLightingShader->setUniform(PostLightingUniform::s_shadowmapcube, 4);
 			gbuffers = nullptr;
 
 
@@ -133,6 +135,7 @@ namespace vrlib
 
 			//TODO: use camera
 			gbuffers->bind();
+			int oldFBO = gbuffers->oldFBO;
 			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -153,12 +156,14 @@ namespace vrlib
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gbuffers->oldFBO);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldFBO);
 			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
 				viewport[0], viewport[1], viewport[2], viewport[3],
 				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 			glDisableVertexAttribArray(3);
+			glDisableVertexAttribArray(4);
+			glDisableVertexAttribArray(5);
 
 
 			gbuffers->use();
@@ -177,8 +182,8 @@ namespace vrlib
 			glEnable(GL_CULL_FACE);
 			glDisable(GL_DEPTH_TEST);
 
-			if (!scene.lights.empty() && scene.lights.front()->getComponent<components::Light>()->type != components::Light::Type::directional)
-				glEnable(GL_BLEND);
+			//if (!scene.lights.empty() && scene.lights.front()->getComponent<components::Light>()->type != components::Light::Type::directional)
+			//	glEnable(GL_BLEND);
 
 			for (Node* c : scene.lights)
 			{
@@ -197,7 +202,10 @@ namespace vrlib
 
 				if (l->shadow == components::Light::Shadow::shadowmap && l->shadowMapDirectional)
 				{
-					l->shadowMapDirectional->use(3);
+					if(l->type == components::Light::Type::directional)
+						l->shadowMapDirectional->use(3);
+					else
+						l->shadowMapDirectional->use(4);
 					postLightingShader->setUniform(PostLightingUniform::shadowMatrix, l->projectionMatrix * l->modelViewMatrix);
 					postLightingShader->setUniform(PostLightingUniform::lightCastShadow, true);
 				}

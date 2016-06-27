@@ -49,6 +49,7 @@ namespace vrlib
 
 			void use(int offset = 0);
 
+			Type types[5];
 			GLuint texid[5];	//5 should be big enough
 
 			int getHeight();

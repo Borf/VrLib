@@ -1,5 +1,6 @@
 #include "FBO.h"
 #include <VrLib/Log.h>
+#include <glm/glm.hpp>
 using vrlib::Log;
 
 namespace vrlib
@@ -10,7 +11,7 @@ namespace vrlib
 		FBO::FBO(int width, int height, bool depth /*= false*/, int textureCount, bool hasDepthTexture)
 		{
 			this->depthTexture = 0;
-			oldFBO = 0;
+			oldFBO = -1;
 			this->textureCount = textureCount;
 			depthBuffer = 0;
 			fboId = 0;
@@ -76,7 +77,7 @@ namespace vrlib
 		FBO::FBO(int width, int height, bool hasDepthTexture, Type buf1, Type buf2, Type buf3, Type buf4)
 		{
 			this->depthTexture = 0;
-			oldFBO = 0;
+			oldFBO = -1;
 			this->textureCount = textureCount;
 			depthBuffer = 0;
 			fboId = 0;
@@ -92,12 +93,19 @@ namespace vrlib
 			{
 				if (textures[i] == None)
 					continue;
+				types[i] = textures[i];
 				if (textures[i] == Type::ShadowCube)
 				{//http://ogldev.atspace.co.uk/www/tutorial43/tutorial43.html
 					glGenTextures(1, &texid[i]);
 					glBindTexture(GL_TEXTURE_CUBE_MAP, texid[i]);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 					for (int i = 0; i < 6; i++)
-						glTexImage2D(GL_TEXTURE_CUBE_MAP, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+						glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_R32F, width, height, 0, GL_RED, GL_FLOAT, 0);
+					glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 					textureCount++;
 				}
 				else
@@ -161,8 +169,6 @@ namespace vrlib
 		void FBO::bind()
 		{
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
-			if (oldFBO < 0)
-				oldFBO = 0;
 			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
@@ -173,23 +179,19 @@ namespace vrlib
 
 		void FBO::bind(int index)
 		{
-			if (oldFBO == 0)
-			{
+			if (oldFBO == -1)
 				glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
-				if (oldFBO < 0)
-					oldFBO = 0;
-			}
 			glBindFramebuffer(GL_FRAMEBUFFER, fboId);
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
 			//if (textureCount == 0)
-			//	glDrawBuffer(GL_NONE); // No color buffer is drawn to.
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, index, texid[textureCount], 0);
+			glDrawBuffer(GL_COLOR_ATTACHMENT0); // No color buffer is drawn to.
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X+index, texid[0], 0); //TODO: texid[0] should be the right texid
 		}
 
 		void FBO::unbind()
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, glm::max(0, oldFBO));
 			if (depthBuffer > 0)
 				glBindRenderbuffer(GL_RENDERBUFFER, 0);
 			if (oldFBO == 0)
@@ -197,12 +199,12 @@ namespace vrlib
 				static GLenum buffers[] = { GL_BACK };
 				glDrawBuffers(1, buffers);
 			}
-			else
+			else if(oldFBO != -1)
 			{
 				static GLenum buffers[] = { GL_COLOR_ATTACHMENT0 };
 				glDrawBuffers(1, buffers);
 			}
-			oldFBO = 0;
+			oldFBO = -1;
 		}
 
 		void FBO::use(int offset)
@@ -210,7 +212,7 @@ namespace vrlib
 			for (int i = 0; i < textureCount; i++)
 			{
 				glActiveTexture(GL_TEXTURE0 + i + offset);
-				glBindTexture(GL_TEXTURE_2D, texid[i]);
+				glBindTexture(types[i] == Type::ShadowCube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D, texid[i]);
 			}
 			if (depthTexture > 0)
 			{

@@ -46,11 +46,13 @@ namespace vrlib
 						modelMatrix,
 						projectionMatrix,
 						viewMatrix,
-						boneMatrices
+						boneMatrices,
+						outputPosition
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
+					virtual void useCubemap(bool use) override;
 				};
 
 				std::function<void()> callbackOnDone;
