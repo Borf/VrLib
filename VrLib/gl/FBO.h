@@ -45,7 +45,7 @@ namespace vrlib
 			void unbind();
 
 
-			void use();
+			void use(int offset = 0);
 
 			GLuint texid[5];	//5 should be big enough
 

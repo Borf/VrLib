@@ -71,10 +71,15 @@ namespace vrlib
 				if (renderable = n->getComponent<components::Renderable>())
 				{
 					renderables.push_back(n);
-					if (renderContexts.find(renderable->renderContext) == renderContexts.end())
+					if (renderable->renderContext && renderContexts.find(renderable->renderContext) == renderContexts.end())
 					{
 						renderable->renderContext->init(); // TODO: move this to another place?
 						renderContexts.insert(renderable->renderContext);
+					}
+					if (renderable->renderContextShadow && renderContextsShadow.find(renderable->renderContextShadow) == renderContextsShadow.end())
+					{
+						renderable->renderContextShadow->init(); // TODO: move this to another place?
+						renderContextsShadow.insert(renderable->renderContextShadow);
 					}
 				}
 				if (n->getComponent<components::Light>())

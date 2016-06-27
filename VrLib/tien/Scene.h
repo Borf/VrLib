@@ -12,6 +12,8 @@ namespace vrlib
 	namespace math { class Ray; }
 	namespace tien
 	{
+		namespace components { class Light;  }
+
 		class DebugDraw : public btIDebugDraw
 		{
 			int debugmode;
@@ -38,6 +40,7 @@ namespace vrlib
 
 			bool treeDirty;
 			std::set<components::Renderable::RenderContext*> renderContexts;
+			std::set<components::Renderable::RenderContext*> renderContextsShadow;
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
 			
@@ -53,6 +56,7 @@ namespace vrlib
 			friend class Renderer;
 			friend class Tien;
 			friend class Node;
+			friend class components::Light;
 
 
 			btBroadphaseInterface*                  broadphase;

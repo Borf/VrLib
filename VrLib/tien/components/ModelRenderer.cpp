@@ -20,6 +20,7 @@ namespace vrlib
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 				model = cache[fileName];
 				renderContext = ModelRenderContext::getInstance();
+				renderContextShadow = ModelRenderShadowContext::getInstance();
 			}
 
 			ModelRenderer::~ModelRenderer()
@@ -61,6 +62,21 @@ namespace vrlib
 				});
 			}
 
+
+			void ModelRenderer::drawShadowMap()
+			{
+				components::Transform* t = node->getComponent<Transform>();
+				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
+				context->renderShader->use(); //TODO: only call this once!
+				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
+				{
+					context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
+				},
+				[this, &context](const vrlib::Material &material)		{	});
+
+			}
+
+
 			void ModelRenderer::ModelRenderContext::init()
 			{
 				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
@@ -98,6 +114,29 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
 			}
 
+
+			void ModelRenderer::ModelRenderShadowContext::init()
+			{
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
+				renderShader->bindAttributeLocation("a_position", 0);
+				renderShader->bindAttributeLocation("a_normal", 1);
+				renderShader->bindAttributeLocation("a_bitangent", 2);
+				renderShader->bindAttributeLocation("a_tangent", 3);
+				renderShader->bindAttributeLocation("a_texture", 4);
+				renderShader->link();
+				renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
+				renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
+				renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
+				renderShader->use();
+			}
+
+			void ModelRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			{
+				renderShader->use();
+				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
+				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
+			}
 		}
+
 	}
 }

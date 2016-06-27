@@ -21,8 +21,10 @@ namespace vrlib
 				};
 
 
-				RenderContext* renderContext;
+				RenderContext* renderContext = nullptr;
+				RenderContext* renderContextShadow = nullptr;
 				virtual void draw() = 0;
+				virtual void drawShadowMap() = 0;
 			};
 		}
 	}

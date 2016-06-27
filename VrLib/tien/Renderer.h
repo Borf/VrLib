@@ -19,19 +19,6 @@ namespace vrlib
 		class Scene;
 		class Renderer
 		{
-			enum class RenderUniform
-			{
-				modelMatrix,
-				projectionMatrix,
-				viewMatrix,
-				normalMatrix,
-				s_texture,
-				s_normalmap,
-				diffuseColor,
-				textureFactor,
-			};
-			vrlib::gl::Shader<RenderUniform>* renderShader;
-			
 			enum class PostLightingUniform
 			{
 				windowSize,
@@ -39,14 +26,17 @@ namespace vrlib
 				projectionMatrix,
 				modelViewMatrixInv,
 				projectionMatrixInv,
+				shadowMatrix,
 				lightType,
 				lightPosition,
 				lightDirection,
 				lightColor,
 				lightRange,
+				lightCastShadow,
 				s_color,
 				s_normal,
 				s_depth,
+				s_shadowmap,
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			enum class PhysicsDebugUniform

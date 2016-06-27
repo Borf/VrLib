@@ -20,6 +20,7 @@ namespace vrlib
 			this->transform = nullptr;
 			this->rigidBody = nullptr;
 			this->renderAble = nullptr;
+			this->light = nullptr;
 			this->parent = parent;
 			if (parent)
 			{

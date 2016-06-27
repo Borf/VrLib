@@ -65,6 +65,8 @@ namespace vrlib
 				glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texid[textureCount], 0);
 				if(textureCount == 0)
 					glDrawBuffer(GL_NONE); // No color buffer is drawn to.
+
+				depthTexture = texid[textureCount];
 			}
 			unbind();
 			glBindTexture(GL_TEXTURE_2D, 0);
@@ -176,16 +178,16 @@ namespace vrlib
 			}
 		}
 
-		void FBO::use()
+		void FBO::use(int offset)
 		{
 			for (int i = 0; i < textureCount; i++)
 			{
-				glActiveTexture(GL_TEXTURE0 + i);
+				glActiveTexture(GL_TEXTURE0 + i + offset);
 				glBindTexture(GL_TEXTURE_2D, texid[i]);
 			}
 			if (depthTexture > 0)
 			{
-				glActiveTexture(GL_TEXTURE0 + textureCount);
+				glActiveTexture(GL_TEXTURE0 + textureCount + offset);
 				glBindTexture(GL_TEXTURE_2D, texid[textureCount]);
 			}
 			if(textureCount > 1)

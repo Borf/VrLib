@@ -22,6 +22,7 @@ namespace vrlib
 				model = cache[fileName];
 				modelInstance = model->getInstance();
 				renderContext = ModelRenderContext::getInstance();
+				renderContextShadow = ModelRenderShadowContext::getInstance();
 				callbackOnDone = nullptr;
 			}
 
@@ -83,6 +84,24 @@ namespace vrlib
 			}
 
 
+			void AnimatedModelRenderer::drawShadowMap()
+			{
+//				if(!castShadow)
+//					return;
+				components::Transform* t = node->getComponent<Transform>();
+
+				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
+				context->renderShader->use(); //TODO: only call this once!
+											  //TODO: ewwww
+				context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::boneMatrices, ((vrlib::State*)modelInstance)->boneMatrices);
+
+				modelInstance->draw([this, t, &context](const glm::mat4 &modelMatrix)
+				{
+					context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform);
+				},
+				[this, &context](const vrlib::Material &material)	{	});
+			}
+
 
 			void AnimatedModelRenderer::playAnimation(const std::string &animation, bool loop)
 			{
@@ -135,6 +154,25 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
 			}
 
+			void AnimatedModelRenderer::ModelRenderShadowContext::init()
+			{
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/animatedModelShadow.vert", "data/vrlib/tien/shaders/animatedModelShadow.frag");
+				renderShader->bindAttributeLocation("a_position", 0);
+				renderShader->bindAttributeLocation("a_boneIds", 5);
+				renderShader->bindAttributeLocation("a_boneWeights", 6);
+				renderShader->link();
+				renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
+				renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
+				renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
+				renderShader->registerUniform(RenderUniform::boneMatrices, "boneMatrices");
+			}
+
+			void AnimatedModelRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			{
+				renderShader->use();
+				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
+				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
+			}
 		}
 	}
 }

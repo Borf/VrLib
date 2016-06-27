@@ -48,6 +48,11 @@ namespace vrlib
 				}
 				return nullptr;
 			}
+
+			template<> components::Light* getComponent()			{			return light;				}
+			template<> components::Transform* getComponent()		{			return transform;			}
+			template<> components::RigidBody* getComponent()		{			return rigidBody;			}
+
 			template<class T> std::vector<T*> getComponents()
 			{
 				std::vector<T*> ret;

@@ -36,18 +36,23 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::projectionMatrix, "projectionMatrix");
 			postLightingShader->registerUniform(PostLightingUniform::modelViewMatrixInv, "modelViewMatrixInv");
 			postLightingShader->registerUniform(PostLightingUniform::projectionMatrixInv, "projectionMatrixInv");
+			postLightingShader->registerUniform(PostLightingUniform::shadowMatrix, "shadowMatrix");
+
 			postLightingShader->registerUniform(PostLightingUniform::s_color, "s_color");
 			postLightingShader->registerUniform(PostLightingUniform::s_normal, "s_normal");
 			postLightingShader->registerUniform(PostLightingUniform::s_depth, "s_depth");
+			postLightingShader->registerUniform(PostLightingUniform::s_shadowmap, "s_shadowmap");
 			postLightingShader->registerUniform(PostLightingUniform::lightType, "lightType");
 			postLightingShader->registerUniform(PostLightingUniform::lightPosition, "lightPosition");
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
 			postLightingShader->registerUniform(PostLightingUniform::lightRange, "lightRange");
 			postLightingShader->registerUniform(PostLightingUniform::lightColor, "lightColor");
+			postLightingShader->registerUniform(PostLightingUniform::lightCastShadow, "lightCastShadow");
 			postLightingShader->use();
 			postLightingShader->setUniform(PostLightingUniform::s_color, 0);
 			postLightingShader->setUniform(PostLightingUniform::s_normal, 1);
 			postLightingShader->setUniform(PostLightingUniform::s_depth, 2);
+			postLightingShader->setUniform(PostLightingUniform::s_shadowmap, 3);
 			gbuffers = nullptr;
 
 
@@ -118,6 +123,7 @@ namespace vrlib
 			{
 				if (l->light->shadow == components::Light::Shadow::shadowmap)
 				{
+					l->light->generateShadowMap();
 					//TODO: generate depthmap for light
 				}
 			}
@@ -188,6 +194,15 @@ namespace vrlib
 					glCullFace(GL_BACK);
 				else
 					glCullFace(GL_FRONT);
+
+				if (l->shadow == components::Light::Shadow::shadowmap)
+				{
+					l->shadowMapDirectional->use(3);
+					postLightingShader->setUniform(PostLightingUniform::shadowMatrix, l->projectionMatrix * l->modelViewMatrix);
+					postLightingShader->setUniform(PostLightingUniform::lightCastShadow, true);
+				}
+				else
+					postLightingShader->setUniform(PostLightingUniform::lightCastShadow, false);
 
 
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));

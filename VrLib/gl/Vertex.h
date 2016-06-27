@@ -87,13 +87,13 @@ namespace vrlib
 			int boneIds[4];
 			float boneWeights[4];
 
-			VertexP3N3T2B4B4() { boneIds[0] = -1; boneIds[1] = -1; boneIds[2] = -1; boneIds[3] = -1;  boneWeights[0] = 0; boneWeights[1] = 0; boneWeights[2] = 0; boneWeights[3] = 0; };
+			VertexP3N3T2B4B4() { boneIds[0] = 0; boneIds[1] = 0; boneIds[2] = 0; boneIds[3] = 0;  boneWeights[0] = 0; boneWeights[1] = 0; boneWeights[2] = 0; boneWeights[3] = 0; };
 			VertexP3N3T2B4B4(const glm::vec3& position, const glm::vec3 &normal, const glm::vec2 &texCoord)
 			{
 				px = position.x;	py = position.y;	pz = position.z;
 				nx = normal.x;		ny = normal.y;		nz = normal.z;
 				tx = texCoord.x;	ty = texCoord.y;
-				boneIds[0] = -1; boneIds[1] = -1; boneIds[2] = -1; boneIds[3] = -1;
+				boneIds[0] = 0; boneIds[1] = 0; boneIds[2] = 0; boneIds[3] = 0;
 				boneWeights[0] = 0; boneWeights[1] = 0; boneWeights[2] = 0; boneWeights[3] = 0;
 			}
 		};

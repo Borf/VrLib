@@ -5,12 +5,19 @@
 
 namespace vrlib
 {
+	namespace gl { class FBO; }
 	namespace tien
 	{
 		namespace components
 		{
 			class Light : public Component
 			{
+				vrlib::gl::FBO* shadowMapDirectional = nullptr;
+				void generateShadowMap();
+				glm::mat4 projectionMatrix;
+				glm::mat4 modelViewMatrix;
+
+				friend class Renderer;
 			public:
 				enum class Type
 				{
@@ -31,6 +38,8 @@ namespace vrlib
 					shadowmap,
 					shadowvolume
 				} shadow = Shadow::none;
+
+
 
 				float intensity;
 				glm::vec4 color;
