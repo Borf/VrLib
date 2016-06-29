@@ -10,18 +10,20 @@ namespace vrlib
 	namespace tien
 	{
 		class Scene;
+		class Node;
 
 		namespace components
 		{
 			class RigidBody : public Component, btMotionState
 			{
+				friend class vrlib::tien::Scene;
+				friend class vrlib::tien::Node;
+				
 				static btCollisionShape* emptyShape;
 				float mass;
 				void init(btDynamicsWorld* world);
 				void updateCollider(btDynamicsWorld* world);
 
-				friend class Scene;
-				friend class Node;
 
 				enum class Type
 				{

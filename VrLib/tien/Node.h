@@ -35,7 +35,7 @@ namespace vrlib
 			Node* parent;
 			std::list<Node*> children;
 
-			Node::Node(const std::string &name, Node* parent);
+			Node(const std::string &name, Node* parent);
 			~Node();
 
 			template<class T> T* getComponent()
@@ -49,9 +49,6 @@ namespace vrlib
 				return nullptr;
 			}
 
-			template<> components::Light* getComponent()			{			return light;				}
-			template<> components::Transform* getComponent()		{			return transform;			}
-			template<> components::RigidBody* getComponent()		{			return rigidBody;			}
 
 			template<class T> std::vector<T*> getComponents()
 			{
@@ -98,6 +95,9 @@ namespace vrlib
 			void fortree(const std::function<void(Node*)> &callback);
 			void addComponent(Component* component);
 		};
+		template<> components::Light* Node::getComponent()			{			return light;				}
+		template<> components::Transform* Node::getComponent()		{			return transform;			}
+		template<> components::RigidBody* Node::getComponent()		{			return rigidBody;			}
 
 	}
 }

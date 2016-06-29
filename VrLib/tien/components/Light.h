@@ -17,7 +17,7 @@ namespace vrlib
 				glm::mat4 projectionMatrix;
 				glm::mat4 modelViewMatrix;
 
-				friend class Renderer;
+				friend class vrlib::tien::Renderer;
 			public:
 				~Light();
 

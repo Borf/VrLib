@@ -4,6 +4,7 @@
 #include "../Node.h"
 #include <VrLib/Model.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+#include <string.h>
 
 namespace vrlib
 {
