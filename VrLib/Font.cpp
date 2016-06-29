@@ -30,7 +30,7 @@ namespace vrlib
 			if (error)
 				logger << "Error initializing freetype" << Log::newline;
 		}
-		
+
 		int error = FT_New_Face(library, "c:/windows/fonts/tahoma.ttf", 0, &face);
 		if (error == FT_Err_Unknown_File_Format)
 			logger << "the font file could be opened and read, but it appears that its font format is unsupported" << Log::newline;
@@ -201,38 +201,46 @@ namespace vrlib
 	void Font::render(const char *fmt, ...)					// Custom GL "Print" Routine
 	{
 		float		length = 0;								// Used To Find The Length Of The Text
-		char		text[256];								// Holds Our String
+		char		text[2048];								// Holds Our String
 		va_list		ap;										// Pointer To List Of Arguments
 
 		if (fmt == NULL)									// If There's No Text
 			return;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
-		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
+		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 		va_end(ap);											// Results Are Stored In Text
 		int len = strlen(text);
 
 
 		std::vector<gl::VertexP3N3T2> vertices;
 		gl::VertexP3N3T2 v;
-		gl::setT2(v, glm::vec2(0.5,0.5));
+		gl::setT2(v, glm::vec2(0.5, 0.5));
 		glm::vec3 pos(0, 0, 0);
 
 		for (int i = 0; i < len; i++)
 		{
 			char c = text[i];
-			if (glyphs.find(c) == glyphs.end())
-				generateGlyph(c);
-
-
-			Glyph* g = glyphs[c];
-			for (const gl::VertexP3N3& p : g->verts)
+			if (c == '\n')
 			{
-				setP3(v, pos + glm::vec3(p.px, p.py, p.pz));
-				setN3(v, glm::vec3(p.nx, p.ny, p.nz));
-				vertices.push_back(v);
+				pos.y -= 0.3f;
+				pos.x = 0;
 			}
-			pos += glm::vec3(g->advance.x, g->advance.y, 0);
+			else
+			{
+				if (glyphs.find(c) == glyphs.end())
+					generateGlyph(c);
+
+
+				Glyph* g = glyphs[c];
+				for (const gl::VertexP3N3& p : g->verts)
+				{
+					setP3(v, pos + glm::vec3(p.px, p.py, p.pz));
+					setN3(v, glm::vec3(p.nx, p.ny, p.nz));
+					vertices.push_back(v);
+				}
+				pos += glm::vec3(g->advance.x, g->advance.y, 0);
+			}
 		}
 
 		gl::VBO<gl::VertexP3N3T2> vbo;
@@ -253,14 +261,14 @@ namespace vrlib
 	float Font::getLength(const char *fmt, ...)
 	{
 		float		length = 0;								// Used To Find The Length Of The Text
-		char		text[256];								// Holds Our String
+		char		text[2048];								// Holds Our String
 		va_list		ap;										// Pointer To List Of Arguments
 
 		if (fmt == NULL)									// If There's No Text
 			return 0;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
-		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
+		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 		va_end(ap);											// Results Are Stored In Text
 		int len = strlen(text);
 
@@ -430,7 +438,7 @@ namespace vrlib
 		glm::vec2 cursor;
 		int wrapWidth = -1;
 		std::vector<T> verts;
-		
+
 		glm::vec2 texFactor(1.0f / texture->image->width, 1.0f / texture->image->height);
 
 		float x = cursor.x;
@@ -457,14 +465,14 @@ namespace vrlib
 			gl::setP2(v, glm::vec2(x + g->xoffset + g->width, y + g->yoffset + g->height));	gl::setT2(v, glm::vec2((g->x + g->width)*texFactor.x, (g->y + g->height)*texFactor.y));
 			verts.push_back(v);
 			gl::setP2(v, glm::vec2(x + g->xoffset, y + g->yoffset + g->height));			gl::setT2(v, glm::vec2(g->x*texFactor.x, (g->y + g->height)*texFactor.y));
-			verts.push_back(v);			
+			verts.push_back(v);
 			x += g->xadvance;
 		}
-		
+
 		texture->bind();
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		gl::setAttributes<T>(&verts[0]);
- 
+
 		glDrawArrays(GL_QUADS, 0, verts.size());
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);

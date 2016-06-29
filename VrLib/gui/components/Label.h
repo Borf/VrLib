@@ -13,9 +13,15 @@ namespace vrlib
 			class Label : public Component
 			{
 			public:
+				enum class Alignment
+				{
+					Center,
+					Left,
+					Right,
+				} alignment = Alignment::Center;
 				std::string text;
 
-				Label(const std::string &text, const glm::vec2 &position = glm::vec2(0,0));
+				Label(const std::string &text, const glm::vec2 &position = glm::vec2(0, 0));
 				virtual void draw(const glm::mat4 &parentMatrix) override;
 			};
 		}
