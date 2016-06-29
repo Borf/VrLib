@@ -18,11 +18,14 @@ namespace vrlib
 				public:
 					virtual void init() = 0;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) = 0;
+					virtual void useCubemap(bool use) {};
 				};
 
 
-				RenderContext* renderContext;
+				RenderContext* renderContext = nullptr;
+				RenderContext* renderContextShadow = nullptr;
 				virtual void draw() = 0;
+				virtual void drawShadowMap() = 0;
 			};
 		}
 	}

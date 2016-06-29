@@ -9,8 +9,11 @@
 
 namespace vrlib
 {
+	namespace math { class Ray; }
 	namespace tien
 	{
+		namespace components { class Light;  }
+
 		class DebugDraw : public btIDebugDraw
 		{
 			int debugmode;
@@ -30,25 +33,30 @@ namespace vrlib
 		{
 		public:
 			Scene();
-			Scene(const Scene& other);
 			Node* cameraNode;
 
 		private:
+			Scene(const Scene& other);
+
 			bool treeDirty;
 			std::set<components::Renderable::RenderContext*> renderContexts;
+			std::set<components::Renderable::RenderContext*> renderContextsShadow;
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
+			
+			void addRigidBody(Node* node);
+			void addCollider(Node* node);
 
-			std::list<Node*> toInit;
-
-			bool isPreparedForRunning;
+			virtual Scene &getScene() override { return *this; }
 			virtual void setTreeDirty(Node* newNode, bool isNewNode) override;
 			void updateRenderables();
-			void prepareForRun();
 			void update(float elapsedTime);
+			void init();
 
 			friend class Renderer;
 			friend class Tien;
+			friend class Node;
+			friend class components::Light;
 
 
 			btBroadphaseInterface*                  broadphase;
@@ -61,6 +69,7 @@ namespace vrlib
 
 
 			bool testBodyCollision(Node* n1, Node* n2);
+			void castRay(const math::Ray& ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback) const;
 
 
 		};

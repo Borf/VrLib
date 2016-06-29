@@ -166,6 +166,7 @@
     <ClInclude Include="VrLib\Texture.h" />
     <ClInclude Include="VrLib\TextureAtlas.h" />
     <ClInclude Include="VrLib\tien\Component.h" />
+    <ClInclude Include="VrLib\tien\components\AnimatedModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\BoxCollider.h" />
     <ClInclude Include="VrLib\tien\components\Camera.h" />
     <ClInclude Include="VrLib\tien\components\Collider.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="VrLib\tien\components\ModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\RigidBody.h" />
     <ClInclude Include="VrLib\tien\components\SphereCollider.h" />
+    <ClInclude Include="VrLib\tien\components\TerrainCollider.h" />
     <ClInclude Include="VrLib\tien\components\TerrainRenderer.h" />
     <ClInclude Include="VrLib\tien\components\Transform.h" />
     <ClInclude Include="VrLib\tien\components\TransformAttach.h" />
@@ -265,6 +267,7 @@
     <ClCompile Include="VrLib\Texture.cpp" />
     <ClCompile Include="VrLib\TextureAtlas.cpp" />
     <ClCompile Include="VrLib\tien\Component.cpp" />
+    <ClCompile Include="VrLib\tien\components\AnimatedModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\BoxCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\Camera.cpp" />
     <ClCompile Include="VrLib\tien\components\Collider.cpp" />
@@ -273,6 +276,7 @@
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\RigidBody.cpp" />
     <ClCompile Include="VrLib\tien\components\SphereCollider.cpp" />
+    <ClCompile Include="VrLib\tien\components\TerrainCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\TerrainRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\Transform.cpp" />
     <ClCompile Include="VrLib\tien\components\TransformAttach.cpp" />

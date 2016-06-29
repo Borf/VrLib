@@ -59,6 +59,7 @@ namespace vrlib
 				bool smoothNormals;
 
 				void draw() override;
+				void drawShadowMap() override {};
 
 
 				void addMaterialLayer(vrlib::Texture* diffuse, vrlib::Texture* normal, vrlib::Texture* mask);

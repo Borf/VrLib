@@ -267,7 +267,10 @@ namespace vrlib
 		{
 			glUniform1i(uniformLocations[id], value);
 		}
-
+		void UntypedShader::setUniform(int id, bool value)
+		{
+			glUniform1i(uniformLocations[id], value ? 1 : 0);
+		}
 		void UntypedShader::setUniform(int id, float value)
 		{
 			glUniform1f(uniformLocations[id], value);

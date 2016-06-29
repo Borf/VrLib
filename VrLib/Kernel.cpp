@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <cctype>
-#include <unistd.h>
 
 #include <VrLib/Application.h>
 #include <VrLib/Log.h>
@@ -28,7 +27,6 @@
 #include <VrLib/drivers/Vrpn.h>
 #include <VrLib/drivers/OpenVR.h>
 #endif
-
 #include <VrLib/PerfMon.h>
 #include <VrLib/ServerConnection.h>
 
@@ -37,8 +35,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-#ifdef WIN32
-#include <GL/wglew.h>
+#ifndef WIN32
+#include <unistd.h>
 #endif
 
 
@@ -122,9 +120,10 @@ namespace vrlib
 		else
 			headDevice = NULL;
 
-		PerfMon::getInstance()->resetTimer();
 
 		running = true;
+		tick(0, 0);
+		PerfMon::getInstance()->resetTimer();
 		while (running)
 		{
 			frameTime = PerfMon::getInstance()->getTime();
@@ -458,7 +457,8 @@ namespace vrlib
 
 			BinaryStream data(2048);
 			for (std::map<std::string, DeviceDriverAdaptor*>::iterator it = adaptors.begin(); it != adaptors.end(); it++)
-				it->second->updateDataMaster(data);
+				if(it->second)
+					it->second->updateDataMaster(data);
 
 			if (clusterManager)
 				if (!clusterManager->sync(data.str()))

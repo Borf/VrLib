@@ -204,15 +204,16 @@ namespace vrlib
 	void Font::render(const char *fmt, ...)					// Custom GL "Print" Routine
 	{
 		float		length = 0;								// Used To Find The Length Of The Text
-		char		text[256];								// Holds Our String
+		char		text[2048];								// Holds Our String
 		va_list		ap;										// Pointer To List Of Arguments
 
 		if (fmt == NULL)									// If There's No Text
 			return;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
+		vsprintf_s(text, 204856, fmt, ap);						// And Converts Symbols To Actual Numbers
 #ifdef WIN32
-		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
+		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 #else
 		vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
 #endif
@@ -260,15 +261,16 @@ namespace vrlib
 	float Font::getLength(const char *fmt, ...)
 	{
 		float		length = 0;								// Used To Find The Length Of The Text
-		char		text[256];								// Holds Our String
+		char		text[2048];								// Holds Our String
 		va_list		ap;										// Pointer To List Of Arguments
 
 		if (fmt == NULL)									// If There's No Text
 			return 0;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
+		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 #ifdef WIN32
-		vsprintf_s(text, 256, fmt, ap);						// And Converts Symbols To Actual Numbers
+		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 #else
 		vsprintf(text, fmt, ap);						// And Converts Symbols To Actual Numbers
 #endif

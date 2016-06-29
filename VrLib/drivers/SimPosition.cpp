@@ -74,9 +74,12 @@ namespace vrlib
 			mouseOffsetY = 0;
 		}
 
-		float speed = (float)(0.05 * elapsedTime);
 		for (std::map<std::string, std::list<keyhandler> >::iterator it = keyHandlers.begin(); it != keyHandlers.end(); it++)
 		{
+			float speed = (float)(0.05 * elapsedTime);
+			if (it->first == "Wand")
+				speed *= .333f;
+
 			for (std::list<keyhandler>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
 			{
 				keyhandler& kh = *it2;

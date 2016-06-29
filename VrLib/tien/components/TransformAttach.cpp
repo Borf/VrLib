@@ -32,7 +32,7 @@ namespace vrlib
 
 
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
-				if (rigidBody && rigidBody->body && rigidBody->mass > 0)
+				if (rigidBody && rigidBody->body && rigidBody->getMass() > 0)
 				{
 					node->getComponent<Transform>()->setGlobalRotation(rot);
 					btTransform t;

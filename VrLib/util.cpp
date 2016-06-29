@@ -118,7 +118,7 @@ namespace vrlib
 			ff = hh - i;
 			p = in.z * (1.0f - in.y);
 			q = in.z * (1.0f - (in.y * ff));
-			t = in.z * (1.0f - (in.y * (1.0 - ff)));
+			t = in.z * (1.0f - (in.y * (1.0f - ff)));
 
 			switch (i) {
 			case 0:

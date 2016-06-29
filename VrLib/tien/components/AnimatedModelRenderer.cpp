@@ -1,9 +1,10 @@
-#include "ModelRenderer.h"
+#include "AnimatedModelRenderer.h"
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
 #include "Transform.h"
 #include "../Node.h"
+#include <VrLib/models/AssimpModel.h>
 
 
 namespace vrlib
@@ -12,33 +13,53 @@ namespace vrlib
 	{
 		namespace components
 		{
-			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
+			std::map<std::string, vrlib::Model*> AnimatedModelRenderer::cache;
 
-			ModelRenderer::ModelRenderer(const std::string &fileName)
+			AnimatedModelRenderer::AnimatedModelRenderer(const std::string &fileName)
 			{
 				if (cache.find(fileName) == cache.end())
-					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
+					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2B4B4>(fileName);
 				model = cache[fileName];
+				modelInstance = model->getInstance();
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
+				callbackOnDone = nullptr;
 			}
 
-			ModelRenderer::~ModelRenderer()
+			AnimatedModelRenderer::~AnimatedModelRenderer()
 			{
 
 			}
 
-			void ModelRenderer::draw()
+
+			void AnimatedModelRenderer::update(float elapsedTime, Scene& scene)
+			{
+				modelInstance->update(elapsedTime);
+
+				if (callbackOnDone)
+				{
+					if (((vrlib::State*)modelInstance)->animations.size() == 0)
+					{
+						callbackOnDone();
+						callbackOnDone = nullptr;
+					}
+				}
+
+			}
+
+			void AnimatedModelRenderer::draw()
 			{
 				components::Transform* t = node->getComponent<Transform>();
 
 				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);
 				context->renderShader->use(); //TODO: only call this once!
+				//TODO: ewwww
+				context->renderShader->setUniform(ModelRenderContext::RenderUniform::boneMatrices, ((vrlib::State*)modelInstance)->boneMatrices);
 
-				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
+				modelInstance->draw([this, t, &context](const glm::mat4 &modelMatrix)
 				{
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform * modelMatrix))));
+					context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform);
+					context->renderShader->setUniform(ModelRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
 				},
 					[this, &context](const vrlib::Material &material)
 				{
@@ -63,28 +84,46 @@ namespace vrlib
 			}
 
 
-			void ModelRenderer::drawShadowMap()
+			void AnimatedModelRenderer::drawShadowMap()
 			{
+//				if(!castShadow)
+//					return;
 				components::Transform* t = node->getComponent<Transform>();
+
 				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
 				context->renderShader->use(); //TODO: only call this once!
-				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
-				{
-					context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-				},
-				[this, &context](const vrlib::Material &material)		{	});
+											  //TODO: ewwww
+				context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::boneMatrices, ((vrlib::State*)modelInstance)->boneMatrices);
 
+				modelInstance->draw([this, t, &context](const glm::mat4 &modelMatrix)
+				{
+					context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform);
+				},
+				[this, &context](const vrlib::Material &material)	{	});
 			}
 
 
-			void ModelRenderer::ModelRenderContext::init()
+			void AnimatedModelRenderer::playAnimation(const std::string &animation, bool loop)
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
+				((vrlib::State*)modelInstance)->playAnimation(animation, 0, !loop);
+			}
+
+			void AnimatedModelRenderer::playAnimation(const std::string &animation, std::function<void()> callbackOnDone)
+			{
+				this->callbackOnDone = callbackOnDone;
+				((vrlib::State*)modelInstance)->playAnimation(animation, 0, true);
+			}
+
+			void AnimatedModelRenderer::ModelRenderContext::init()
+			{
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/animatedModel.vert", "data/vrlib/tien/shaders/animatedModel.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_normal", 1);
 				renderShader->bindAttributeLocation("a_bitangent", 2);
 				renderShader->bindAttributeLocation("a_tangent", 3);
 				renderShader->bindAttributeLocation("a_texture", 4);
+				renderShader->bindAttributeLocation("a_boneIds", 5);
+				renderShader->bindAttributeLocation("a_boneWeights", 6);
 				renderShader->link();
 				renderShader->bindFragLocation("fragColor", 0);
 				renderShader->bindFragLocation("fragNormal", 1);
@@ -97,6 +136,7 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
 				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
 				renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
+				renderShader->registerUniform(RenderUniform::boneMatrices, "boneMatrices");
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::s_texture, 0);
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);
@@ -105,7 +145,7 @@ namespace vrlib
 
 			}
 
-			void ModelRenderer::ModelRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			void AnimatedModelRenderer::ModelRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
@@ -114,35 +154,32 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
 			}
 
-
-			void ModelRenderer::ModelRenderShadowContext::init()
+			void AnimatedModelRenderer::ModelRenderShadowContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/animatedModelShadow.vert", "data/vrlib/tien/shaders/animatedModelShadow.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
-				renderShader->bindAttributeLocation("a_normal", 1);
-				renderShader->bindAttributeLocation("a_bitangent", 2);
-				renderShader->bindAttributeLocation("a_tangent", 3);
-				renderShader->bindAttributeLocation("a_texture", 4);
+				renderShader->bindAttributeLocation("a_boneIds", 5);
+				renderShader->bindAttributeLocation("a_boneWeights", 6);
 				renderShader->link();
 				renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
 				renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
 				renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
-				renderShader->registerUniform(RenderUniform::outputPosition, "outputPosition");				
-				renderShader->use();
+				renderShader->registerUniform(RenderUniform::boneMatrices, "boneMatrices");
+				renderShader->registerUniform(RenderUniform::outputPosition, "outputPosition");
 			}
 
-			void ModelRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			void AnimatedModelRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
 				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
 			}
-			void ModelRenderer::ModelRenderShadowContext::useCubemap(bool use)
+			void AnimatedModelRenderer::ModelRenderShadowContext::useCubemap(bool use)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::outputPosition, use);
 			}
-		}
 
+		}
 	}
 }
