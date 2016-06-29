@@ -5,7 +5,7 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #else
-#include <gl/glew.h>
+#include <GL/glew.h>
 #endif
 
 #ifdef WIN32
@@ -33,6 +33,7 @@ namespace vrlib
 				Normal,
 				Position,
 				Depth,
+				ShadowCube,
 				None,
 			};
 
@@ -42,11 +43,13 @@ namespace vrlib
 			//~FBO();
 
 			void bind();
+			void bind(int index);
 			void unbind();
 
 
-			void use();
+			void use(int offset = 0);
 
+			Type types[5];
 			GLuint texid[5];	//5 should be big enough
 
 			int getHeight();

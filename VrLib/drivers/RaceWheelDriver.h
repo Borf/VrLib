@@ -1,4 +1,5 @@
 #pragma once
+#ifdef WIN32
 
 #include <VrLib/Device.h>
 
@@ -169,3 +170,5 @@ namespace vrlib
 	VOID* pContext );
 	*/
 }
+
+#endif

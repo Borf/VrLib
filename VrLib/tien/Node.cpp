@@ -1,6 +1,14 @@
 #include "Node.h"
 #include "Component.h"
+#include "Scene.h"
 #include <assert.h>
+#include <algorithm>
+
+#include "components/Transform.h"
+#include "components/RigidBody.h"
+#include "components/Renderable.h"
+#include "components/Collider.h"
+#include "components/Light.h"
 
 namespace vrlib
 {
@@ -9,28 +17,15 @@ namespace vrlib
 		Node::Node(const std::string &name, Node* parent) :
 			name(name)
 		{
-			this->orig = nullptr;
+			this->transform = nullptr;
+			this->rigidBody = nullptr;
+			this->renderAble = nullptr;
+			this->light = nullptr;
 			this->parent = parent;
 			if (parent)
 			{
 				parent->setTreeDirty(this, true);
 				parent->children.push_back(this);
-			}
-		}
-
-		Node::Node(const Node* original)
-		{
-			orig = original;
-			name = original->name;
-			parent = nullptr;
-
-			components = original->components;
-
-			for (auto c : original->children)
-			{
-				Node* newChild = new Node(c);
-				children.push_back(newChild);
-				newChild->parent = this;
 			}
 		}
 
@@ -45,6 +40,11 @@ namespace vrlib
 			}
 		}
 
+		Scene &Node::getScene()
+		{
+			return parent->getScene();
+		}
+
 		void Node::fortree(const std::function<void(Node*)> &callback)
 		{
 			callback(this);
@@ -57,6 +57,30 @@ namespace vrlib
 			assert(!component->node);
 			components.push_back(component);
 			component->node = this;
+
+			Scene& scene = getScene();
+
+
+			if(!transform)
+				transform = dynamic_cast<components::Transform*>(component);
+			if (!light)
+				light = dynamic_cast<components::Light*>(component);
+			if (!rigidBody)
+			{
+				rigidBody = dynamic_cast<components::RigidBody*>(component);
+				if (rigidBody)
+					getScene().addRigidBody(this);
+			}
+			if (dynamic_cast<components::Collider*>(component))
+			{
+				if (rigidBody)
+					rigidBody->updateCollider(getScene().world);
+			}
+
+			if (!renderAble)
+				renderAble = dynamic_cast<components::Renderable*>(component);
+
+
 		}
 
 	}

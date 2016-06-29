@@ -1,6 +1,8 @@
 #pragma once
 
+#ifdef WIN32
 #include <windows.h>
+#endif
 
 #include <VrLib/Singleton.h>
 
@@ -13,9 +15,10 @@ namespace vrlib
 
 	class PerfMon : public Singleton < PerfMon >
 	{
+#ifdef WIN32
 		double frequency;
 		__int64 startTime;
-
+#endif
 		FrameData* currentFrame;
 	public:
 		PerfMon();

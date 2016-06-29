@@ -25,19 +25,21 @@ namespace vrlib
 				Transform* transform = n->getComponent<Transform>();
 				if (transform)
 				{
-					size *= transform->scale;
+//					size *= transform->scale;
 					offset *= transform->scale;
 				}
+				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
 			BoxCollider::BoxCollider(const glm::vec3 &size)
 			{
 				this->size = size;
+				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
 			btCollisionShape* BoxCollider::getShape()
 			{
-				return new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
+				return shape;
 			}
 
 		}

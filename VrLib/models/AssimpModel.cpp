@@ -1,8 +1,8 @@
 #include "AssimpModel.h"
 
-#include <vrlib/gl/Vertex.h>
-#include <vrlib/Texture.h>
-#include <vrlib/Log.h>
+#include <VrLib/gl/Vertex.h>
+#include <VrLib/Texture.h>
+#include <VrLib/Log.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -85,7 +85,7 @@ namespace vrlib
 					setN3(v, vertexNormals[ii]); //matrix?
 //					setN3(v, glm::vec3(0, 0, 1));
 
-				if (mesh->HasTangentsAndBitangents() && gl::hasTangentsAndBitangents<VertexFormat>())
+				if (mesh->HasTangentsAndBitangents())
 				{
 					gl::setTan3(v, glm::normalize(glm::vec3(mesh->mTangents[ii].x, mesh->mTangents[ii].y, mesh->mTangents[ii].z)));
 					gl::setBiTan3(v, glm::normalize(glm::vec3(mesh->mBitangents[ii].x, mesh->mBitangents[ii].y, mesh->mBitangents[ii].z)));
@@ -187,6 +187,23 @@ namespace vrlib
 			}
 			else
 				m.material.normalmap = NULL;
+
+			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_NORMALS, 0, &texPath) == aiReturn_SUCCESS)
+			{
+				std::string file = texPath.C_Str();
+				m.material.normalmap = vrlib::Texture::loadCached(path + "/" + file);
+				while (!m.material.normalmap && file.find("/") != std::string::npos)
+				{
+					file = file.substr(file.find("/") + 1);
+					m.material.normalmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				while (!m.material.normalmap && file.find("\\") != std::string::npos)
+				{
+					file = file.substr(file.find("\\") + 1);
+					m.material.normalmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+			}
+
 
 
 			aiColor4D color;
@@ -434,7 +451,8 @@ namespace vrlib
 					a->playCount--;
 			a->time = fmod(a->time, a->animation->totalTime);
 		}
-		//TODO blib::linq::deletewhere(animations, [](AnimationState* a) { return a->playCount == 0; });
+		animations.erase(std::remove_if(animations.begin(), animations.end(), [](AnimationState* a) { return a->playCount == 0;  }), animations.end());
+
 
 
 		for (int i = 0; i < (int)faders.size(); i++)
@@ -625,7 +643,7 @@ namespace vrlib
 					faders.push_back(fader);
 					return;
 				}
-				//		delete animations[i];
+				//		delete animations[i]; TODO: memory leak !
 				animations.erase(animations.begin() + i);
 				return;
 			}
@@ -639,6 +657,7 @@ namespace vrlib
 	template class AssimpModel < gl::VertexP3N3T2 >;
 	template class AssimpModel < gl::VertexP3N3T2B4B4 >;
 	template class AssimpModel < gl::VertexP3N2B2T2T2 >;
+	template class AssimpModel < gl::VertexP3N2B2T2T2B4B4 >;
 
 	inline Bone * Bone::find(std::function<bool(Bone*)> callback)
 	{

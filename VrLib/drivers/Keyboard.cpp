@@ -1,7 +1,25 @@
 #include <VrLib/drivers/Keyboard.h>
 #include <VrLib/Log.h>
 
+#ifdef WIN32
 #include <windows.h>
+#else
+
+enum Keys
+{
+	VK_PRIOR,
+	VK_NEXT,
+	VK_HOME,
+	VK_END,
+	VK_INSERT,
+	VK_DELETE,
+	VK_F1, VK_F2, VK_F3, VK_F4, VK_F5, VK_F6, VK_F7, VK_F8, VK_F9, VK_F10, VK_F11, VK_F12,
+	VK_NUMPAD0, VK_NUMPAD1, VK_NUMPAD2, VK_NUMPAD3, VK_NUMPAD4, VK_NUMPAD5, VK_NUMPAD6, VK_NUMPAD7, VK_NUMPAD8, VK_NUMPAD9,
+	VK_TAB,
+	VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT,
+};
+
+#endif
 
 #include <vector>
 #include <string>
@@ -169,11 +187,13 @@ namespace vrlib
 
 	bool KeyboardDeviceDriver::isModPressed( KeyboardModifiers mods )
 	{
+#ifdef WIN32
 		bool shift = ((GetKeyState(VK_LSHIFT) | GetKeyState(VK_RSHIFT))&0x80) != 0;
 		bool ctrl = ((GetKeyState(VK_LCONTROL) | GetKeyState(VK_RCONTROL))&0x80) != 0;
 		bool alt = ((GetKeyState(VK_LMENU) | GetKeyState(VK_RMENU))&0x80) != 0;
-
-
+#else
+		bool shift = false, ctrl = false, alt = false;
+#endif
 		switch(mods)
 		{
 		case KEYMOD_ALT:			return alt && !shift && !ctrl;

@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef WIN32
+
 #include <VrLib/Device.h>
 #include <glm/glm.hpp>
 #include <windows.h>
@@ -92,3 +94,5 @@ namespace vrlib
 		glm::mat4 getNunchukData(HydraNunchuk nunchuk);
 	};
 }
+
+#endif

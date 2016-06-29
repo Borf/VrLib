@@ -24,10 +24,11 @@ namespace vrlib
 		if (endline)
 		{
 			endline = false;
-
+#ifdef WIN32
 			SYSTEMTIME beg;
 			GetLocalTime(&beg);
 			logString("[%02d:%02d:%02d:%03d]\t", beg.wHour, beg.wMinute, beg.wSecond, beg.wMilliseconds);
+#endif
 		}
 
 		char text[10240];
@@ -35,7 +36,11 @@ namespace vrlib
 		if (fmt == NULL)
 			return;
 		va_start(ap, fmt);
+#ifdef WIN32
 		vsprintf_s(text, 10240, fmt, ap);
+#else
+		vsprintf(text, fmt, ap);
+#endif
 		va_end(ap);
 
 		std::cout << text;
@@ -50,6 +55,11 @@ namespace vrlib
 		return *this;
 	}
 
+	Log& Log::operator<<(const char* txt)
+	{
+		logString("%s", txt);
+		return *this;
+	}
 	Log& Log::operator<<(int txt)
 	{
 		logString("%i", txt);
@@ -100,7 +110,11 @@ namespace vrlib
 		if (fmt == NULL)
 			return "";
 		va_start(ap, fmt);
+#ifdef WIN32
 		vsprintf_s(text, 10240, fmt, ap);
+#else
+		vsprintf(text, fmt, ap);
+#endif
 		va_end(ap);
 
 		return text;

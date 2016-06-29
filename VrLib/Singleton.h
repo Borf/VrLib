@@ -20,9 +20,9 @@ namespace vrlib
 	public:
 		AutoSingleton()
 		{
-			object = T->getInstance();
+			object = T::getInstance();
 		}
-		
+
 		T* operator -> ()
 		{
 			return object;

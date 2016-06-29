@@ -3,7 +3,7 @@
 #include <VrLib/Device.h>
 
 #include <list>
-#include <vrlib/json.h>
+#include <VrLib/json.h>
 #include <openvr.h>
 
 

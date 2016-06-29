@@ -9,21 +9,34 @@ namespace vrlib
 	namespace tien
 	{
 		class Component;
+		class Scene;
+		namespace components
+		{
+			class Transform;
+			class RigidBody;
+			class Renderable;
+			class Light;
+		}
 
 		class Node
 		{
 		protected:
-			virtual void setTreeDirty(Node* newNode, bool isNewNode) { parent->setTreeDirty(newNode, isNewNode); };
+			virtual void setTreeDirty(Node* newNode, bool isNewNode) { if(parent) parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
-
-			Node(const Node* original);
 		public:
+			components::Transform* transform;
+			components::RigidBody* rigidBody;
+			components::Renderable* renderAble;
+			components::Light* light;
+
+
 			std::string name;
 			Node* parent;
-			const Node* orig;
 			std::list<Node*> children;
 
+			Node::Node(const std::string &name, Node* parent);
+			~Node();
 
 			template<class T> T* getComponent()
 			{
@@ -34,6 +47,22 @@ namespace vrlib
 						return r;
 				}
 				return nullptr;
+			}
+
+			template<> components::Light* getComponent()			{			return light;				}
+			template<> components::Transform* getComponent()		{			return transform;			}
+			template<> components::RigidBody* getComponent()		{			return rigidBody;			}
+
+			template<class T> std::vector<T*> getComponents()
+			{
+				std::vector<T*> ret;
+				for (auto c : components)
+				{
+					T* r = dynamic_cast<T*>(c);
+					if (r)
+						ret.push_back(r);
+				}
+				return ret;
 			}
 
 
@@ -50,9 +79,22 @@ namespace vrlib
 				return nullptr;
 			}
 
-			Node(const std::string &name, Node* parent);
-			~Node();
+			Node* findNodeWithName(const std::string &name)
+			{
+				if (this->name == name)
+					return this;
+				for (auto c : children)
+				{
+					Node* cn = c->findNodeWithName(name);
+					if (cn)
+						return cn;
+				}
+				return nullptr;
+			}
 
+
+
+			virtual Scene& getScene();
 			void fortree(const std::function<void(Node*)> &callback);
 			void addComponent(Component* component);
 		};

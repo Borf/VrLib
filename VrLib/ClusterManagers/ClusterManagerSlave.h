@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef WIN32
 #include <WinSock2.h>
+#else
+typedef int SOCKET;
+#endif
 #include <VrLib/ClusterManager.h>
 
 namespace vrlib

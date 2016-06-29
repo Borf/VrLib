@@ -25,8 +25,7 @@ namespace vrlib
 
 
 			Renderer renderer;
-			Scene currentScene;
-			Scene currentRunningScene;
+			Scene scene;
 
 			void start();
 			void pause();

@@ -34,7 +34,7 @@ namespace vrlib
 	*/
 	TextureAtlas::~TextureAtlas()
 	{
-		for each (auto subTexture in subTextures)
+		for(auto subTexture : subTextures)
 		{
 			delete subTexture.second;
 		}

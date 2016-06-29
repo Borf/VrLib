@@ -6,7 +6,11 @@
 #include "components/RigidBody.h"
 #include "components/Collider.h"
 
+#include <VrLib/math/Ray.h>
+
 #include <btBulletDynamicsCommon.h>
+
+#include <algorithm>
 
 
 namespace vrlib
@@ -18,33 +22,41 @@ namespace vrlib
 		{
 			cameraNode = nullptr;
 			world = nullptr;
-			isPreparedForRunning = false;
 		}
 
-		Scene::Scene(const Scene& other) : Node(&other)
+		Scene::Scene(const Scene& other) : Node("", nullptr)
 		{
-			cameraNode = other.cameraNode;
-			treeDirty = true;
-			world = nullptr;
-			isPreparedForRunning = false;
-			update(0);
+			throw "Not allowed";
+		}
+
+		void Scene::init()
+		{
+			broadphase = new btDbvtBroadphase();
+			collisionConfiguration = new btDefaultCollisionConfiguration();
+			dispatcher = new btCollisionDispatcher(collisionConfiguration);
+			solver = new btSequentialImpulseConstraintSolver();
+			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+			world->setGravity(btVector3(0, -9.8f, 0));
+			world->setDebugDrawer(debugDrawer = new DebugDraw());
+			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+		}
+
+
+		void Scene::addRigidBody(Node* node)
+		{
+			node->rigidBody->init(world);
+		}
+		void Scene::addCollider(Node* node)
+		{
+			if (node->rigidBody)
+				node->rigidBody->updateCollider(world);
+			else
+				throw "Not supported yet";
 		}
 
 
 		void Scene::setTreeDirty(Node* newNode, bool isNewNode)
 		{
-			if (isPreparedForRunning)
-			{ 
-				if(isNewNode)
-					toInit.push_back(newNode);
-				else
-				{
-					auto a = std::find(toInit.begin(), toInit.end(), newNode);
-					if (a != toInit.end())
-						toInit.erase(a);
-				}
-			}
-			
 			treeDirty = true;
 		}
 
@@ -59,39 +71,23 @@ namespace vrlib
 				if (renderable = n->getComponent<components::Renderable>())
 				{
 					renderables.push_back(n);
-					if (renderContexts.find(renderable->renderContext) == renderContexts.end())
+					if (renderable->renderContext && renderContexts.find(renderable->renderContext) == renderContexts.end())
 					{
 						renderable->renderContext->init(); // TODO: move this to another place?
 						renderContexts.insert(renderable->renderContext);
+					}
+					if (renderable->renderContextShadow && renderContextsShadow.find(renderable->renderContextShadow) == renderContextsShadow.end())
+					{
+						renderable->renderContextShadow->init(); // TODO: move this to another place?
+						renderContextsShadow.insert(renderable->renderContextShadow);
 					}
 				}
 				if (n->getComponent<components::Light>())
 					lights.push_back(n);
 			});
+
+			renderables.sort([](Node* a, Node* b) { return (int)a->renderAble->renderContext < (int)b->renderAble->renderContext; });
 		}
-
-		void Scene::prepareForRun()
-		{
-			broadphase = new btDbvtBroadphase();
-			collisionConfiguration = new btDefaultCollisionConfiguration();
-			dispatcher = new btCollisionDispatcher(collisionConfiguration);
-			solver = new btSequentialImpulseConstraintSolver();
-			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-			world->setGravity(btVector3(0, -9.8f, 0));
-			world->setDebugDrawer(debugDrawer = new DebugDraw());
-			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
-
-
-			fortree([this](Node* n)
-			{
-				components::RigidBody* rigidBody;
-				if (rigidBody = n->getComponent<components::RigidBody>())
-					rigidBody->init(world);
-			});
-			isPreparedForRunning = true;
-		}
-
-
 
 		void Scene::update(float elapsedTime)
 		{
@@ -101,17 +97,6 @@ namespace vrlib
 				if (!cameraNode)
 					cameraNode = findNodeWithComponent<components::Camera>();
 				treeDirty = false;
-			}
-
-			if (!toInit.empty())
-			{
-				for (auto newNode : toInit)
-				{
-					components::RigidBody* rigidBody;
-					if (rigidBody = newNode->getComponent<components::RigidBody>())
-						rigidBody->init(world);
-				}
-				toInit.clear();
 			}
 
 			if(world)
@@ -159,11 +144,49 @@ namespace vrlib
 		{
 			if (!n1 || !n2)
 				return false;
+			if (!n1->getComponent<vrlib::tien::components::RigidBody>()->body || !n2->getComponent<vrlib::tien::components::RigidBody>()->body)
+				return false;
+
+
 			CollisionTest test;
 			world->contactPairTest(n1->getComponent<vrlib::tien::components::RigidBody>()->body,
 				n2->getComponent<vrlib::tien::components::RigidBody>()->body,
 				test);
 			return test.collision;
+		}
+
+		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback) const
+		{
+			class Callback : public btCollisionWorld::RayResultCallback
+			{
+				std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback;
+				const math::Ray& ray;
+			public:
+				Callback(std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, const math::Ray& ray) : ray(ray)
+				{
+					this->callback = callback;
+				}
+				virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace) override
+				{
+					btVector3 hitNormalWorld;
+					if (normalInWorldSpace)
+						hitNormalWorld = rayResult.m_hitNormalLocal;
+					else
+						hitNormalWorld = m_collisionObject->getWorldTransform().getBasis()*rayResult.m_hitNormalLocal;
+
+
+					bool cont = this->callback(
+						(Node*)rayResult.m_collisionObject->getUserPointer(), 
+						ray.mOrigin + 100 * rayResult.m_hitFraction * ray.mDir,
+						glm::vec3(hitNormalWorld.x(), hitNormalWorld.y(), hitNormalWorld.z()));
+					return cont ? rayResult.m_hitFraction : 1.0f;
+				}
+
+			};
+			Callback _callback(callback, ray);
+			glm::vec3 worldTarget = ray.mOrigin + 100.0f * ray.mDir;
+			world->rayTest(btVector3(ray.mOrigin.x, ray.mOrigin.y, ray.mOrigin.z), btVector3(worldTarget.x, worldTarget.y, worldTarget.z), _callback);
+
 		}
 
 

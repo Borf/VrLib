@@ -3,16 +3,19 @@
 #include "Renderable.h"
 #include <string>
 #include <map>
+#include <functional>
+
 namespace vrlib
 {
 	class Model;
+	class ModelInstance;
 	class Texture;
 
 	namespace tien
 	{
 		namespace components
 		{
-			class ModelRenderer : public Renderable
+			class AnimatedModelRenderer : public Renderable
 			{
 			private:
 				class ModelRenderContext : public Renderable::RenderContext, public Singleton<ModelRenderContext>
@@ -28,6 +31,7 @@ namespace vrlib
 						s_normalmap,
 						diffuseColor,
 						textureFactor,
+						boneMatrices
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
@@ -42,24 +46,35 @@ namespace vrlib
 						modelMatrix,
 						projectionMatrix,
 						viewMatrix,
+						boneMatrices,
 						outputPosition
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
-					virtual void useCubemap(bool) override;
+					virtual void useCubemap(bool use) override;
 				};
 
+				std::function<void()> callbackOnDone;
 
 				static std::map<std::string, vrlib::Model*> cache;
 			public:
-				ModelRenderer(const std::string &fileName);
-				~ModelRenderer();
+				AnimatedModelRenderer(const std::string &fileName);
+				~AnimatedModelRenderer();
 
 				vrlib::Model* model;
+				vrlib::ModelInstance* modelInstance;
+				
+				
 
+				void update(float elapsedTime, Scene& scene) override;
 				void draw() override;
 				void drawShadowMap() override;
+
+				void playAnimation(const std::string &animation, bool loop = true);
+				void playAnimation(const std::string &animation, std::function<void()> callbackOnDone);
+
+
 
 				bool castShadow;
 			};

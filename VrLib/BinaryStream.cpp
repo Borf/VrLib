@@ -1,6 +1,7 @@
 #include "BinaryStream.h"
 #include <VrLib/Log.h>
 #include <glm/glm.hpp>
+#include <string.h>
 
 namespace vrlib
 {

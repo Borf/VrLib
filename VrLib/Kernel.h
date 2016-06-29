@@ -7,7 +7,7 @@
 #include <list>
 #include <map>
 
-
+#ifdef WIN32
 #pragma comment(lib, "vrlib.lib")
 #pragma comment(lib, "glew32s.lib")
 #pragma comment(lib, "ws2_32.lib")
@@ -34,7 +34,7 @@
 #pragma comment(lib, "freetype255.lib")
 #pragma comment(lib, "assimp-vc140-mt-static.lib") //so that you don't get annoying dll trouble
 #endif
-
+#endif
 
 
 namespace vrlib

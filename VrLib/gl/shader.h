@@ -75,6 +75,7 @@ namespace vrlib
 			void registerUniform(int id, std::string value);
 			void setUniform(int id, int value);
 			void setUniform(int id, float value);
+			void setUniform(int id, bool value);
 			void setUniform(int id, const glm::vec2 &value);
 			void setUniform(int id, const glm::vec3 &value);
 			void setUniform(int id, const glm::vec4 &value);

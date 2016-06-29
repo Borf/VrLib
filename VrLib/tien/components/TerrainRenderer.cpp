@@ -4,7 +4,7 @@
 #include "../Node.h"
 #include <vector>
 
-#include <vrlib/Texture.h>
+#include <VrLib/Texture.h>
 
 namespace vrlib
 {

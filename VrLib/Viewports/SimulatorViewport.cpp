@@ -8,7 +8,7 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/Model.h>
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -41,7 +41,7 @@ namespace vrlib
 			camera = cameraDevice->getData();
 
 		float aspect = (windowWidth * this->width()) / (windowHeight * this->height());
-		return glm::perspective(glm::radians(45.0f), aspect, 0.2f, 1000.0f) * camera;
+		return glm::perspective(glm::radians(45.0f), aspect, 0.05f, 1000.0f) * camera;
 	}
 
 #define HEADSIZE 0.1f

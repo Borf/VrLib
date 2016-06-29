@@ -3,9 +3,11 @@
 #include <VrLib/Device.h>
 #include <VrLib/drivers/Keyboard.h>
 
-#include <OVR_CAPI.h>
 #include <list>
-#include <vrlib/json.h>
+#include <VrLib/json.h>
+
+#ifdef WIN32
+#include <OVR_CAPI.h>
 
 namespace vrlib
 {
@@ -33,3 +35,18 @@ namespace vrlib
 		glm::mat4 headMatrix;
 	};
 }
+
+#else
+
+
+namespace vrlib
+{
+	class OculusDeviceDriver : public DeviceDriver
+	{
+	
+	
+	};
+}
+
+
+#endif

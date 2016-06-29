@@ -1,12 +1,14 @@
 #pragma once
 
-
 #include <VrLib/Viewport.h>
 #include <glm/glm.hpp>
 
+#ifdef WIN32
+
+
 
 #define OVR_OS_WIN32
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include <OVR_CAPI_GL.h>
 
 namespace vrlib
@@ -206,3 +208,22 @@ namespace vrlib
 
 	};
 }
+
+
+#else
+namespace vrlib //STUB
+{
+	class RiftViewport : public Viewport
+	{
+	public:
+		RiftViewport(User* user, OculusDeviceDriver* oculusDriver, Kernel* kernel);
+		virtual void draw(Application* application) {};
+		virtual glm::mat4 getProjectionMatrix() {return glm::mat4(); };
+
+	
+	};
+
+
+}
+
+#endif

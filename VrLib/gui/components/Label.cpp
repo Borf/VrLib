@@ -1,7 +1,7 @@
 #include "Label.h"
-#include <vrlib/gui/Window.h>
-#include <vrlib/gl/shader.h>
-#include <vrlib/Font.h>
+#include <VrLib/gui/Window.h>
+#include <VrLib/gl/shader.h>
+#include <VrLib/Font.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
