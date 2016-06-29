@@ -211,7 +211,6 @@ namespace vrlib
 			return;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
-		vsprintf_s(text, 204856, fmt, ap);						// And Converts Symbols To Actual Numbers
 #ifdef WIN32
 		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 #else
@@ -268,7 +267,6 @@ namespace vrlib
 			return 0;											// Do Nothing
 
 		va_start(ap, fmt);									// Parses The String For Variables
-		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 #ifdef WIN32
 		vsprintf_s(text, 2048, fmt, ap);						// And Converts Symbols To Actual Numbers
 #else
