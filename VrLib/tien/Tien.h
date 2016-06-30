@@ -34,6 +34,9 @@ namespace vrlib
 			void init();
 			void update(float elapsedTime);
 			void render(const glm::mat4 &projectionMatrix, const glm::mat4& modelViewMatrix);
+
+
+			void saveCubeMap(const glm::vec3 position, const std::string &fileName);
 		};
 	}
 }

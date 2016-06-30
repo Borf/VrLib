@@ -117,7 +117,10 @@ namespace vrlib
 
 
 			if (!scene.cameraNode)
+			{
+				logger << "No camera found" << Log::newline;
 				return;
+			}
 			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
 
 

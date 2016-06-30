@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 
 #ifdef ANDROID
 #include <GLES2/gl2.h>
@@ -54,6 +55,8 @@ namespace vrlib
 
 			int getHeight();
 			int getWidth();
+
+			void saveAsFile(const std::string &fileName);
 
 		};
 	}

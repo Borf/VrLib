@@ -40,6 +40,19 @@ namespace vrlib
 					vrlib::Texture* white;
 					vrlib::Texture* defaultNormalMap;
 				};
+				class TerrainRenderShadowContext : public Renderable::RenderContext, public Singleton<TerrainRenderShadowContext>
+				{
+				public:
+					enum class RenderUniform
+					{
+						modelMatrix,
+						projectionMatrix,
+						viewMatrix,
+					};
+					vrlib::gl::Shader<RenderUniform>* renderShader;
+					virtual void init() override;
+					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
+				};
 
 				gl::VBO<gl::VertexP3N2B2T2T2> vbo;
 				gl::VIO<unsigned int> vio;
@@ -59,7 +72,7 @@ namespace vrlib
 				bool smoothNormals;
 
 				void draw() override;
-				void drawShadowMap() override {};
+				void drawShadowMap() override;
 
 
 				void addMaterialLayer(vrlib::Texture* diffuse, vrlib::Texture* normal, vrlib::Texture* mask);

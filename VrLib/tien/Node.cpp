@@ -82,6 +82,9 @@ namespace vrlib
 
 
 		}
+		template<> components::Light* Node::getComponent<components::Light>() { return light; }
+		template<> components::Transform* Node::getComponent<components::Transform>() { return transform; }
+		template<> components::RigidBody* Node::getComponent<components::RigidBody>() { return rigidBody; }
 
 	}
 }

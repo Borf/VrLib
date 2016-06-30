@@ -21,6 +21,7 @@ namespace vrlib
 				model = cache[fileName];
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
+				castShadow = true;
 			}
 
 			ModelRenderer::~ModelRenderer()
@@ -65,6 +66,8 @@ namespace vrlib
 
 			void ModelRenderer::drawShadowMap()
 			{
+				if (!castShadow)
+					return;
 				components::Transform* t = node->getComponent<Transform>();
 				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
 				context->renderShader->use(); //TODO: only call this once!
