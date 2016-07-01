@@ -2,6 +2,9 @@
 #include "Renderer.h"
 #include "Scene.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <VrLib/gl/FBO.h>
+
 
 namespace vrlib
 {
@@ -49,6 +52,41 @@ namespace vrlib
 		void Tien::pause()
 		{
 			playState = PlayState::Paused;
+		}
+
+		void Tien::saveCubeMap(const glm::vec3 position, const std::string &fileName)
+		{
+			vrlib::gl::FBO* fbo = new vrlib::gl::FBO(1024, 1024, true);
+			struct CameraDirection
+			{
+				GLenum cubemapFace;
+				glm::vec3 target;
+				glm::vec3 up;
+			};
+
+			CameraDirection gCameraDirections[6] =
+			{
+				{ GL_TEXTURE_CUBE_MAP_POSITIVE_X, glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f) },
+				{ GL_TEXTURE_CUBE_MAP_NEGATIVE_X, glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f) },
+				{ GL_TEXTURE_CUBE_MAP_POSITIVE_Y, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) },
+				{ GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f) },
+				{ GL_TEXTURE_CUBE_MAP_POSITIVE_Z, glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f) },
+				{ GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f) }
+			};
+
+			glViewport(0, 0, fbo->getWidth(), fbo->getHeight());
+
+			for (int i = 0; i < 6; i++)
+			{
+				fbo->bind();
+				render(glm::perspective(45.0f, 1.0f, 0.1f, 500.0f), glm::lookAt(position, position + gCameraDirections[i].target, gCameraDirections[i].up));
+				fbo->unbind();
+				fbo->saveAsFile(fileName + "." + std::to_string(i) + ".png");
+			}
+
+
+			delete fbo;
+
 		}
 
 

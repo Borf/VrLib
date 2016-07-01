@@ -95,9 +95,9 @@ namespace vrlib
 			void fortree(const std::function<void(Node*)> &callback);
 			void addComponent(Component* component);
 		};
-		template<> components::Light* Node::getComponent()			{			return light;				}
-		template<> components::Transform* Node::getComponent()		{			return transform;			}
-		template<> components::RigidBody* Node::getComponent()		{			return rigidBody;			}
+		template<> components::Light* Node::getComponent<components::Light>();
+		template<> components::Transform* Node::getComponent<components::Transform>();
+		template<> components::RigidBody* Node::getComponent<components::RigidBody>();
 
 	}
 }

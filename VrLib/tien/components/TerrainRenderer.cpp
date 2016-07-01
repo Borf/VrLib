@@ -16,6 +16,7 @@ namespace vrlib
 			{
 				smoothNormals = true;
 				renderContext = TerrainRenderContext::getInstance();
+				renderContextShadow = TerrainRenderShadowContext::getInstance();
 
 				std::vector<std::vector<glm::vec3>> polyNormals;
 				polyNormals.resize(terrain.width - 1, std::vector<glm::vec3>(terrain.height - 1, glm::vec3(0, 1, 0)));
@@ -154,6 +155,18 @@ namespace vrlib
 
 
 
+			void TerrainRenderer::drawShadowMap()
+			{
+				components::Transform* t = node->getComponent<Transform>();
+
+				TerrainRenderShadowContext* context = dynamic_cast<TerrainRenderShadowContext*>(renderContextShadow);
+				context->renderShader->use();
+				context->renderShader->setUniform(TerrainRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform);
+
+				vao->bind();
+				glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
+				vao->unBind();
+			}
 
 
 
@@ -191,7 +204,6 @@ namespace vrlib
 				black = vrlib::Texture::loadCached("data/vrlib/tien/textures/black.png");
 				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 			}
-
 			void TerrainRenderer::TerrainRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
@@ -199,6 +211,31 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
 				renderShader->setUniform(RenderUniform::diffuseColor, glm::vec4(1, 1, 1, 1));
 			}
+
+
+
+
+
+
+
+			void TerrainRenderer::TerrainRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			{
+				renderShader->use();
+				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
+				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
+			}
+			void TerrainRenderer::TerrainRenderShadowContext::init()
+			{
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
+				renderShader->bindAttributeLocation("a_position", 0);
+				renderShader->link();
+				//shader->bindFragLocation("fragColor", 0);
+				renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
+				renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
+				renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
+				renderShader->use();
+			}
+
 
 
 		}

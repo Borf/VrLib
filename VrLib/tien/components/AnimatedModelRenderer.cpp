@@ -24,6 +24,7 @@ namespace vrlib
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
 				callbackOnDone = nullptr;
+				castShadow = true;
 			}
 
 			AnimatedModelRenderer::~AnimatedModelRenderer()
@@ -49,6 +50,8 @@ namespace vrlib
 
 			void AnimatedModelRenderer::draw()
 			{
+				if (!castShadow)
+					return;
 				components::Transform* t = node->getComponent<Transform>();
 
 				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);

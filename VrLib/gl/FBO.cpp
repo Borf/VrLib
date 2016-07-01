@@ -1,6 +1,7 @@
 #include "FBO.h"
 #include <VrLib/Log.h>
 #include <glm/glm.hpp>
+#include <VrLib/stb_image_write.h>
 using vrlib::Log;
 
 namespace vrlib
@@ -233,5 +234,15 @@ namespace vrlib
 		{
 			return width;
 		}
+
+		void FBO::saveAsFile(const std::string &fileName)
+		{
+			char* data = new char[getWidth() * getHeight() * 4];
+			use();
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
+			delete[] data;
+		}
+
 	}
 }
