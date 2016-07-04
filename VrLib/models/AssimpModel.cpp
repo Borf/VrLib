@@ -76,7 +76,7 @@ namespace vrlib
 				setP3(v, glm::vec3(mesh->mVertices[ii].x, mesh->mVertices[ii].y, mesh->mVertices[ii].z));
 //				vertex = vertex * matrix;
 				if (mesh->HasTextureCoords(0))
-					setT2(v, glm::vec2(mesh->mTextureCoords[0][ii].x, 1 - mesh->mTextureCoords[0][ii].y));
+					setT2(v, glm::vec2(mesh->mTextureCoords[0][ii].x, mesh->mTextureCoords[0][ii].y));
 
 				glm::vec4 normal;
 				if (mesh->HasNormals())

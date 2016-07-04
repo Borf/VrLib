@@ -157,6 +157,8 @@ namespace vrlib
 
 		std::string btn = config.substr(11);
 
+		if (driver->controllers.empty())
+			logger << "Please connect vive controllers" << Log::newline;
 		id = driver->controllers[0];
 		if (config.substr(6, 4) == "Left")
 		{

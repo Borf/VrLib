@@ -115,6 +115,7 @@ namespace vrlib
 				context->renderShader->use();
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
+				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::heightmapSize, glm::vec2(terrain.width, terrain.height)); //TODO: only do this once
 
 
 				vao->bind();
@@ -133,7 +134,7 @@ namespace vrlib
 				glBlendFunci(0, GL_ONE, GL_ONE);
 				glBlendFunci(1, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				glDepthFunc(GL_EQUAL);
-				
+
 				for (size_t i = 0; i < materials.size(); i++)
 				{
 					glActiveTexture(GL_TEXTURE0);
@@ -195,6 +196,7 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
 				renderShader->registerUniform(RenderUniform::s_mask, "s_mask");
 				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
+				renderShader->registerUniform(RenderUniform::heightmapSize, "heightmapSize");
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::s_texture, 0);
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);

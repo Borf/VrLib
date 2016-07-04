@@ -36,9 +36,9 @@ namespace vrlib
 			void Transform::buildTransform()
 			{
 				transform = glm::mat4();
+				transform = glm::scale(transform, scale);
 				transform = glm::translate(transform, position);
 				transform = transform * glm::toMat4(rotation);
-				transform = glm::scale(transform, scale);
 			}
 
 

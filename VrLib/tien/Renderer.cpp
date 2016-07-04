@@ -148,7 +148,7 @@ namespace vrlib
 
 
 			for (components::Renderable::RenderContext* context : scene.renderContexts)
-				context->frameSetup(projectionMatrix, modelViewMatrix);
+				context->frameSetup(projectionMatrix, modelViewMatrix * glm::inverse(scene.cameraNode->transform->globalTransform));
 
 			for (Node* c : scene.renderables)
 				c->getComponent<components::Renderable>()->draw();

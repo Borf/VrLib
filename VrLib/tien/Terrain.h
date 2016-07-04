@@ -17,7 +17,7 @@ namespace vrlib
 			int getHeight() { return height; }
 			int getWidth() { return width; }
 
-			Terrain(const std::string &filename);
+			Terrain(const std::string &filename, float stretch);
 
 			friend class components::TerrainRenderer;
 

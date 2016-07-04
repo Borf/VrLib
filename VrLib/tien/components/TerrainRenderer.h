@@ -30,7 +30,8 @@ namespace vrlib
 						s_texture,
 						s_normalmap,
 						s_mask,
-						diffuseColor
+						diffuseColor,
+						heightmapSize
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					virtual void init() override;
