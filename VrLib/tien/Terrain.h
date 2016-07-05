@@ -13,9 +13,11 @@ namespace vrlib
 			std::vector<std::vector<float> > heights;
 			int height;
 			int width;
+			float stretch;
 		public:
 			int getHeight() { return height; }
 			int getWidth() { return width; }
+			float getStretch() { return stretch; }
 
 			Terrain(const std::string &filename, float stretch);
 

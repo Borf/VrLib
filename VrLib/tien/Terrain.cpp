@@ -8,6 +8,7 @@ namespace vrlib
 	{
 		Terrain::Terrain(const std::string &fileName, float stretch)
 		{
+			this->stretch = stretch;
 			vrlib::Image image(fileName);
 
 			width = image.width;

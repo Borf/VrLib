@@ -112,6 +112,7 @@ namespace vrlib
 							vrlib::gl::setB4(vertices[index], iiii, ii, weight.mWeight);
 							break; //TODO: if index iiii is already filled in, don't overwrite it, but use proper weights etc
 							}
+							assert(iiii != 3);
 						}
 					}
 
@@ -120,6 +121,7 @@ namespace vrlib
 					Bone* b = rootBone->find([&name](Bone* c) { return c->name == name; });
 					if (b)
 					{
+						//TODO: this could be causing problems, if b->index is already set and it's different from ii
 						b->index = ii;
 						b->offset = glm::transpose(glm::make_mat4((float*)&bone->mOffsetMatrix));
 					}

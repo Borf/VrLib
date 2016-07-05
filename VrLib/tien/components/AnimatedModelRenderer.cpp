@@ -35,7 +35,7 @@ namespace vrlib
 
 			void AnimatedModelRenderer::update(float elapsedTime, Scene& scene)
 			{
-				modelInstance->update(elapsedTime);
+				modelInstance->update(elapsedTime * animationSpeed);
 
 				if (callbackOnDone)
 				{

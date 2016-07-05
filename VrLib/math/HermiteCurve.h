@@ -21,6 +21,7 @@ namespace vrlib
 			HermiteCurve(glm::vec2 pos0, glm::vec2 dir0, glm::vec2 pos1, glm::vec2 dir1);
 
 			glm::vec2 getPoint(float t) const;
+			float getLength() const;
 
 		};
 	}

@@ -73,9 +73,13 @@ namespace vrlib
 			float bitanx, bitany, bitanz;
 			float tanx, tany, tanz;
 			float tx, ty;
-			VertexP3N2B2T2T2B4B4() { boneIds[0] = -1; boneIds[1] = -1; boneIds[2] = -1; boneIds[3] = -1;  boneWeights[0] = 0; boneWeights[1] = 0; boneWeights[2] = 0; boneWeights[3] = 0; };
 			int boneIds[4];
 			float boneWeights[4];
+			VertexP3N2B2T2T2B4B4()
+			{
+				boneIds[0] = -1; boneIds[1] = -1; boneIds[2] = -1; boneIds[3] = -1; 
+				boneWeights[0] = 0; boneWeights[1] = 0; boneWeights[2] = 0; boneWeights[3] = 0;
+			};
 		};
 		
 
@@ -281,9 +285,9 @@ namespace vrlib
 			glEnableVertexAttribArray(attributeIndex + 0);
 			glEnableVertexAttribArray(attributeIndex + 1);
 			glVertexAttribIPointer(attributeIndex + 0, 4, GL_INT, totalSize, (void*)(offset + prevSize));
-			glVertexAttribPointer(attributeIndex + 1, 4, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize + 4 * sizeof(float)));
+			glVertexAttribPointer(attributeIndex + 1, 4, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize + 4 * sizeof(int)));
 			attributeIndex += 2;
-			return prevSize + 8 * sizeof(float);
+			return prevSize + 4 * sizeof(int) + 4 * sizeof(float);
 		}
 
 

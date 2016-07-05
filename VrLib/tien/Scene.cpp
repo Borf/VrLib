@@ -177,14 +177,14 @@ namespace vrlib
 
 					bool cont = this->callback(
 						(Node*)rayResult.m_collisionObject->getUserPointer(), 
-						ray.mOrigin + 100 * rayResult.m_hitFraction * ray.mDir,
+						ray.mOrigin + 1000 * rayResult.m_hitFraction * ray.mDir,
 						glm::vec3(hitNormalWorld.x(), hitNormalWorld.y(), hitNormalWorld.z()));
 					return cont ? rayResult.m_hitFraction : 1.0f;
 				}
 
 			};
 			Callback _callback(callback, ray);
-			glm::vec3 worldTarget = ray.mOrigin + 100.0f * ray.mDir;
+			glm::vec3 worldTarget = ray.mOrigin + 1000.0f * ray.mDir;
 			world->rayTest(btVector3(ray.mOrigin.x, ray.mOrigin.y, ray.mOrigin.z), btVector3(worldTarget.x, worldTarget.y, worldTarget.z), _callback);
 
 		}

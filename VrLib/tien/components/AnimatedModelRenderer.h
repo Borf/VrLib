@@ -66,6 +66,7 @@ namespace vrlib
 				vrlib::ModelInstance* modelInstance;
 				
 				
+				float animationSpeed = 1;
 
 				void update(float elapsedTime, Scene& scene) override;
 				void draw() override;

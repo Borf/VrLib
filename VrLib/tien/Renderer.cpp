@@ -272,15 +272,28 @@ namespace vrlib
 			glDisable(GL_CULL_FACE);
 			billboardShader->use();
 			billboardShader->setUniform(BillboardUniforms::projectionMatrix, projectionMatrix);
-			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(5,5,5)));
-			sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
-				material.texture->bind();
-			});
 
-			billboardShader->setUniform(BillboardUniforms::mat, glm::scale(glm::inverse(glm::lookAt(-pos, cameraPos, glm::vec3(0, 1, 0))), glm::vec3(15, 15, 15)));
-			moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
-				material.texture->bind();
-			});
+			{
+				glm::mat4 mat = modelViewMatrix;
+				mat = glm::rotate(mat, now + glm::half_pi<float>(), glm::vec3(1, 0, 0));
+				mat = glm::translate(mat, glm::vec3(0, 0, -145));
+				mat = glm::scale(mat, glm::vec3(2.5f, 2.5f, 2.5f));
+				billboardShader->setUniform(BillboardUniforms::mat, mat);
+				sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
+					material.texture->bind();
+				});
+			}
+
+			{
+				glm::mat4 mat = modelViewMatrix;
+				mat = glm::rotate(mat, now - glm::half_pi<float>(), glm::vec3(1, 0, 0));
+				mat = glm::translate(mat, glm::vec3(0, 0, -145));
+				mat = glm::scale(mat, glm::vec3(5, 5, 5));
+				billboardShader->setUniform(BillboardUniforms::mat, mat);
+				moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
+					material.texture->bind();
+				});
+			}
 
 			if (drawPhysicsDebug)
 			{
@@ -291,7 +304,7 @@ namespace vrlib
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 					physicsDebugShader->use();
-					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix);
+					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix * glm::inverse(scene.cameraNode->transform->globalTransform));
 					physicsDebugShader->setUniform(PhysicsDebugUniform::projectionMatrix, projectionMatrix);
 
 					gl::setAttributes<gl::VertexP3C4>(&scene.debugDrawer->verts[0]);

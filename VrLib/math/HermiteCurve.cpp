@@ -16,5 +16,19 @@ namespace vrlib
 		{
 			return (2 * t*t*t - 3 * t*t + 1)*p0 + (t*t*t - 2 * t*t + t)*m0 + (-2 * t*t*t + 3 * t*t)*p1 + (t*t*t - t*t)*m1;
 		}
+
+		float HermiteCurve::getLength() const
+		{
+			float length = 0;
+			glm::vec2 lastPoint = getPoint(0);
+			for (float f = 0; f < 1; f += 0.01f)
+			{
+				glm::vec2 point = getPoint(f);
+				length += glm::distance(point, lastPoint);
+				lastPoint = point;
+			}
+			return length;
+		}
+
 	}
 }

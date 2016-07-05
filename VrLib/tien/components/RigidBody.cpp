@@ -13,7 +13,7 @@ namespace vrlib
 	{
 		namespace components
 		{
-			btCollisionShape* RigidBody::emptyShape = new btEmptyShape();;
+			btCollisionShape* RigidBody::emptyShape = new btEmptyShape();
 
 			RigidBody::RigidBody(float mass, Type type)
 			{
