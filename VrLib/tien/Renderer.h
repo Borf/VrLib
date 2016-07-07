@@ -60,30 +60,6 @@ namespace vrlib
 			vrlib::PositionalDevice mHead;
 
 
-			enum class SkydomeUniforms
-			{
-				modelViewMatrix,
-				projectionMatrix,
-				glow,
-				color,
-				sunDirection,
-			};
-			vrlib::gl::Shader<SkydomeUniforms>* skydomeShader;
-			vrlib::Model* skydome;
-			vrlib::Texture* skydomeColor;
-			vrlib::Texture* skydomeGlow;
-
-			enum class BillboardUniforms
-			{
-				projectionMatrix,
-				mat,
-				s_texture
-			};
-			vrlib::gl::Shader<BillboardUniforms>* billboardShader;
-			vrlib::Model* sun;
-			vrlib::Model* moon;
-
-
 		public:
 			Renderer();
 

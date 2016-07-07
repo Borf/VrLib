@@ -170,10 +170,12 @@
     <ClInclude Include="VrLib\tien\components\BoxCollider.h" />
     <ClInclude Include="VrLib\tien\components\Camera.h" />
     <ClInclude Include="VrLib\tien\components\Collider.h" />
+    <ClInclude Include="VrLib\tien\components\DynamicSkyBox.h" />
     <ClInclude Include="VrLib\tien\components\Light.h" />
     <ClInclude Include="VrLib\tien\components\MeshCollider.h" />
     <ClInclude Include="VrLib\tien\components\ModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\RigidBody.h" />
+    <ClInclude Include="VrLib\tien\components\SkyBox.h" />
     <ClInclude Include="VrLib\tien\components\SphereCollider.h" />
     <ClInclude Include="VrLib\tien\components\TerrainCollider.h" />
     <ClInclude Include="VrLib\tien\components\TerrainRenderer.h" />
@@ -271,10 +273,12 @@
     <ClCompile Include="VrLib\tien\components\BoxCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\Camera.cpp" />
     <ClCompile Include="VrLib\tien\components\Collider.cpp" />
+    <ClCompile Include="VrLib\tien\components\DynamicSkyBox.cpp" />
     <ClCompile Include="VrLib\tien\components\Light.cpp" />
     <ClCompile Include="VrLib\tien\components\MeshCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\RigidBody.cpp" />
+    <ClCompile Include="VrLib\tien\components\SkyBox.cpp" />
     <ClCompile Include="VrLib\tien\components\SphereCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\TerrainCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\TerrainRenderer.cpp" />

@@ -360,6 +360,12 @@
     <ClInclude Include="VrLib\tien\components\AnimatedModelRenderer.h">
       <Filter>tien\components</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\tien\components\DynamicSkyBox.h">
+      <Filter>tien\components</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\tien\components\SkyBox.h">
+      <Filter>tien\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -657,6 +663,12 @@
       <Filter>tien\components\colliders</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\AnimatedModelRenderer.cpp">
+      <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\SkyBox.cpp">
+      <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\DynamicSkyBox.cpp">
       <Filter>tien\components</Filter>
     </ClCompile>
   </ItemGroup>
