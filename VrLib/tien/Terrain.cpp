@@ -20,6 +20,23 @@ namespace vrlib
 					heights[x][y] = image.data[(x + image.width * y) * image.depth] / 256.0f * stretch;
 		}
 
+		glm::vec3 Terrain::getPosition(const glm::vec2 &p)
+		{
+			int rx = (int)p.x;
+			int ry = (int)p.y;
+
+			glm::vec3 p1 = glm::vec3(rx, ry, heights[rx][ry]);
+			glm::vec3 p2 = glm::vec3(rx + 1, ry + 1, heights[rx + 1][ry + 1]);
+			glm::vec3 p3 = glm::vec3(rx, ry + 1, heights[rx][ry + 1]);
+
+			double l1 = (((p2.y - p3.y) * (p.x - p3.x)) + ((p3.x - p2.x) * (p.y - p3.y))) / (((p2.y - p3.y) * (p1.x - p3.x)) + ((p3.x - p2.x) * (p1.y - p3.y)));
+			double l2 = (((p3.y - p1.y) * (p.x - p3.x)) + ((p1.x - p3.x) * (p.y - p3.y))) / (((p2.y - p3.y) * (p1.x - p3.x)) + ((p3.x - p2.x) * (p1.y - p3.y)));
+			double l3 = 1 - l1 - l2;
+
+			float z = (l1 * p1.z) + (l2 * p2.z) + (l3 * p3.z);
+
+			return glm::vec3(p.x, z, p.y);
+		}
 
 
 		std::vector<float>& Terrain::operator [] (int x)

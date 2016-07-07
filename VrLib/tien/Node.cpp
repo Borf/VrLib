@@ -58,28 +58,28 @@ namespace vrlib
 			components.push_back(component);
 			component->node = this;
 
-			Scene& scene = getScene();
-
-
-			if(!transform)
-				transform = dynamic_cast<components::Transform*>(component);
-			if (!light)
-				light = dynamic_cast<components::Light*>(component);
-			if (!rigidBody)
+			if (parent)
 			{
-				rigidBody = dynamic_cast<components::RigidBody*>(component);
-				if (rigidBody)
-					getScene().addRigidBody(this);
-			}
-			if (dynamic_cast<components::Collider*>(component))
-			{
-				if (rigidBody)
-					rigidBody->updateCollider(getScene().world);
-			}
+				Scene& scene = getScene();
+				if (!transform)
+					transform = dynamic_cast<components::Transform*>(component);
+				if (!light)
+					light = dynamic_cast<components::Light*>(component);
+				if (!rigidBody)
+				{
+					rigidBody = dynamic_cast<components::RigidBody*>(component);
+					if (rigidBody)
+						getScene().addRigidBody(this);
+				}
+				if (dynamic_cast<components::Collider*>(component))
+				{
+					if (rigidBody)
+						rigidBody->updateCollider(getScene().world);
+				}
 
-			if (!renderAble)
-				renderAble = dynamic_cast<components::Renderable*>(component);
-
+				if (!renderAble)
+					renderAble = dynamic_cast<components::Renderable*>(component);
+			}
 
 		}
 		template<> components::Light* Node::getComponent<components::Light>() { return light; }

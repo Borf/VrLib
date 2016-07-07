@@ -10,7 +10,7 @@ namespace vrlib
 		{
 			Camera::Camera()
 			{
-				target = new vrlib::gl::FBO(2048, 2048);
+
 			}
 
 			void Camera::render()

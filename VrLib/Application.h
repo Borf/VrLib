@@ -9,6 +9,8 @@ namespace vrlib
 	{
 	public:
 		glm::vec4 clearColor;
+		float farplane = 200.0f;
+		float nearplane = 0.1f;
 
 		Application();
 

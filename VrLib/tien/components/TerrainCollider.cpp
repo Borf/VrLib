@@ -25,7 +25,7 @@ namespace vrlib
 				for (int x = 0; x < terrain.getWidth(); x++)
 					for (int y = 0; y < terrain.getHeight(); y++)
 						data[x + terrain.getWidth() * y] = terrain[x][y];
-				shape = new btHeightfieldTerrainShape(terrain.getWidth(), terrain.getHeight(), data, 1, 0, terrain.getStretch(), 1, PHY_ScalarType::PHY_FLOAT, false);
+				shape = new btHeightfieldTerrainShape(terrain.getWidth(), terrain.getHeight(), data, 1, 0, terrain.getStretch(), 1, PHY_ScalarType::PHY_FLOAT, true);
 			}
 
 			btCollisionShape* TerrainCollider::getShape()

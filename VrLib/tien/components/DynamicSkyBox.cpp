@@ -44,10 +44,11 @@ void vrlib::tien::components::DynamicSkyBox::render(const glm::mat4 & projection
 {
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+	glDepthMask(0);
 
 	skydomeShader->use();
 	skydomeShader->setUniform(SkydomeUniforms::projectionMatrix, projectionMatrix);
-	skydomeShader->setUniform(SkydomeUniforms::modelViewMatrix, glm::scale(modelviewMatrix, glm::vec3(4.0, 4.0, 4.0)));
+	skydomeShader->setUniform(SkydomeUniforms::modelViewMatrix, glm::scale(modelviewMatrix, glm::vec3(7.5, 7.5, 7.5))); // model is 50 big
 
 	glActiveTexture(GL_TEXTURE1);
 	skydomeGlow->bind();
@@ -55,8 +56,7 @@ void vrlib::tien::components::DynamicSkyBox::render(const glm::mat4 & projection
 	skydomeColor->bind();
 
 
-	static float now = 0;
-	now += 0.000125f;
+	float now = (timeOfDay / 24) * glm::two_pi<float>() + glm::pi<float>();
 
 	glm::vec3 sunDirection(0, cos(now), sin(now));
 
@@ -89,8 +89,8 @@ void vrlib::tien::components::DynamicSkyBox::render(const glm::mat4 & projection
 	{
 		glm::mat4 mat = modelviewMatrix;
 		mat = glm::rotate(mat, now + glm::half_pi<float>(), glm::vec3(1, 0, 0));
-		mat = glm::translate(mat, glm::vec3(0, 0, -145));
-		mat = glm::scale(mat, glm::vec3(2.5f, 2.5f, 2.5f));
+		mat = glm::translate(mat, glm::vec3(0, 0, -400));
+		mat = glm::scale(mat, glm::vec3(5, 5, 5));
 		billboardShader->setUniform(BillboardUniforms::mat, mat);
 		sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 			material.texture->bind();
@@ -100,13 +100,14 @@ void vrlib::tien::components::DynamicSkyBox::render(const glm::mat4 & projection
 	{
 		glm::mat4 mat = modelviewMatrix;
 		mat = glm::rotate(mat, now - glm::half_pi<float>(), glm::vec3(1, 0, 0));
-		mat = glm::translate(mat, glm::vec3(0, 0, -145));
-		mat = glm::scale(mat, glm::vec3(5, 5, 5));
+		mat = glm::translate(mat, glm::vec3(0, 0, -300));
+		mat = glm::scale(mat, glm::vec3(7.5, 7.5, 7.5));
 		billboardShader->setUniform(BillboardUniforms::mat, mat);
 		moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 			material.texture->bind();
 		});
 	}
+	glDepthMask(1);
 
 
 }

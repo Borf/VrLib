@@ -1,4 +1,4 @@
-#include "ModelRenderer.h"
+#include "MeshRenderer.h"
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
@@ -12,77 +12,87 @@ namespace vrlib
 	{
 		namespace components
 		{
-			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
-
-			ModelRenderer::ModelRenderer(const std::string &fileName)
+			MeshRenderer::MeshRenderer(Mesh* mesh)
 			{
-				if (cache.find(fileName) == cache.end())
-					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
-				model = cache[fileName];
+				this->mesh = mesh;
+				vao = nullptr;
+				if (mesh)
+					updateMesh();
+				castShadow = true;
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
-				castShadow = true;
 			}
 
-			ModelRenderer::~ModelRenderer()
+			MeshRenderer::~MeshRenderer()
 			{
 
 			}
 
-			void ModelRenderer::draw()
+
+			void MeshRenderer::updateMesh()
+			{
+				vbo.setData(mesh->vertices.size(), &mesh->vertices[0], GL_STATIC_DRAW);
+				vio.setData(mesh->indices.size(), &mesh->indices[0], GL_STATIC_DRAW);
+
+				if (!vao)
+					vao = new gl::VAO<gl::VertexP3N2B2T2T2>(&vbo);
+				vao->bind();
+				vio.bind();
+				vao->unBind();
+			}
+
+
+			void MeshRenderer::draw()
 			{
 				components::Transform* t = node->getComponent<Transform>();
 
 				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);
 				context->renderShader->use(); //TODO: only call this once!
 
-				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
+				context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform);
+				context->renderShader->setUniform(ModelRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
+				if (mesh->material.texture)
 				{
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform * modelMatrix))));
-				},
-					[this, &context](const vrlib::Material &material)
-				{
-					if (material.texture)
-					{
-						context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 1.0f);
-						material.texture->bind();
-						glActiveTexture(GL_TEXTURE1);
-						if (material.normalmap)
-							material.normalmap->bind();
-						else
-							context->defaultNormalMap->bind();
-						glActiveTexture(GL_TEXTURE0);
-
-					}
+					context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 1.0f);
+					mesh->material.texture->bind();
+					glActiveTexture(GL_TEXTURE1);
+					if (mesh->material.normalmap)
+						mesh->material.normalmap->bind();
 					else
-					{
-						context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 0.0f);
-						context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, material.color.diffuse);
-						glActiveTexture(GL_TEXTURE1);
 						context->defaultNormalMap->bind();
-					}
-				});
+					glActiveTexture(GL_TEXTURE0);
+
+				}
+				else
+				{
+					context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 0.0f);
+					context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, mesh->material.color.diffuse);
+				}
+
+
+				if (vao)
+				{
+					vao->bind();
+					glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+					vao->unBind();
+				}
 			}
 
 
-			void ModelRenderer::drawShadowMap()
+			void MeshRenderer::drawShadowMap()
 			{
 				if (!castShadow)
 					return;
 				components::Transform* t = node->getComponent<Transform>();
 				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
 				context->renderShader->use(); //TODO: only call this once!
-				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
-				{
-					context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-				},
-				[this, &context](const vrlib::Material &material)		{	});
+				context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform);
+
 
 			}
 
 
-			void ModelRenderer::ModelRenderContext::init()
+			void MeshRenderer::ModelRenderContext::init()
 			{
 				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
@@ -110,7 +120,7 @@ namespace vrlib
 
 			}
 
-			void ModelRenderer::ModelRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			void MeshRenderer::ModelRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
@@ -120,7 +130,7 @@ namespace vrlib
 			}
 
 
-			void ModelRenderer::ModelRenderShadowContext::init()
+			void MeshRenderer::ModelRenderShadowContext::init()
 			{
 				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
@@ -136,13 +146,13 @@ namespace vrlib
 				renderShader->use();
 			}
 
-			void ModelRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			void MeshRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
 				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
 			}
-			void ModelRenderer::ModelRenderShadowContext::useCubemap(bool use)
+			void MeshRenderer::ModelRenderShadowContext::useCubemap(bool use)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::outputPosition, use);

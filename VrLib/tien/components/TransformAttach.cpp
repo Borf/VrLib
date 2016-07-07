@@ -25,7 +25,7 @@ namespace vrlib
 			{
 				if (!device.isInitialized())
 					return;
-				glm::mat4 mat = device.getData();
+				glm::mat4 mat = scene.cameraNode->transform->globalTransform * device.getData();
 
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
 				glm::quat rot(mat);

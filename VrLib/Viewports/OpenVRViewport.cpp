@@ -42,10 +42,10 @@ namespace vrlib
 		CreateFrameBuffer(m_nRenderWidth, m_nRenderHeight, leftEyeDesc);
 		CreateFrameBuffer(m_nRenderWidth, m_nRenderHeight, rightEyeDesc);
 
-		vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(vr::Eye_Left, 0.1f, 400.0f, vr::API_OpenGL);
+		vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(vr::Eye_Left, 0.1f, 500.0f, vr::API_OpenGL);
 		projectionLeft = glm::transpose(glm::make_mat4((float*)mat.m));
 
-		mat = m_pHMD->GetProjectionMatrix(vr::Eye_Right, 0.1f, 400.0f, vr::API_OpenGL);
+		mat = m_pHMD->GetProjectionMatrix(vr::Eye_Right, 0.1f, 500.0f, vr::API_OpenGL);
 		projectionRight = glm::transpose(glm::make_mat4((float*)mat.m));
 
 
@@ -61,7 +61,7 @@ namespace vrlib
 
 	glm::mat4 OpenVRViewport::getProjectionMatrix()
 	{
-		return glm::perspective(glm::radians(60.0f), 1.0f, 0.001f, 1000.0f);
+		return glm::perspective(glm::radians(60.0f), 1.0f, 0.1f, 500.0f);
 	}
 
 

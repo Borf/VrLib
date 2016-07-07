@@ -205,7 +205,7 @@ namespace vrlib
 			{
 				if (!skybox->initialized)
 					skybox->initialize();
-				skybox->render(projectionMatrix, modelViewMatrix);
+				skybox->render(projectionMatrix, modelViewMatrix * glm::inverse(scene.cameraNode->transform->globalTransform));
 			}
 
 			if (drawPhysicsDebug)
@@ -213,6 +213,7 @@ namespace vrlib
 				scene.world->debugDrawWorld();
 				if (scene.debugDrawer->verts.size() > 0)
 				{
+					glDisable(GL_DEPTH_TEST);
 					glBindVertexArray(0);
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -224,6 +225,7 @@ namespace vrlib
 					glLineWidth(1.0f);
 					glDrawArrays(GL_LINES, 0, scene.debugDrawer->verts.size());
 					scene.debugDrawer->flush();
+					glEnable(GL_DEPTH_TEST);
 				}
 			}
 

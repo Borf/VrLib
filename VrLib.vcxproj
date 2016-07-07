@@ -173,6 +173,7 @@
     <ClInclude Include="VrLib\tien\components\DynamicSkyBox.h" />
     <ClInclude Include="VrLib\tien\components\Light.h" />
     <ClInclude Include="VrLib\tien\components\MeshCollider.h" />
+    <ClInclude Include="VrLib\tien\components\MeshRenderer.h" />
     <ClInclude Include="VrLib\tien\components\ModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\RigidBody.h" />
     <ClInclude Include="VrLib\tien\components\SkyBox.h" />
@@ -276,6 +277,7 @@
     <ClCompile Include="VrLib\tien\components\DynamicSkyBox.cpp" />
     <ClCompile Include="VrLib\tien\components\Light.cpp" />
     <ClCompile Include="VrLib\tien\components\MeshCollider.cpp" />
+    <ClCompile Include="VrLib\tien\components\MeshRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\RigidBody.cpp" />
     <ClCompile Include="VrLib\tien\components\SkyBox.cpp" />

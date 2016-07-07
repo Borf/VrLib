@@ -36,9 +36,9 @@ namespace vrlib
 				vrlib::Model* sun;
 				vrlib::Model* moon;
 			public:
-				// Inherited via SkyBox
 				virtual void initialize() override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
+				float timeOfDay = 16;
 			};
 		}
 	}
