@@ -61,6 +61,7 @@ namespace vrlib
 						context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, material.color.diffuse);
 						glActiveTexture(GL_TEXTURE1);
 						context->defaultNormalMap->bind();
+						glActiveTexture(GL_TEXTURE0);
 					}
 				});
 			}
