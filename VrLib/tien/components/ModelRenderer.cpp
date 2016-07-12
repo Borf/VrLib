@@ -31,6 +31,8 @@ namespace vrlib
 
 			void ModelRenderer::draw()
 			{
+				if (!model)
+					return;
 				components::Transform* t = node->getComponent<Transform>();
 
 				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);
