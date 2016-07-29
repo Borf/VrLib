@@ -3,6 +3,8 @@
 #include "../Terrain.h"
 #include "../Node.h"
 #include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <VrLib/Texture.h>
 
@@ -92,7 +94,7 @@ namespace vrlib
 				}
 				vbo.bind();
 				vbo.setData(vertices.size(), &vertices[0], GL_STATIC_DRAW);
-				vao = new gl::VAO<gl::VertexP3N2B2T2T2>(&vbo);
+				vao = new gl::VAO(&vbo);
 			}
 
 
@@ -162,7 +164,7 @@ namespace vrlib
 
 				TerrainRenderShadowContext* context = dynamic_cast<TerrainRenderShadowContext*>(renderContextShadow);
 				context->renderShader->use();
-				context->renderShader->setUniform(TerrainRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform);
+				context->renderShader->setUniform(TerrainRenderShadowContext::RenderUniform::modelMatrix, glm::translate(t->globalTransform, glm::vec3(0,-0.01f, 0)));
 
 				vao->bind();
 				glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);

@@ -57,8 +57,9 @@ namespace vrlib
 
 				gl::VBO<gl::VertexP3N2B2T2T2> vbo;
 				gl::VIO<unsigned int> vio;
-				gl::VAO<gl::VertexP3N2B2T2T2>* vao;
 			public:
+				gl::VAO* vao;
+
 				class Material
 				{
 				public:
@@ -74,6 +75,7 @@ namespace vrlib
 
 				void draw() override;
 				void drawShadowMap() override;
+				json::Value toJson() const override;
 
 
 				void addMaterialLayer(vrlib::Texture* diffuse, vrlib::Texture* normal, vrlib::Texture* mask);

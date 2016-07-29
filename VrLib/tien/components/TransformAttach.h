@@ -23,8 +23,9 @@ namespace vrlib
 			public:
 				TransformAttach(const vrlib::PositionalDevice &device);
 				~TransformAttach();
-				
-				void update(float elapsedTime, Scene& scene) override;
+				json::Value toJson() const override;
+
+				void postUpdate(Scene& scene) override;
 			};
 		}
 	}

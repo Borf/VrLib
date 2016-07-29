@@ -50,7 +50,7 @@ namespace vrlib
 					virtual void useCubemap(bool) override;
 				};
 
-
+				std::string fileName;
 				static std::map<std::string, vrlib::Model*> cache;
 			public:
 				ModelRenderer(const std::string &fileName);
@@ -60,8 +60,10 @@ namespace vrlib
 
 				void draw() override;
 				void drawShadowMap() override;
+				json::Value toJson() const override;
 
 				bool castShadow;
+				bool cullBackFaces;
 			};
 		}
 	}

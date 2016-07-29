@@ -25,9 +25,10 @@ namespace vrlib
 		void Tien::update(float elapsedTime)
 		{
 #ifdef WIN32
-			SHORT debugKey = GetAsyncKeyState(VK_F1);
-			if ((debugKey & 1) == 1)
+			if ((GetAsyncKeyState(VK_F1) & 1) == 1)
 				renderer.drawPhysicsDebug = !renderer.drawPhysicsDebug;
+			if ((GetAsyncKeyState(VK_F2) & 1) == 1)
+				renderer.drawLightDebug = !renderer.drawLightDebug;
 #endif
 
 			if (playState == PlayState::Playing)

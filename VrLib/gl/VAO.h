@@ -8,13 +8,13 @@ namespace vrlib
 	namespace gl
 	{
 
-		template<class T>
 		class VAO
 		{
 		private:
 			GLuint vao;
 			VAO(const VAO &other);
 		public:
+			template<class T>
 			VAO(VBO<T>* vbo)
 			{
 				glGenVertexArrays(1, &vao);

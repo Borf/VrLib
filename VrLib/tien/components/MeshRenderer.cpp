@@ -2,6 +2,7 @@
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
+#include <VrLib/json.h>
 #include "Transform.h"
 #include "../Node.h"
 
@@ -28,6 +29,12 @@ namespace vrlib
 
 			}
 
+			vrlib::json::Value MeshRenderer::toJson() const
+			{
+				vrlib::json::Value ret;
+				ret["type"] = "meshrenderer";
+				return ret;
+			}
 
 			void MeshRenderer::updateMesh()
 			{
@@ -35,7 +42,7 @@ namespace vrlib
 				vio.setData(mesh->indices.size(), &mesh->indices[0], GL_STATIC_DRAW);
 
 				if (!vao)
-					vao = new gl::VAO<gl::VertexP3N2B2T2T2>(&vbo);
+					vao = new gl::VAO(&vbo);
 				vao->bind();
 				vio.bind();
 				vao->unBind();

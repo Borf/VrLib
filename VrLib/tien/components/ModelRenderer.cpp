@@ -2,6 +2,7 @@
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
+#include <VrLib/json.h>
 #include "Transform.h"
 #include "../Node.h"
 
@@ -14,7 +15,7 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
 
-			ModelRenderer::ModelRenderer(const std::string &fileName)
+			ModelRenderer::ModelRenderer(const std::string &fileName) : fileName(fileName)
 			{
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
@@ -37,6 +38,9 @@ namespace vrlib
 
 				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);
 				context->renderShader->use(); //TODO: only call this once!
+				
+				if (!cullBackFaces)
+					glDisable(GL_CULL_FACE);
 
 				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
 				{
@@ -66,12 +70,16 @@ namespace vrlib
 						glActiveTexture(GL_TEXTURE0);
 					}
 				});
+
+				if (!cullBackFaces)
+					glEnable(GL_CULL_FACE);
+
 			}
 
 
 			void ModelRenderer::drawShadowMap()
 			{
-				if (!castShadow)
+				if (!castShadow || !model)
 					return;
 				components::Transform* t = node->getComponent<Transform>();
 				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
@@ -82,6 +90,14 @@ namespace vrlib
 				},
 				[this, &context](const vrlib::Material &material)		{	});
 
+			}
+
+			json::Value ModelRenderer::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "modelrenderer";
+				ret["file"] = fileName;
+				return ret;
 			}
 
 

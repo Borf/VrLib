@@ -309,7 +309,7 @@ namespace vrlib
 		vbo.bind();
 		vbo.setData(vertices.size(), &vertices[0], GL_STATIC_DRAW);
 
-		vao = new gl::VAO<VertexFormat>(&vbo);
+		vao = new gl::VAO(&vbo);
 		vao->bind();
 		vio.bind();
 		vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
@@ -478,7 +478,10 @@ namespace vrlib
 		}
 
 
-		model->rootBone->update(this->boneMatrices, 0, NULL);
+
+		model->rootBone->update(this->boneMatrices, (float)animations[0]->time, animations[0]->animation);
+
+/*		model->rootBone->update(this->boneMatrices, 0, NULL);
 		float totalFac = 0;//TODO blib::linq::sum<float>(animations, [](AnimationState* s) { return s->blendFactor; });
 		for (size_t ii = 0; ii < boneMatrices.size(); ii++)
 			boneMatrices[ii] = boneMatrices[ii] * (1 - totalFac);
@@ -490,7 +493,7 @@ namespace vrlib
 			{
 				boneMatrices[ii] += tmpMatrices[ii] * animations[i]->blendFactor;
 			}
-		}
+		}*/
 	}
 
 	void State::draw(const std::function<void(const glm::mat4&)>& modelviewMatrixCallback, const std::function<void(const Material&)>& materialCallback)

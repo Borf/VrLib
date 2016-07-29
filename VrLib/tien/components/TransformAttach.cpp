@@ -21,7 +21,7 @@ namespace vrlib
 			{
 			}
 
-			void TransformAttach::update(float elapsedTime, Scene& scene)
+			void TransformAttach::postUpdate(Scene& scene)
 			{
 				if (!device.isInitialized())
 					return;

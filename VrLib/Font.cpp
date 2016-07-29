@@ -245,7 +245,7 @@ namespace vrlib
 		gl::VBO<gl::VertexP3N3T2> vbo;
 		vbo.bind();
 		vbo.setData(vertices.size(), &vertices[0], GL_STATIC_DRAW);
-		gl::VAO<gl::VertexP3N3T2> vao(&vbo);
+		gl::VAO vao(&vbo);
 
 		glDisable(GL_CULL_FACE);
 		vao.bind();

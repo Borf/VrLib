@@ -5,6 +5,7 @@
 #include "../Node.h"
 #include <btBulletDynamicsCommon.h>
 #include <VrLib/Model.h>
+#include <VrLib/json.h>
 
 
 namespace vrlib
@@ -27,6 +28,12 @@ namespace vrlib
 			{
 				world->removeRigidBody(body);
 				delete body;
+			}
+			json::Value RigidBody::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "rigidbody";
+				return ret;
 			}
 
 			void RigidBody::init(btDynamicsWorld* world)

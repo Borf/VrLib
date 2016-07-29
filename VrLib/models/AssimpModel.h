@@ -158,7 +158,7 @@ namespace vrlib
 
 		gl::VBO<VertexFormat> vbo;
 		gl::VIO<unsigned int> vio;
-		gl::VAO<VertexFormat>* vao;
+		gl::VAO* vao;
 
 
 

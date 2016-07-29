@@ -11,6 +11,7 @@ namespace vrlib
 	{
 		namespace components
 		{
+			// http://csc.lsu.edu/~kooima/misc/cs594/final/index.html
 			class DynamicSkyBox : public SkyBox
 			{
 				enum class SkydomeUniforms
@@ -38,7 +39,9 @@ namespace vrlib
 			public:
 				virtual void initialize() override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
+
 				float timeOfDay = 16;
+				virtual json::Value toJson() const override;
 			};
 		}
 	}

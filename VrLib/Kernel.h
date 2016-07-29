@@ -18,6 +18,7 @@
 #pragma comment(lib, "leap.lib")
 #pragma comment(lib, "libovr.lib")
 #pragma comment(lib, "openvr_api.lib")
+#pragma comment(lib, "Rpcrt4.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed

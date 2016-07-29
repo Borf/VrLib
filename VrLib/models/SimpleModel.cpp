@@ -179,7 +179,7 @@ namespace vrlib
 			vbo.setData(verts.size(), &verts[0], GL_STATIC_DRAW);
 
 
-			vao = new gl::VAO<VertexFormat>(&vbo);
+			vao = new gl::VAO(&vbo);
 			vio.bind();
 			vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
 			vao->unBind();

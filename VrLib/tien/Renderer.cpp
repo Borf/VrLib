@@ -23,6 +23,7 @@ namespace vrlib
 		Renderer::Renderer()
 		{
 			drawPhysicsDebug = false;
+			drawLightDebug = false;
 		}
 		
 
@@ -79,7 +80,7 @@ namespace vrlib
 
 		}
 
-		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix)
+		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix)
 		{
 			int viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
@@ -93,6 +94,8 @@ namespace vrlib
 				return;
 			}
 			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
+
+			glm::mat4 modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
 
 
 			for (auto l : scene.lights)
@@ -119,7 +122,7 @@ namespace vrlib
 
 
 			for (components::Renderable::RenderContext* context : scene.renderContexts)
-				context->frameSetup(projectionMatrix, modelViewMatrix * glm::inverse(scene.cameraNode->transform->globalTransform));
+				context->frameSetup(projectionMatrix, modelViewMatrix);
 
 			for (Node* c : scene.renderables)
 				c->getComponent<components::Renderable>()->draw();
@@ -205,7 +208,7 @@ namespace vrlib
 			{
 				if (!skybox->initialized)
 					skybox->initialize();
-				skybox->render(projectionMatrix, modelViewMatrix * glm::inverse(scene.cameraNode->transform->globalTransform));
+				skybox->render(projectionMatrix, modelViewMatrix);
 			}
 
 			if (drawPhysicsDebug)
@@ -218,7 +221,7 @@ namespace vrlib
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 					physicsDebugShader->use();
-					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix * glm::inverse(scene.cameraNode->transform->globalTransform));
+					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix);
 					physicsDebugShader->setUniform(PhysicsDebugUniform::projectionMatrix, projectionMatrix);
 
 					gl::setAttributes<gl::VertexP3C4>(&scene.debugDrawer->verts[0]);
@@ -227,6 +230,61 @@ namespace vrlib
 					scene.debugDrawer->flush();
 					glEnable(GL_DEPTH_TEST);
 				}
+			}
+
+			if (drawLightDebug)
+			{
+				std::vector<vrlib::gl::VertexP3C4> verts;
+				for (auto l : scene.lights)
+				{
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2,-2,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2,-2,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0,-2,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0,-2,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
+
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2,-2, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2,-2, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0,-2, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0,-2, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0, 1, 1)), glm::vec4(1, 0, 1, 1)));
+
+
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0,-2, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0,-2,-1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2,-2, 1, 1)), glm::vec4(1, 0, 1, 1)));
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2,-2,-1, 1)), glm::vec4(1, 0, 1, 1)));
+
+
+
+				}
+				if (!verts.empty())
+				{
+					//glDisable(GL_DEPTH_TEST);
+					glBindVertexArray(0);
+					glBindBuffer(GL_ARRAY_BUFFER, 0);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+					physicsDebugShader->use();
+					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix);
+					physicsDebugShader->setUniform(PhysicsDebugUniform::projectionMatrix, projectionMatrix);
+
+
+					gl::setAttributes<gl::VertexP3C4>(&verts[0]);
+					glLineWidth(4.0f);
+					glDrawArrays(GL_LINES, 0, verts.size());
+					scene.debugDrawer->flush();
+				}
+				glEnable(GL_DEPTH_TEST);
 			}
 
 
@@ -577,7 +635,7 @@ namespace vrlib
 			glDisableVertexAttribArray(1);
 			glDisableVertexAttribArray(2);
 			glDisableVertexAttribArray(3);
-			overlayVao = new vrlib::gl::VAO<vrlib::gl::VertexP3>(overlayVerts);
+			overlayVao = new vrlib::gl::VAO(overlayVerts);
 		}
 
 

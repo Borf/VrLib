@@ -4,6 +4,12 @@
 #include <assert.h>
 #include <algorithm>
 
+#ifdef WIN32
+#include <rpc.h>
+#endif
+
+#include <VrLib/json.h>
+
 #include "components/Transform.h"
 #include "components/RigidBody.h"
 #include "components/Renderable.h"
@@ -22,13 +28,22 @@ namespace vrlib
 			this->renderAble = nullptr;
 			this->light = nullptr;
 			this->parent = parent;
+
+#ifdef WIN32
+			UUID uuid = { 0 };
+			::UuidCreate(&uuid);
+			unsigned char* cuuid = nullptr;
+			::UuidToString(&uuid, &cuuid);
+			guid = std::string((char*)cuuid);
+			::RpcStringFree(&cuuid);
+#endif
 			if (parent)
 			{
 				parent->setTreeDirty(this, true);
 				parent->children.push_back(this);
 			}
 		}
-
+				
 		Node::~Node()
 		{
 			if (parent)
@@ -38,7 +53,22 @@ namespace vrlib
 				for (auto c : components)
 					delete c;
 			}
+			for (auto c : children)
+				delete c;
 		}
+
+		json::Value Node::asJson() const
+		{
+			vrlib::json::Value v;
+			v["name"] = name;
+			v["uuid"] = guid;
+			for (auto c : components)
+				v["components"].push_back(c->toJson());
+			for (auto c : children)
+				v["children"].push_back(c->asJson());
+			return v;
+		}
+
 
 		Scene &Node::getScene()
 		{

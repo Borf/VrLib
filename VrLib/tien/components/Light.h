@@ -21,6 +21,8 @@ namespace vrlib
 			public:
 				~Light();
 
+				json::Value toJson() const override;
+
 
 				enum class Type
 				{

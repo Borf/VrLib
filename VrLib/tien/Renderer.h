@@ -52,7 +52,7 @@ namespace vrlib
 			vrlib::gl::FBO* gbuffers;
 
 			vrlib::gl::VBO<gl::VertexP3>* overlayVerts;
-			vrlib::gl::VAO<gl::VertexP3>* overlayVao;
+			vrlib::gl::VAO* overlayVao;
 			glm::ivec2 sphere;
 			glm::ivec2 cone;
 
@@ -71,6 +71,7 @@ namespace vrlib
 
 
 			bool drawPhysicsDebug;
+			bool drawLightDebug;
 
 		};
 	}

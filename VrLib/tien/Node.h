@@ -6,6 +6,7 @@
 
 namespace vrlib
 {
+	namespace json { class Value; }
 	namespace tien
 	{
 		class Component;
@@ -24,19 +25,22 @@ namespace vrlib
 			virtual void setTreeDirty(Node* newNode, bool isNewNode) { if(parent) parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
+			std::list<Node*> children;
 		public:
 			components::Transform* transform;
 			components::RigidBody* rigidBody;
 			components::Renderable* renderAble;
 			components::Light* light;
 
-
+			std::string guid;
 			std::string name;
 			Node* parent;
-			std::list<Node*> children;
 
 			Node(const std::string &name, Node* parent);
+			Node(const Node& other) = delete;
 			~Node();
+
+			json::Value asJson() const;
 
 			template<class T> T* getComponent()
 			{
@@ -60,6 +64,10 @@ namespace vrlib
 						ret.push_back(r);
 				}
 				return ret;
+			}
+			std::vector<Component*> getComponents()
+			{
+				return components;
 			}
 
 
@@ -88,7 +96,18 @@ namespace vrlib
 				}
 				return nullptr;
 			}
-
+			Node* findNodeWithGuid(const std::string &guid)
+			{
+				if (this->guid == guid) //TODO: add better compare here
+					return this;
+				for (auto c : children)
+				{
+					Node* cn = c->findNodeWithGuid(guid);
+					if (cn)
+						return cn;
+				}
+				return nullptr;
+			}
 
 
 			virtual Scene& getScene();

@@ -56,7 +56,7 @@ namespace vrlib
 				};
 				gl::VBO<gl::VertexP3N2B2T2T2> vbo;
 				gl::VIO<unsigned int> vio;
-				gl::VAO<gl::VertexP3N2B2T2T2>* vao;
+				gl::VAO* vao;
 
 
 			public:
@@ -74,6 +74,7 @@ namespace vrlib
 
 				Mesh* mesh;
 
+				json::Value toJson() const override;
 				void updateMesh();
 
 

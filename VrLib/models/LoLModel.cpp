@@ -209,7 +209,7 @@ namespace vrlib
 			vao = NULL;
 			if (!indices.empty())
 			{
-				vao = new gl::VAO<VertexFormat>(&vbo);
+				vao = new gl::VAO(&vbo);
 				vio.bind();
 				vio.setData(indices.size(), &indices[0], GL_STATIC_DRAW);
 				vao->unBind();

@@ -26,7 +26,7 @@ namespace vrlib
 
 		gl::VBO<VertexType> vbo;
 		gl::VIO<unsigned short> vio;
-		gl::VAO<VertexType>* vao;
+		gl::VAO* vao;
 
 
 		friend class Model;

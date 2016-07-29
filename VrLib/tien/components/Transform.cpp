@@ -1,4 +1,6 @@
 #include "Transform.h"
+#include <VrLib/json.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -21,6 +23,13 @@ namespace vrlib
 			Transform::~Transform()
 			{
 
+			}
+
+			json::Value Transform::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "transform";
+				return ret;
 			}
 
 			void Transform::setGlobalPosition(const glm::vec3 &position)

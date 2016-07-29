@@ -3,6 +3,7 @@
 
 #include <VrLib/gl/FBO.h>
 #include <VrLib/Log.h>
+#include <VrLib/json.h>
 #include "../Node.h"
 #include "../Scene.h"
 
@@ -54,8 +55,10 @@ namespace vrlib
 					if (!shadowMapDirectional)
 						shadowMapDirectional = new vrlib::gl::FBO(1024*8, 1024*8, true, 0, true); //shadowmap
 
-					projectionMatrix = glm::ortho(-8.0f, 8.0f, -8.0f, 8.0f, 0.0f, 10.0f);
-					modelViewMatrix = glm::lookAt(glm::vec3(0, 5, 0), glm::vec3(0,5,0) - node->transform->position, glm::vec3(0, 1, 0));
+					glm::vec3 lightPosition(0, 100, 100);
+					projectionMatrix = glm::ortho(-250.0f, 500.0f, -250.0f, 500.0f, 0.0f, 250.0f); //TODO: auto generate
+					//projectionMatrix = glm::ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 250.0f);
+					modelViewMatrix = glm::lookAt(lightPosition, lightPosition - glm::vec3(0,1,1), glm::vec3(0, 1, 0));
 					Scene& scene = node->getScene();
 
 					shadowMapDirectional->bind();
@@ -108,6 +111,12 @@ namespace vrlib
 
 
 
+			}
+			json::Value Light::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "light";
+				return ret;
 			}
 		}
 	}

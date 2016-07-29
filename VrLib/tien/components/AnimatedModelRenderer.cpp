@@ -5,6 +5,7 @@
 #include "Transform.h"
 #include "../Node.h"
 #include <VrLib/models/AssimpModel.h>
+#include <VrLib/json.h>
 
 
 namespace vrlib
@@ -31,7 +32,12 @@ namespace vrlib
 			{
 
 			}
-
+			json::Value AnimatedModelRenderer::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "animatedmodelrenderer";
+				return ret;
+			}
 
 			void AnimatedModelRenderer::update(float elapsedTime, Scene& scene)
 			{

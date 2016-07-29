@@ -125,6 +125,14 @@ namespace vrlib
 						updateTransforms(c, parentTransform);
 			};
 			updateTransforms(this, glm::mat4());
+
+			fortree([this, &elapsedTime](Node* n)
+			{
+				for (Component* c : n->components)
+					c->postUpdate(*this);
+			});
+			updateTransforms(this, glm::mat4());
+
 		}
 
 		
