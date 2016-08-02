@@ -178,6 +178,11 @@ namespace vrlib
 
 		Value& Value::operator[](size_t index)
 		{
+			if (type == Type::nullValue)
+			{
+				type = Type::arrayValue;
+				value.arrayValue = new std::vector<Value>();
+			}
 			assert(type == Type::arrayValue);
 			return (*value.arrayValue)[index];
 		}
@@ -188,6 +193,11 @@ namespace vrlib
 		}
 		Value& Value::operator[](int index)
 		{
+			if (type == Type::nullValue)
+			{
+				type = Type::arrayValue;
+				value.arrayValue = new std::vector<Value>();
+			}
 			assert(type == Type::arrayValue);
 			return (*value.arrayValue)[index];
 		}

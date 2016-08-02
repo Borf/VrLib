@@ -20,6 +20,25 @@ namespace vrlib
 					heights[x][y] = image.data[(x + image.width * y) * image.depth] / 256.0f * stretch;
 		}
 
+		Terrain::Terrain()
+		{
+			this->stretch = 1;
+			width = 0;
+			height = 0;
+		}
+
+		void Terrain::setSize(int width, int height)
+		{
+			this->width = width;
+			this->height = height;
+			heights.resize(width, std::vector<float>(height, 0.0f));
+		}
+
+		void Terrain::setHeight(int x, int y, float height)
+		{
+			heights[x][y] = height;
+		}
+
 		glm::vec3 Terrain::getPosition(const glm::vec2 &p)
 		{
 			int rx = (int)p.x;
@@ -29,9 +48,9 @@ namespace vrlib
 			glm::vec3 p2 = glm::vec3(rx + 1, ry + 1, heights[rx + 1][ry + 1]);
 			glm::vec3 p3 = glm::vec3(rx, ry + 1, heights[rx][ry + 1]);
 
-			double l1 = (((p2.y - p3.y) * (p.x - p3.x)) + ((p3.x - p2.x) * (p.y - p3.y))) / (((p2.y - p3.y) * (p1.x - p3.x)) + ((p3.x - p2.x) * (p1.y - p3.y)));
-			double l2 = (((p3.y - p1.y) * (p.x - p3.x)) + ((p1.x - p3.x) * (p.y - p3.y))) / (((p2.y - p3.y) * (p1.x - p3.x)) + ((p3.x - p2.x) * (p1.y - p3.y)));
-			double l3 = 1 - l1 - l2;
+			float l1 = (((p2.y - p3.y) * (p.x - p3.x)) + ((p3.x - p2.x) * (p.y - p3.y))) / (((p2.y - p3.y) * (p1.x - p3.x)) + ((p3.x - p2.x) * (p1.y - p3.y)));
+			float l2 = (((p3.y - p1.y) * (p.x - p3.x)) + ((p1.x - p3.x) * (p.y - p3.y))) / (((p2.y - p3.y) * (p1.x - p3.x)) + ((p3.x - p2.x) * (p1.y - p3.y)));
+			float l3 = 1 - l1 - l2;
 
 			if (l3 < 0 || l3 > 1)
 			{

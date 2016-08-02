@@ -38,8 +38,11 @@ namespace vrlib
 				vrlib::Model* moon;
 			public:
 				virtual void initialize() override;
+				virtual void update(float elapsedTime, Scene& scene) override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
 
+
+				Node* light = nullptr;
 				float timeOfDay = 16;
 				virtual json::Value toJson() const override;
 			};

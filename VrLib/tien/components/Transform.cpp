@@ -29,6 +29,12 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "transform";
+				for (int i = 0; i < 3; i++)
+					ret["position"].push_back(position[i]);
+				for (int i = 0; i < 4; i++)
+					ret["rotation"].push_back(rotation[i]);
+				for (int i = 0; i < 3; i++)
+					ret["scale"].push_back(scale[i]);
 				return ret;
 			}
 

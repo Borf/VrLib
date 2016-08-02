@@ -5,6 +5,7 @@
 #include <VrLib/Model.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <string.h>
+#include <VrLib/json.h>
 
 namespace vrlib
 {
@@ -26,6 +27,13 @@ namespace vrlib
 					for (int y = 0; y < terrain.getHeight(); y++)
 						data[x + terrain.getWidth() * y] = terrain[x][y];
 				shape = new btHeightfieldTerrainShape(terrain.getWidth(), terrain.getHeight(), data, 1, 0, terrain.getStretch(), 1, PHY_ScalarType::PHY_FLOAT, true);
+			}
+
+			vrlib::json::Value TerrainCollider::toJson() const
+			{
+				vrlib::json::Value ret;
+				ret["type"] = "terraincollider";
+				return ret;
 			}
 
 			btCollisionShape* TerrainCollider::getShape()

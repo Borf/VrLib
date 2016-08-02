@@ -4,6 +4,10 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <VrLib/gl/FBO.h>
+#include <VrLib/Log.h>
+#include <VrLib/json.h>
+
+using vrlib::logger;
 
 
 namespace vrlib
@@ -29,6 +33,8 @@ namespace vrlib
 				renderer.drawPhysicsDebug = !renderer.drawPhysicsDebug;
 			if ((GetAsyncKeyState(VK_F2) & 1) == 1)
 				renderer.drawLightDebug = !renderer.drawLightDebug;
+			if ((GetAsyncKeyState(VK_F3) & 1) == 1)
+				logger<<scene.asJson() << Log::newline;
 #endif
 
 			if (playState == PlayState::Playing)

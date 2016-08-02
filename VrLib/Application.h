@@ -2,6 +2,7 @@
 
 #include <VrLib/VrLib.h>
 #include <glm/glm.hpp>
+#include <string>
 
 namespace vrlib
 {
@@ -11,6 +12,7 @@ namespace vrlib
 		glm::vec4 clearColor;
 		float farplane = 200.0f;
 		float nearplane = 0.1f;
+		std::string title = "";
 
 		Application();
 

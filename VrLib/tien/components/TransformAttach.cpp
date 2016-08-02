@@ -3,6 +3,7 @@
 #include "RigidBody.h"
 #include "../Scene.h"
 #include <VrLib/tien/Node.h>
+#include <VrLib/json.h>
 #include <btBulletDynamicsCommon.h>
 
 namespace vrlib
@@ -19,6 +20,13 @@ namespace vrlib
 
 			TransformAttach::~TransformAttach()
 			{
+			}
+
+			json::Value TransformAttach::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "transformattach";
+				return ret;
 			}
 
 			void TransformAttach::postUpdate(Scene& scene)

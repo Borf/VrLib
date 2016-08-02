@@ -1,8 +1,10 @@
 #include "BoxCollider.h"
+#include "BoxCollider.h"
 #include "ModelRenderer.h"
 #include "Transform.h"
 #include "../Node.h"
 #include <VrLib/Model.h>
+#include <VrLib/json.h>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 
 namespace vrlib
@@ -40,6 +42,14 @@ namespace vrlib
 			btCollisionShape* BoxCollider::getShape()
 			{
 				return shape;
+			}
+
+			json::Value BoxCollider::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "collider";
+				ret["collider"] = "box";
+				return ret;
 			}
 
 		}

@@ -77,6 +77,9 @@ namespace vrlib
 				void drawShadowMap() override;
 				json::Value toJson() const override;
 
+				void rebuildBuffers();
+				void updateBuffers(int x, int y);
+
 
 				void addMaterialLayer(vrlib::Texture* diffuse, vrlib::Texture* normal, vrlib::Texture* mask);
 				void addMaterialLayer(const std::string &diffuse, const std::string &normal, const std::string &mask);

@@ -1,5 +1,8 @@
 #include "DynamicSkyBox.h"
+#include "Light.h"
+#include "Transform.h"
 
+#include <VrLib/tien/Node.h>
 #include <VrLib/Texture.h>
 #include <VrLib/Model.h>
 #include <VrLib/gl/Vertex.h>
@@ -47,6 +50,28 @@ namespace vrlib
 				initialized = true;
 			}
 
+			void DynamicSkyBox::update(float elapsedTime, Scene & scene)
+			{
+				if (light)
+				{
+					float now = (timeOfDay / 24) * glm::two_pi<float>() + glm::pi<float>();
+					glm::vec3 sunDirection(0, cos(now), sin(now));
+					float k = glm::cos(now);
+					light->getComponent<Transform>()->position = sunDirection;
+					if (k < 0)
+					{
+						light->getComponent<Transform>()->position = -sunDirection;
+						light->getComponent<Light>()->color = -k * glm::vec4(0.2, 0.2, 0.3, 1);
+					}
+					else
+					{
+						light->getComponent<Transform>()->position = sunDirection;
+						light->getComponent<Light>()->color = k * glm::vec4(1, 1, 0.8627f, 1);
+					}
+					//todo: use proper ambient and diffuse, not just color
+				}
+			}
+
 			void DynamicSkyBox::render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix)
 			{
 				glDepthMask(GL_TRUE);
@@ -66,9 +91,6 @@ namespace vrlib
 				float now = (timeOfDay / 24) * glm::two_pi<float>() + glm::pi<float>();
 
 				glm::vec3 sunDirection(0, cos(now), sin(now));
-
-				//lights.front()->getComponent<components::Transform>()->position = sunDirection;
-				//glm::vec3 sunDirection(0, 1, -1);
 				sunDirection = glm::normalize(sunDirection);
 
 				skydomeShader->setUniform(SkydomeUniforms::sunDirection, sunDirection);
@@ -122,7 +144,7 @@ namespace vrlib
 			json::Value DynamicSkyBox::toJson() const
 			{
 				json::Value ret;
-				ret["type"] = "camera";
+				ret["type"] = "dynamicskybox";
 				return ret;
 			}
 		}

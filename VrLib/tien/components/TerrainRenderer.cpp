@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <VrLib/json.h>
 #include <VrLib/Texture.h>
 
 namespace vrlib
@@ -20,6 +21,20 @@ namespace vrlib
 				renderContext = TerrainRenderContext::getInstance();
 				renderContextShadow = TerrainRenderShadowContext::getInstance();
 
+				rebuildBuffers();
+			}
+
+
+			json::Value TerrainRenderer::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "terrainrenderer";
+				return ret;
+			}
+
+			void TerrainRenderer::rebuildBuffers()
+			{
+
 				std::vector<std::vector<glm::vec3>> polyNormals;
 				polyNormals.resize(terrain.width - 1, std::vector<glm::vec3>(terrain.height - 1, glm::vec3(0, 1, 0)));
 				std::vector<std::vector<glm::vec3>> normals;
@@ -28,8 +43,8 @@ namespace vrlib
 				for (int x = 0; x < terrain.width - 1; x++)
 					for (int y = 0; y < terrain.height - 1; y++)
 						polyNormals[x][y] = glm::normalize(glm::cross(
-							glm::vec3(0, terrain[x][y + 1] - terrain[x][y], 1),
-							glm::vec3(1, terrain[x + 1][y] - terrain[x][y], 0)
+							glm::vec3(1, terrain[x + 1][y] - terrain[x][y], 0),
+							glm::vec3(0, terrain[x][y + 1] - terrain[x][y], 1)
 							));
 
 				for (int x = 0; x < terrain.width; x++)
@@ -40,8 +55,8 @@ namespace vrlib
 						{
 							for (int yy = -1; yy <= 0; yy++)
 							{
-								if(terrain.isValid(x+xx, y+yy) && x+xx < terrain.width-1 && y+yy < terrain.height-1)
-									normals[x][y] += polyNormals[x+xx][y+yy];
+								if (terrain.isValid(x + xx, y + yy) && x + xx < terrain.width - 1 && y + yy < terrain.height - 1)
+									normals[x][y] += polyNormals[x + xx][y + yy];
 							}
 						}
 						normals[x][y] = glm::normalize(normals[x][y]);
@@ -51,7 +66,7 @@ namespace vrlib
 
 
 				std::vector<gl::VertexP3N2B2T2T2> vertices;
-				for (int x = 0; x < terrain.width-1; x++)
+				for (int x = 0; x < terrain.width - 1; x++)
 				{
 					for (int y = 0; y < terrain.height - 1; y++)
 					{
@@ -59,34 +74,34 @@ namespace vrlib
 						glm::vec3 tan;
 
 						gl::setN3(v, normals[x][y]);
-						tan = glm::normalize(glm::cross(normals[x][y], glm::vec3(0, 0, 1)));
+						tan = glm::normalize(glm::cross(normals[x][y], glm::vec3(1, 0, 0)));
 						gl::setTan3(v, tan);
-						gl::setBiTan3(v, glm::normalize(glm::cross(tan, normals[x][y])));
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x][y], tan)));
 						gl::setP3(v, glm::vec3(x, terrain[x][y], y));
- 						gl::setT2(v, glm::vec2(x, y)/10.0f);
+						gl::setT2(v, glm::vec2(x, y) / 10.0f);
 						vertices.push_back(v);
 
-						gl::setN3(v, normals[x][y+1]);
-						tan = glm::normalize(glm::cross(normals[x][y+1], glm::vec3(0, 0, 1)));
+						gl::setN3(v, normals[x][y + 1]);
+						tan = glm::normalize(glm::cross(normals[x][y + 1], glm::vec3(1, 0, 0)));
 						gl::setTan3(v, tan);
-						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x][y+1], tan)));
-						gl::setP3(v, glm::vec3(x, terrain[x][y+1], y + 1));
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x][y + 1], tan)));
+						gl::setP3(v, glm::vec3(x, terrain[x][y + 1], y + 1));
 						gl::setT2(v, glm::vec2(x, y + 1) / 10.0f);
 						vertices.push_back(v);
 
-						gl::setN3(v, normals[x+1][y+1]);
-						tan = glm::normalize(glm::cross(normals[x+1][y+1], glm::vec3(0, 0, 1)));
+						gl::setN3(v, normals[x + 1][y + 1]);
+						tan = glm::normalize(glm::cross(normals[x + 1][y + 1], glm::vec3(1, 0, 0)));
 						gl::setTan3(v, tan);
-						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x+1][y+1], tan)));
-						gl::setP3(v, glm::vec3(x+1, terrain[x+1][y+1], y+1));
-						gl::setT2(v, glm::vec2(x+1, y+1) / 10.0f);
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x + 1][y + 1], tan)));
+						gl::setP3(v, glm::vec3(x + 1, terrain[x + 1][y + 1], y + 1));
+						gl::setT2(v, glm::vec2(x + 1, y + 1) / 10.0f);
 						vertices.push_back(v);
 
-						gl::setN3(v, normals[x+1][y]);
-						tan = glm::normalize(glm::cross(normals[x+1][y], glm::vec3(0, 0, 1)));
+						gl::setN3(v, normals[x + 1][y]);
+						tan = glm::normalize(glm::cross(normals[x + 1][y], glm::vec3(1, 0, 0)));
 						gl::setTan3(v, tan);
-						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x+1][y], tan)));
-						gl::setP3(v, glm::vec3(x + 1, terrain[x+1][y], y));
+						gl::setBiTan3(v, glm::normalize(glm::cross(normals[x + 1][y], tan)));
+						gl::setP3(v, glm::vec3(x + 1, terrain[x + 1][y], y));
 						gl::setT2(v, glm::vec2(x + 1, y) / 10.0f);
 						vertices.push_back(v);
 
@@ -96,6 +111,7 @@ namespace vrlib
 				vbo.setData(vertices.size(), &vertices[0], GL_STATIC_DRAW);
 				vao = new gl::VAO(&vbo);
 			}
+
 
 
 
@@ -145,6 +161,16 @@ namespace vrlib
 					materials[i].normal->bind();
 					glActiveTexture(GL_TEXTURE2);
 					materials[i].mask->bind();
+					glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
+				}
+				if (materials.size() == 0)
+				{
+					glActiveTexture(GL_TEXTURE0);
+					context->white->bind();
+					glActiveTexture(GL_TEXTURE1);
+					context->defaultNormalMap->bind();
+					glActiveTexture(GL_TEXTURE2);
+					context->white->bind();
 					glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
 				}
 

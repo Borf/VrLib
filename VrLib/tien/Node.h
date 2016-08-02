@@ -40,6 +40,8 @@ namespace vrlib
 			Node(const Node& other) = delete;
 			~Node();
 
+			Node* getFirstChild() { return children.empty() ? nullptr : children.front(); }
+
 			json::Value asJson() const;
 
 			template<class T> T* getComponent()

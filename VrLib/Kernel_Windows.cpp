@@ -10,7 +10,8 @@
 #include <VrLib/drivers/MouseButton.h>
 #include <VrLib/drivers/Keyboard.h>
 #include <VrLib/drivers/SimPosition.h>
-#include <VrLib\drivers\RaceWheelDriver.h>
+#include <VrLib/drivers/RaceWheelDriver.h>
+#include <VrLib/Application.h>
 
 #ifdef WIN32	
 
@@ -183,9 +184,15 @@ namespace vrlib
 	void KernelWindows::createWindow()
 	{
 		//Open Window
-		const char* title = localConfig["window"]["title"].asString().c_str();
+		const char* title = "";
 		windowWidth = localConfig["window"]["width"].asInt();
 		windowHeight = localConfig["window"]["height"].asInt();
+		if (currentApplication && currentApplication->title != "")
+			title = currentApplication->title.c_str();
+		if (newApplication && newApplication->title != "")
+			title = newApplication->title.c_str();
+		if(localConfig["window"].isMember("title"))
+			title = localConfig["window"]["title"].asString().c_str();
 
 		WNDCLASS windowClass;
 		DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;

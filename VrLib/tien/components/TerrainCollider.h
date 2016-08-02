@@ -19,7 +19,7 @@ namespace vrlib
 				btHeightfieldTerrainShape* shape;
 			public:
 				TerrainCollider(Node* n = nullptr);
-
+				virtual vrlib::json::Value toJson() const override;
 				virtual btCollisionShape* getShape() override;
 			};
 		}

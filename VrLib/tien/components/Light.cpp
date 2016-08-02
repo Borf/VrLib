@@ -53,7 +53,7 @@ namespace vrlib
 				if (type == Type::directional)
 				{
 					if (!shadowMapDirectional)
-						shadowMapDirectional = new vrlib::gl::FBO(1024*8, 1024*8, true, 0, true); //shadowmap
+						shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
 
 					glm::vec3 lightPosition(0, 100, 100);
 					projectionMatrix = glm::ortho(-250.0f, 500.0f, -250.0f, 500.0f, 0.0f, 250.0f); //TODO: auto generate
