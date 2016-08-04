@@ -26,6 +26,7 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "transformattach";
+				ret["attach"] = device.name;
 				return ret;
 			}
 

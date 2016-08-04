@@ -97,6 +97,8 @@ namespace vrlib
 				json::Value ret;
 				ret["type"] = "modelrenderer";
 				ret["file"] = fileName;
+				ret["castShadow"] = castShadow;
+				ret["cullBackFaces"] = cullBackFaces;
 				return ret;
 			}
 

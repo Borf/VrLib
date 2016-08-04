@@ -145,6 +145,8 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "dynamicskybox";
+				ret["timeOfDay"] = timeOfDay;
+				ret["light"] = light ? light->guid : "";
 				return ret;
 			}
 		}

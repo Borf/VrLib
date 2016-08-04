@@ -55,10 +55,10 @@ namespace vrlib
 					if (!shadowMapDirectional)
 						shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
 
-					glm::vec3 lightPosition(0, 100, 100);
+					glm::vec3 lightPosition = 100.0f * node->transform->position;
 					projectionMatrix = glm::ortho(-250.0f, 500.0f, -250.0f, 500.0f, 0.0f, 250.0f); //TODO: auto generate
 					//projectionMatrix = glm::ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 250.0f);
-					modelViewMatrix = glm::lookAt(lightPosition, lightPosition - glm::vec3(0,1,1), glm::vec3(0, 1, 0));
+					modelViewMatrix = glm::lookAt(lightPosition, lightPosition - node->transform->position, glm::vec3(0, 1, 0));
 					Scene& scene = node->getScene();
 
 					shadowMapDirectional->bind();
@@ -116,6 +116,31 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "light";
+				
+				switch (type)
+				{
+				case Type::directional:		ret["lighttype"] = "directional";	break;
+				case Type::point:			ret["lighttype"] = "point";			break;
+				case Type::spot:			ret["lighttype"] = "spot";			break;
+				default:
+					ret["lighttype"] = "error";
+				}
+
+				switch (shadow)
+				{
+				case Shadow::none:			ret["shadow"] = "none";				break;
+				case Shadow::shadowmap:		ret["shadow"] = "shadowmap";		break;
+				case Shadow::shadowvolume:	ret["shadow"] = "shadowvolume";		break;
+				default:
+					ret["shadow"] = "error";
+				}
+
+				ret["intensity"] = intensity;
+				for (int i = 0; i < 4; i++)
+					ret["color"].push_back(color[i]);
+
+				ret["range"] = range;
+
 				return ret;
 			}
 		}

@@ -31,8 +31,11 @@ namespace vrlib
 
 			vrlib::json::Value TerrainCollider::toJson() const
 			{
-				vrlib::json::Value ret;
-				ret["type"] = "terraincollider";
+				json::Value ret;
+				ret["type"] = "collider";
+				ret["collider"] = "terrain";
+				for (int i = 0; i < 3; i++)
+					ret["offset"].push_back(offset[i]);
 				return ret;
 			}
 

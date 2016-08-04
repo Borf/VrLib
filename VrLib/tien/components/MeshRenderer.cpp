@@ -3,6 +3,7 @@
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/json.h>
+#include <VrLib/util.h>
 #include "Transform.h"
 #include "../Node.h"
 
@@ -33,6 +34,10 @@ namespace vrlib
 			{
 				vrlib::json::Value ret;
 				ret["type"] = "meshrenderer";
+				ret["castShadow"] = castShadow;
+				ret["mesh"] = "";
+				if (mesh)
+					ret["mesh"] = mesh->guid;
 				return ret;
 			}
 
@@ -164,7 +169,13 @@ namespace vrlib
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::outputPosition, use);
 			}
-		}
 
+
+			MeshRenderer::Mesh::Mesh()
+			{
+				guid = vrlib::util::getGuid();
+			}
+
+		}
 	}
 }

@@ -157,6 +157,20 @@ namespace vrlib
 			return out;
 		}
 
+		std::string getGuid()
+		{
+#ifdef WIN32
+			UUID uuid = { 0 };
+			::UuidCreate(&uuid);
+			unsigned char* cuuid = nullptr;
+			::UuidToString(&uuid, &cuuid);
+			std::string guid = std::string((char*)cuuid);
+			::RpcStringFree(&cuuid);
+			return guid;
+#endif
+			return "";
+		}
+
 	}
 
 }

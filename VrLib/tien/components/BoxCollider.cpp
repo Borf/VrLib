@@ -49,6 +49,10 @@ namespace vrlib
 				json::Value ret;
 				ret["type"] = "collider";
 				ret["collider"] = "box";
+				for (int i = 0; i < 3; i++)
+					ret["offset"].push_back(offset[i]);
+				for (int i = 0; i < 3; i++)
+					ret["size"].push_back(size[i]);
 				return ret;
 			}
 

@@ -15,6 +15,7 @@ namespace vrlib
 
 		glm::vec3 randomHsv();
 
+		std::string getGuid();
 
 	}
 }

@@ -9,6 +9,7 @@
 #endif
 
 #include <VrLib/json.h>
+#include <VrLib/util.h>
 
 #include "components/Transform.h"
 #include "components/RigidBody.h"
@@ -28,15 +29,7 @@ namespace vrlib
 			this->renderAble = nullptr;
 			this->light = nullptr;
 			this->parent = parent;
-
-#ifdef WIN32
-			UUID uuid = { 0 };
-			::UuidCreate(&uuid);
-			unsigned char* cuuid = nullptr;
-			::UuidToString(&uuid, &cuuid);
-			guid = std::string((char*)cuuid);
-			::RpcStringFree(&cuuid);
-#endif
+			guid = vrlib::util::getGuid();
 			if (parent)
 			{
 				parent->setTreeDirty(this, true);

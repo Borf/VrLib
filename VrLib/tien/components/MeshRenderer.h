@@ -63,6 +63,9 @@ namespace vrlib
 				class Mesh
 				{
 				public:
+					Mesh();
+					std::string guid;
+
 					vrlib::Material material;
 					std::vector<vrlib::gl::VertexP3N2B2T2T2> vertices;
 					std::vector<unsigned int> indices;

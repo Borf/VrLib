@@ -33,6 +33,16 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "rigidbody";
+				ret["mass"] = mass;
+				switch (type)
+				{
+				case Type::Static:		ret["bodytype"] = "static";		break;
+				case Type::Auto:		ret["bodytype"] = "auto";		break;
+				case Type::Dynamic:		ret["bodytype"] = "dynamic";	break;
+				case Type::Kinematic:	ret["bodytype"] = "kinematic";	break;
+				default:
+					ret["bodytype"] = "error";
+				}
 				return ret;
 			}
 
