@@ -88,6 +88,13 @@ namespace vrlib
 					{
 						context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 0.0f);
 						context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, material.color.diffuse);
+						
+						glActiveTexture(GL_TEXTURE1);
+						if (material.normalmap)
+							material.normalmap->bind();
+						else
+							context->defaultNormalMap->bind();
+						glActiveTexture(GL_TEXTURE0);
 					}
 				});
 			}

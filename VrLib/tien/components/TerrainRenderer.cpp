@@ -43,8 +43,8 @@ namespace vrlib
 				for (int x = 0; x < terrain.width - 1; x++)
 					for (int y = 0; y < terrain.height - 1; y++)
 						polyNormals[x][y] = glm::normalize(glm::cross(
-							glm::vec3(1, terrain[x + 1][y] - terrain[x][y], 0),
-							glm::vec3(0, terrain[x][y + 1] - terrain[x][y], 1)
+							glm::vec3(0, terrain[x][y + 1] - terrain[x][y], 1),
+							glm::vec3(1, terrain[x + 1][y] - terrain[x][y], 0)
 							));
 
 				for (int x = 0; x < terrain.width; x++)
@@ -190,7 +190,7 @@ namespace vrlib
 
 				TerrainRenderShadowContext* context = dynamic_cast<TerrainRenderShadowContext*>(renderContextShadow);
 				context->renderShader->use();
-				context->renderShader->setUniform(TerrainRenderShadowContext::RenderUniform::modelMatrix, glm::translate(t->globalTransform, glm::vec3(0,-0.01f, 0)));
+				context->renderShader->setUniform(TerrainRenderShadowContext::RenderUniform::modelMatrix, glm::translate(t->globalTransform, glm::vec3(0,0, 0)));
 
 				vao->bind();
 				glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);

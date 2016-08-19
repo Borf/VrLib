@@ -7,20 +7,20 @@ namespace vrlib
 {
 	namespace math
 	{
-
+		template<class T = glm::vec2>
 		class HermiteCurve
 		{
 		public:
-			glm::vec2 p0;
-			glm::vec2 p1;
+			T p0;
+			T p1;
 
-			glm::vec2 m0;
-			glm::vec2 m1;
+			T m0;
+			T m1;
 
 
-			HermiteCurve(glm::vec2 pos0, glm::vec2 dir0, glm::vec2 pos1, glm::vec2 dir1);
-
-			glm::vec2 getPoint(float t) const;
+			HermiteCurve(const T &pos0, const T &dir0, const T &pos1, const T &dir1);
+			
+			T getPoint(float t) const;
 			float getLength() const;
 
 		};

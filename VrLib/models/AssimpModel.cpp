@@ -478,8 +478,8 @@ namespace vrlib
 		}
 
 
-
-		model->rootBone->update(this->boneMatrices, (float)animations[0]->time, animations[0]->animation);
+		if(!animations.empty())
+			model->rootBone->update(this->boneMatrices, (float)animations[0]->time, animations[0]->animation);
 
 /*		model->rootBone->update(this->boneMatrices, 0, NULL);
 		float totalFac = 0;//TODO blib::linq::sum<float>(animations, [](AnimationState* s) { return s->blendFactor; });

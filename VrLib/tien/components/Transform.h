@@ -32,7 +32,7 @@ namespace vrlib
 
 
 				void lookAt(const glm::vec3 &position, const glm::vec3 &target, const glm::vec3 &up);
-				void lookAt(const glm::vec3 &target, const glm::vec3 &up);
+				void lookAt(const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0,1,0));
 				void setGlobalPosition(const glm::vec3 &position);
 				void setGlobalRotation(const glm::quat &rotation);
 				void setGlobalScale(const glm::vec3 &scale);

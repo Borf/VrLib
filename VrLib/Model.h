@@ -32,12 +32,12 @@ namespace vrlib
 	class Material
 	{
 	public:
-		Texture* texture;
-		Texture* normalmap;
+		Texture* texture = nullptr;
+		Texture* normalmap = nullptr;
 		struct
 		{
-			glm::vec4 diffuse;
-			glm::vec4 ambient;
+			glm::vec4 diffuse = glm::vec4(0.7f, 0.7f, 0.7f, 1.0f);
+			glm::vec4 ambient = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 			glm::vec4 specular;
 		} color;
 
