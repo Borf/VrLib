@@ -19,5 +19,15 @@ namespace vrlib
 		~Image();
 		void unload();
 
+		class Col
+		{
+		public:
+			Image* img;
+			int x;
+			unsigned char* operator [] (int y) { return img->data + ((x + img->width*y) * 4); }
+		};
+
+		Col operator [] (int x) { return{ this, x }; }
+
 	};
 }

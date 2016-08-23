@@ -40,6 +40,22 @@ namespace vrlib
 	}
 
 
+	Image::Image(int width, int height)
+	{
+		this->width = width;
+		this->height = height;
+		this->depth = 4;
+		this->usesAlpha = false;
+
+		data = new unsigned char[width*height*depth];
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
+				for (int i = 0; i < 4; i++)
+					data[4 * (x + width*y) + i] = 255;
+	}
+
+
+
 	Image::~Image()
 	{
 		if (data)

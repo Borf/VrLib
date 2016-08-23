@@ -8,6 +8,7 @@
 
 #include <VrLib/json.h>
 #include <VrLib/Texture.h>
+#include <VrLib/Image.h>
 
 namespace vrlib
 {
@@ -122,6 +123,24 @@ namespace vrlib
 			void TerrainRenderer::addMaterialLayer(const std::string &diffuse, const std::string &normal, const std::string &mask)
 			{
 				materials.push_back({ vrlib::Texture::loadCached(diffuse), vrlib::Texture::loadCached(normal), vrlib::Texture::loadCached(mask)  });
+			}
+			void TerrainRenderer::addMaterialLayer(const std::string &diffuse, const std::string &normal, float minHeight, float maxHeight, float fadeDist)
+			{
+				vrlib::Image* mask = new vrlib::Image(terrain.width, terrain.height);
+
+				for (int x = 0; x < terrain.width; x++)
+				{
+					for (int y = 0; y < terrain.height; y++)
+					{
+						if (terrain[x][y] >= minHeight && terrain[x][y] <= maxHeight)
+							(*mask)[x][y][0] = 255;
+						else
+							(*mask)[x][y][0] = (unsigned char)glm::floor(255 * glm::max(0.0f, 1.0f - glm::min(glm::abs(terrain[x][y] - minHeight), glm::abs(terrain[x][y] - maxHeight)) / fadeDist));
+					}
+				}
+
+
+				materials.push_back({ vrlib::Texture::loadCached(diffuse), vrlib::Texture::loadCached(normal), new vrlib::Texture(mask) });
 			}
 
 

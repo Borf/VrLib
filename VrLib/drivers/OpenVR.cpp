@@ -152,21 +152,16 @@ namespace vrlib
 
 	OpenVRDriver::OpenVrButtonDeviceDriverAdaptor::OpenVrButtonDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config)
 	{
+		id = -1;
+		bitmask = 0;
 		this->driver = driver;
 		this->src = config;
 
 		std::string btn = config.substr(11);
 
-		if (driver->controllers.empty())
-			logger << "Please connect vive controllers" << Log::newline;
-		id = driver->controllers[0];
 		if (config.substr(6, 4) == "Left")
-		{
-			id = driver->controllers[1];
 			btn = config.substr(10);
-		}
-		
-			 if (btn == "Menu")		bitmask = ButtonMaskFromId(vr::k_EButton_ApplicationMenu);
+		if (btn == "Menu")		bitmask = ButtonMaskFromId(vr::k_EButton_ApplicationMenu);
 		else if (btn == "Grip")		bitmask = ButtonMaskFromId(vr::k_EButton_Grip);
 		else if (btn == "Touch")	bitmask = ButtonMaskFromId(vr::k_EButton_SteamVR_Touchpad);
 		else if (btn == "Trigger")	bitmask = ButtonMaskFromId(vr::k_EButton_SteamVR_Trigger);
@@ -176,10 +171,34 @@ namespace vrlib
 			logger << "Unknown button: " << btn << Log::newline;
 		}
 
+
+		if (driver->controllers.empty())
+		{
+			logger << "Please connect vive controllers" << Log::newline;
+			return;
+		}
+		id = driver->controllers[0];
+		if (config.substr(6, 4) == "Left")
+			id = driver->controllers[1];
+		
+
 	}
 
 	DigitalState OpenVRDriver::OpenVrButtonDeviceDriverAdaptor::getData()
 	{
+		if (id == -1)
+		{
+			if (driver->controllers.empty())
+			{
+				logger << "Please connect vive controllers" << Log::newline;
+				return OFF;
+			}
+			id = driver->controllers[0];
+			if (src.substr(6, 4) == "Left")
+				id = driver->controllers[1];
+
+			return OFF;
+		}
 		bool b = (driver->controllerStates[id].ulButtonPressed & bitmask) != 0;
 		bool lastValue = (driver->prevControllerStates[id].ulButtonPressed & bitmask) != 0;
 		if (b && !lastValue)

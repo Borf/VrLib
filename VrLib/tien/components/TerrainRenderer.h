@@ -83,6 +83,7 @@ namespace vrlib
 
 				void addMaterialLayer(vrlib::Texture* diffuse, vrlib::Texture* normal, vrlib::Texture* mask);
 				void addMaterialLayer(const std::string &diffuse, const std::string &normal, const std::string &mask);
+				void addMaterialLayer(const std::string &diffuse, const std::string &normal, float minHeight, float maxHeight, float fadeDist);
 
 				int addRoadTexture(vrlib::Texture* diffuse, vrlib::Texture* normal); //TODO
 				void addRoad(); // TODO

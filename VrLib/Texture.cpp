@@ -60,6 +60,13 @@ namespace vrlib
 
 	}
 
+	Texture::Texture(Image* image)
+	{
+		this->image = image;
+		loaded = false;
+		load();
+	}
+
 	void Texture::load()
 	{
 		if (!image || !image->data)
