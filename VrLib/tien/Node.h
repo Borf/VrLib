@@ -40,7 +40,9 @@ namespace vrlib
 			Node(const Node& other) = delete;
 			~Node();
 
-			Node* getFirstChild() { return children.empty() ? nullptr : children.front(); }
+			Node* getFirstChild() const { return children.empty() ? nullptr : children.front(); }
+			Node* getNextSibling() const;
+			void setParent(Node* newParent);
 
 			json::Value asJson() const;
 
@@ -86,30 +88,9 @@ namespace vrlib
 				return nullptr;
 			}
 
-			Node* findNodeWithName(const std::string &name)
-			{
-				if (this->name == name)
-					return this;
-				for (auto c : children)
-				{
-					Node* cn = c->findNodeWithName(name);
-					if (cn)
-						return cn;
-				}
-				return nullptr;
-			}
-			Node* findNodeWithGuid(const std::string &guid)
-			{
-				if (this->guid == guid) //TODO: add better compare here
-					return this;
-				for (auto c : children)
-				{
-					Node* cn = c->findNodeWithGuid(guid);
-					if (cn)
-						return cn;
-				}
-				return nullptr;
-			}
+			Node* findNodeWithName(const std::string &name);
+			std::vector<Node*> findNodesWithName(const std::string &name);
+			Node* findNodeWithGuid(const std::string &guid);
 
 
 			virtual Scene& getScene();

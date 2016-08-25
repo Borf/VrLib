@@ -81,6 +81,8 @@ namespace vrlib
 			{
 				if (!castShadow || !model)
 					return;
+				if (!cullBackFaces)
+					glDisable(GL_CULL_FACE);
 				components::Transform* t = node->getComponent<Transform>();
 				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
 				context->renderShader->use(); //TODO: only call this once!
@@ -89,6 +91,8 @@ namespace vrlib
 					context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
 				},
 				[this, &context](const vrlib::Material &material)		{	});
+				if (!cullBackFaces)
+					glEnable(GL_CULL_FACE);
 
 			}
 

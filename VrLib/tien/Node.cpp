@@ -50,6 +50,14 @@ namespace vrlib
 				delete c;
 		}
 
+		void Node::setParent(Node* newParent)
+		{
+			assert(parent);
+			parent->children.erase(std::remove(parent->children.begin(), parent->children.end(), this), parent->children.end()); //removes this from parent
+			parent = newParent;
+			newParent->children.push_back(this);
+		}
+
 		json::Value Node::asJson() const
 		{
 			vrlib::json::Value v;
@@ -62,6 +70,42 @@ namespace vrlib
 			return v;
 		}
 
+
+		Node * Node::findNodeWithName(const std::string & name)
+		{
+			if (this->name == name)
+				return this;
+			for (auto c : children)
+			{
+				Node* cn = c->findNodeWithName(name);
+				if (cn)
+					return cn;
+			}
+			return nullptr;
+		}
+
+		std::vector<Node*> Node::findNodesWithName(const std::string & name)
+		{
+			std::vector<Node*> ret;
+			fortree([&ret, &name](Node* n) {
+				if (n->name == name)
+					ret.push_back(n);
+			});
+			return ret;
+		}
+
+		Node * Node::findNodeWithGuid(const std::string & guid)
+		{
+			if (this->guid == guid) //TODO: add better compare here
+				return this;
+			for (auto c : children)
+			{
+				Node* cn = c->findNodeWithGuid(guid);
+				if (cn)
+					return cn;
+			}
+			return nullptr;
+		}
 
 		Scene &Node::getScene()
 		{
