@@ -369,6 +369,9 @@
     <ClInclude Include="VrLib\tien\components\MeshRenderer.h">
       <Filter>tien\components</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\stb_truetype.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -676,6 +679,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\MeshRenderer.cpp">
       <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\stb_truetype.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

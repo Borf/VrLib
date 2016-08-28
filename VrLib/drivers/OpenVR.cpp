@@ -190,7 +190,7 @@ namespace vrlib
 		{
 			if (driver->controllers.empty())
 			{
-				logger << "Please connect vive controllers" << Log::newline;
+				//logger << "Please connect vive controllers" << Log::newline;
 				return OFF;
 			}
 			id = driver->controllers[0];

@@ -42,6 +42,7 @@ namespace vrlib
 	class ServerConnection
 	{
 #if 0
+#if 1
 		const std::string apiHost = "127.0.0.1";
 #else
 		const std::string apiHost = "145.48.6.10";
@@ -71,7 +72,8 @@ namespace vrlib
 		void callBackOnce(const std::string &action, std::function<void(const json::Value &)> callback);
 		json::Value call(const std::string &action, const json::Value& data = json::Value::null);
 		Tunnel* createTunnel(const std::string &sessionId);
-		void onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel);
+		void onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel, const std::string &key = "");
+		inline void onTunnelCreate(const std::string &key, const std::function<void(Tunnel*)> &onTunnel) {		onTunnelCreate(onTunnel, key);	};
 
 		void sendFps(float fps);
 

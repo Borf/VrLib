@@ -300,12 +300,14 @@ namespace vrlib
 		return NULL;
 	}
 
-	void ServerConnection::onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel)
+	void ServerConnection::onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel, const std::string &key)
 	{
 		waitForConnection();
 		json::Value v;
 		v["id"] = "session/enable";
 		v["data"].push_back("tunnel");
+		if(key != "")
+			v["key"] = key;
 		send(v);
 		tunnelCallback = onTunnel;
 	}

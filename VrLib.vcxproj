@@ -163,6 +163,7 @@
     <ClInclude Include="VrLib\ServerConnection.h" />
     <ClInclude Include="VrLib\stb_image.h" />
     <ClInclude Include="VrLib\stb_image_write.h" />
+    <ClInclude Include="VrLib\stb_truetype.h" />
     <ClInclude Include="VrLib\Texture.h" />
     <ClInclude Include="VrLib\TextureAtlas.h" />
     <ClInclude Include="VrLib\tien\Component.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="VrLib\ServerConnection.cpp" />
     <ClCompile Include="VrLib\stb_image.c" />
     <ClCompile Include="VrLib\stb_image_write.cpp" />
+    <ClCompile Include="VrLib\stb_truetype.cpp" />
     <ClCompile Include="VrLib\Texture.cpp" />
     <ClCompile Include="VrLib\TextureAtlas.cpp" />
     <ClCompile Include="VrLib\tien\Component.cpp" />

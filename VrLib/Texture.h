@@ -30,7 +30,7 @@ namespace vrlib
 		bool usesAlphaChannel;
 
 		void load();
-		void bind();
+		virtual void bind();
 
 		void loadDds(const std::string &fileName);
 
