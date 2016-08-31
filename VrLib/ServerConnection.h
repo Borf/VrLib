@@ -42,7 +42,6 @@ namespace vrlib
 	class ServerConnection
 	{
 #if 0
-#if 1
 		const std::string apiHost = "127.0.0.1";
 #else
 		const std::string apiHost = "145.48.6.10";

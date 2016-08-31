@@ -7,15 +7,16 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\VrLib;$(SolutionDir)\Libraries\VrLib\externals\glm;$(SolutionDir)\Libraries\VrLib\externals\glew\include;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Libraries\VrLib;$(SolutionDir)\Libraries\VrLib\externals\glm;$(SolutionDir)\Libraries\VrLib\externals\glew\include;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;$(SolutionDir)\Libraries\VrLib\externals\ffmpeg\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)\</ObjectFileName>
       <PreprocessorDefinitions>NOMINMAX;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(UseDebugLibraries)' != 'true'">MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\Windows\win32\$(Configuration)\VS2015;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\assimp;$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;$(SolutionDir)\Libraries\VrLib\externals\leap\lib;$(SolutionDir)\Libraries\VrLib\externals\openvr\lib\win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);$(SolutionDir)\Libraries\VrLib\externals\glew\lib\Release\Win32;$(SolutionDir)\Libraries\VrLib\externals\libovr\lib\Windows\win32\$(Configuration)\VS2015;$(SolutionDir)\Libraries\VrLib\externals\fglove;$(SolutionDir)\Libraries\VrLib\externals\hydra;$(SolutionDir)\Libraries\VrLib\externals\vrpn;$(SolutionDir)\Libraries\VrLib\externals\vrpn\lib\$(Configuration);$(SolutionDir)\Libraries\VrLib\externals\assimp;$(SolutionDir)\Libraries\VrLib\externals\freetype2\lib;$(SolutionDir)\Libraries\VrLib\externals\leap\lib;$(SolutionDir)\Libraries\VrLib\externals\openvr\lib\win32;$(SolutionDir)\Libraries\VrLib\externals\ffmpeg\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalOptions>/ignore:4099 %(AdditionalOptions)</AdditionalOptions>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Lib>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>

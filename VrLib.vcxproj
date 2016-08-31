@@ -54,7 +54,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;GLM_FORCE_RADIANS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;externals/openvr/headers;../BulletPhysics/bullet3/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;externals/openvr/headers;../BulletPhysics/bullet3/src/;externals/ffmpeg/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
     </ClCompile>
@@ -78,7 +78,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;GLEW_STATIC;DIRECTINPUT_VERSION=0x0800;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;externals/openvr/headers;../BulletPhysics/bullet3/src/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;externals/glm;externals/glew/include;externals/libOVR/include;externals/libOVR/src;externals/vrpn/include;externals/fglove;externals/hydra/include;externals/assimp;externals/freetype2/include;externals/leap/include;externals/openvr/headers;../BulletPhysics/bullet3/src/;externals/ffmpeg/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)\%(RelativeDir)\</ObjectFileName>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -127,6 +127,7 @@
     <ClInclude Include="VrLib\gl\Cubemap.h" />
     <ClInclude Include="VrLib\gl\FBO.h" />
     <ClInclude Include="VrLib\gl\shader.h" />
+    <ClInclude Include="VrLib\gl\VAB.h" />
     <ClInclude Include="VrLib\gl\VAO.h" />
     <ClInclude Include="VrLib\gl\VBO.h" />
     <ClInclude Include="VrLib\gl\Vertex.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="VrLib\util\mutex.h" />
     <ClInclude Include="VrLib\util\RestApi.h" />
     <ClInclude Include="VrLib\util\thread.h" />
+    <ClInclude Include="VrLib\Video.h" />
     <ClInclude Include="VrLib\Viewport.h" />
     <ClInclude Include="VrLib\Viewports\OpenVRViewport.h" />
     <ClInclude Include="VrLib\Viewports\ProjectionViewport.h" />
@@ -299,6 +301,7 @@
     <ClCompile Include="VrLib\util\mutex.cpp" />
     <ClCompile Include="VrLib\util\RestApi.cpp" />
     <ClCompile Include="VrLib\util\thread.cpp" />
+    <ClCompile Include="VrLib\Video.cpp" />
     <ClCompile Include="VrLib\Viewport.cpp" />
     <ClCompile Include="VrLib\Viewports\OpenVRViewport.cpp" />
     <ClCompile Include="VrLib\Viewports\ProjectionViewport.cpp" />

@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "Image.h"
-
+#include "Video.h"
 #include <VrLib/Log.h>
 #include <glm/glm.hpp>
 
@@ -46,11 +46,24 @@ namespace vrlib
 	Texture::Texture(const std::string &fileName)
 	{
 		image = NULL;
+		texid = 0;
 #ifdef _DEBUG
 		logger << "Loading " << fileName << Log::newline;
 #endif
 		if (fileName.substr(fileName.size() - 4) == ".dds")
 			loadDds(fileName);
+		else if (fileName.substr(fileName.size() - 4) == ".mp4" || fileName.substr(fileName.size() - 4) == ".MP4")
+		{
+			this->image = new vrlib::Video(fileName, this);
+			loaded = true;
+			load();
+
+			bind();
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->width, image->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+			glGenerateMipmap(GL_TEXTURE_2D);
+
+			update(0.1f);
+		}
 		else
 		{
 			this->image = new vrlib::Image(fileName);
@@ -62,6 +75,7 @@ namespace vrlib
 
 	Texture::Texture(Image* image)
 	{
+		texid = 0;
 		this->image = image;
 		loaded = false;
 		load();
@@ -69,10 +83,11 @@ namespace vrlib
 
 	void Texture::load()
 	{
+		if(texid == 0)
+			glGenTextures(1, &texid);
 		if (!image || !image->data)
 			return;
 		usesAlphaChannel = image->usesAlpha;
-		glGenTextures(1, &texid);
 		glBindTexture(GL_TEXTURE_2D, texid);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image->data);
 		glGenerateMipmap(GL_TEXTURE_2D);
@@ -119,6 +134,13 @@ namespace vrlib
 		if (!loaded)
 			load();
 		glBindTexture(GL_TEXTURE_2D, texid);
+	}
+
+	void Texture::update(float elapsedTime)
+	{
+		if (dynamic_cast<Video*>(image))
+			dynamic_cast<Video*>(image)->update(elapsedTime);
+
 	}
 
 

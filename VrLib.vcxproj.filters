@@ -372,6 +372,12 @@
     <ClInclude Include="VrLib\stb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\gl\VAB.h">
+      <Filter>gl</Filter>
+    </ClInclude>
+    <ClInclude Include="VrLib\Video.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -681,6 +687,9 @@
       <Filter>tien\components</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\stb_truetype.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\Video.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
