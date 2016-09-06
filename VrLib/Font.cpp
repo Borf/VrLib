@@ -488,7 +488,8 @@ namespace vrlib
 
 	TrueTypeFont::TrueTypeFont(const std::string &name, float size)
 	{
-		FILE* pFile = fopen(("c:/windows/fonts/"+name+".ttf").c_str(), "rb");
+		logger << "Loading font 'c:\\windows\\fonts\\" << name << ".ttf" << Log::newline;
+		FILE* pFile = fopen(("c:/windows/fonts/" + name + ".ttf").c_str(), "rb");
 		if (!pFile)
 		{
 			logger << "Error opening font" << Log::newline;
