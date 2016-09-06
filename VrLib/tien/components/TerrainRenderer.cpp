@@ -175,9 +175,11 @@ namespace vrlib
 				for (size_t i = 0; i < materials.size(); i++)
 				{
 					glActiveTexture(GL_TEXTURE0);
-					materials[i].diffuse->bind();
+					if(materials[i].diffuse)
+						materials[i].diffuse->bind();
 					glActiveTexture(GL_TEXTURE1);
-					materials[i].normal->bind();
+					if(materials[i].normal)
+						materials[i].normal->bind();
 					glActiveTexture(GL_TEXTURE2);
 					materials[i].mask->bind();
 					glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
