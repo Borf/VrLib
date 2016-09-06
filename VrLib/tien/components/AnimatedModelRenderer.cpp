@@ -74,6 +74,7 @@ namespace vrlib
 				{
 					if (material.texture)
 					{
+						context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, glm::vec4(1,1,1,1));
 						context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 1.0f);
 						material.texture->bind();
 						glActiveTexture(GL_TEXTURE1);

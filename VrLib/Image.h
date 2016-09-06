@@ -18,6 +18,7 @@ namespace vrlib
 		Image(int width, int height);
 		~Image();
 		void unload();
+		void save(const std::string &fileName);
 
 		class Col
 		{

@@ -13,6 +13,10 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/math/Polygon.h>
 
+#include <vrlib/stb_truetype.h>
+
+
+
 typedef struct FT_LibraryRec_  *FT_Library;
 typedef struct FT_FaceRec_*  FT_Face;
 
@@ -84,4 +88,22 @@ namespace vrlib
 		void drawText(const std::string &text, const T& base = T());
 
 	};
+
+
+	class TrueTypeFont
+	{
+	public:
+		TrueTypeFont(const std::string &name, float size = 32.0f);
+		unsigned char* fileData;
+		Texture* texture;
+		stbtt_packedchar fontData[256];
+
+		stbtt_fontinfo info;
+
+		template<class T>
+		void drawText(const std::string &text, const T& base = T());
+		float textlen(const std::string &text);
+	};
+
+
 }

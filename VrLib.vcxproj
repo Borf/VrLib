@@ -163,6 +163,7 @@
     <ClInclude Include="VrLib\ServerConnection.h" />
     <ClInclude Include="VrLib\stb_image.h" />
     <ClInclude Include="VrLib\stb_image_write.h" />
+    <ClInclude Include="VrLib\stb_rect_pack.h" />
     <ClInclude Include="VrLib\stb_truetype.h" />
     <ClInclude Include="VrLib\Texture.h" />
     <ClInclude Include="VrLib\TextureAtlas.h" />

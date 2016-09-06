@@ -3,6 +3,9 @@
 #include "stb_image.h"
 #include <iostream>
 
+#include <VrLib/stb_image_write.h>
+
+
 namespace vrlib
 {
 	Image::Image(const std::string &filename)
@@ -68,6 +71,11 @@ namespace vrlib
 		if (data)
 			stbi_image_free(data);
 		data = NULL;
+	}
+
+	void Image::save(const std::string & fileName)
+	{
+		stbi_write_png("test.png", width, height, depth, data,0);
 	}
 
 }

@@ -480,8 +480,99 @@ namespace vrlib
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 	}
-
-
-
 	template void BitmapFont::drawText<vrlib::gl::VertexP2T2>(const std::string &text, const vrlib::gl::VertexP2T2 &base);
+
+
+
+
+
+	TrueTypeFont::TrueTypeFont(const std::string &name, float size)
+	{
+		FILE* pFile = fopen(("c:/windows/fonts/"+name+".ttf").c_str(), "rb");
+		if (!pFile)
+		{
+			logger << "Error opening font" << Log::newline;
+		}
+		fseek(pFile, 0L, SEEK_END);
+		int fileSize = ftell(pFile);
+		rewind(pFile);
+
+		fileData = new unsigned char[fileSize];
+		fread(fileData, 1, fileSize, pFile);
+
+		vrlib::Image *image = new vrlib::Image(512, 512);
+		unsigned char tmpImage[512][512];
+
+		stbtt_pack_context pc;
+		stbtt_PackBegin(&pc, tmpImage[0], 512, 512, 0, 1, NULL);
+		stbtt_PackSetOversampling(&pc, 2, 2);
+		stbtt_PackFontRange(&pc, fileData, 0, size, 0, 256, fontData);
+		stbtt_PackEnd(&pc);
+		//stbtt_GetPackedQuad(fontData)
+
+		for (int x = 0; x < 512; x++)
+		{
+			for (int y = 0; y < 512; y++)
+			{
+				image->data[(x + 512 * y) * 4 + 0] = 255;
+				image->data[(x + 512 * y) * 4 + 1] = 255;
+				image->data[(x + 512 * y) * 4 + 2] = 255;
+				image->data[(x + 512 * y) * 4 + 3] = tmpImage[y][x];
+			}
+		}
+		texture = new Texture(image);
+	}
+
+	
+
+
+	template <class T>
+	void TrueTypeFont::drawText(const std::string &text, const T &base)
+	{
+		glm::vec2 cursor;
+		int wrapWidth = -1;
+		std::vector<T> verts;
+
+		glm::vec2 texFactor(1.0f / texture->image->width, 1.0f / texture->image->height);
+
+		float x = cursor.x;
+		float y = cursor.y;
+		int lineHeight = 12;
+		for (size_t i = 0; i < text.size(); i++)
+		{
+			if (text[i] == '\n' || (x > wrapWidth && wrapWidth != -1))
+			{
+				x = 0;
+				y += lineHeight;
+				lineHeight = 12;
+			}
+//			if (charmap.find(text[i]) == charmap.end())
+//				continue;
+
+			stbtt_aligned_quad q;
+			stbtt_GetPackedQuad(fontData, 512, 512, text[i], &x, &y, &q, 0);
+//			lineHeight = glm::max(lineHeight, g->height);
+
+			T v = base;
+			gl::setP2(v, glm::vec2(q.x0, q.y0));	gl::setT2(v, glm::vec2(q.s0, q.t0));
+			verts.push_back(v);
+			gl::setP2(v, glm::vec2(q.x1, q.y0));	gl::setT2(v, glm::vec2(q.s1, q.t0));
+			verts.push_back(v);
+			gl::setP2(v, glm::vec2(q.x1, q.y1));	gl::setT2(v, glm::vec2(q.s1, q.t1));
+			verts.push_back(v);
+			gl::setP2(v, glm::vec2(q.x0, q.y1));	gl::setT2(v, glm::vec2(q.s0, q.t1));
+			verts.push_back(v);
+		}
+
+		texture->bind();
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		gl::setAttributes<T>(&verts[0]);
+
+		glDrawArrays(GL_QUADS, 0, verts.size());
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+	}
+	template void TrueTypeFont::drawText<vrlib::gl::VertexP2T2>(const std::string &text, const vrlib::gl::VertexP2T2 &base);
+
+
 }
