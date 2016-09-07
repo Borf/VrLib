@@ -381,6 +381,9 @@
     <ClInclude Include="VrLib\Video.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math\Frustum.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -694,6 +697,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\Video.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\Frustum.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
