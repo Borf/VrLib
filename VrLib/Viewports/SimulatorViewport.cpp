@@ -36,12 +36,8 @@ namespace vrlib
 
 	glm::mat4 SimulatorViewport::getProjectionMatrix()
 	{
-		glm::mat4 camera;
-		if(cameraDevice && cameraDevice->isInitialized())
-			camera = cameraDevice->getData();
-
 		float aspect = (windowWidth * this->width()) / (windowHeight * this->height());
-		return glm::perspective(glm::radians(45.0f), aspect, 0.01f, 500.0f) * camera;
+		return glm::perspective(glm::radians(45.0f), aspect, 0.01f, 500.0f);
 	}
 
 #define HEADSIZE 0.1f
@@ -51,6 +47,10 @@ namespace vrlib
 		resetOpenGL();
 
 		User* user = Kernel::getInstance()->users.front();
+		glm::mat4 camera;
+		if (cameraDevice && cameraDevice->isInitialized())
+			camera = cameraDevice->getData();
+
 		glm::mat4 projectionMatrix = getProjectionMatrix();
 		glEnable(GL_DEPTH_TEST);
 		glMatrixMode(GL_PROJECTION);
@@ -58,7 +58,8 @@ namespace vrlib
 		glLoadMatrixf(glm::value_ptr(projectionMatrix));
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		application->draw(projectionMatrix, glm::mat4(), user->matrix);
+		glLoadMatrixf(glm::value_ptr(camera));
+		application->draw(projectionMatrix, camera);
 
 		resetOpenGL();
 

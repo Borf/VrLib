@@ -197,7 +197,7 @@ namespace vrlib
 
 
 
-			application->draw(projectionMatrix, modelviewMatrix, user->matrix);
+			application->draw(projectionMatrix, modelviewMatrix);
 			// Avoids an error when calling SetAndClearRenderSurface during next iteration.
 			// Without this, during the next while loop iteration SetAndClearRenderSurface
 			// would bind a framebuffer with an invalid COLOR_ATTACHMENT0 because the texture ID

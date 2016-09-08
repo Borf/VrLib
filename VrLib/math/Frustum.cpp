@@ -8,8 +8,15 @@ namespace vrlib
 	namespace math
 	{
 		Frustum::Frustum(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix)
+		{
+			setFromMatrix(projectionMatrix, modelviewMatrix);
+		}
+
+		void Frustum::setFromMatrix(const glm::mat4 &projectionMatrix, const glm::mat4 &modelviewMatrix)
 		{ // http://www.lighthouse3d.com/tutorials/view-frustum-culling/clip-space-approach-extracting-the-planes/
 			// Extracting the planes.
+			this->projectionMatrix = projectionMatrix;
+			this->modelviewMatrix = modelviewMatrix;
 			glm::mat4 matrix = projectionMatrix * modelviewMatrix;
 
 			glm::vec4 rowX = glm::row(matrix, 0);
@@ -28,6 +35,22 @@ namespace vrlib
 			// Normalizing the planes.
 			for (int i = 0; i < 4; i++)
 				planes[i] = -planes[i] / glm::length(glm::vec3(planes[i]));
+		}
+		glm::vec3 Frustum::getCenter()
+		{
+			glm::mat4 mat = glm::inverse(projectionMatrix);
+			auto drawVert = [&, this](const glm::vec3 &pos)
+			{
+				glm::vec4 p(mat * glm::vec4(pos, 1));
+				p = glm::vec4(p.x * p.w, p.y * p.w, p.z * p.w, 1);
+				p = glm::inverse(modelviewMatrix) * p;
+				return glm::vec3(p);
+			};
+			
+			glm::vec3 total(0, 0, 0);
+			for (int i = 0; i < 8; i++)
+				total += drawVert(glm::vec3(((i >> 0) & 1) * 2 - 1, ((i >> 1) & 1) * 2 - 1, ((i >> 2) & 1)));
+			return total /= 8.0f;
 		}
 	}
 }

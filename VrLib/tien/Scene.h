@@ -5,6 +5,7 @@
 #include <VrLib/gl/Vertex.h>
 #include <btBulletDynamicsCommon.h>
 #include "components/Renderable.h"
+#include <VrLib/math/Frustum.h>
 
 
 namespace vrlib
@@ -43,7 +44,9 @@ namespace vrlib
 			std::set<components::Renderable::RenderContext*> renderContextsShadow;
 			std::list<Node*> renderables;
 			std::list<Node*> lights;
-			
+			math::Frustum* frustum;
+
+
 			void addRigidBody(Node* node);
 			void addCollider(Node* node);
 

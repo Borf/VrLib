@@ -8,9 +8,18 @@ namespace vrlib
 	{
 		class Frustum
 		{
-			glm::vec4 planes[6];
 		public:
+			glm::vec4 planes[6];
+			glm::mat4 projectionMatrix;
+			glm::mat4 modelviewMatrix;
+
+
+			Frustum() {};
 			Frustum(const glm::mat4 &projectionMatrix, const glm::mat4 &modelviewMatrix);
+			void setFromMatrix(const glm::mat4 &projectionMatrix, const glm::mat4 &modelviewMatrix);
+
+			glm::vec3 getCenter();
+
 		};
 
 	}

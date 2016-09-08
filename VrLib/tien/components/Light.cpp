@@ -53,11 +53,13 @@ namespace vrlib
 				if (type == Type::directional)
 				{
 					if (!shadowMapDirectional)
-						shadowMapDirectional = new vrlib::gl::FBO(1024*8, 1024*8, true, 0, true); //shadowmap
+						shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
 
-					float size = 250.0f;
+					float size = 50.0f;
 
-					glm::vec3 lightPosition = 100.0f * node->transform->position;
+					glm::vec3 frustumCenter = node->getScene().frustum->getCenter(); //todo: cache?
+
+					glm::vec3 lightPosition = frustumCenter + 100.0f * node->transform->position;
 					projectionMatrix = glm::ortho(-size, size*2, -size, size*2, 0.0f, 250.0f); //TODO: auto generate
 					//projectionMatrix = glm::ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 250.0f);
 					modelViewMatrix = glm::lookAt(lightPosition, lightPosition - node->transform->position, glm::vec3(0, 1, 0));

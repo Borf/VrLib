@@ -22,6 +22,7 @@ namespace vrlib
 		{
 			cameraNode = nullptr;
 			world = nullptr;
+			frustum = new math::Frustum();
 		}
 
 		Scene::Scene(const Scene& other) : Node("", nullptr)

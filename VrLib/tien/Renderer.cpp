@@ -11,6 +11,7 @@
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
+#include <VrLib/math/Frustum.h>
 
 #include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
@@ -96,7 +97,7 @@ namespace vrlib
 			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
 
 			glm::mat4 modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
-
+			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 
 			for (auto l : scene.lights)
 			{
@@ -268,6 +269,47 @@ namespace vrlib
 
 
 				}
+
+
+				glm::mat4 mat = glm::inverse(scene.frustum->projectionMatrix);
+				auto drawVert = [&, this](const glm::vec3 &pos)
+				{
+					glm::vec4 p(mat * glm::vec4(pos, 1));
+					p = glm::vec4(p.x * p.w, p.y * p.w, p.z * p.w, 1);
+					p = glm::inverse(scene.frustum->modelviewMatrix) * p;
+					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(p), glm::vec4(1, 0, 1, 1)));
+				};
+
+				drawVert(glm::vec3(1, 1, 0));
+				drawVert(glm::vec3(-1, 1, 0));
+				drawVert(glm::vec3(-1, 1, 0));
+				drawVert(glm::vec3(-1, -1, 0));
+				drawVert(glm::vec3(-1, -1, 0));
+				drawVert(glm::vec3(1, -1, 0));
+				drawVert(glm::vec3(1, -1, 0));
+				drawVert(glm::vec3(1, 1, 0));
+
+				drawVert(glm::vec3(1, 1, 1));
+				drawVert(glm::vec3(-1, 1, 1));
+				drawVert(glm::vec3(-1, 1, 1));
+				drawVert(glm::vec3(-1, -1, 1));
+				drawVert(glm::vec3(-1, -1, 1));
+				drawVert(glm::vec3(1, -1, 1));
+				drawVert(glm::vec3(1, -1, 1));
+				drawVert(glm::vec3(1, 1, 1));
+
+
+				drawVert(glm::vec3(1, 1, 1));
+				drawVert(glm::vec3(1, 1, 0));
+				drawVert(glm::vec3(-1, 1, 1));
+				drawVert(glm::vec3(-1, 1, 0));
+				drawVert(glm::vec3(1, -1, 1));
+				drawVert(glm::vec3(1, -1, 0));
+				drawVert(glm::vec3(-1, -1, 1));
+				drawVert(glm::vec3(-1, -1, 0));
+
+
+
 				if (!verts.empty())
 				{
 					//glDisable(GL_DEPTH_TEST);

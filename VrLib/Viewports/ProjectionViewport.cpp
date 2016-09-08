@@ -76,7 +76,7 @@ namespace vrlib
 		glLoadIdentity();
 
 
-		application->draw(projectionMatrix, glm::mat4(), user->matrix);
+		application->draw(projectionMatrix, glm::mat4());
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
