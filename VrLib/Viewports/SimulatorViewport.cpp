@@ -65,7 +65,7 @@ namespace vrlib
 
 		shader->use();
 		shader->setUniform(Uniforms::projectionMatrix, projectionMatrix);
-		shader->setUniform(Uniforms::viewMatrix, user->matrix);
+		shader->setUniform(Uniforms::viewMatrix, camera * user->matrix);
 		faceModel->draw([this](const glm::mat4& modelMatrix)
 		{
 

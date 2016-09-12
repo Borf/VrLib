@@ -81,6 +81,14 @@ namespace vrlib
 		glViewport(0, 0, m_nRenderWidth, m_nRenderHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glLoadMatrixf(glm::value_ptr(projectionLeft));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glLoadMatrixf(glm::value_ptr(viewLeft * hmdMatrix));
+
 		application->draw(projectionLeft, viewLeft * hmdMatrix);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -104,6 +112,14 @@ namespace vrlib
 		glViewport(0, 0, m_nRenderWidth, m_nRenderHeight);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
+
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glLoadMatrixf(glm::value_ptr(projectionRight));
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glLoadMatrixf(glm::value_ptr(viewRight * hmdMatrix));
+
 		application->draw(projectionRight, viewRight * hmdMatrix);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

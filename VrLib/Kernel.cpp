@@ -91,7 +91,7 @@ namespace vrlib
 		if (config.isNull() || config.size() == 0)
 		{
 			logger << "No configuration file loaded" << Log::newline;
-			logger << "Press any key to exit" << Log::newline;
+			logger << "Press enter key to exit" << Log::newline;
 			getchar();
 			return;
 		}
