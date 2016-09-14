@@ -256,7 +256,9 @@ namespace vrlib
 		path = "";
 		if (fileName.find("/") != std::string::npos)
 			path = fileName.substr(0, fileName.rfind("/"));
-		
+		if (fileName.find("\\") != std::string::npos)
+			path = fileName.substr(0, fileName.rfind("\\"));
+
 		
 		int numVerts = 0;
 		int numIndices = 0;
