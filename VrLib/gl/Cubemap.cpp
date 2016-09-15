@@ -2,6 +2,7 @@
 #include "shader.h"
 
 #include <VrLib/stb_image.h>
+#include <VrLib/Image.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -139,5 +140,44 @@ namespace vrlib
 				glDepthMask(GL_TRUE);
 			}
 		}
+
+
+
+
+
+		CubeMap::CubeMap()
+		{
+			glGenTextures(1, &texid);
+			//Bind the texture as a cubemap texture
+			glBindTexture(GL_TEXTURE_CUBE_MAP, texid);
+			//Set cubemap parameters
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		}
+
+
+		void CubeMap::bind()
+		{
+			glBindTexture(GL_TEXTURE_CUBE_MAP, texid);
+		}
+
+
+		void CubeMap::setTexture(int index, const std::string &fileName)
+		{
+			Image image(fileName, false);
+			if (image.data)
+			{
+				bind();
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + index, 0, GL_RGBA, image.width, image.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.data);
+				glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+
+			}
+		}
+
+
 	}
 }

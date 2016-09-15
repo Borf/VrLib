@@ -384,6 +384,9 @@
     <ClInclude Include="VrLib\math\Frustum.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\tien\components\StaticSkyBox.h">
+      <Filter>tien\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -700,6 +703,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\math\Frustum.cpp">
       <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\tien\components\StaticSkyBox.cpp">
+      <Filter>tien\components</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

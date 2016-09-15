@@ -14,7 +14,7 @@ namespace vrlib
 
 		bool usesAlpha;
 
-		Image(const std::string &filename);
+		Image(const std::string &filename, bool flip = true);
 		Image(int width, int height);
 		virtual ~Image();
 		void unload();

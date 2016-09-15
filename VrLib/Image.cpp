@@ -8,7 +8,7 @@
 
 namespace vrlib
 {
-	Image::Image(const std::string &filename)
+	Image::Image(const std::string &filename, bool flip)
 	{
 		if (filename.substr(filename.size() - 4) == ".dds")
 		{
@@ -21,7 +21,7 @@ namespace vrlib
 			height = -1;
 			depth = -1;
 			usesAlpha = false;
-			stbi_set_flip_vertically_on_load(true);
+			stbi_set_flip_vertically_on_load(flip);
 			data = stbi_load(filename.c_str(), &width, &height, &depth, 4);
 			if (!data)
 			{

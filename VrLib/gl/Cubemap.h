@@ -35,5 +35,17 @@ namespace vrlib
 			void draw(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix);
 		};
 
+
+
+		class CubeMap
+		{
+		public:
+			CubeMap();
+
+			GLuint texid;
+
+			void setTexture(int index, const std::string &fileName);
+			void bind();
+		};
 	}
 }

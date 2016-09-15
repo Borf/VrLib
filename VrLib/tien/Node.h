@@ -3,6 +3,7 @@
 #include <list>
 #include <vector>
 #include <functional>
+#include <algorithm>
 
 namespace vrlib
 {
@@ -55,6 +56,11 @@ namespace vrlib
 						return r;
 				}
 				return nullptr;
+			}
+
+			template<class T> void removeComponent()
+			{
+				components.erase(std::remove_if(components.begin(), components.end(), [](const Component* c) { return dynamic_cast<const T*>(c) != nullptr; }), components.end());
 			}
 
 
