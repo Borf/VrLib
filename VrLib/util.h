@@ -15,6 +15,8 @@ namespace vrlib
 
 		glm::vec3 randomHsv();
 
+		float random(float min, float max);
+
 		std::string getGuid();
 
 	}

@@ -126,7 +126,8 @@ namespace vrlib
 				context->frameSetup(projectionMatrix, modelViewMatrix);
 
 			for (Node* c : scene.renderables)
-				c->getComponent<components::Renderable>()->draw();
+				if(c->getComponent<components::Renderable>()->deferred)
+					c->getComponent<components::Renderable>()->draw();
 			gbuffers->unbind();
 
 			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
@@ -203,6 +204,14 @@ namespace vrlib
 				glEnable(GL_BLEND);
 			}
 			glCullFace(GL_BACK);
+
+			glEnable(GL_DEPTH_TEST);
+			glDepthMask(GL_TRUE);
+			for (Node* c : scene.renderables)
+				if (!c->getComponent<components::Renderable>()->deferred)
+					c->getComponent<components::Renderable>()->draw();
+
+
 
 			auto skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
 			if (skybox)

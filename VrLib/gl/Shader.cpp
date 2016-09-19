@@ -263,49 +263,58 @@ namespace vrlib
 				logger << "Error registering uniform " << value << Log::newline;
 		}
 
-		void UntypedShader::setUniform(int id, int value)
+
+		void UntypedShader::registerUniformArray(int id, std::string value, int size)
 		{
-			glUniform1i(uniformLocations[id], value);
-		}
-		void UntypedShader::setUniform(int id, bool value)
-		{
-			glUniform1i(uniformLocations[id], value ? 1 : 0);
-		}
-		void UntypedShader::setUniform(int id, float value)
-		{
-			glUniform1f(uniformLocations[id], value);
+			if ((int)uniformLocationsArray.size() <= id)
+				uniformLocationsArray.resize(id + 1);
+			for(int i = 0; i < size; i++)
+				uniformLocationsArray[id].push_back(glGetUniformLocation(programId, (value + "[" + std::to_string(i) + "]").c_str()));
 		}
 
-		void UntypedShader::setUniform(int id, const glm::vec2 &value)
+		void UntypedShader::setUniformRaw(int id, int value)
 		{
-			glUniform2fv(uniformLocations[id], 1, glm::value_ptr(value));
+			glUniform1i(id, value);
+		}
+		void UntypedShader::setUniformRaw(int id, bool value)
+		{
+			glUniform1i(id, value ? 1 : 0);
+		}
+		void UntypedShader::setUniformRaw(int id, float value)
+		{
+			glUniform1f(id, value);
 		}
 
-		void UntypedShader::setUniform(int id, const glm::vec3 &value)
+		void UntypedShader::setUniformRaw(int id, const glm::vec2 &value)
 		{
-			glUniform3fv(uniformLocations[id], 1, glm::value_ptr(value));
+			glUniform2fv(id, 1, glm::value_ptr(value));
 		}
 
-		void UntypedShader::setUniform(int id, const glm::vec4 &value)
+		void UntypedShader::setUniformRaw(int id, const glm::vec3 &value)
 		{
-			glUniform4fv(uniformLocations[id], 1, glm::value_ptr(value));
+			glUniform3fv(id, 1, glm::value_ptr(value));
 		}
 
-		void UntypedShader::setUniform(int id, const glm::mat3 &value)
+		void UntypedShader::setUniformRaw(int id, const glm::vec4 &value)
 		{
-			glUniformMatrix3fv(uniformLocations[id], 1, 0, glm::value_ptr(value));
+			glUniform4fv(id, 1, glm::value_ptr(value));
 		}
-		void UntypedShader::setUniform(int id, const glm::mat4 &value)
+
+		void UntypedShader::setUniformRaw(int id, const glm::mat3 &value)
 		{
-			glUniformMatrix4fv(uniformLocations[id], 1, 0, glm::value_ptr(value));
+			glUniformMatrix3fv(id, 1, 0, glm::value_ptr(value));
 		}
-		void UntypedShader::setUniform(int id, const std::vector<glm::mat4> &values)
+		void UntypedShader::setUniformRaw(int id, const glm::mat4 &value)
+		{
+			glUniformMatrix4fv(id, 1, 0, glm::value_ptr(value));
+		}
+		void UntypedShader::setUniformRaw(int id, const std::vector<glm::mat4> &values)
 		{
 			float* data = new float[values.size() * 16];
 			for (size_t i = 0; i < values.size(); i++)
 				memcpy(&data[i * 16], glm::value_ptr(values[i]), 4*4*4);
 
-			glUniformMatrix4fv(uniformLocations[id], values.size(), 0, data);
+			glUniformMatrix4fv(id, values.size(), 0, data);
 			delete[] data;
 		}
 

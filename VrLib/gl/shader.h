@@ -59,6 +59,7 @@ namespace vrlib
 		protected:
 			GLuint programId;
 			std::vector<int> uniformLocations;
+			std::vector<std::vector<int>> uniformLocationsArray;
 		public:
 			UntypedShader(std::string vertShader, std::string fragShader);
 			UntypedShader(std::string vertShader, std::string fragShader, std::string geoShader);
@@ -73,17 +74,30 @@ namespace vrlib
 			void use();
 
 			void registerUniform(int id, std::string value);
-			void setUniform(int id, int value);
-			void setUniform(int id, float value);
-			void setUniform(int id, bool value);
-			void setUniform(int id, const glm::vec2 &value);
-			void setUniform(int id, const glm::vec3 &value);
-			void setUniform(int id, const glm::vec4 &value);
-			void setUniform(int id, const glm::mat3 &value);
-			void setUniform(int id, const glm::mat4 &value);
+			void registerUniformArray(int id, std::string value, int size);
 
-			void setUniform(int id, const std::vector<glm::mat4> &value);
 
+			template<class T>
+			void setUniform(int id, int index, const T& value)
+			{
+				setUniformRaw(uniformLocationsArray[id][index], value);
+			};
+
+			template<class T>
+			void setUniform(int id, const T& value)
+			{
+				setUniformRaw(uniformLocations[id], value);
+			};
+		private:
+			void setUniformRaw(int id, int value);
+			void setUniformRaw(int id, float value);
+			void setUniformRaw(int id, bool value);
+			void setUniformRaw(int id, const glm::vec2 &value);
+			void setUniformRaw(int id, const glm::vec3 &value);
+			void setUniformRaw(int id, const glm::vec4 &value);
+			void setUniformRaw(int id, const glm::mat3 &value);
+			void setUniformRaw(int id, const glm::mat4 &value);
+			void setUniformRaw(int id, const std::vector<glm::mat4> &value);
 		};
 
 		template<class T>
@@ -103,11 +117,24 @@ namespace vrlib
 				UntypedShader::registerUniform((int)id, value);
 			}
 
+			void registerUniformArray(T id, std::string value, int size)
+			{
+				UntypedShader::registerUniformArray((int)id, value, size);
+			}
+
+
 			template<class V>
 			void setUniform(T id, const V &value)
 			{
 				//assert(uniformLocations[(int)id] != -1);
 				UntypedShader::setUniform((int)id, value);
+			}
+
+			template<class V>
+			void setUniform(T id, int index, const V &value)
+			{
+				//assert(uniformLocations[(int)id] != -1);
+				UntypedShader::setUniform((int)id, index, value);
 			}
 		};
 	}
