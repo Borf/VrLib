@@ -19,6 +19,8 @@ namespace vrlib
 
 				friend class vrlib::tien::Renderer;
 			public:
+				Light() {};
+				Light(const vrlib::json::Value &json);
 				~Light();
 
 				json::Value toJson() const override;

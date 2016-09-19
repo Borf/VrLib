@@ -27,6 +27,7 @@ namespace vrlib
 				glm::mat4 globalTransform;
 
 				Transform(const glm::vec3 &position = glm::vec3(0, 0, 0), const glm::quat &rotation = glm::quat(), const glm::vec3 &scale = glm::vec3(1, 1, 1));
+				Transform(const vrlib::json::Value &json);
 				~Transform();
 				json::Value toJson() const override;
 

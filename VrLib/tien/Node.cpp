@@ -16,6 +16,9 @@
 #include "components/Renderable.h"
 #include "components/Collider.h"
 #include "components/Light.h"
+#include "components/Camera.h"
+#include "components/ModelRenderer.h"
+#include "components/DynamicSkyBox.h"
 
 namespace vrlib
 {
@@ -69,6 +72,48 @@ namespace vrlib
 				v["children"].push_back(c->asJson());
 			return v;
 		}
+
+		void Node::fromJson(const json::Value &json)
+		{
+			setTreeDirty(this, true);
+			name = json["name"];
+			guid = json["uuid"];
+
+			for (auto c : components)
+				delete c;
+			while(!children.empty())
+				delete children.front();
+			components.clear();
+			transform = nullptr;
+			rigidBody = nullptr;
+			renderAble = nullptr;
+			light = nullptr;
+
+
+			if(json.isMember("components"))
+				for (auto c : json["components"])
+				{
+					if (c["type"] == "transform")
+						addComponent(new vrlib::tien::components::Transform(c));
+					else if (c["type"] == "camera")
+						addComponent(new vrlib::tien::components::Camera());
+					else if (c["type"] == "modelrenderer")
+						addComponent(new vrlib::tien::components::ModelRenderer(c));
+					else if (c["type"] == "dynamicskybox")
+						addComponent(new vrlib::tien::components::DynamicSkyBox(c));
+					else if (c["type"] == "light")
+						addComponent(new vrlib::tien::components::Light(c));
+					else
+						logger << "Unhandled component: " << c["type"].asString() << Log::newline;
+				}
+
+
+
+			if(json.isMember("children"))
+				for (auto c : json["children"])
+					(new Node("", this))->fromJson(c);
+		}
+
 
 
 		Node * Node::findNodeWithName(const std::string & name)

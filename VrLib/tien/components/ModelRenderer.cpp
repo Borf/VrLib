@@ -25,6 +25,29 @@ namespace vrlib
 				castShadow = true;
 			}
 
+			ModelRenderer::ModelRenderer(vrlib::json::Value &json)
+			{
+				fileName = json["file"];
+				if (cache.find(fileName) == cache.end())
+					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
+				model = cache[fileName];
+				renderContext = ModelRenderContext::getInstance();
+				renderContextShadow = ModelRenderShadowContext::getInstance();
+				castShadow = json["castShadow"];
+				cullBackFaces = json["cullBackFaces"];
+			}
+
+
+			json::Value ModelRenderer::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "modelrenderer";
+				ret["file"] = fileName;
+				ret["castShadow"] = castShadow;
+				ret["cullBackFaces"] = cullBackFaces;
+				return ret;
+			}
+
 			ModelRenderer::~ModelRenderer()
 			{
 
@@ -96,15 +119,7 @@ namespace vrlib
 
 			}
 
-			json::Value ModelRenderer::toJson() const
-			{
-				json::Value ret;
-				ret["type"] = "modelrenderer";
-				ret["file"] = fileName;
-				ret["castShadow"] = castShadow;
-				ret["cullBackFaces"] = cullBackFaces;
-				return ret;
-			}
+
 
 
 			void ModelRenderer::ModelRenderContext::init()

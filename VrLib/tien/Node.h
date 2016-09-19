@@ -46,6 +46,7 @@ namespace vrlib
 			void setParent(Node* newParent);
 
 			json::Value asJson() const;
+			void fromJson(const json::Value &json);
 
 			template<class T> T* getComponent()
 			{

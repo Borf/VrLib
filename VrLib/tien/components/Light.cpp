@@ -37,6 +37,53 @@ namespace vrlib
 			
 
 
+			Light::Light(const vrlib::json::Value & json)
+			{
+				if (json["lighttype"] == "directional")	type = Type::directional;
+				if (json["lighttype"] == "point")		type = Type::point;
+				if (json["lighttype"] == "spot")		type = Type::spot;
+
+				if (json["shadow"] == "none")			shadow = Shadow::none;
+				if (json["shadow"] == "shadowmap")		shadow = Shadow::shadowmap;
+				if (json["shadow"] == "shadowvolume")	shadow = Shadow::shadowvolume;
+
+				intensity = json["intensity"];
+				range = json["range"];
+				for (int i = 0; i < 4; i++)
+					color[i] = json["color"][i];
+
+			}
+			json::Value Light::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "light";
+
+				switch (type)
+				{
+				case Type::directional:		ret["lighttype"] = "directional";	break;
+				case Type::point:			ret["lighttype"] = "point";			break;
+				case Type::spot:			ret["lighttype"] = "spot";			break;
+				default:
+					ret["lighttype"] = "error";
+				}
+
+				switch (shadow)
+				{
+				case Shadow::none:			ret["shadow"] = "none";				break;
+				case Shadow::shadowmap:		ret["shadow"] = "shadowmap";		break;
+				case Shadow::shadowvolume:	ret["shadow"] = "shadowvolume";		break;
+				default:
+					ret["shadow"] = "error";
+				}
+
+				ret["intensity"] = intensity;
+				for (int i = 0; i < 4; i++)
+					ret["color"].push_back(color[i]);
+
+				ret["range"] = range;
+
+				return ret;
+			}
 			Light::~Light()
 			{
 				if (shadowMapDirectional)
@@ -116,37 +163,7 @@ namespace vrlib
 
 
 			}
-			json::Value Light::toJson() const
-			{
-				json::Value ret;
-				ret["type"] = "light";
-				
-				switch (type)
-				{
-				case Type::directional:		ret["lighttype"] = "directional";	break;
-				case Type::point:			ret["lighttype"] = "point";			break;
-				case Type::spot:			ret["lighttype"] = "spot";			break;
-				default:
-					ret["lighttype"] = "error";
-				}
 
-				switch (shadow)
-				{
-				case Shadow::none:			ret["shadow"] = "none";				break;
-				case Shadow::shadowmap:		ret["shadow"] = "shadowmap";		break;
-				case Shadow::shadowvolume:	ret["shadow"] = "shadowvolume";		break;
-				default:
-					ret["shadow"] = "error";
-				}
-
-				ret["intensity"] = intensity;
-				for (int i = 0; i < 4; i++)
-					ret["color"].push_back(color[i]);
-
-				ret["range"] = range;
-
-				return ret;
-			}
 		}
 	}
 }

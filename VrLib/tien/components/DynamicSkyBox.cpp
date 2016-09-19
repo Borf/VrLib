@@ -15,6 +15,21 @@ namespace vrlib
 	{
 		namespace components
 		{
+			DynamicSkyBox::DynamicSkyBox(const vrlib::json::Value & json)
+			{
+				timeOfDay = json["timeOfDay"];
+				//TODO: light
+			}
+
+
+			json::Value DynamicSkyBox::toJson() const
+			{
+				json::Value ret;
+				ret["type"] = "dynamicskybox";
+				ret["timeOfDay"] = timeOfDay;
+				ret["light"] = light ? light->guid : "";
+				return ret;
+			}
 			void DynamicSkyBox::initialize()
 			{
 				skydome = vrlib::Model::getModel<vrlib::gl::VertexP3>("data/vrlib/tien/models/skydome.obj");
@@ -141,14 +156,6 @@ namespace vrlib
 
 			}
 
-			json::Value DynamicSkyBox::toJson() const
-			{
-				json::Value ret;
-				ret["type"] = "dynamicskybox";
-				ret["timeOfDay"] = timeOfDay;
-				ret["light"] = light ? light->guid : "";
-				return ret;
-			}
 		}
 	}
 }

@@ -54,6 +54,7 @@ namespace vrlib
 				static std::map<std::string, vrlib::Model*> cache;
 			public:
 				ModelRenderer(const std::string &fileName);
+				ModelRenderer(vrlib::json::Value &json);
 				~ModelRenderer();
 
 				vrlib::Model* model;

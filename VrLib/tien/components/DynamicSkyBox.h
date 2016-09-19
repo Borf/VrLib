@@ -37,6 +37,8 @@ namespace vrlib
 				vrlib::Model* sun;
 				vrlib::Model* moon;
 			public:
+				DynamicSkyBox() {};
+				DynamicSkyBox(const vrlib::json::Value &json);
 				virtual void initialize() override;
 				virtual void update(float elapsedTime, Scene& scene) override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
