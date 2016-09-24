@@ -32,7 +32,7 @@ namespace vrlib
 
 			}
 
-			json::Value Transform::toJson() const
+			json::Value Transform::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "transform";

@@ -11,6 +11,7 @@ namespace vrlib
 		int height;
 		int depth;
 		unsigned char* data;
+		std::string fileName;
 
 		bool usesAlpha;
 

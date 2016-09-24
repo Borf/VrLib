@@ -41,7 +41,7 @@ namespace vrlib
 				RigidBody(float mass, Type type = Type::Auto);
 				~RigidBody();
 				btRigidBody* body;
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 
 				inline float getMass() const {return mass; };
 				void setMass(float newMass);

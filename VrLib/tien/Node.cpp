@@ -19,6 +19,7 @@
 #include "components/Camera.h"
 #include "components/ModelRenderer.h"
 #include "components/DynamicSkyBox.h"
+#include "components/MeshRenderer.h"
 
 namespace vrlib
 {
@@ -61,19 +62,19 @@ namespace vrlib
 			newParent->children.push_back(this);
 		}
 
-		json::Value Node::asJson() const
+		json::Value Node::asJson(json::Value &meshes) const
 		{
 			vrlib::json::Value v;
 			v["name"] = name;
 			v["uuid"] = guid;
 			for (auto c : components)
-				v["components"].push_back(c->toJson());
+				v["components"].push_back(c->toJson(meshes));
 			for (auto c : children)
-				v["children"].push_back(c->asJson());
+				v["children"].push_back(c->asJson(meshes));
 			return v;
 		}
 
-		void Node::fromJson(const json::Value &json)
+		void Node::fromJson(const json::Value &json, const json::Value &totalJson)
 		{
 			setTreeDirty(this, true);
 			name = json["name"];
@@ -103,6 +104,8 @@ namespace vrlib
 						addComponent(new vrlib::tien::components::DynamicSkyBox(c));
 					else if (c["type"] == "light")
 						addComponent(new vrlib::tien::components::Light(c));
+					else if (c["type"] == "meshrenderer")
+						addComponent(new vrlib::tien::components::MeshRenderer(c, totalJson));
 					else
 						logger << "Unhandled component: " << c["type"].asString() << Log::newline;
 				}
@@ -111,7 +114,7 @@ namespace vrlib
 
 			if(json.isMember("children"))
 				for (auto c : json["children"])
-					(new Node("", this))->fromJson(c);
+					(new Node("", this))->fromJson(c, totalJson);
 		}
 
 

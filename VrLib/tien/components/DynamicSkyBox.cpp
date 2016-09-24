@@ -22,7 +22,7 @@ namespace vrlib
 			}
 
 
-			json::Value DynamicSkyBox::toJson() const
+			json::Value DynamicSkyBox::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "dynamicskybox";

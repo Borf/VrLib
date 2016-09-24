@@ -75,7 +75,7 @@ namespace vrlib
 
 				void draw() override;
 				void drawShadowMap() override;
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 
 				void rebuildBuffers();
 				void updateBuffers(int x, int y);

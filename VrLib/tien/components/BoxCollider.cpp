@@ -44,7 +44,7 @@ namespace vrlib
 				return shape;
 			}
 
-			json::Value BoxCollider::toJson() const
+			json::Value BoxCollider::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "collider";

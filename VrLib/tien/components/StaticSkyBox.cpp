@@ -65,7 +65,7 @@ namespace vrlib
 
 
 
-			json::Value StaticSkyBox::toJson() const
+			json::Value StaticSkyBox::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "StaticSkyBox";

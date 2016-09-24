@@ -71,7 +71,7 @@ namespace vrlib
 				void update(float elapsedTime, Scene& scene) override;
 				void draw() override;
 				void drawShadowMap() override;
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 
 				void playAnimation(const std::string &animation, bool loop = true);
 				void playAnimation(const std::string &animation, std::function<void()> callbackOnDone);

@@ -23,7 +23,7 @@ namespace vrlib
 			public:
 				TransformAttach(const vrlib::PositionalDevice &device);
 				~TransformAttach();
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 
 				void postUpdate(Scene& scene) override;
 			};

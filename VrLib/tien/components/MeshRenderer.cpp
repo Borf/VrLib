@@ -4,6 +4,7 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/json.h>
 #include <VrLib/util.h>
+#include <VrLib/Image.h>
 #include "Transform.h"
 #include "../Node.h"
 
@@ -25,19 +26,53 @@ namespace vrlib
 				renderContextShadow = ModelRenderShadowContext::getInstance();
 			}
 
+			MeshRenderer::MeshRenderer(const json::Value &json, const json::Value &totalJson)
+			{
+				vao = nullptr;
+				this->mesh = nullptr;
+				static std::map<std::string, Mesh*> meshes;	//TODO: clear cache !
+
+				if (json.isMember("mesh") && json["mesh"].asString() != "")
+				{
+					if (meshes.find(json["mesh"]) == meshes.end())
+					{
+						for (const auto& m : totalJson["meshes"])
+							if (m["id"].asString() == json["mesh"].asString())
+								meshes[json["mesh"]] = new Mesh(m);
+					}
+					mesh = meshes[json["mesh"]];
+				}
+
+				if(mesh)
+					updateMesh();
+				castShadow = json["castShadow"];
+				renderContext = ModelRenderContext::getInstance();
+				renderContextShadow = ModelRenderShadowContext::getInstance();
+			}
+
 			MeshRenderer::~MeshRenderer()
 			{
 
 			}
 
-			vrlib::json::Value MeshRenderer::toJson() const
+			vrlib::json::Value MeshRenderer::toJson(json::Value &meshes) const
 			{
 				vrlib::json::Value ret;
 				ret["type"] = "meshrenderer";
 				ret["castShadow"] = castShadow;
 				ret["mesh"] = "";
 				if (mesh)
+				{
 					ret["mesh"] = mesh->guid;
+					bool found = false;
+					for (size_t i = 0; i < meshes.size(); i++)
+						if (meshes[i]["id"] == mesh->guid)
+							found = true;
+					if (!found)
+						meshes.push_back(mesh->toJson());
+				}
+
+
 				return ret;
 			}
 
@@ -174,6 +209,72 @@ namespace vrlib
 			MeshRenderer::Mesh::Mesh()
 			{
 				guid = vrlib::util::getGuid();
+			}
+
+			MeshRenderer::Mesh::Mesh(const json::Value & json)
+			{
+				guid = json["id"];
+
+				for (int i : json["indices"])
+					indices.push_back(i);
+				for (const auto &v : json["vertices"])
+				{
+					vrlib::gl::VertexP3N2B2T2T2 vv;
+					vrlib::gl::setP3(vv, glm::vec3(v["pos"][0], v["pos"][1], v["pos"][2]));
+					vrlib::gl::setN3(vv, glm::vec3(v["normal"][0], v["normal"][1], v["normal"][2]));
+					vrlib::gl::setTan3(vv, glm::vec3(v["tan"][0], v["tan"][1], v["tan"][2]));
+					vrlib::gl::setBiTan3(vv, glm::vec3(v["bitan"][0], v["bitan"][1], v["bitan"][2]));
+					vrlib::gl::setT2(vv, glm::vec2(v["tex"][0], v["tex"][1]));
+					vertices.push_back(vv);
+				}
+
+				if(json["material"].isMember("diffuse"))
+					material.texture = vrlib::Texture::loadCached(json["material"]["diffuse"].asString());
+				if (json["material"].isMember("normal"))
+					material.normalmap = vrlib::Texture::loadCached(json["material"]["normal"].asString());
+
+			}
+
+			vrlib::json::Value MeshRenderer::Mesh::toJson()
+			{
+				vrlib::json::Value ret;
+				ret["id"] = guid;
+
+				for (auto i : indices)
+					ret["indices"].push_back((int)i);
+
+				for (auto &v : vertices)
+				{
+					vrlib::json::Value vv;
+					vv["pos"].push_back(v.px);
+					vv["pos"].push_back(v.py);
+					vv["pos"].push_back(v.pz);
+
+					vv["normal"].push_back(v.nx);
+					vv["normal"].push_back(v.ny);
+					vv["normal"].push_back(v.nz);
+
+					vv["tan"].push_back(v.tanx);
+					vv["tan"].push_back(v.tany);
+					vv["tan"].push_back(v.tanz);
+
+					vv["bitan"].push_back(v.bitanx);
+					vv["bitan"].push_back(v.bitany);
+					vv["bitan"].push_back(v.bitanz);
+
+					vv["tex"].push_back(v.tx);
+					vv["tex"].push_back(v.ty);
+
+					ret["vertices"].push_back(vv);
+				}
+
+				if(material.texture && material.texture->image)
+					ret["material"]["diffuse"] = material.texture->image->fileName;
+				if(material.normalmap && material.normalmap->image)
+					ret["material"]["normal"] = material.normalmap->image->fileName;
+
+
+				return ret;
 			}
 
 		}

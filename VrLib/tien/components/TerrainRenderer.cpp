@@ -26,7 +26,7 @@ namespace vrlib
 			}
 
 
-			json::Value TerrainRenderer::toJson() const
+			json::Value TerrainRenderer::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "terrainrenderer";

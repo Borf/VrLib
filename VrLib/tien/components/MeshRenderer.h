@@ -64,20 +64,24 @@ namespace vrlib
 				{
 				public:
 					Mesh();
+					Mesh(const json::Value &json);
 					std::string guid;
 
 					vrlib::Material material;
 					std::vector<vrlib::gl::VertexP3N2B2T2T2> vertices;
 					std::vector<unsigned int> indices;
+
+					vrlib::json::Value toJson();
 				};
 
 
 				MeshRenderer(Mesh* mesh = nullptr);
+				MeshRenderer(const json::Value &json, const json::Value &totalJson);
 				~MeshRenderer();
 
 				Mesh* mesh;
 
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 				void updateMesh();
 
 

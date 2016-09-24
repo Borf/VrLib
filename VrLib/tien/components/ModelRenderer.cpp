@@ -15,7 +15,7 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
 
-			ModelRenderer::ModelRenderer(const std::string &fileName) : fileName(fileName)
+/*			ModelRenderer::ModelRenderer(const std::string &fileName) : fileName(fileName)
 			{
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
@@ -23,22 +23,33 @@ namespace vrlib
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
 				castShadow = true;
-			}
+			}*/
 
-			ModelRenderer::ModelRenderer(vrlib::json::Value &json)
+			ModelRenderer::ModelRenderer(const vrlib::json::Value &json)
 			{
-				fileName = json["file"];
+				if (json.isString())
+					fileName = json;
+				else
+					fileName = json["file"];
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 				model = cache[fileName];
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
-				castShadow = json["castShadow"];
-				cullBackFaces = json["cullBackFaces"];
+				if (json.isObject())
+				{
+					castShadow = json["castShadow"];
+					cullBackFaces = json["cullBackFaces"];
+				}
+				else
+				{
+					castShadow = true;
+					cullBackFaces = true;
+				}
 			}
 
 
-			json::Value ModelRenderer::toJson() const
+			json::Value ModelRenderer::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "modelrenderer";

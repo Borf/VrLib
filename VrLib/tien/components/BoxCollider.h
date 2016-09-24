@@ -22,7 +22,7 @@ namespace vrlib
 				virtual btCollisionShape* getShape() override;
 
 				glm::vec3 getSize() { return size; }
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 			};
 		}
 	}

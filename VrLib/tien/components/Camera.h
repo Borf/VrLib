@@ -18,7 +18,7 @@ namespace vrlib
 				vrlib::gl::FBO* target;
 
 				void render();
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 			};
 		}
 	}

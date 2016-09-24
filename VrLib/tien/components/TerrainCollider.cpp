@@ -29,7 +29,7 @@ namespace vrlib
 				shape = new btHeightfieldTerrainShape(terrain.getWidth(), terrain.getHeight(), data, 1, 0, terrain.getStretch(), 1, PHY_ScalarType::PHY_FLOAT, true);
 			}
 
-			vrlib::json::Value TerrainCollider::toJson() const
+			vrlib::json::Value TerrainCollider::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "collider";

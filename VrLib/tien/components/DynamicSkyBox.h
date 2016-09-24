@@ -46,7 +46,7 @@ namespace vrlib
 
 				Node* light = nullptr;
 				float timeOfDay = 14;
-				virtual json::Value toJson() const override;
+				virtual json::Value toJson(json::Value &meshes) const override;
 			};
 		}
 	}

@@ -23,7 +23,7 @@ namespace vrlib
 				Light(const vrlib::json::Value &json);
 				~Light();
 
-				json::Value toJson() const override;
+				json::Value toJson(json::Value &meshes) const override;
 
 
 				enum class Type

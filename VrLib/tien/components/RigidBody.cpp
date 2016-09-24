@@ -29,7 +29,7 @@ namespace vrlib
 				world->removeRigidBody(body);
 				delete body;
 			}
-			json::Value RigidBody::toJson() const
+			json::Value RigidBody::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "rigidbody";

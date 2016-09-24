@@ -32,7 +32,7 @@ namespace vrlib
 			{
 
 			}
-			json::Value AnimatedModelRenderer::toJson() const
+			json::Value AnimatedModelRenderer::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "animatedmodelrenderer";

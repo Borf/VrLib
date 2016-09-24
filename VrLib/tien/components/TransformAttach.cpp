@@ -22,7 +22,7 @@ namespace vrlib
 			{
 			}
 
-			json::Value TransformAttach::toJson() const
+			json::Value TransformAttach::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "transformattach";

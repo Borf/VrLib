@@ -18,7 +18,7 @@ namespace vrlib
 			{
 
 			}
-			json::Value Camera::toJson() const
+			json::Value Camera::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "camera";

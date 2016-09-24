@@ -19,7 +19,7 @@ namespace vrlib
 		public:
 			virtual void update(float elapsedTime, Scene& scene) {};
 			virtual void postUpdate(Scene& scene) {};
-			virtual json::Value toJson() const = 0;
+			virtual json::Value toJson(json::Value &meshes) const = 0;
 		};
 	}
 }

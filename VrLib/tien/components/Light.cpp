@@ -53,7 +53,7 @@ namespace vrlib
 					color[i] = json["color"][i];
 
 			}
-			json::Value Light::toJson() const
+			json::Value Light::toJson(json::Value &meshes) const
 			{
 				json::Value ret;
 				ret["type"] = "light";

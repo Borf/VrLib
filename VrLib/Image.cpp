@@ -10,6 +10,7 @@ namespace vrlib
 {
 	Image::Image(const std::string &filename, bool flip)
 	{
+		this->fileName = filename;
 		if (filename.substr(filename.size() - 4) == ".dds")
 		{
 			throw "cannot be loaded";
