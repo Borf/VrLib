@@ -59,7 +59,9 @@ namespace vrlib
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 		glLoadMatrixf(glm::value_ptr(camera));
+		glPushMatrix();
 		application->draw(projectionMatrix, camera);
+		glPopMatrix();
 
 		resetOpenGL();
 
@@ -71,9 +73,18 @@ namespace vrlib
 
 		});
 
-/*
-		glDisable(GL_LIGHTING);
+
+		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+		glLoadMatrixf(glm::value_ptr(projectionMatrix));
+
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glLoadMatrixf(glm::value_ptr(camera));
+		glUseProgram(0);
+
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_LIGHTING);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4f(1, 1, 1, 0.25f);
@@ -104,7 +115,7 @@ namespace vrlib
 		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
-		*/
+		
 
 	}
 
