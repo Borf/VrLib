@@ -314,6 +314,8 @@ namespace vrlib
 
 	void Tunnel::send(const json::Value &data)
 	{
+		if (!this)
+			return;
 		json::Value packet;
 		packet["id"] = "tunnel/send";
 		packet["data"]["dest"] = id;

@@ -102,6 +102,7 @@ namespace vrlib
 
 			for (auto l : scene.lights)
 			{
+				if (!l->light)continue;
 				if (l->light->shadow == components::Light::Shadow::shadowmap)
 				{
 					l->light->generateShadowMap();
@@ -249,6 +250,7 @@ namespace vrlib
 				std::vector<vrlib::gl::VertexP3C4> verts;
 				for (auto l : scene.lights)
 				{
+					if (!l->light)continue;
 					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
 					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
 					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4(-2, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));
