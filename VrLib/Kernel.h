@@ -19,6 +19,8 @@
 #pragma comment(lib, "libovr.lib")
 #pragma comment(lib, "openvr_api.lib")
 #pragma comment(lib, "Rpcrt4.lib")
+#pragma comment(lib, "vrpn.lib")
+#pragma comment(lib, "quat.lib")
 
 //ffmpeg
 #pragma comment(lib, "avcodec.lib")
@@ -30,18 +32,17 @@
 #pragma comment(lib, "swresample.lib")
 #pragma comment(lib, "swscale.lib")
 
+
 #ifdef _DEBUG
 #pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed
 #pragma comment(lib, "sixense_utils.lib")	// debug version needs vs debug installed
 #pragma comment(lib, "fgloved.lib")
-#pragma comment(lib, "vrpn.lib")
 #pragma comment(lib, "freetype255d.lib")
 #pragma comment(lib, "assimp-vc140-mt.lib")
 #else
 #pragma comment(lib, "sixense.lib")
 #pragma comment(lib, "sixense_utils.lib")
 #pragma comment(lib, "fglove.lib")
-#pragma comment(lib, "vrpn.lib")
 #pragma comment(lib, "freetype255.lib")
 #pragma comment(lib, "assimp-vc140-mt-static.lib") //so that you don't get annoying dll trouble
 #endif

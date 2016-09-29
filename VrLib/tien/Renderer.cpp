@@ -35,6 +35,7 @@ namespace vrlib
 			postLightingShader->link();
 			postLightingShader->bindFragLocation("fragColor", 0);
 			postLightingShader->registerUniform(PostLightingUniform::windowSize, "windowSize");
+			postLightingShader->registerUniform(PostLightingUniform::windowPos, "windowPos");
 			postLightingShader->registerUniform(PostLightingUniform::modelViewMatrix, "modelViewMatrix");
 			postLightingShader->registerUniform(PostLightingUniform::projectionMatrix, "projectionMatrix");
 			postLightingShader->registerUniform(PostLightingUniform::modelViewMatrixInv, "modelViewMatrixInv");
@@ -129,15 +130,17 @@ namespace vrlib
 				if(c->getComponent<components::Renderable>()->deferred)
 					c->getComponent<components::Renderable>()->draw();
 			gbuffers->unbind();
-
+			glScissor(viewport[0], viewport[1], viewport[2], viewport[3]);
+			glEnable(GL_SCISSOR_TEST);
 			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glDisable(GL_SCISSOR_TEST);
 
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldFBO);
 			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
-				viewport[0], viewport[1], viewport[2], viewport[3],
+				viewport[0], viewport[1], viewport[0]+viewport[2], viewport[1]+viewport[3],
 				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 			glDisableVertexAttribArray(3);
@@ -147,7 +150,8 @@ namespace vrlib
 
 			gbuffers->use();
 			postLightingShader->use();
-			postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2] - viewport[0], viewport[3] - viewport[1]));
+			postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2], viewport[3]));
+			postLightingShader->setUniform(PostLightingUniform::windowPos, glm::vec2(viewport[0], viewport[1]));
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
 			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
@@ -210,8 +214,6 @@ namespace vrlib
 			for (Node* c : scene.renderables)
 				if (!c->getComponent<components::Renderable>()->deferred)
 					c->getComponent<components::Renderable>()->draw();
-
-
 
 			auto skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
 			if (skybox)

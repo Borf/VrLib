@@ -503,27 +503,28 @@ namespace vrlib
 		fileData = new unsigned char[fileSize];
 		fread(fileData, 1, fileSize, pFile);
 
-		vrlib::Image *image = new vrlib::Image(512, 512);
-		unsigned char tmpImage[512][512];
+		vrlib::Image *image = new vrlib::Image(1024, 1024);
+		unsigned char* tmpImage = new unsigned char[1024 * 1024];
 
 		stbtt_pack_context pc;
-		stbtt_PackBegin(&pc, tmpImage[0], 512, 512, 0, 1, NULL);
+		stbtt_PackBegin(&pc, tmpImage, 1024, 1024, 0, 1, NULL);
 		stbtt_PackSetOversampling(&pc, 2, 2);
 		stbtt_PackFontRange(&pc, fileData, 0, size, 0, 256, fontData);
 		stbtt_PackEnd(&pc);
 		//stbtt_GetPackedQuad(fontData)
 
-		for (int x = 0; x < 512; x++)
+		for (int x = 0; x < 1024; x++)
 		{
-			for (int y = 0; y < 512; y++)
+			for (int y = 0; y < 1024; y++)
 			{
-				image->data[(x + 512 * y) * 4 + 0] = 255;
-				image->data[(x + 512 * y) * 4 + 1] = 255;
-				image->data[(x + 512 * y) * 4 + 2] = 255;
-				image->data[(x + 512 * y) * 4 + 3] = tmpImage[y][x];
+				image->data[(x + 1024 * y) * 4 + 0] = 255;
+				image->data[(x + 1024 * y) * 4 + 1] = 255;
+				image->data[(x + 1024 * y) * 4 + 2] = 255;
+				image->data[(x + 1024 * y) * 4 + 3] = tmpImage[x + 1024*y];
 			}
 		}
 		texture = new Texture(image);
+		delete[] tmpImage;
 	}
 
 	

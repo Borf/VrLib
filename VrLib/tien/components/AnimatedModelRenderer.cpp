@@ -21,6 +21,8 @@ namespace vrlib
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2B4B4>(fileName);
 				model = cache[fileName];
+				if (!model)
+					return;
 				modelInstance = model->getInstance();
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
@@ -41,6 +43,8 @@ namespace vrlib
 
 			void AnimatedModelRenderer::update(float elapsedTime, Scene& scene)
 			{
+				if (!model)
+					return;
 				modelInstance->update(elapsedTime * animationSpeed);
 
 				if (callbackOnDone)

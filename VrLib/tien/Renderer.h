@@ -22,6 +22,7 @@ namespace vrlib
 			enum class PostLightingUniform
 			{
 				windowSize,
+				windowPos,
 				modelViewMatrix,
 				projectionMatrix,
 				modelViewMatrixInv,

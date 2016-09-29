@@ -73,7 +73,7 @@ namespace vrlib
 
 		});
 
-
+		glPushAttrib(GL_ENABLE_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glLoadMatrixf(glm::value_ptr(projectionMatrix));
@@ -115,7 +115,7 @@ namespace vrlib
 		glDisable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_DEPTH_TEST);
-		
+		glPopAttrib();
 
 	}
 
