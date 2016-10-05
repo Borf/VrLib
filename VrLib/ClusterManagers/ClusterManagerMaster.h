@@ -30,6 +30,6 @@ namespace vrlib
 		ClusterMaster(std::vector<std::pair<std::string, std::string> > nodes);
 
 		virtual bool isMaster();
-		virtual bool sync(std::string data);
+		virtual bool sync(const std::string &data);
 	};
 }

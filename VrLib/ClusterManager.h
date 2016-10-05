@@ -19,7 +19,7 @@ namespace vrlib
 		~ClusterManager();
 
 
-		virtual bool sync(std::string) { return false; };
+		virtual bool sync(const std::string &) { return false; };
 		virtual bool sync(std::map<std::string, DeviceDriverAdaptor*> &adaptors) { return false; };
 		virtual bool sync(std::list<ClusterDataBase*> &clusterData) { return false; };
 

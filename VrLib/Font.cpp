@@ -541,21 +541,28 @@ namespace vrlib
 
 		float x = cursor.x;
 		float y = cursor.y;
-		int lineHeight = 12;
+		float lineHeight = 12;
 		for (size_t i = 0; i < text.size(); i++)
 		{
-			if (text[i] == '\n' || (x > wrapWidth && wrapWidth != -1))
+			if (text[i] == '\\')
 			{
-				x = 0;
-				y += lineHeight;
-				lineHeight = 12;
+				i++;
+				if(text[i] == 'n')
+				{
+					x = 0;
+					y += lineHeight;
+					lineHeight = 12;
+					continue;
+				}
+
 			}
+
 //			if (charmap.find(text[i]) == charmap.end())
 //				continue;
 
 			stbtt_aligned_quad q;
 			stbtt_GetPackedQuad(fontData, 1024, 1024, text[i], &x, &y, &q, 0);
-//			lineHeight = glm::max(lineHeight, g->height);
+			lineHeight = glm::max(lineHeight, glm::abs(q.y1 - q.y0));
 
 			T v = base;
 			gl::setP2(v, glm::vec2(q.x0, q.y0));	gl::setT2(v, glm::vec2(q.s0, q.t0));

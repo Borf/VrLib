@@ -84,7 +84,7 @@ namespace vrlib
 	}
 
 
-	bool ClusterMaster::sync(std::string data)
+	bool ClusterMaster::sync(const std::string &data)
 	{
 		int len = data.size();
 
@@ -112,7 +112,7 @@ namespace vrlib
 			if (rc != 1)
 				return false;
 			double endTime = PerfMon::getInstance()->getTime();
-			if (endTime - startTime > 10)
+			if (endTime - startTime > 16)
 				logger << "Waiting for node " << nodes[i]->hostname << ", " << endTime - startTime << "ms" << Log::newline;
 		}
 
