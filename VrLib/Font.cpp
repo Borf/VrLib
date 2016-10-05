@@ -507,8 +507,8 @@ namespace vrlib
 		unsigned char* tmpImage = new unsigned char[1024 * 1024];
 
 		stbtt_pack_context pc;
-		stbtt_PackBegin(&pc, tmpImage, 1024, 1024, 0, 1, NULL);
-		stbtt_PackSetOversampling(&pc, 2, 2);
+		stbtt_PackBegin(&pc, tmpImage, 1024, 1024, 0, 0, NULL);
+		stbtt_PackSetOversampling(&pc, 1, 1);
 		stbtt_PackFontRange(&pc, fileData, 0, size, 0, 256, fontData);
 		stbtt_PackEnd(&pc);
 		//stbtt_GetPackedQuad(fontData)
@@ -554,7 +554,7 @@ namespace vrlib
 //				continue;
 
 			stbtt_aligned_quad q;
-			stbtt_GetPackedQuad(fontData, 512, 512, text[i], &x, &y, &q, 0);
+			stbtt_GetPackedQuad(fontData, 1024, 1024, text[i], &x, &y, &q, 0);
 //			lineHeight = glm::max(lineHeight, g->height);
 
 			T v = base;

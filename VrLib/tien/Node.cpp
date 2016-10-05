@@ -47,9 +47,9 @@ namespace vrlib
 			{
 				parent->children.erase(std::find(parent->children.begin(), parent->children.end(), this));
 				parent->setTreeDirty(this, false);
-				for (auto c : components)
-					delete c;
 			}
+			for (auto c : components)
+				delete c;
 			for (auto c : children)
 				delete c;
 		}

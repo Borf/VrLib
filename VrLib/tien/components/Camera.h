@@ -15,6 +15,7 @@ namespace vrlib
 			{
 			public:
 				Camera();
+				~Camera();
 				vrlib::gl::FBO* target;
 
 				void render();
