@@ -50,8 +50,8 @@ namespace vrlib
 			}
 			for (auto c : components)
 				delete c;
-			for (auto c : children)
-				delete c;
+			while(!children.empty())
+				delete children.back();
 		}
 
 		void Node::setParent(Node* newParent)
