@@ -1,7 +1,7 @@
 #include "Frustum.h"
 
 #include <glm/gtc/matrix_access.hpp>
-
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace vrlib
 {
@@ -38,6 +38,12 @@ namespace vrlib
 		}
 		glm::vec3 Frustum::getCenter()
 		{
+			glm::vec3 total(0, 0, 0);
+			for (int i = 0; i < 8; i++)
+				total += glm::unProject(glm::vec3(((i >> 0) & 1) * 2 - 1, ((i >> 1) & 1) * 2 - 1, ((i >> 2) & 1)), modelviewMatrix, projectionMatrix, glm::ivec4(-1, -1, 2, 2));
+			return total /= 8.0f;
+
+
 			glm::mat4 mat = glm::inverse(projectionMatrix);
 			auto drawVert = [&, this](const glm::vec3 &pos)
 			{
@@ -47,7 +53,6 @@ namespace vrlib
 				return glm::vec3(p);
 			};
 			
-			glm::vec3 total(0, 0, 0);
 			for (int i = 0; i < 8; i++)
 				total += drawVert(glm::vec3(((i >> 0) & 1) * 2 - 1, ((i >> 1) & 1) * 2 - 1, ((i >> 2) & 1)));
 			return total /= 8.0f;

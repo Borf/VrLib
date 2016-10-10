@@ -49,6 +49,18 @@ namespace vrlib
 			vrlib::gl::Shader<PhysicsDebugUniform>* physicsDebugShader;
 
 
+			enum class SimpleDebugUniform
+			{
+				projectionMatrix,
+				modelViewMatrix,
+				s_texture,
+				textureFactor,
+				color
+			};
+			vrlib::gl::Shader<SimpleDebugUniform>* simpleDebugShader;
+
+
+
 
 			vrlib::gl::FBO* gbuffers;
 
@@ -73,6 +85,14 @@ namespace vrlib
 
 			bool drawPhysicsDebug;
 			bool drawLightDebug;
+
+			enum class DrawMode
+			{
+				Default,
+				Albedo,
+				Normals,
+				SunLightmap
+			} drawMode;
 
 		};
 	}

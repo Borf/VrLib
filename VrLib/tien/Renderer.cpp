@@ -25,6 +25,7 @@ namespace vrlib
 		{
 			drawPhysicsDebug = false;
 			drawLightDebug = false;
+			drawMode = DrawMode::Default;
 		}
 		
 
@@ -73,7 +74,16 @@ namespace vrlib
 			physicsDebugShader->registerUniform(PhysicsDebugUniform::modelViewMatrix, "modelViewMatrix");
 
 
-
+			simpleDebugShader = new vrlib::gl::Shader<SimpleDebugUniform>("data/vrlib/tien/shaders/simpledebug.vert", "data/vrlib/tien/shaders/simpledebug.frag");
+			simpleDebugShader->bindAttributeLocation("a_position", 0);
+			simpleDebugShader->bindAttributeLocation("a_texcoord", 1);
+			simpleDebugShader->link();
+			simpleDebugShader->bindFragLocation("fragColor", 0);
+			simpleDebugShader->registerUniform(SimpleDebugUniform::projectionMatrix, "projectionMatrix");
+			simpleDebugShader->registerUniform(SimpleDebugUniform::modelViewMatrix, "modelViewMatrix");
+			simpleDebugShader->registerUniform(SimpleDebugUniform::s_texture, "s_texture");
+			simpleDebugShader->registerUniform(SimpleDebugUniform::textureFactor, "textureFactor");
+			simpleDebugShader->registerUniform(SimpleDebugUniform::color, "color");
 
 			buildOverlay();
 
@@ -341,15 +351,58 @@ namespace vrlib
 				}
 				glEnable(GL_DEPTH_TEST);
 			}
-
-
-
-
 			//camera->target->bind();
-
 			//camera->target->unbind();
 
 			glDisable(GL_BLEND);
+			if (drawMode != DrawMode::Default)
+			{
+
+				vrlib::gl::VertexP3T2 verts[] = {
+					vrlib::gl::VertexP3T2(glm::vec3(-1,-1,0), glm::vec2(0,0)),
+					vrlib::gl::VertexP3T2(glm::vec3(1,-1,0), glm::vec2(1,0)),
+					vrlib::gl::VertexP3T2(glm::vec3(1,1,0), glm::vec2(1,1)),
+					vrlib::gl::VertexP3T2(glm::vec3(-1,1,0), glm::vec2(0,1))
+				};
+				glBindVertexArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+				
+				simpleDebugShader->use();
+				simpleDebugShader->setUniform(SimpleDebugUniform::modelViewMatrix, glm::mat4());
+				simpleDebugShader->setUniform(SimpleDebugUniform::projectionMatrix, glm::mat4());
+				simpleDebugShader->setUniform(SimpleDebugUniform::textureFactor, 1.0f);
+				simpleDebugShader->setUniform(SimpleDebugUniform::s_texture, 0);
+				simpleDebugShader->setUniform(SimpleDebugUniform::color, glm::vec4(1,1,1,1));
+
+				if (drawMode == DrawMode::Albedo)
+					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[0]);
+				if (drawMode == DrawMode::Normals)
+					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[1]);
+				if (drawMode == DrawMode::SunLightmap)
+				{
+					auto light = scene.lights.back()->getComponent<vrlib::tien::components::Light>();
+					light->shadowMapDirectional->use();
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+					glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+				}
+
+				vrlib::gl::setAttributes<vrlib::gl::VertexP3T2>(verts);
+				glDisable(GL_BLEND);
+				glDisable(GL_DEPTH_TEST);
+				glDrawArrays(GL_QUADS, 0, 4);
+
+
+				if (drawMode == DrawMode::SunLightmap)
+				{
+					auto light = scene.lights.back()->getComponent<vrlib::tien::components::Light>();
+					light->shadowMapDirectional->use();
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+				}
+
+			}
+
 
 		}
 

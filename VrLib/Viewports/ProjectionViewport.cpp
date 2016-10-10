@@ -22,7 +22,7 @@ namespace vrlib
 		glm::vec3 pe = user->getEyePosition(eye);
 
 		float nearPlane = 0.001f;
-		float farPlane = 1000;
+		float farPlane = 500;
 
 		/*	glm::vec3 pa = glm::vec3(glm::vec4(screenBottomLeft,0) * user->matrix);
 			glm::vec3 pb = glm::vec3(glm::vec4(screenBottomRight,0) * user->matrix);
@@ -62,7 +62,10 @@ namespace vrlib
 			0, 0, 0, 1
 			);
 
-		return glm::translate(ret * rot, -pe);;
+		glm::mat4 rotated = ret * rot;
+		glm::mat4 translated = glm::translate(rotated, -pe);
+
+		return glm::translate(ret * rot, -pe);
 	}
 
 	void ProjectionViewport::draw(Application* application)

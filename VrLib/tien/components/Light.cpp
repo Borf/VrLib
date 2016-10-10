@@ -105,8 +105,13 @@ namespace vrlib
 					float size = 50.0f;
 
 					glm::vec3 frustumCenter = node->getScene().frustum->getCenter(); //todo: cache?
+					glm::vec3 eyePos = glm::vec3(glm::inverse(node->getScene().frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1));
+					glm::vec3 dir = frustumCenter - eyePos;
+					frustumCenter = eyePos + size * 0.5f * glm::normalize(dir);
+					printf("Eyepos:\t%f\t%f\t%f\n", eyePos.x, eyePos.y, eyePos.z);
+					printf("dir:   \t%f\t%f\t%f\n", dir.x, dir.y, dir.z);
 
-					glm::vec3 lightPosition = frustumCenter + 100.0f * node->transform->position;
+					glm::vec3 lightPosition = frustumCenter + 50.0f * node->transform->position;
 					projectionMatrix = glm::ortho(-size, size*2, -size, size*2, 0.0f, 250.0f); //TODO: auto generate
 					//projectionMatrix = glm::ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 250.0f);
 					modelViewMatrix = glm::lookAt(lightPosition, lightPosition - node->transform->position, glm::vec3(0, 1, 0));

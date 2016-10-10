@@ -21,6 +21,19 @@ namespace vrlib
 			float px, py, pz;
 		};
 
+		struct VertexP3T2
+		{
+			float px, py, pz;
+			float tx, ty;
+
+			VertexP3T2() {};
+			VertexP3T2(const glm::vec3& position, const glm::vec2 &texCoord)
+			{
+				px = position.x;	py = position.y;	pz = position.z;
+				tx = texCoord.x;	ty = texCoord.y;
+			}
+		};
+
 		struct VertexP3N3
 		{
 			float px, py, pz;
@@ -134,11 +147,12 @@ namespace vrlib
 
 		template<class T>	inline void setP3(T& vertex, const glm::vec3 &p)								{	}
 		template<>			inline void setP3<VertexP3>(VertexP3& vertex, const glm::vec3 &p)				{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3T2>(VertexP3T2& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
-		template<>			inline void setP3<VertexP3C4>(VertexP3C4& vertex, const glm::vec3 &p) { vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3C4>(VertexP3C4& vertex, const glm::vec3 &p)			{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2>(VertexP3N3T2& vertex, const glm::vec3 &p)		{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N3T2B4B4>(VertexP3N3T2B4B4& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
-		template<>			inline void setP3<VertexP3N2B2T2T2>(VertexP3N2B2T2T2& vertex, const glm::vec3 &p) { vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
+		template<>			inline void setP3<VertexP3N2B2T2T2>(VertexP3N2B2T2T2& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N2B2T2T2B4B4>(VertexP3N2B2T2T2B4B4& vertex, const glm::vec3 &p) { vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		
 
@@ -154,6 +168,7 @@ namespace vrlib
 
 		template<class T>	inline void setT2(T& vertex, const glm::vec2 &t)								{	}
 		template<>			inline void setT2(VertexP3N3T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
+		template<>			inline void setT2(VertexP3T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
 		template<>			inline void setT2(VertexP2T2& vertex, const glm::vec2 &t)						{ vertex.tx = t.x;		vertex.ty = t.y; }
 		template<>			inline void setT2(VertexP3N3T2B4B4& vertex, const glm::vec2 &t)					{ vertex.tx = t.x;		vertex.ty = t.y; }
 		template<>			inline void setT2(VertexP3N2B2T2T2& vertex, const glm::vec2 &t)					{ vertex.tx = t.x;		vertex.ty = t.y; }
@@ -203,6 +218,14 @@ namespace vrlib
 			glVertexAttribPointer(attributeIndex, 3, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
 			attributeIndex++;
 			return prevSize + 3 * sizeof(float);
+		}
+		template<>			inline int setAttribute<VertexP3T2>(int& attributeIndex, int totalSize, int offset)
+		{
+			int prevSize = setAttribute<VertexP3>(attributeIndex, totalSize, offset);
+			glEnableVertexAttribArray(attributeIndex);
+			glVertexAttribPointer(attributeIndex, 2, GL_FLOAT, GL_FALSE, totalSize, (void*)(offset + prevSize));
+			attributeIndex++;
+			return prevSize + 2 * sizeof(float);
 		}
 		template<>			inline int setAttribute<VertexP3C4>(int& attributeIndex, int totalSize, int offset)
 		{
