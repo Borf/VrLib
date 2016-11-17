@@ -50,6 +50,7 @@ namespace vrlib
 				FILE* pFile = fopen(filename->c_str(), "rb");
 				if (pFile)
 				{
+					stbi_set_flip_vertically_on_load(false);
 					//Get the data from the texture
 					unsigned char* data = stbi_load_from_file(pFile, &width, &height, &components, 4);
 					//Close the file

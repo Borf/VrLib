@@ -113,6 +113,18 @@ namespace vrlib
 		{
 			prevControllerStates[unDevice] = controllerStates[unDevice];
 			m_pHMD->GetControllerState(unDevice, &controllerStates[unDevice]);
+
+			if (controllers.size() > 0 && controllers[0] == unDevice)
+			{
+				this->touch0.x = controllerStates[unDevice].rAxis[0].x;
+				this->touch0.y = controllerStates[unDevice].rAxis[0].y;
+			}
+			else  if (controllers.size() > 1 && controllers[1] == unDevice)
+			{
+				this->touch1.x = controllerStates[unDevice].rAxis[0].x;
+				this->touch1.y = controllerStates[unDevice].rAxis[0].y;
+			}
+
 		}
 	}
 
@@ -125,6 +137,8 @@ namespace vrlib
 			return new OpenVrPositionDeviceDriverAdaptor(this, src);
 		else if (src.substr(0, 6) == "button")
 			return new OpenVrButtonDeviceDriverAdaptor(this, src);
+		else if (src == "RightThumbPos" || src == "LeftThumbPos")
+			return new OpenVrTouchDeviceDriverAdaptor(this, src);
 
 		logger << "Unknown OpenVR Device source: " << src << Log::newline;
 		return nullptr;
@@ -147,6 +161,24 @@ namespace vrlib
 		else
 			logger << "Unknown OpenVR device: " << src << Log::newline;
 		return glm::mat4();
+	}
+
+
+	OpenVRDriver::OpenVrTouchDeviceDriverAdaptor::OpenVrTouchDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config)
+	{
+		this->driver = driver;
+		this->src = config;
+	}
+
+	glm::vec2 OpenVRDriver::OpenVrTouchDeviceDriverAdaptor::getData()
+	{
+		if (src == "RightThumbPos")
+			return driver->touch0;
+		else if (src == "LeftThumbPos")
+			return driver->touch1;
+		else
+			logger << "Unknown OpenVR device: " << src << Log::newline;
+		return glm::vec2();
 	}
 
 

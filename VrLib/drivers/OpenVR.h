@@ -36,6 +36,16 @@ namespace vrlib
 			DigitalState getData();
 		};
 
+		class OpenVrTouchDeviceDriverAdaptor : public TwoDimensionDeviceDriverAdaptor
+		{
+			std::string src;
+			OpenVRDriver* driver;
+			int id;
+			uint64_t bitmask;
+		public:
+			OpenVrTouchDeviceDriverAdaptor(OpenVRDriver* driver, const std::string &config);
+			glm::vec2 getData();
+		};
 
 
 		json::Value config;
@@ -56,6 +66,9 @@ namespace vrlib
 		glm::mat4 controller1;
 		glm::mat4 lighthouse0;
 		glm::mat4 lighthouse1;
+
+		glm::vec2 touch0;
+		glm::vec2 touch1;
 
 
 		OpenVRDriver(json::Value config);

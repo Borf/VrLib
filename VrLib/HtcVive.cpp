@@ -10,6 +10,8 @@ namespace vrlib
 		controllers[1].transform.init("WandPositionLeft");
 
 
+
+
 		controllers[0].applicationMenuButton.init("buttonRightMenu");
 		controllers[0].gripButton.init("buttonRightGrip");
 		controllers[0].touchButton.init("buttonRightTouch");

@@ -15,6 +15,8 @@ namespace vrlib
 			vrlib::DigitalDevice		gripButton;
 			vrlib::DigitalDevice		touchButton;
 			vrlib::DigitalDevice		triggerButton;
+
+			vrlib::TwoDimensionDevice	thumbPad;
 		} controllers[2];
 
 		vrlib::PositionalDevice hmd;
