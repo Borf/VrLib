@@ -3,6 +3,9 @@
 #include <VrLib/VrLib.h>
 #include <VrLib/json.h>
 
+
+#include <glm/vec2.hpp>
+
 #include <string>
 #include <list>
 #include <map>
@@ -160,6 +163,10 @@ namespace vrlib
 		inline int getWindowWidth()
 		{
 			return windowWidth;
+		}
+		inline glm::ivec2 getWindowSize()
+		{
+			return glm::ivec2(windowWidth, windowHeight);
 		}
 
 		void loadConfig(std::string fileName);

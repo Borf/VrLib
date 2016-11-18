@@ -112,7 +112,7 @@ namespace vrlib
 		for (vr::TrackedDeviceIndex_t unDevice = 0; unDevice < vr::k_unMaxTrackedDeviceCount; unDevice++)
 		{
 			prevControllerStates[unDevice] = controllerStates[unDevice];
-			m_pHMD->GetControllerState(unDevice, &controllerStates[unDevice]);
+			m_pHMD->GetControllerState(unDevice, &controllerStates[unDevice], sizeof(vr::VRControllerState_t));
 
 			if (controllers.size() > 0 && controllers[0] == unDevice)
 			{

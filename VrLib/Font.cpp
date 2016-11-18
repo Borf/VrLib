@@ -486,7 +486,7 @@ namespace vrlib
 
 
 
-	TrueTypeFont::TrueTypeFont(const std::string &name, float size)
+	TrueTypeFont::TrueTypeFont(const std::string &name, float size, int oversample)
 	{
 		fileData = nullptr;
 		logger << "Loading font 'c:\\windows\\fonts\\" << name << ".ttf" << Log::newline;
@@ -508,7 +508,8 @@ namespace vrlib
 
 		stbtt_pack_context pc;
 		stbtt_PackBegin(&pc, tmpImage, 1024, 1024, 0, 0, NULL);
-		stbtt_PackSetOversampling(&pc, 1, 1);
+		if(oversample > 0)
+			stbtt_PackSetOversampling(&pc, oversample, oversample);
 		stbtt_PackFontRange(&pc, fileData, 0, size, 0, 256, fontData);
 		stbtt_PackEnd(&pc);
 		//stbtt_GetPackedQuad(fontData)
@@ -525,6 +526,35 @@ namespace vrlib
 		}
 		texture = new Texture(image);
 		delete[] tmpImage;
+	}
+
+
+
+	float TrueTypeFont::textlen(const std::string & text)
+	{
+		float x = 0;
+		float y = 0;
+		float lineHeight = 12;
+		for (size_t i = 0; i < text.size(); i++)
+		{
+			if (text[i] == '\\')
+			{
+				i++;
+				if (text[i] == 'n')
+				{
+					x = 0;
+					y += lineHeight;
+					lineHeight = 12;
+					continue;
+				}
+
+			}
+			stbtt_aligned_quad q;
+			stbtt_GetPackedQuad(fontData, 1024, 1024, text[i], &x, &y, &q, 0);
+			lineHeight = glm::max(lineHeight, glm::abs(q.y1 - q.y0));
+		}
+
+		return x;
 	}
 
 	

@@ -93,7 +93,7 @@ namespace vrlib
 	class TrueTypeFont
 	{
 	public:
-		TrueTypeFont(const std::string &name, float size = 32.0f);
+		TrueTypeFont(const std::string &name, float size = 32.0f, int oversample = 1);
 		unsigned char* fileData;
 		Texture* texture;
 		stbtt_packedchar fontData[256];
