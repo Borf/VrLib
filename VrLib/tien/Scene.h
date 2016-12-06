@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Node.h"
+#include <list>
 #include <set>
 #include <VrLib/gl/Vertex.h>
 #include <btBulletDynamicsCommon.h>

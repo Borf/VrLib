@@ -1,6 +1,5 @@
 #pragma once
 
-#include <list>
 #include <vector>
 #include <functional>
 #include <algorithm>
@@ -26,7 +25,7 @@ namespace vrlib
 			virtual void setTreeDirty(Node* newNode, bool isNewNode) { if(parent) parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
-			std::list<Node*> children;
+			std::vector<Node*> children;
 		public:
 			components::Transform* transform;
 			components::RigidBody* rigidBody;
@@ -99,6 +98,15 @@ namespace vrlib
 			std::vector<Node*> findNodesWithName(const std::string &name);
 			Node* findNodeWithGuid(const std::string &guid);
 
+			inline std::vector<Node*> getChildren() const
+			{
+				return std::vector<Node*>(children);
+			}
+
+			inline Node* getChild(int index) const
+			{
+				return children[index];
+			}
 
 			virtual Scene& getScene();
 			void fortree(const std::function<void(Node*)> &callback);

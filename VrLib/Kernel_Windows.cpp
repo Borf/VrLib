@@ -61,8 +61,12 @@ namespace vrlib
 		switch (message) {
 		case WM_SIZE: // If our window is resizing
 		{
-			windowWidth = LOWORD(lParam);
-			windowHeight = HIWORD(lParam);
+			//windowWidth = LOWORD(lParam);
+			//windowHeight = HIWORD(lParam);
+			RECT rcClient;
+			GetClientRect(hWnd, &rcClient);
+			windowWidth = rcClient.right - rcClient.left;
+			windowHeight = rcClient.bottom - rcClient.top;
 			break;
 		}
 		case WM_DESTROY:

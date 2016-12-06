@@ -109,7 +109,8 @@ namespace vrlib
 
 			glm::mat4 modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
-
+			
+			glEnable(GL_DEPTH_TEST);
 			for (auto l : scene.lights)
 			{
 				if (!l->light)continue;
