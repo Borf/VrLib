@@ -42,6 +42,7 @@ namespace vrlib
 				bool moveTo(const glm::vec3 &target, float speed);
 				void rotate(const glm::vec3 &angle);
 
+				virtual void buildEditor(EditorBuilder* builder);
 
 			};
 		}

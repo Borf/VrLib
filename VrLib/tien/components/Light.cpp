@@ -169,6 +169,65 @@ namespace vrlib
 
 			}
 
+
+			void Light::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Light");
+
+				char rgb[10];
+				sprintf(rgb, "%02X%02X%02X", (int)(color.r * 256), (int)(color.g * 256), (int)(color.b * 256));
+
+				builder->beginGroup("Color");
+				builder->addTextBox(rgb, [this](const std::string &) {});
+				builder->endGroup();
+
+				builder->beginGroup("Intensity");
+				builder->addTextBox(std::to_string(intensity), [this](const std::string &) {});
+				builder->endGroup();
+
+				builder->beginGroup("Light type");
+				builder->addComboBox(type == Type::directional ? "Directional" :
+									(type == Type::point ? "Point" :
+									(type == Type::spot ? "Spot" :
+										"none")), { "Directional", "Point", "Spot" }, [this](const std::string &newValue) {
+					if (newValue == "Directional")
+						type = Type::directional;
+					else if (newValue == "Point")
+						type = Type::point;
+					else if (newValue == "Spot")
+						type = Type::spot;
+				});
+				builder->endGroup();
+
+				builder->beginGroup("Spotlight Angle");
+				builder->addTextBox(std::to_string(spotlightAngle), [this](const std::string &) {});
+				builder->endGroup();
+
+				builder->beginGroup("Range");
+				builder->addTextBox(std::to_string(range), [this](const std::string &) {});
+				builder->endGroup();
+
+				builder->beginGroup("Baking");
+				builder->addComboBox(baking == Baking::realtime ? "Realtime" : "Baked", { "Realtime", "Baked" }, [this](const std::string &newValue) {
+					baking = newValue == "Realtime" ? Baking::realtime : Baking::baked;
+				});
+				builder->endGroup();
+
+				builder->beginGroup("Shadow");
+				builder->addComboBox(shadow == Shadow::none ? "None" :
+									(shadow == Shadow::shadowmap ? "Shadowmap" :
+									(shadow == Shadow::shadowvolume ? "Shadowvolume" :
+										"None")), { "None", "Shadowmap", "Shadowvolume" }, [this](const std::string &newValue) {
+					if (newValue == "None")
+						shadow = Shadow::none;
+					else if (newValue == "Shadowmap")
+						shadow = Shadow::shadowmap;
+					else if (newValue == "Shadowvolume")
+						shadow = Shadow::shadowvolume;
+				});				
+				builder->endGroup();
+			}
+
 		}
 	}
 }

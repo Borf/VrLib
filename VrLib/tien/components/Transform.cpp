@@ -92,6 +92,34 @@ namespace vrlib
 			{
 				rotation *= glm::quat(angles);
 			}
+
+
+
+
+			void Transform::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Transform");
+
+				builder->beginGroup("Translate", false);
+				builder->addTextBox(std::to_string(position.x), [this](const std::string & newValue) { position.x = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(position.y), [this](const std::string & newValue) { position.y = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(position.z), [this](const std::string & newValue) { position.z = atof(newValue.c_str());  });
+				builder->endGroup();
+
+				builder->beginGroup("Scale", false);
+				builder->addTextBox(std::to_string(scale.x), [this](const std::string & newValue) { scale.x = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(scale.y), [this](const std::string & newValue) { scale.y = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(scale.z), [this](const std::string & newValue) { scale.z = atof(newValue.c_str());  });
+				builder->endGroup();
+
+				builder->beginGroup("Rotation");
+				builder->addTextBox(std::to_string(rotation.x), [this](const std::string & newValue) { rotation.x = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(rotation.y), [this](const std::string & newValue) { rotation.y = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(rotation.z), [this](const std::string & newValue) { rotation.z = atof(newValue.c_str());  });
+				builder->addTextBox(std::to_string(rotation.w), [this](const std::string & newValue) { rotation.w = atof(newValue.c_str());  });
+				builder->endGroup();
+
+			}
 		}
 	}
 }

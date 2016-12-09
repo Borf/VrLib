@@ -65,6 +65,8 @@ namespace vrlib
 
 				bool castShadow;
 				bool cullBackFaces;
+				virtual void buildEditor(EditorBuilder* builder) override;
+
 			};
 		}
 	}

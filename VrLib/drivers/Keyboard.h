@@ -67,6 +67,7 @@ namespace vrlib
 		KeyboardDeviceDriver();
 		virtual void keyDown(int button);
 		virtual void keyUp(int button);
+		virtual void keyChar(char letter);
 
 		bool isPressed(KeyboardButton button);
 		bool isModPressed(KeyboardModifiers mods);

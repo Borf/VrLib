@@ -20,6 +20,8 @@ namespace vrlib
 
 				void render();
 				json::Value toJson(json::Value &meshes) const override;
+				virtual void buildEditor(EditorBuilder* builder) override;
+
 			};
 		}
 	}

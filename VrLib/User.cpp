@@ -22,9 +22,9 @@ namespace vrlib
 		if (eye == 0)
 			return glm::vec3(matrix * glm::vec4(0, 0, 0, 1));
 		if (eye == 1)
-			return glm::vec3(matrix * glm::vec4(0, eyeDist, 0, 1));
+			return glm::vec3(matrix * glm::vec4(-eyeDist, 0, 0, 1));
 		//if(eye == 2)
-		return glm::vec3(matrix * glm::vec4(0, -eyeDist, 0, 1));
+		return glm::vec3(matrix * glm::vec4(eyeDist, 0, 0, 1));
 	}
 
 	std::string User::getName()

@@ -36,6 +36,10 @@ namespace vrlib
 				ret["type"] = "camera";
 				return ret;
 			}
+			void Camera::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Camera");
+			}
 		}
 	}
 }

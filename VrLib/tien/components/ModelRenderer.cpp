@@ -59,6 +59,24 @@ namespace vrlib
 				return ret;
 			}
 
+			void ModelRenderer::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Model Renderer");
+
+				builder->beginGroup("Filename");
+				builder->addTextBox(fileName, [this](const std::string &) {});
+				builder->endGroup();
+
+				builder->beginGroup("Casts Shadows");
+				builder->addCheckbox(castShadow, [this](bool newValue) {castShadow = newValue; });
+				builder->endGroup();
+
+				builder->beginGroup("Cull backfaces");
+				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
+				builder->endGroup();
+
+			}
+
 			ModelRenderer::~ModelRenderer()
 			{
 

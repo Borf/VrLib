@@ -501,6 +501,54 @@ namespace vrlib
 	void State::draw(const std::function<void(const glm::mat4&)>& modelviewMatrixCallback, const std::function<void(const Material&)>& materialCallback)
 	{
 		model->draw(modelviewMatrixCallback, materialCallback);
+
+
+#if 0
+		glColor4f(1, 1, 1, 1);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_DEPTH_TEST);
+		glUseProgram(0);
+		glPushMatrix();
+		glLineWidth(1);
+		glBegin(GL_LINES);
+
+		std::function<void(Bone*, const glm::mat4 &)> drawStuff;
+		drawStuff = [&drawStuff, this](Bone* bone, const glm::mat4 &parentMatrix)
+		{
+			glm::mat4 mat = parentMatrix * bone->getMatrix(animations[0]->animation, animations[0]->time);// parentMatrix * bone->matrix;
+			//glm::mat4 mat = parentMatrix * bone->getMatrix(nullptr, 0);// parentMatrix * bone->matrix;
+			glm::vec4 p2(parentMatrix * glm::vec4(0, 0, 0, 1));
+			glm::vec4 p1(mat * glm::vec4(0, 0, 0, 1));
+
+			glm::vec3 px(mat * glm::vec4(.1f, 0, 0, 1));
+			glm::vec3 py(mat * glm::vec4(0, .1f, 0, 1));
+			glm::vec3 pz(mat * glm::vec4(0, 0, .1f, 1));
+
+			glColor3f(1, 1, 1);
+			glVertex3f(p1.x, p1.y, p1.z);
+			glVertex3f(p2.x, p2.y, p2.z);
+			glColor3f(1, 0, 0);
+			glVertex3f(p1.x, p1.y, p1.z);
+			glVertex3f(px.x, px.y, px.z);
+			glColor3f(0, 1, 0);
+			glVertex3f(p1.x, p1.y, p1.z);
+			glVertex3f(py.x, py.y, py.z);
+			glColor3f(0, 0, 1);
+			glVertex3f(p1.x, p1.y, p1.z);
+			glVertex3f(pz.x, pz.y, pz.z);
+
+			for (auto c : bone->children)
+				drawStuff(c, mat);
+
+		};
+
+		drawStuff(this->model->rootBone, glm::mat4());
+
+		glEnd();
+
+#endif
+
 	}
 
 

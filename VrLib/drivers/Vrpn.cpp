@@ -31,6 +31,9 @@ namespace vrlib
 		rot = rot * customRot;
 
 		rot = glm::scale(glm::mat4(), glm::vec3(1, -1, 1)) * rot;
+		rot = rot * glm::rotate(glm::mat4(), glm::radians(-90.0f), glm::vec3(0, 0, 1));
+
+
 
 		driver->data[t.sensor] = glm::translate(glm::mat4(), glm::vec3((float)t.pos[0], (float)t.pos[1], (float)t.pos[2])) * rot;
 	}

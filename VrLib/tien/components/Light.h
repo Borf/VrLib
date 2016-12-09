@@ -55,6 +55,8 @@ namespace vrlib
 				float spotlightAngle;
 				float range; //point / spotlight
 
+				virtual void buildEditor(EditorBuilder* builder) override;
+
 			};
 		}
 	}

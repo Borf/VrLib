@@ -87,6 +87,10 @@ namespace vrlib
 			if (keyboardDriver)
 				keyboardDriver->keyUp(wParam);
 			break;
+		case WM_CHAR:
+			if (keyboardDriver)
+				keyboardDriver->keyChar(wParam);
+			break;
 		case WM_LBUTTONDOWN:
 			if (mouseDriver)
 				mouseDriver->mouseDown(MouseButtonDeviceDriver::Left);

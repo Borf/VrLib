@@ -137,6 +137,10 @@ namespace vrlib
 			buttonsPressed[buttonLookup[button]] = false;
 	}
 
+	void KeyboardDeviceDriver::keyChar(char character)
+	{
+	}
+
 	bool KeyboardDeviceDriver::isPressed( KeyboardButton button )
 	{
 		return buttonsPressed[button];
