@@ -63,8 +63,16 @@ namespace vrlib
 			{
 				builder->addTitle("Model Renderer");
 
-				builder->beginGroup("Filename");
-				builder->addTextBox(fileName, [this](const std::string &) {});
+				builder->beginGroup("Filename", false);
+				EditorBuilder::TextBox* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});
+				builder->addBrowseButton(EditorBuilder::BrowseType::Model, [this, filenameBox](const std::string &file) 
+				{
+					fileName = file;
+					filenameBox->setText(fileName);
+					if (cache.find(fileName) == cache.end())
+						cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
+					model = cache[fileName];
+				});
 				builder->endGroup();
 
 				builder->beginGroup("Casts Shadows");

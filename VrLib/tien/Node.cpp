@@ -167,6 +167,13 @@ namespace vrlib
 				c->fortree(callback);
 		}
 
+		void Node::fortree(const std::function<void(const Node*)> &callback) const
+		{
+			callback(this);
+			for (const Node* c : children)
+				c->fortree(callback);
+		}
+
 		void Node::addComponent(Component* component)
 		{
 			assert(!component->node);
@@ -197,9 +204,9 @@ namespace vrlib
 			}
 
 		}
-		template<> components::Light* Node::getComponent<components::Light>() { return light; }
-		template<> components::Transform* Node::getComponent<components::Transform>() { return transform; }
-		template<> components::RigidBody* Node::getComponent<components::RigidBody>() { return rigidBody; }
+		template<> components::Light* Node::getComponent<components::Light>()  const { return light; }
+		template<> components::Transform* Node::getComponent<components::Transform>()  const { return transform; }
+		template<> components::RigidBody* Node::getComponent<components::RigidBody>()  const { return rigidBody; }
 
 	}
 }

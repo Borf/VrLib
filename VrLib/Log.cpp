@@ -103,6 +103,21 @@ namespace vrlib
 		return *this;
 	}
 
+	Log& Log::operator<<(const glm::vec2& vec)
+	{
+		return (*this) << vec.x << "," << vec.y;
+	}
+
+	Log& Log::operator<<(const glm::vec3& vec)
+	{
+		return (*this) << vec.x << "," << vec.y << vec.z;
+	}
+
+	Log& Log::operator<<(const glm::vec4& vec)
+	{
+		return (*this) << vec.x << "," << vec.y << vec.z << vec.w;
+	}
+
 	std::string Log::format(char* fmt, ...)
 	{
 		char text[10240];

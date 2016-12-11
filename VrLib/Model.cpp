@@ -20,7 +20,8 @@ namespace vrlib
 		logger << "Loading " << fileName << Log::newline;
 #endif
 		std::string extension = fileName;
-		extension = extension.substr(extension.rfind("."));
+		if(extension.find(".") != std::string::npos)
+			extension = extension.substr(extension.rfind("."));
 		std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
 
 		if (extension == ".shape")
@@ -144,7 +145,16 @@ namespace vrlib
 
 	std::vector<glm::vec3> Model::collisions(const math::Ray &ray)
 	{
+		std::vector<float> col = collisionFractions(ray);
 		std::vector<glm::vec3> result;
+		for(auto c : col)
+			result.push_back(ray.mOrigin + c * ray.mDir);
+		return result;
+	}
+
+	std::vector<float> Model::collisionFractions(const math::Ray &ray)
+	{
+		std::vector<float> result;
 		if (!aabb.hasRayCollision(ray, 0, 10000))
 			return result;
 		std::vector<glm::vec3> verts = getTriangles();
@@ -152,9 +162,10 @@ namespace vrlib
 		float f = 0;
 		for (size_t i = 0; i < verts.size(); i += 3)
 			if (ray.LineIntersectPolygon(&verts[i], 3, f))
-				result.push_back(ray.mOrigin + f * ray.mDir);
+				result.push_back(f);
 		return result;
 	}
+
 
 
 #define prototypes(x) \

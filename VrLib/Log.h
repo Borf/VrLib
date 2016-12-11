@@ -3,6 +3,7 @@
 #include <VrLib/VrLib.h>
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace vrlib
 {
@@ -26,6 +27,9 @@ namespace vrlib
 		Log& operator <<(unsigned int txt);
 		Log& operator <<(float txt);
 		Log& operator <<(double txt);
+		Log& operator <<(const glm::vec2 &vec);
+		Log& operator <<(const glm::vec3 &vec);
+		Log& operator <<(const glm::vec4 &vec);
 		Log& operator <<(const EndLine& endline);
 
 

@@ -604,7 +604,8 @@ namespace vrlib
 			gl::setP2(v, glm::vec2(q.x0, q.y1));	gl::setT2(v, glm::vec2(q.s0, q.t1));
 			verts.push_back(v);
 		}
-
+		if (verts.empty())
+			return;
 		texture->bind();
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		gl::setAttributes<T>(&verts[0]);

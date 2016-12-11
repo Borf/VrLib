@@ -91,5 +91,6 @@ namespace vrlib
 		void recenterToCenterBottom(std::vector<VertexFormat> &vertices);
 
 		std::vector<glm::vec3> collisions(const vrlib::math::Ray &ray);
+		std::vector<float> collisionFractions(const vrlib::math::Ray &ray);
 	};
 }

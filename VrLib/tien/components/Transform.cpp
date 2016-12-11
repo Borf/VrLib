@@ -6,6 +6,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <sstream>
+
 namespace vrlib
 {
 	namespace tien
@@ -94,6 +96,12 @@ namespace vrlib
 			}
 
 
+			std::string toString(float value)
+			{
+				std::ostringstream ss;
+				ss << value;
+				return ss.str();
+			}
 
 
 			void Transform::buildEditor(EditorBuilder * builder)
@@ -101,22 +109,37 @@ namespace vrlib
 				builder->addTitle("Transform");
 
 				builder->beginGroup("Translate", false);
-				builder->addTextBox(std::to_string(position.x), [this](const std::string & newValue) { position.x = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(position.y), [this](const std::string & newValue) { position.y = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(position.z), [this](const std::string & newValue) { position.z = atof(newValue.c_str());  });
+				builder->addTextBox(toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
+				builder->addTextBox(toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
+				builder->addTextBox(toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
 				builder->endGroup();
 
 				builder->beginGroup("Scale", false);
-				builder->addTextBox(std::to_string(scale.x), [this](const std::string & newValue) { scale.x = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(scale.y), [this](const std::string & newValue) { scale.y = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(scale.z), [this](const std::string & newValue) { scale.z = atof(newValue.c_str());  });
+				builder->addTextBox(toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
+				builder->addTextBox(toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
+				builder->addTextBox(toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
+				builder->addCheckbox(true, [](bool newValue) {});
 				builder->endGroup();
 
-				builder->beginGroup("Rotation");
-				builder->addTextBox(std::to_string(rotation.x), [this](const std::string & newValue) { rotation.x = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(rotation.y), [this](const std::string & newValue) { rotation.y = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(rotation.z), [this](const std::string & newValue) { rotation.z = atof(newValue.c_str());  });
-				builder->addTextBox(std::to_string(rotation.w), [this](const std::string & newValue) { rotation.w = atof(newValue.c_str());  });
+				glm::vec3 euler = glm::eulerAngles(rotation);
+
+				//TODO: use yaw/pitch/roll for rotation
+				builder->beginGroup("Rotation", false);
+				builder->addTextBox(toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
+					glm::vec3 euler = glm::eulerAngles(rotation);
+					euler.x = glm::radians(atof(newValue.c_str()));
+					rotation = glm::quat(euler);
+				});
+				builder->addTextBox(toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
+					glm::vec3 euler = glm::eulerAngles(rotation);
+					euler.y = glm::radians(atof(newValue.c_str()));
+					rotation = glm::quat(euler);
+				});
+				builder->addTextBox(toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
+					glm::vec3 euler = glm::eulerAngles(rotation);
+					euler.z = glm::radians(atof(newValue.c_str()));
+					rotation = glm::quat(euler);
+				});
 				builder->endGroup();
 
 			}

@@ -47,7 +47,7 @@ namespace vrlib
 			json::Value asJson(json::Value &meshes) const;
 			void fromJson(const json::Value &json, const json::Value &totalJson);
 
-			template<class T> T* getComponent()
+			template<class T> T* getComponent() const
 			{
 				for (auto c : components)
 				{
@@ -110,11 +110,12 @@ namespace vrlib
 
 			virtual Scene& getScene();
 			void fortree(const std::function<void(Node*)> &callback);
+			void fortree(const std::function<void(const Node*)> &callback) const;
 			void addComponent(Component* component);
 		};
-		template<> components::Light* Node::getComponent<components::Light>();
-		template<> components::Transform* Node::getComponent<components::Transform>();
-		template<> components::RigidBody* Node::getComponent<components::RigidBody>();
+		template<> components::Light* Node::getComponent<components::Light>() const;
+		template<> components::Transform* Node::getComponent<components::Transform>() const;
+		template<> components::RigidBody* Node::getComponent<components::RigidBody>() const;
 
 	}
 }

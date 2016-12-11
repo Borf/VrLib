@@ -35,6 +35,12 @@ namespace vrlib
 		kernel->config["local"]["window"]["vsync"] = false;
 		kernel->config["local"]["window"]["cursor"] = true;
 
+		char hostname[255];
+		gethostname(hostname, 255);
+		if(strcmp(hostname, "BorfDesktop") == 0)
+			kernel->config["local"]["window"]["vsync"] = true;
+
+
 		kernel->viewports.push_back(new NullViewPort());
 
 		kernel->keyboardDriver = this;
