@@ -378,8 +378,17 @@ namespace vrlib
 	std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> AssimpModel<VertexFormat>::getIndexedTriangles() const
 	{
 		std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> ret;
-
-//TODO
+		for (const Mesh& mesh : meshes)
+		{
+			for (int i = mesh.indexStart; i < mesh.indexStart + mesh.indexCount; i++)
+			{
+				glm::vec3 v = glm::make_vec3(&vertices[indices[i]].px);
+				v = glm::vec3(mesh.globalTransform * glm::vec4(v, 1));
+				ret.first.push_back(ret.first.size());
+				ret.second.push_back(glm::vec3(v.x, v.y, v.z));
+			}
+		}
+//TODO: return properly
 		return ret;
 	}
 
