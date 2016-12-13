@@ -42,10 +42,10 @@ namespace vrlib
 		CreateFrameBuffer(m_nRenderWidth, m_nRenderHeight, leftEyeDesc);
 		CreateFrameBuffer(m_nRenderWidth, m_nRenderHeight, rightEyeDesc);
 
-		vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(vr::Eye_Left, 0.1f, 500.0f, vr::API_OpenGL);
+		vr::HmdMatrix44_t mat = m_pHMD->GetProjectionMatrix(vr::Eye_Left, 0.1f, 500.0f);
 		projectionLeft = glm::transpose(glm::make_mat4((float*)mat.m));
 
-		mat = m_pHMD->GetProjectionMatrix(vr::Eye_Right, 0.1f, 500.0f, vr::API_OpenGL);
+		mat = m_pHMD->GetProjectionMatrix(vr::Eye_Right, 0.1f, 500.0f);
 		projectionRight = glm::transpose(glm::make_mat4((float*)mat.m));
 
 
@@ -172,9 +172,9 @@ glUseProgram( 0 );
 		glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 
 
-		vr::Texture_t leftEyeTexture = { (void*)leftEyeDesc.m_nResolveTextureId, vr::API_OpenGL, vr::ColorSpace_Gamma };
+		vr::Texture_t leftEyeTexture = { (void*)leftEyeDesc.m_nResolveTextureId, vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
 		vr::VRCompositor()->Submit(vr::Eye_Left, &leftEyeTexture);
-		vr::Texture_t rightEyeTexture = { (void*)rightEyeDesc.m_nResolveTextureId, vr::API_OpenGL, vr::ColorSpace_Gamma };
+		vr::Texture_t rightEyeTexture = { (void*)rightEyeDesc.m_nResolveTextureId, vr::TextureType_OpenGL, vr::ColorSpace_Gamma };
 		vr::VRCompositor()->Submit(vr::Eye_Right, &rightEyeTexture);
 
 	}
