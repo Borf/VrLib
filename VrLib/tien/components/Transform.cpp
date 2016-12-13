@@ -25,7 +25,7 @@ namespace vrlib
 			Transform::Transform(const vrlib::json::Value & json)
 			{
 				position = glm::vec3(json["position"][0].asFloat(), json["position"][1].asFloat(), json["position"][2].asFloat());
-				rotation = glm::quat(json["rotation"][0].asFloat(), json["rotation"][1].asFloat(), json["rotation"][2].asFloat(), json["rotation"][3].asFloat());
+				rotation = glm::quat(json["rotation"][3].asFloat(), json["rotation"][0].asFloat(), json["rotation"][1].asFloat(), json["rotation"][2].asFloat());
 				scale = glm::vec3(json["scale"][0].asFloat(), json["scale"][1].asFloat(), json["scale"][2].asFloat());
 			}
 
