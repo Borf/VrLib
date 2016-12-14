@@ -173,6 +173,24 @@ namespace vrlib
 			});
 		}
 
+		std::pair<Node*, glm::vec3> Scene::castRay(const math::Ray & ray, bool physics) const
+		{
+			float closest = 99999;
+			std::pair<Node*, glm::vec3> ret(nullptr, glm::vec3(0, 0, 0));
+
+			castRay(ray, [&](Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)
+			{
+				if (hitFraction < closest)
+				{
+					closest = hitFraction;
+					ret.first = node;
+					ret.second = hitPosition;
+				}
+				return true;
+			});
+			return ret;
+		}
+
 		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics) const
 		{
 			if (physics)

@@ -28,88 +28,88 @@ enum Keys
 namespace vrlib
 {
 	KeyboardDeviceDriver::keymap KeyboardDeviceDriver::keyMapping[] = {
-		{ KeyboardDeviceDriver::KEY_PAGEUP,			"pageup",		VK_PRIOR },
-		{ KeyboardDeviceDriver::KEY_PAGEDOWN,		"pagedown",		VK_NEXT },
-		{ KeyboardDeviceDriver::KEY_HOME,			"home",			VK_HOME },
-		{ KeyboardDeviceDriver::KEY_END,			"end",			VK_END },
-		{ KeyboardDeviceDriver::KEY_INSERT,			"insert",		VK_INSERT },
-		{ KeyboardDeviceDriver::KEY_DELETE,			"delete",		VK_DELETE },
-		{ KeyboardDeviceDriver::KEY_F1		,		"f1",			VK_F1 },
-		{ KeyboardDeviceDriver::KEY_F2		,		"f2",			VK_F2 },
-		{ KeyboardDeviceDriver::KEY_F3		,		"f3",			VK_F3 },
-		{ KeyboardDeviceDriver::KEY_F4		,		"f4",			VK_F4 },
-		{ KeyboardDeviceDriver::KEY_F5		,		"f5",			VK_F5 },
-		{ KeyboardDeviceDriver::KEY_F6		,		"f6",			VK_F6 },
-		{ KeyboardDeviceDriver::KEY_F7		,		"f7",			VK_F7 },
-		{ KeyboardDeviceDriver::KEY_F8		,		"f8",			VK_F8 },
-		{ KeyboardDeviceDriver::KEY_F9		,		"f9",			VK_F9 },
-		{ KeyboardDeviceDriver::KEY_F10		,		"f10",			VK_F10 },
-		{ KeyboardDeviceDriver::KEY_F11		,		"f11",			VK_F11 },
-		{ KeyboardDeviceDriver::KEY_F12		,		"f12",			VK_F12 },
+		{ KeyboardButton::KEY_PAGEUP,			"pageup",		VK_PRIOR },
+		{ KeyboardButton::KEY_PAGEDOWN,		"pagedown",		VK_NEXT },
+		{ KeyboardButton::KEY_HOME,			"home",			VK_HOME },
+		{ KeyboardButton::KEY_END,			"end",			VK_END },
+		{ KeyboardButton::KEY_INSERT,			"insert",		VK_INSERT },
+		{ KeyboardButton::KEY_DELETE,			"delete",		VK_DELETE },
+		{ KeyboardButton::KEY_F1		,		"f1",			VK_F1 },
+		{ KeyboardButton::KEY_F2		,		"f2",			VK_F2 },
+		{ KeyboardButton::KEY_F3		,		"f3",			VK_F3 },
+		{ KeyboardButton::KEY_F4		,		"f4",			VK_F4 },
+		{ KeyboardButton::KEY_F5		,		"f5",			VK_F5 },
+		{ KeyboardButton::KEY_F6		,		"f6",			VK_F6 },
+		{ KeyboardButton::KEY_F7		,		"f7",			VK_F7 },
+		{ KeyboardButton::KEY_F8		,		"f8",			VK_F8 },
+		{ KeyboardButton::KEY_F9		,		"f9",			VK_F9 },
+		{ KeyboardButton::KEY_F10		,		"f10",			VK_F10 },
+		{ KeyboardButton::KEY_F11		,		"f11",			VK_F11 },
+		{ KeyboardButton::KEY_F12		,		"f12",			VK_F12 },
 
-		{ KeyboardDeviceDriver::KEY_NUMPAD_0,		"numpad0",		VK_NUMPAD0 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_1,		"numpad1",		VK_NUMPAD1 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_2,		"numpad2",		VK_NUMPAD2 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_3,		"numpad3",		VK_NUMPAD3 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_4,		"numpad4",		VK_NUMPAD4 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_5,		"numpad5",		VK_NUMPAD5 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_6,		"numpad6",		VK_NUMPAD6 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_7,		"numpad7",		VK_NUMPAD7 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_8,		"numpad8",		VK_NUMPAD8 },
-		{ KeyboardDeviceDriver::KEY_NUMPAD_9,		"numpad9",		VK_NUMPAD9 },
+		{ KeyboardButton::KEY_NUMPAD_0,		"numpad0",		VK_NUMPAD0 },
+		{ KeyboardButton::KEY_NUMPAD_1,		"numpad1",		VK_NUMPAD1 },
+		{ KeyboardButton::KEY_NUMPAD_2,		"numpad2",		VK_NUMPAD2 },
+		{ KeyboardButton::KEY_NUMPAD_3,		"numpad3",		VK_NUMPAD3 },
+		{ KeyboardButton::KEY_NUMPAD_4,		"numpad4",		VK_NUMPAD4 },
+		{ KeyboardButton::KEY_NUMPAD_5,		"numpad5",		VK_NUMPAD5 },
+		{ KeyboardButton::KEY_NUMPAD_6,		"numpad6",		VK_NUMPAD6 },
+		{ KeyboardButton::KEY_NUMPAD_7,		"numpad7",		VK_NUMPAD7 },
+		{ KeyboardButton::KEY_NUMPAD_8,		"numpad8",		VK_NUMPAD8 },
+		{ KeyboardButton::KEY_NUMPAD_9,		"numpad9",		VK_NUMPAD9 },
 		/*{ KeyboardDeviceDriver::KEY_PLUS,			"+",			VK_OEM_PLUS },
 		{ KeyboardDeviceDriver::KEY_MINUS,			"-",			VK_OEM_MINUS },*/
 
-		{ KeyboardDeviceDriver::KEY_0		,		"0",			'0' },
-		{ KeyboardDeviceDriver::KEY_1		,		"1",			'1' },
-		{ KeyboardDeviceDriver::KEY_2		,		"2",			'2' },
-		{ KeyboardDeviceDriver::KEY_3		,		"3",			'3' },
-		{ KeyboardDeviceDriver::KEY_4		,		"4",			'4' },
-		{ KeyboardDeviceDriver::KEY_5		,		"5",			'5' },
-		{ KeyboardDeviceDriver::KEY_6		,		"6",			'6' },
-		{ KeyboardDeviceDriver::KEY_7		,		"7",			'7' },
-		{ KeyboardDeviceDriver::KEY_8		,		"8",			'8' },
-		{ KeyboardDeviceDriver::KEY_9		,		"9",			'9' },
+		{ KeyboardButton::KEY_0		,		"0",			'0' },
+		{ KeyboardButton::KEY_1		,		"1",			'1' },
+		{ KeyboardButton::KEY_2		,		"2",			'2' },
+		{ KeyboardButton::KEY_3		,		"3",			'3' },
+		{ KeyboardButton::KEY_4		,		"4",			'4' },
+		{ KeyboardButton::KEY_5		,		"5",			'5' },
+		{ KeyboardButton::KEY_6		,		"6",			'6' },
+		{ KeyboardButton::KEY_7		,		"7",			'7' },
+		{ KeyboardButton::KEY_8		,		"8",			'8' },
+		{ KeyboardButton::KEY_9		,		"9",			'9' },
 
-		{ KeyboardDeviceDriver::KEY_A		,		"a",			'A' },
-		{ KeyboardDeviceDriver::KEY_B		,		"b",			'B' },
-		{ KeyboardDeviceDriver::KEY_C		,		"c",			'C' },
-		{ KeyboardDeviceDriver::KEY_D		,		"d",			'D' },
-		{ KeyboardDeviceDriver::KEY_E		,		"e",			'E' },
-		{ KeyboardDeviceDriver::KEY_F		,		"f",			'F' },
-		{ KeyboardDeviceDriver::KEY_G		,		"g",			'G' },
-		{ KeyboardDeviceDriver::KEY_H		,		"h",			'H' },
-		{ KeyboardDeviceDriver::KEY_I		,		"i",			'I' },
-		{ KeyboardDeviceDriver::KEY_J		,		"j",			'J' },
-		{ KeyboardDeviceDriver::KEY_K		,		"k",			'K' },
-		{ KeyboardDeviceDriver::KEY_L		,		"l",			'L' },
-		{ KeyboardDeviceDriver::KEY_M		,		"m",			'M' },
-		{ KeyboardDeviceDriver::KEY_N		,		"n",			'N' },
-		{ KeyboardDeviceDriver::KEY_O		,		"o",			'O' },
-		{ KeyboardDeviceDriver::KEY_P		,		"p",			'P' },
-		{ KeyboardDeviceDriver::KEY_Q		,		"q",			'Q' },
-		{ KeyboardDeviceDriver::KEY_R		,		"r",			'R' },
-		{ KeyboardDeviceDriver::KEY_S		,		"s",			'S' },
-		{ KeyboardDeviceDriver::KEY_T		,		"t",			'T' },
-		{ KeyboardDeviceDriver::KEY_U		,		"u",			'U' },
-		{ KeyboardDeviceDriver::KEY_V		,		"v",			'V' },
-		{ KeyboardDeviceDriver::KEY_W		,		"w",			'W' },
-		{ KeyboardDeviceDriver::KEY_X		,		"x",			'X' },
-		{ KeyboardDeviceDriver::KEY_Y		,		"y",			'Y' },
-		{ KeyboardDeviceDriver::KEY_Z		,		"z",			'Z' },
-		{ KeyboardDeviceDriver::KEY_SPACEBAR,		"spacebar",		' ' },
-		{ KeyboardDeviceDriver::KEY_TAB		,		"tab",			VK_TAB },
+		{ KeyboardButton::KEY_A		,		"a",			'A' },
+		{ KeyboardButton::KEY_B		,		"b",			'B' },
+		{ KeyboardButton::KEY_C		,		"c",			'C' },
+		{ KeyboardButton::KEY_D		,		"d",			'D' },
+		{ KeyboardButton::KEY_E		,		"e",			'E' },
+		{ KeyboardButton::KEY_F		,		"f",			'F' },
+		{ KeyboardButton::KEY_G		,		"g",			'G' },
+		{ KeyboardButton::KEY_H		,		"h",			'H' },
+		{ KeyboardButton::KEY_I		,		"i",			'I' },
+		{ KeyboardButton::KEY_J		,		"j",			'J' },
+		{ KeyboardButton::KEY_K		,		"k",			'K' },
+		{ KeyboardButton::KEY_L		,		"l",			'L' },
+		{ KeyboardButton::KEY_M		,		"m",			'M' },
+		{ KeyboardButton::KEY_N		,		"n",			'N' },
+		{ KeyboardButton::KEY_O		,		"o",			'O' },
+		{ KeyboardButton::KEY_P		,		"p",			'P' },
+		{ KeyboardButton::KEY_Q		,		"q",			'Q' },
+		{ KeyboardButton::KEY_R		,		"r",			'R' },
+		{ KeyboardButton::KEY_S		,		"s",			'S' },
+		{ KeyboardButton::KEY_T		,		"t",			'T' },
+		{ KeyboardButton::KEY_U		,		"u",			'U' },
+		{ KeyboardButton::KEY_V		,		"v",			'V' },
+		{ KeyboardButton::KEY_W		,		"w",			'W' },
+		{ KeyboardButton::KEY_X		,		"x",			'X' },
+		{ KeyboardButton::KEY_Y		,		"y",			'Y' },
+		{ KeyboardButton::KEY_Z		,		"z",			'Z' },
+		{ KeyboardButton::KEY_SPACEBAR,		"spacebar",		' ' },
+		{ KeyboardButton::KEY_TAB		,		"tab",			VK_TAB },
 
-		{ KeyboardDeviceDriver::KEY_ARROW_UP,		"arrowup",		VK_UP },
-		{ KeyboardDeviceDriver::KEY_ARROW_DOWN,		"arrowdown",	VK_DOWN },
-		{ KeyboardDeviceDriver::KEY_ARROW_LEFT,		"arrowleft",	VK_LEFT },
-		{ KeyboardDeviceDriver::KEY_ARROW_RIGHT,	"arrowright",	VK_RIGHT },
+		{ KeyboardButton::KEY_ARROW_UP,		"arrowup",		VK_UP },
+		{ KeyboardButton::KEY_ARROW_DOWN,		"arrowdown",	VK_DOWN },
+		{ KeyboardButton::KEY_ARROW_LEFT,		"arrowleft",	VK_LEFT },
+		{ KeyboardButton::KEY_ARROW_RIGHT,	"arrowright",	VK_RIGHT },
 
 
 	
 
 
-		{ KeyboardDeviceDriver::KEY_UNDEFINED,"UNDEFINED",0 }
+		{ KeyboardButton::KEY_UNDEFINED,"UNDEFINED",0 }
 	};
 
 
@@ -128,13 +128,13 @@ namespace vrlib
 	void KeyboardDeviceDriver::keyDown( int button )
 	{
 		if(buttonLookup.find(button) != buttonLookup.end())
-			buttonsPressed[buttonLookup[button]] = true;
+			buttonsPressed[(int)buttonLookup[button]] = true;
 	}
 
 	void KeyboardDeviceDriver::keyUp( int button )
 	{
 		if(buttonLookup.find(button) != buttonLookup.end())
-			buttonsPressed[buttonLookup[button]] = false;
+			buttonsPressed[(int)buttonLookup[button]] = false;
 	}
 
 	void KeyboardDeviceDriver::keyChar(char character)
@@ -143,14 +143,14 @@ namespace vrlib
 
 	bool KeyboardDeviceDriver::isPressed( KeyboardButton button )
 	{
-		return buttonsPressed[button];
+		return buttonsPressed[(int)button];
 	}
 
 	KeyboardDeviceDriver::KeyboardDeviceDriver()
 	{
 		for(int i = 0; i < sizeof(keyMapping) / sizeof(keymap); i++)
 			buttonLookup[keyMapping[i].vk] = keyMapping[i].btn;
-		for(int i = 0; i < KEY_UNDEFINED; i++)
+		for(int i = 0; i < (int)KeyboardButton::KEY_UNDEFINED; i++)
 			buttonsPressed[i] = false;
 	}
 
@@ -164,7 +164,7 @@ namespace vrlib
 		}
 		splitted.push_back(str);
 
-		KeyboardButton btn = KEY_UNDEFINED;
+		KeyboardButton btn = KeyboardButton::KEY_UNDEFINED;
 		KeyboardModifiers mod = KEYMOD_NONE;
 
 		for(size_t i = 0; i < splitted.size(); i++)
