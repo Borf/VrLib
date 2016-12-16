@@ -189,7 +189,7 @@ namespace vrlib
 					ret.second = hitPosition;
 				}
 				return true;
-			});
+			}, physics);
 			return ret;
 		}
 

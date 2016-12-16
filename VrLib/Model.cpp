@@ -162,7 +162,8 @@ namespace vrlib
 		float f = 0;
 		for (size_t i = 0; i < verts.size(); i += 3)
 			if (ray.LineIntersectPolygon(&verts[i], 3, f))
-				result.push_back(f);
+				if(f > 0)
+					result.push_back(f);
 		return result;
 	}
 
