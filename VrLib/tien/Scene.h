@@ -75,7 +75,7 @@ namespace vrlib
 			bool testBodyCollision(Node* n1, Node* n2);
 			void castRay(const math::Ray& ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true) const;
 			void castRay(const math::Ray& ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true) const;
-			std::pair<Node*, glm::vec3> castRay(const math::Ray& ray, bool physics = true) const;
+			std::pair<Node*, glm::vec3> castRay(const math::Ray& ray, bool physics = true, const std::function<bool(vrlib::tien::Node*)> &filter = [](vrlib::tien::Node*) {return true; }) const;
 
 
 		};
