@@ -159,7 +159,7 @@ namespace vrlib
 
 		float random(float min, float max)
 		{
-			return ((double)rand() / (RAND_MAX + 1)) * (max - min + 1) + min;
+			return (float)((double)rand() / (RAND_MAX + 1)) * (max - min + 1) + min;
 		}
 
 		std::string getGuid()

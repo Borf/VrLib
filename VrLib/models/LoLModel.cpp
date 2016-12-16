@@ -418,7 +418,7 @@ namespace vrlib
 		glDisable(GL_DEPTH_TEST);
 		glUseProgram(0);
 		glPushMatrix();
-		glScalef(0.01, 0.01, 0.01);
+		glScalef(0.01f, 0.01f, 0.01f);
 		glLineWidth(1);
 		glBegin(GL_LINES);
 		

@@ -57,6 +57,8 @@ namespace vrlib
 		void Node::setParent(Node* newParent)
 		{
 			assert(parent);
+			if (newParent == this)
+				return;
 			parent->children.erase(std::remove(parent->children.begin(), parent->children.end(), this), parent->children.end()); //removes this from parent
 			parent = newParent;
 			newParent->children.push_back(this);
@@ -153,6 +155,20 @@ namespace vrlib
 					return cn;
 			}
 			return nullptr;
+		}
+
+		void Node::sortChildren()
+		{
+			std::sort(children.begin(), children.end(), [](Node* a, Node* b)
+			{
+				if (a->children.empty() != b->children.empty())
+					return !a->children.empty();
+				
+				if (a->getComponent<components::ModelRenderer>() != b->getComponent<components::ModelRenderer>())
+					return a->getComponent<components::ModelRenderer>() == nullptr;
+
+				return a->name < b->name;
+			});
 		}
 
 		Scene &Node::getScene()

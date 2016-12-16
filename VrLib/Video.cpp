@@ -26,7 +26,7 @@ namespace vrlib
 			logger << "Couldn't find stream information" << Log::newline;
 
 
-		int i;
+		unsigned int i;
 
 		// Find the first video stream
 		videoStream = -1;

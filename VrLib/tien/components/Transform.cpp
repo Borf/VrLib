@@ -127,17 +127,17 @@ namespace vrlib
 				builder->beginGroup("Rotation", false);
 				builder->addTextBox(toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
-					euler.x = glm::radians(atof(newValue.c_str()));
+					euler.x = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
 				builder->addTextBox(toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
-					euler.y = glm::radians(atof(newValue.c_str()));
+					euler.y = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
 				builder->addTextBox(toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
-					euler.z = glm::radians(atof(newValue.c_str()));
+					euler.z = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
 				builder->endGroup();

@@ -108,6 +108,8 @@ namespace vrlib
 				return children[index];
 			}
 
+			void sortChildren();
+
 			virtual Scene& getScene();
 			void fortree(const std::function<void(Node*)> &callback);
 			void fortree(const std::function<void(const Node*)> &callback) const;
