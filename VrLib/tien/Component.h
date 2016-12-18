@@ -16,21 +16,23 @@ namespace vrlib
 		class EditorBuilder
 		{
 		public:
-			class TextBox { public: virtual std::string getText() const = 0; virtual void setText(const std::string &text) = 0; };
+			class TextComponent { public: virtual std::string getText() const = 0; virtual void setText(const std::string &text) = 0; };
+			class BoolComponent { public: virtual bool getValue() const = 0; virtual void setValue(bool newValue) = 0; };
 
-			virtual void addTitle(const std::string &name) = 0;
+			virtual TextComponent* addTitle(const std::string &name) = 0;
 
 			virtual void beginGroup(const std::string &name, bool vertical = true) = 0;
 			virtual void endGroup() = 0;
-			virtual TextBox* addTextBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
+			virtual TextComponent* addTextBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual void addCheckbox(bool value, std::function<void(bool)> onChange) = 0;
 			virtual void addButton(const std::string &value, std::function<void()> onClick) = 0;
-			virtual void addComboBox(const std::string &value, const std::vector<std::string> &values, std::function<void(const std::string &)> onClick) = 0;
+			virtual TextComponent* addComboBox(const std::string &value, const std::vector<std::string> &values, std::function<void(const std::string &)> onClick) = 0;
 
 
 			enum BrowseType
 			{
 				Model,
+				Texture,
 				Node,
 				Prefab
 			};

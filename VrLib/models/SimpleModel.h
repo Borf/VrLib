@@ -19,6 +19,7 @@ namespace vrlib
 		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback) override;
 		virtual ModelInstance* getInstance() override;
 		virtual bool hasAlphaMaterial() override { return false; }
+		virtual std::vector<Material*> getMaterials() override { return std::vector<Material*>(); };
 
 		std::vector<glm::vec3> vertices;
 		std::vector<unsigned short> indices;

@@ -12,6 +12,8 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 
+#include <set>
+
 namespace vrlib
 {
 
@@ -434,6 +436,18 @@ namespace vrlib
 			}
 		}
 		return false;
+	}
+
+	template<class VertexFormat>
+	std::vector<vrlib::Material*> AssimpModel<VertexFormat>::getMaterials()
+	{
+		std::set<vrlib::Material*> ret;
+		
+		for (auto &mesh : meshes)
+		{
+			ret.insert(&mesh.material);
+		}
+		return std::vector<vrlib::Material*>(ret.begin(), ret.end());
 	}
 
 

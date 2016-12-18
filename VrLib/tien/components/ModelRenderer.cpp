@@ -3,6 +3,7 @@
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/json.h>
+#include <VrLib/Image.h>
 #include "Transform.h"
 #include "../Node.h"
 
@@ -64,7 +65,7 @@ namespace vrlib
 				builder->addTitle("Model Renderer");
 
 				builder->beginGroup("Filename", false);
-				EditorBuilder::TextBox* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});
+				EditorBuilder::TextComponent* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});
 				builder->addBrowseButton(EditorBuilder::BrowseType::Model, [this, filenameBox](const std::string &file) 
 				{
 					fileName = file;
@@ -81,6 +82,53 @@ namespace vrlib
 
 				builder->beginGroup("Cull backfaces");
 				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
+				builder->endGroup();
+
+				builder->addTitle("Materials");
+				builder->beginGroup("Has alpha materials");
+				builder->addCheckbox(true, [](bool newValue) {});
+				builder->endGroup();
+
+				int index = 0; //TODO: material name?
+				for (auto m : model->getMaterials())
+				{
+					builder->addTitle("Material " + std::to_string(index));
+
+					builder->beginGroup("Ambient", true);
+					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->endGroup();
+					builder->beginGroup("Diffuse", true);
+					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->endGroup();
+					builder->beginGroup("Specular", true);
+					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->endGroup();
+
+					builder->beginGroup("Texture", false);
+					builder->addTextBox((m->texture && m->texture->image) ? m->texture->image->fileName : "", [](const std::string &newFile) {});
+					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
+					{
+
+					});
+					builder->endGroup();
+
+					builder->beginGroup("Normalmap", false);
+					builder->addTextBox((m->normalmap && m->normalmap->image) ? m->normalmap->image->fileName : "", [](const std::string &newFile) {});
+					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
+					{
+
+					});
+					builder->endGroup();
+
+
+					builder->beginGroup("Glow", false);
+					builder->endGroup();
+
+					index++;
+				}
+
+				builder->beginGroup("");
+
 				builder->endGroup();
 
 			}

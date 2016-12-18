@@ -73,6 +73,8 @@ namespace vrlib
 		virtual std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> getIndexedTriangles() const { throw "not implemented"; };
 		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
 
+		virtual std::vector<Material*> getMaterials() = 0;
+
 		virtual ModelInstance* getInstance() = 0;
 		virtual bool hasAlphaMaterial() = 0;
 
