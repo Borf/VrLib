@@ -730,7 +730,8 @@ namespace vrlib
 
 
 
-	template class AssimpModel < gl::VertexP3 > ;
+	template class AssimpModel < gl::VertexP3 >;
+	template class AssimpModel < gl::VertexP3T2 >;
 	template class AssimpModel < gl::VertexP3N3 >;
 	template class AssimpModel < gl::VertexP3N3T2 >;
 	template class AssimpModel < gl::VertexP3N3T2B4B4 >;

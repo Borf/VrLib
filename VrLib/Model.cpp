@@ -177,6 +177,7 @@ namespace vrlib
 
 
 	prototypes(VertexP3);
+	prototypes(VertexP3T2);
 	prototypes(VertexP3N3);
 	prototypes(VertexP3N3T2);
 	prototypes(VertexP3N3T2B4B4);
