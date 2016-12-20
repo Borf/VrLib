@@ -120,8 +120,23 @@ namespace vrlib
 					});
 					builder->endGroup();
 
+					builder->beginGroup("Specularmap");
+					builder->addTextBox((m->normalmap && m->normalmap->image) ? m->normalmap->image->fileName : "", [](const std::string &newFile) {});
+					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
+					{
 
-					builder->beginGroup("Glow", false);
+					});
+					builder->addTextBox("1.0", [](const std::string &newValue) {});
+					builder->endGroup();
+
+
+					builder->beginGroup("Glow");
+					builder->addTextBox("", [](const std::string &newFile) {});
+					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
+					{
+
+					});
+					builder->addTextBox("1.0", [](const std::string &newValue) {});
 					builder->endGroup();
 
 					index++;
