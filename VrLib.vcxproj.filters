@@ -387,6 +387,9 @@
     <ClInclude Include="VrLib\tien\components\StaticSkyBox.h">
       <Filter>tien\components</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\math\Rectangle.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -706,6 +709,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\StaticSkyBox.cpp">
       <Filter>tien\components</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\math\Rectangle.cpp">
+      <Filter>math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

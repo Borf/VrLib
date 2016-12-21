@@ -16,8 +16,13 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> AnimatedModelRenderer::cache;
 
-			AnimatedModelRenderer::AnimatedModelRenderer(const std::string &fileName)
+			AnimatedModelRenderer::AnimatedModelRenderer(const vrlib::json::Value &json)
 			{
+				if (json.isString())
+					fileName = json;
+				else
+					fileName = json["file"];
+
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2B4B4>(fileName);
 				model = cache[fileName];
@@ -27,7 +32,16 @@ namespace vrlib
 				renderContext = ModelRenderContext::getInstance();
 				renderContextShadow = ModelRenderShadowContext::getInstance();
 				callbackOnDone = nullptr;
-				castShadow = true;
+				if (json.isObject())
+				{
+					castShadow = json["castShadow"];
+					if (json.isMember("animation"))
+						this->playAnimation(json["animation"]);
+				}
+				else
+				{
+					castShadow = true;
+				}
 			}
 
 			AnimatedModelRenderer::~AnimatedModelRenderer()
@@ -38,6 +52,8 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "animatedmodelrenderer";
+				ret["file"] = fileName;
+				ret["castShadow"] = castShadow;
 				return ret;
 			}
 

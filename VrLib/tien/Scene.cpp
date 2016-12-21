@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "components/AnimatedModelRenderer.h"
 #include "components/ModelRenderer.h"
 #include "components/Light.h"
 #include "components/Transform.h"
@@ -236,10 +237,22 @@ namespace vrlib
 						return;
 
 					vrlib::math::Ray inverseRay = glm::inverse(node->transform->globalTransform) * ray;
-					vrlib::tien::components::ModelRenderer* renderer = node->getComponent<vrlib::tien::components::ModelRenderer>();
-					if (renderer)
+					vrlib::Model* model = nullptr;
 					{
-						std::vector<float> collisions = renderer->model->collisionFractions(inverseRay);
+						vrlib::tien::components::ModelRenderer* renderer = node->getComponent<vrlib::tien::components::ModelRenderer>();
+						if (renderer)
+							model = renderer->model;
+					}
+					{
+						vrlib::tien::components::AnimatedModelRenderer* renderer = node->getComponent<vrlib::tien::components::AnimatedModelRenderer>();
+						if (renderer)
+							model = renderer->model;
+					}
+
+
+					if (model)
+					{
+						std::vector<float> collisions = model->collisionFractions(inverseRay);
 						for (float& f : collisions)
 						{
 							callback(const_cast<vrlib::tien::Node*>(node), f, ray.mOrigin + f * ray.mDir, glm::vec3(0, 0, 0));

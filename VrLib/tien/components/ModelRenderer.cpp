@@ -86,7 +86,7 @@ namespace vrlib
 
 				builder->addTitle("Materials");
 				builder->beginGroup("Has alpha materials");
-				builder->addCheckbox(true, [](bool newValue) {});
+				builder->addCheckbox(model->hasAlphaMaterial(), [](bool newValue) {});
 				builder->endGroup();
 
 				int index = 0; //TODO: material name?

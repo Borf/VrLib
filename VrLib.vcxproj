@@ -154,6 +154,7 @@
     <ClInclude Include="VrLib\math\Plane.h" />
     <ClInclude Include="VrLib\math\Polygon.h" />
     <ClInclude Include="VrLib\math\Ray.h" />
+    <ClInclude Include="VrLib\math\Rectangle.h" />
     <ClInclude Include="VrLib\math\Triangle.h" />
     <ClInclude Include="VrLib\Model.h" />
     <ClInclude Include="VrLib\models\AssimpModel.h" />
@@ -264,6 +265,7 @@
     <ClCompile Include="VrLib\math\Plane.cpp" />
     <ClCompile Include="VrLib\math\Polygon.cpp" />
     <ClCompile Include="VrLib\math\Ray.cpp" />
+    <ClCompile Include="VrLib\math\Rectangle.cpp" />
     <ClCompile Include="VrLib\math\Triangle.cpp" />
     <ClCompile Include="VrLib\Model.cpp" />
     <ClCompile Include="VrLib\models\AssimpModel.cpp" />

@@ -17,6 +17,7 @@
 #include "components/Collider.h"
 #include "components/Light.h"
 #include "components/Camera.h"
+#include "components/AnimatedModelRenderer.h"
 #include "components/ModelRenderer.h"
 #include "components/DynamicSkyBox.h"
 #include "components/MeshRenderer.h"
@@ -102,6 +103,8 @@ namespace vrlib
 						addComponent(new vrlib::tien::components::Camera());
 					else if (c["type"] == "modelrenderer")
 						addComponent(new vrlib::tien::components::ModelRenderer(c));
+					else if (c["type"] == "animatedmodelrenderer")
+						addComponent(new vrlib::tien::components::AnimatedModelRenderer(c));
 					else if (c["type"] == "dynamicskybox")
 						addComponent(new vrlib::tien::components::DynamicSkyBox(c));
 					else if (c["type"] == "light")
