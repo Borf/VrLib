@@ -162,7 +162,7 @@ namespace vrlib
 		gl::VAO* vao;
 
 
-
+		virtual std::vector<std::string> getAnimationNames() const override;
 
 
 

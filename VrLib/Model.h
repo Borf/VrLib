@@ -94,5 +94,8 @@ namespace vrlib
 
 		std::vector<glm::vec3> collisions(const vrlib::math::Ray &ray);
 		std::vector<float> collisionFractions(const vrlib::math::Ray &ray);
+
+
+		virtual std::vector<std::string> getAnimationNames() const { return std::vector<std::string>(); };
 	};
 }

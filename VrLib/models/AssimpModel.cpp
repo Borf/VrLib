@@ -450,6 +450,15 @@ namespace vrlib
 		return std::vector<vrlib::Material*>(ret.begin(), ret.end());
 	}
 
+	template<class VertexFormat>
+	std::vector<std::string> AssimpModel<VertexFormat>::getAnimationNames() const
+	{
+		std::vector<std::string> ret;
+		for (auto a : animations)
+			ret.push_back(a.first);
+		return ret;
+	}
+
 
 
 	////////animation stuff
