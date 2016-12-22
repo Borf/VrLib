@@ -1,5 +1,6 @@
 #include "Transform.h"
 #include <VrLib/json.h>
+#include <VrLib/tien/Node.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -49,7 +50,11 @@ namespace vrlib
 
 			void Transform::setGlobalPosition(const glm::vec3 &position)
 			{
-				this->position = position;//TODO
+				glm::vec3 parentPos;
+				if (node->parent && node->parent->transform)
+					parentPos = node->parent->transform->getGlobalPosition();
+
+				this->position = position - parentPos;//TODO
 			}
 
 			void Transform::setGlobalRotation(const glm::quat &rotation)
@@ -70,6 +75,11 @@ namespace vrlib
 			{
 				glm::mat4 mat = glm::lookAt(position, target, up);
 				rotation = glm::inverse(glm::quat(mat));
+			}
+
+			glm::vec3 Transform::getGlobalPosition() const
+			{
+				return glm::vec3(globalTransform * glm::vec4(0,0,0,1));
 			}
 
 			bool Transform::moveTo(const glm::vec3 &target, float speed)

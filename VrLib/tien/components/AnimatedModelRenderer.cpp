@@ -239,12 +239,15 @@ namespace vrlib
 				builder->endGroup();
 
 
+				builder->beginGroup("Animation");
 				std::vector<std::string> animations = model->getAnimationNames();
-			
 				builder->addComboBox("", animations, [this](const std::string &newValue)
 				{
-					playAnimation(newValue);
+					if(!((vrlib::State*)modelInstance)->animations.empty())
+						((vrlib::State*)modelInstance)->stopAnimation(((vrlib::State*)modelInstance)->animations[0]->animation->name);
+					playAnimation(newValue, true); //TODO: this doesn't work yet?
 				});
+				builder->endGroup();
 
 
 				builder->addTitle("Materials");

@@ -130,8 +130,10 @@ namespace vrlib
 						context->useCubemap(false);
 					}
 
+					glCullFace(GL_FRONT);
 					for (Node* c : scene.renderables)
 						c->getComponent<components::Renderable>()->drawShadowMap();
+					glCullFace(GL_BACK);
 
 					shadowMapDirectional->unbind();
 				}

@@ -38,6 +38,7 @@ namespace vrlib
 				void setGlobalRotation(const glm::quat &rotation);
 				void setGlobalScale(const glm::vec3 &scale);
 
+				glm::vec3 getGlobalPosition() const;
 
 				bool moveTo(const glm::vec3 &target, float speed);
 				void rotate(const glm::vec3 &angle);

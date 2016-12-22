@@ -54,6 +54,7 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::lightRange, "lightRange");
 			postLightingShader->registerUniform(PostLightingUniform::lightColor, "lightColor");
 			postLightingShader->registerUniform(PostLightingUniform::lightCastShadow, "lightCastShadow");
+			postLightingShader->registerUniform(PostLightingUniform::cameraPosition, "cameraPosition");
 			postLightingShader->use();
 			postLightingShader->setUniform(PostLightingUniform::s_color, 0);
 			postLightingShader->setUniform(PostLightingUniform::s_normal, 1);
@@ -167,7 +168,8 @@ namespace vrlib
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
 			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
-
+			postLightingShader->setUniform(PostLightingUniform::cameraPosition, scene.cameraNode->transform->getGlobalPosition() );
+			
 
 			overlayVao->bind();
 			glDisable(GL_BLEND);
