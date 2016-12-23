@@ -168,7 +168,8 @@ namespace vrlib
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
 			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
-			postLightingShader->setUniform(PostLightingUniform::cameraPosition, scene.cameraNode->transform->getGlobalPosition() );
+			glm::vec3 cameraPosition(glm::inverse(modelViewMatrix) * glm::vec4(0, 0, 0, 1));
+			postLightingShader->setUniform(PostLightingUniform::cameraPosition, cameraPosition );
 			
 
 			overlayVao->bind();
