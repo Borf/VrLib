@@ -21,10 +21,11 @@ namespace vrlib
 					virtual void useCubemap(bool use) {};
 				};
 
-				bool deferred = true;
-				RenderContext* renderContext = nullptr;
+				RenderContext* renderContextDeferred = nullptr;
 				RenderContext* renderContextShadow = nullptr;
-				virtual void draw() = 0;
+				RenderContext* renderContextForward = nullptr;
+				virtual void drawDeferredPass() = 0;
+				virtual void drawForwardPass() = 0;
 				virtual void drawShadowMap() = 0;
 			};
 		}

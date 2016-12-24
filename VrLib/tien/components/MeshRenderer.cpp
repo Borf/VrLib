@@ -22,8 +22,8 @@ namespace vrlib
 				if (mesh)
 					updateMesh();
 				castShadow = true;
-				renderContext = ModelRenderContext::getInstance();
-				renderContextShadow = ModelRenderShadowContext::getInstance();
+				renderContextDeferred = ModelRenderContext::getInstance();
+				renderContextShadow = ModelShadowRenderContext::getInstance();
 			}
 
 			MeshRenderer::MeshRenderer(const json::Value &json, const json::Value &totalJson)
@@ -46,8 +46,8 @@ namespace vrlib
 				if(mesh)
 					updateMesh();
 				castShadow = json["castShadow"];
-				renderContext = ModelRenderContext::getInstance();
-				renderContextShadow = ModelRenderShadowContext::getInstance();
+				renderContextDeferred = ModelRenderContext::getInstance();
+				renderContextShadow = ModelShadowRenderContext::getInstance();
 			}
 
 			MeshRenderer::~MeshRenderer()
@@ -89,11 +89,11 @@ namespace vrlib
 			}
 
 
-			void MeshRenderer::draw()
+			void MeshRenderer::drawDeferredPass()
 			{
 				components::Transform* t = node->getComponent<Transform>();
 
-				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContext);
+				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContextDeferred);
 				context->renderShader->use(); //TODO: only call this once!
 
 				context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform);
@@ -131,9 +131,9 @@ namespace vrlib
 				if (!castShadow)
 					return;
 				components::Transform* t = node->getComponent<Transform>();
-				ModelRenderShadowContext* context = dynamic_cast<ModelRenderShadowContext*>(renderContextShadow);
+				ModelShadowRenderContext* context = dynamic_cast<ModelShadowRenderContext*>(renderContextShadow);
 				context->renderShader->use(); //TODO: only call this once!
-				context->renderShader->setUniform(ModelRenderShadowContext::RenderUniform::modelMatrix, t->globalTransform);
+				context->renderShader->setUniform(ModelShadowRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 
 
 			}
@@ -177,7 +177,7 @@ namespace vrlib
 			}
 
 
-			void MeshRenderer::ModelRenderShadowContext::init()
+			void MeshRenderer::ModelShadowRenderContext::init()
 			{
 				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
@@ -193,13 +193,13 @@ namespace vrlib
 				renderShader->use();
 			}
 
-			void MeshRenderer::ModelRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			void MeshRenderer::ModelShadowRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
 				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
 			}
-			void MeshRenderer::ModelRenderShadowContext::useCubemap(bool use)
+			void MeshRenderer::ModelShadowRenderContext::useCubemap(bool use)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::outputPosition, use);

@@ -34,7 +34,7 @@ namespace vrlib
 			if ((GetAsyncKeyState(VK_F2) & 1) == 1)
 				renderer.drawLightDebug = !renderer.drawLightDebug;
 			if ((GetAsyncKeyState(VK_F3) & 1) == 1)
-				renderer.drawMode = (Renderer::DrawMode)(((int)renderer.drawMode + 1) % 4);
+				renderer.drawMode = (Renderer::DrawMode)(((int)renderer.drawMode + 1) % 5);
 #endif
 
 			if (playState == PlayState::Playing)

@@ -19,7 +19,7 @@ namespace vrlib
 			TerrainRenderer::TerrainRenderer(Terrain* _terrain) : terrain(*_terrain)
 			{
 				smoothNormals = true;
-				renderContext = TerrainRenderContext::getInstance();
+				renderContextDeferred = TerrainRenderContext::getInstance();
 				renderContextShadow = TerrainRenderShadowContext::getInstance();
 
 				rebuildBuffers();
@@ -144,11 +144,11 @@ namespace vrlib
 			}
 
 
-			void TerrainRenderer::draw()
+			void TerrainRenderer::drawDeferredPass()
 			{
 				components::Transform* t = node->getComponent<Transform>();
 
-				TerrainRenderContext* context = dynamic_cast<TerrainRenderContext*>(renderContext);
+				TerrainRenderContext* context = dynamic_cast<TerrainRenderContext*>(renderContextDeferred);
 				context->renderShader->use();
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));

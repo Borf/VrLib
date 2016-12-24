@@ -15,7 +15,7 @@ namespace vrlib
 			class ModelRenderer : public Renderable
 			{
 			private:
-				class ModelRenderContext : public Renderable::RenderContext, public Singleton<ModelRenderContext>
+				class ModelDeferredRenderContext : public Renderable::RenderContext, public Singleton<ModelDeferredRenderContext>
 				{
 				public:
 					enum class RenderUniform
@@ -26,19 +26,42 @@ namespace vrlib
 						normalMatrix,
 						s_texture,
 						s_normalmap,
+						s_specularmap,
 						diffuseColor,
 						textureFactor,
+						shinyness,
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 				};
-				class ModelRenderShadowContext : public Renderable::RenderContext, public Singleton<ModelRenderShadowContext>
+				class ModelForwardRenderContext : public Renderable::RenderContext, public Singleton<ModelForwardRenderContext>
 				{
 				public:
 					enum class RenderUniform
 					{
+						modelMatrix,
+						projectionMatrix,
+						viewMatrix,
+						normalMatrix,
+						s_texture,
+						s_normalmap,
+						s_specularmap,
+						diffuseColor,
+						textureFactor,
+						shinyness,
+					};
+					vrlib::gl::Shader<RenderUniform>* renderShader;
+					vrlib::Texture* defaultNormalMap;
+					virtual void init() override;
+					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
+				};
+				class ModelShadowRenderContext : public Renderable::RenderContext, public Singleton<ModelShadowRenderContext>
+				{
+				public:
+					enum class RenderUniform
+					{ 
 						modelMatrix,
 						projectionMatrix,
 						viewMatrix,
@@ -59,7 +82,8 @@ namespace vrlib
 
 				vrlib::Model* model;
 
-				void draw() override;
+				void drawDeferredPass() override;
+				void drawForwardPass() override;
 				void drawShadowMap() override;
 				json::Value toJson(json::Value &meshes) const override;
 

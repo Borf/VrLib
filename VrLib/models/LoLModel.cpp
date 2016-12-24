@@ -401,7 +401,7 @@ namespace vrlib
 
 
 	template<class VertexFormat>
-	void LoLModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback)
+	void LoLModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<bool(const Material&)> &materialCallback)
 	{
 		if (vao)
 		{

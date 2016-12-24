@@ -56,7 +56,8 @@ namespace vrlib
 				modelViewMatrix,
 				s_texture,
 				textureFactor,
-				color
+				color,
+				showAlpha,
 			};
 			vrlib::gl::Shader<SimpleDebugUniform>* simpleDebugShader;
 
@@ -92,7 +93,8 @@ namespace vrlib
 				Default,
 				Albedo,
 				Normals,
-				SunLightmap
+				Specular,
+				SunLightmap,
 			} drawMode;
 
 		};

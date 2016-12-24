@@ -138,6 +138,7 @@ namespace vrlib
 					billboardShader->setUniform(BillboardUniforms::mat, mat);
 					sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 						material.texture->bind();
+						return true;
 					});
 				}
 
@@ -149,6 +150,7 @@ namespace vrlib
 					billboardShader->setUniform(BillboardUniforms::mat, mat);
 					moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 						material.texture->bind();
+						return true;
 					});
 				}
 				glDepthMask(1);

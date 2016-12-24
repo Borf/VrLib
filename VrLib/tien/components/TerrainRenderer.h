@@ -73,7 +73,8 @@ namespace vrlib
 				Terrain& terrain;
 				bool smoothNormals;
 
-				void draw() override;
+				void drawDeferredPass() override;
+				void drawForwardPass() override {};
 				void drawShadowMap() override;
 				json::Value toJson(json::Value &meshes) const override;
 

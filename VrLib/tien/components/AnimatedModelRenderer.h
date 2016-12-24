@@ -38,7 +38,7 @@ namespace vrlib
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 				};
-				class ModelRenderShadowContext : public Renderable::RenderContext, public Singleton<ModelRenderShadowContext>
+				class ModelShadowRenderContext : public Renderable::RenderContext, public Singleton<ModelShadowRenderContext>
 				{
 				public:
 					enum class RenderUniform
@@ -70,7 +70,8 @@ namespace vrlib
 				float animationSpeed = 1;
 
 				void update(float elapsedTime, Scene& scene) override;
-				void draw() override;
+				void drawDeferredPass() override;
+				void drawForwardPass() override;
 				void drawShadowMap() override;
 				json::Value toJson(json::Value &meshes) const override;
 
