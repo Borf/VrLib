@@ -37,13 +37,13 @@ namespace vrlib
 				renderer.drawMode = (Renderer::DrawMode)(((int)renderer.drawMode + 1) % 5);
 #endif
 
-			if (playState == PlayState::Playing)
-				scene.update(elapsedTime);
+			if (playState != PlayState::Stopped)
+				scene.update(playState == PlayState::Playing ? elapsedTime : 0);
 		}
 
 		void Tien::render(const glm::mat4 &projectionMatrix, const glm::mat4& modelViewMatrix)
 		{
-			if (playState == PlayState::Playing)
+			if (playState == PlayState::Playing || playState == PlayState::Paused)
 				renderer.render(scene, projectionMatrix, modelViewMatrix);
 		}
 

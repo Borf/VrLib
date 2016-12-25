@@ -29,9 +29,11 @@ namespace vrlib
 						normalMatrix,
 						s_texture,
 						s_normalmap,
+						s_specularmap,
 						diffuseColor,
 						textureFactor,
-						boneMatrices
+						boneMatrices,
+						shinyness,
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
@@ -81,6 +83,7 @@ namespace vrlib
 				void AnimatedModelRenderer::buildEditor(EditorBuilder * builder);
 
 				bool castShadow;
+				bool cullBackFaces;
 			};
 		}
 	}

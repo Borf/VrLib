@@ -505,7 +505,7 @@ namespace vrlib
 	{
 		this->model = model;
 		boneMatrices.resize(model->bones.size());
-		
+		model->rootBone->update(this->boneMatrices, 0, NULL);
 		//static_cast<AssimpModel<vrlib::gl::VertexP3N3T2B4B4>*>(model)->bones;
 	}
 
@@ -514,7 +514,7 @@ namespace vrlib
 	{
 		if (animations.empty())
 		{
-			model->rootBone->update(this->boneMatrices, 0, NULL);
+			//model->rootBone->update(this->boneMatrices, 0, NULL);
 		}
 		for (auto a : animations)
 		{

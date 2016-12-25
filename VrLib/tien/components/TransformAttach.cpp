@@ -52,8 +52,9 @@ namespace vrlib
 					{
 						rigidBody->body->setGravity(btVector3(0, 0, 0));
 						constraint = new btPoint2PointConstraint(*rigidBody->body, btVector3(0,0,0));
-						constraint->m_setting.m_impulseClamp = 0.5f;
-						constraint->m_setting.m_tau = 0.001f;
+						constraint->m_setting.m_impulseClamp = 0;	//0
+						constraint->m_setting.m_tau = 0.1f;			//.3
+						constraint->m_setting.m_damping = 1.0;		//1
 
 						scene.world->addConstraint(constraint);
 					}

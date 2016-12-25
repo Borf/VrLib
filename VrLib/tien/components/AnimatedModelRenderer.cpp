@@ -36,12 +36,14 @@ namespace vrlib
 				if (json.isObject())
 				{
 					castShadow = json["castShadow"];
+					cullBackFaces = json["cullBackFaces"];
 					if (json.isMember("animation"))
 						this->playAnimation(json["animation"]);
 				}
 				else
 				{
 					castShadow = true;
+					cullBackFaces = true;
 				}
 			}
 
@@ -55,6 +57,7 @@ namespace vrlib
 				ret["type"] = "animatedmodelrenderer";
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;
+				ret["cullBackFaces"] = cullBackFaces;
 				return ret;
 			}
 
@@ -86,6 +89,11 @@ namespace vrlib
 				//TODO: ewwww
 				context->renderShader->setUniform(ModelRenderContext::RenderUniform::boneMatrices, ((vrlib::State*)modelInstance)->boneMatrices);
 
+
+				if (!cullBackFaces)
+					glDisable(GL_CULL_FACE);
+
+
 				modelInstance->draw([this, t, &context](const glm::mat4 &modelMatrix)
 				{
 					context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform);
@@ -103,6 +111,13 @@ namespace vrlib
 							material.normalmap->bind();
 						else
 							context->defaultNormalMap->bind();
+						
+						if (material.specularmap)
+						{
+							glActiveTexture(GL_TEXTURE2);
+							material.specularmap->bind();
+						}
+						context->renderShader->setUniform(ModelRenderContext::RenderUniform::shinyness, material.color.shinyness);
 						glActiveTexture(GL_TEXTURE0);
 
 					}
@@ -116,10 +131,21 @@ namespace vrlib
 							material.normalmap->bind();
 						else
 							context->defaultNormalMap->bind();
+
+						if (material.specularmap)
+						{
+							glActiveTexture(GL_TEXTURE2);
+							material.specularmap->bind();
+						}
+						context->renderShader->setUniform(ModelRenderContext::RenderUniform::shinyness, material.color.shinyness);
 						glActiveTexture(GL_TEXTURE0);
 					}
 					return true;
 				});
+
+				if (!cullBackFaces)
+					glEnable(GL_CULL_FACE);
+
 			}
 
 			void AnimatedModelRenderer::drawForwardPass()
@@ -175,12 +201,15 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::normalMatrix, "normalMatrix");
 				renderShader->registerUniform(RenderUniform::s_texture, "s_texture");
 				renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
+				renderShader->registerUniform(RenderUniform::s_specularmap, "s_specularmap");
 				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
 				renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
 				renderShader->registerUniform(RenderUniform::boneMatrices, "boneMatrices");
+				renderShader->registerUniform(RenderUniform::shinyness, "shinyness");
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::s_texture, 0);
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);
+				renderShader->setUniform(RenderUniform::s_specularmap, 2);
 
 				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
 
@@ -241,6 +270,9 @@ namespace vrlib
 				builder->addCheckbox(castShadow, [this](bool newValue) {castShadow = newValue; });
 				builder->endGroup();
 
+				builder->beginGroup("Cull backfaces");
+				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
+				builder->endGroup();
 
 				builder->beginGroup("Animation");
 				std::vector<std::string> animations = model->getAnimationNames();

@@ -107,7 +107,7 @@ namespace vrlib
 				treeDirty = false;
 			}
 
-			if(world)
+			if(world && elapsedTime > 0)
 				world->stepSimulation(elapsedTime);
 			fortree([this, &elapsedTime](Node* n)
 			{

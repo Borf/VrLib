@@ -1,6 +1,7 @@
 #include "BoxCollider.h"
 #include "BoxCollider.h"
 #include "ModelRenderer.h"
+#include "AnimatedModelRenderer.h"
 #include "Transform.h"
 #include "../Node.h"
 #include <VrLib/Model.h>
@@ -18,11 +19,17 @@ namespace vrlib
 				if (!n)
 					return;
 
-				ModelRenderer* model = n->getComponent<ModelRenderer>();
+				Model* model = nullptr;
+
+				if (n->getComponent<ModelRenderer>())
+					model = n->getComponent<ModelRenderer>()->model;
+				if (n->getComponent<AnimatedModelRenderer>())
+					model = n->getComponent<AnimatedModelRenderer>()->model;
+
 				if (model)
 				{
-					size = model->model->aabb.bounds[1] - model->model->aabb.bounds[0];
-					offset = model->model->aabb.center();
+					size = model->aabb.bounds[1] - model->aabb.bounds[0];
+					offset = model->aabb.center();
 				}
 				Transform* transform = n->getComponent<Transform>();
 				if (transform)
