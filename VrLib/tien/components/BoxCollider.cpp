@@ -39,6 +39,15 @@ namespace vrlib
 				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
+			BoxCollider::BoxCollider(const json::Value & json)
+			{
+				for (int i = 0; i < 3; i++)
+					offset[i] = json["offset"][i].asFloat();
+				for (int i = 0; i < 3; i++)
+					size[i] = json["size"][i].asFloat();
+				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
+			}
+
 			btCollisionShape* BoxCollider::getShape()
 			{
 				return shape;
@@ -55,6 +64,28 @@ namespace vrlib
 					ret["size"].push_back(size[i]);
 				return ret;
 			}
+
+
+			void BoxCollider::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Box Collider");
+
+				builder->beginGroup("Size", false);
+				for(int i = 0; i < 3; i++)
+					builder->addTextBox(builder->toString(size[i]), [this, i](const std::string & newValue) 
+					{ 
+						size[i] = (float)atof(newValue.c_str());  
+						shape->setImplicitShapeDimensions(btVector3(size.x/2, size.y/2, size.z/2));
+					});
+				builder->endGroup();
+
+				builder->beginGroup("offset", false);
+				for (int i = 0; i < 3; i++)
+					builder->addTextBox(builder->toString(offset[i]), [this, i](const std::string & newValue) { offset[i] = (float)atof(newValue.c_str());  });
+				builder->endGroup();
+
+			}
+
 
 		}
 	}

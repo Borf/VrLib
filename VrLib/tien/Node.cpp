@@ -21,6 +21,8 @@
 #include "components/ModelRenderer.h"
 #include "components/DynamicSkyBox.h"
 #include "components/MeshRenderer.h"
+#include "components/RigidBody.h"
+#include "components/BoxCollider.h"
 
 namespace vrlib
 {
@@ -111,6 +113,13 @@ namespace vrlib
 						addComponent(new vrlib::tien::components::Light(c));
 					else if (c["type"] == "meshrenderer")
 						addComponent(new vrlib::tien::components::MeshRenderer(c, totalJson));
+					else if (c["type"] == "rigidbody")
+						addComponent(new vrlib::tien::components::RigidBody(c));
+					else if (c["type"] == "collider")
+					{
+						if(c["collider"] == "box")
+							addComponent(new vrlib::tien::components::BoxCollider(c));
+					}
 					else
 						logger << "Unhandled component: " << c["type"].asString() << Log::newline;
 				}

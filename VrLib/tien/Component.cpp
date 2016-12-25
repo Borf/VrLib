@@ -1,5 +1,7 @@
 #include "Component.h"
 
+#include <sstream>
+
 namespace vrlib
 {
 	namespace tien
@@ -12,5 +14,14 @@ namespace vrlib
 
 			builder->addTitle("Generic Component: " + componentName);
 		}
+
+		std::string EditorBuilder::toString(float value) const
+		{
+			std::ostringstream ss;
+			ss << value;
+			return ss.str();
+		}
+
+
 	}
 }

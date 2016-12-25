@@ -11,6 +11,7 @@ namespace vrlib
 			class SphereCollider : public Collider
 			{
 				virtual btCollisionShape* getShape() override;
+				virtual json::Value toJson(json::Value &meshes) const override;
 
 			};
 		}

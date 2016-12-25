@@ -122,15 +122,18 @@ namespace vrlib
 			
 			//update the lights / shadowmaps
 			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(1.0, 1.0f); //no idea what these values are or should be
 			for (auto l : scene.lights)
 			{
 				if (!l->light)continue;
 				if (l->light->shadow == components::Light::Shadow::shadowmap)
 				{
 					l->light->generateShadowMap();
-					//TODO: generate depthmap for light
 				}
 			}
+			glPolygonOffset(0, 0);
+			glDisable(GL_POLYGON_OFFSET_FILL);
 
 
 
@@ -141,6 +144,7 @@ namespace vrlib
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_BLEND);
 

@@ -28,6 +28,7 @@ namespace vrlib
 			virtual void addButton(const std::string &value, std::function<void()> onClick) = 0;
 			virtual TextComponent* addComboBox(const std::string &value, const std::vector<std::string> &values, std::function<void(const std::string &)> onClick) = 0;
 
+			virtual std::string toString(float value) const;
 
 			enum BrowseType
 			{

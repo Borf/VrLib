@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include <VrLib/json.h>
 #include <VrLib/tien/Node.h>
+#include <VrLib/tien/components/RigidBody.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -54,7 +55,17 @@ namespace vrlib
 				if (node->parent && node->parent->transform)
 					parentPos = node->parent->transform->getGlobalPosition();
 
-				this->position = position - parentPos;//TODO
+				this->position = position - parentPos;
+
+				auto rigidBody = node->getComponent<RigidBody>();
+				if (rigidBody && rigidBody->body)
+				{
+					btTransform t;
+					rigidBody->body->getMotionState()->getWorldTransform(t);
+					rigidBody->body->setWorldTransform(t);
+					rigidBody->body->setLinearVelocity(btVector3(0, 0, 0));
+				}
+
 			}
 
 			void Transform::setGlobalRotation(const glm::quat &rotation)
@@ -106,12 +117,6 @@ namespace vrlib
 			}
 
 
-			std::string toString(float value)
-			{
-				std::ostringstream ss;
-				ss << value;
-				return ss.str();
-			}
 
 
 			void Transform::buildEditor(EditorBuilder * builder)
@@ -119,15 +124,15 @@ namespace vrlib
 				builder->addTitle("Transform");
 
 				builder->beginGroup("Translate", false);
-				builder->addTextBox(toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
 				builder->endGroup();
 
 				builder->beginGroup("Scale", false);
-				builder->addTextBox(toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
 				builder->addCheckbox(true, [](bool newValue) {});
 				builder->endGroup();
 
@@ -135,17 +140,17 @@ namespace vrlib
 
 				//TODO: use yaw/pitch/roll for rotation
 				builder->beginGroup("Rotation", false);
-				builder->addTextBox(toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
+				builder->addTextBox(builder->toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.x = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
-				builder->addTextBox(toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
+				builder->addTextBox(builder->toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.y = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
-				builder->addTextBox(toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
+				builder->addTextBox(builder->toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.z = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);

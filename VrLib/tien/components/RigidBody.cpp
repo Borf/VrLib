@@ -23,6 +23,12 @@ namespace vrlib
 				body = nullptr;
 			}
 
+			RigidBody::RigidBody(const json::Value & json)
+			{
+				this->mass = json["mass"];
+				this->type = Type::Static; //TODO
+			}
+
 
 			RigidBody::~RigidBody()
 			{
@@ -129,6 +135,8 @@ namespace vrlib
 			}
 			void RigidBody::setWorldTransform(const btTransform & worldTrans)
 			{
+				if (!node->getComponent<Collider>())
+					return;
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 
@@ -136,6 +144,25 @@ namespace vrlib
 				transform->rotation = glm::quat(worldTrans.getRotation().w(), worldTrans.getRotation().x(), worldTrans.getRotation().y(), worldTrans.getRotation().z());
 				transform->position -= transform->rotation * node->getComponent<Collider>()->offset;
 			}
+
+
+
+
+			void RigidBody::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Rigid Body");
+
+				builder->beginGroup("Mass");
+				builder->addTextBox(builder->toString(mass), [this](const std::string & newValue) { mass = (float)atof(newValue.c_str());  });
+				builder->endGroup();
+
+				builder->beginGroup("Type");
+				builder->addComboBox("static", { "static", "dynamic", "kinematic" }, [](const std::string &newValue) {});
+				builder->endGroup();
+				builder->endGroup();
+
+			}
+
 		}
 	}
 }

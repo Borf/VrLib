@@ -153,7 +153,7 @@ namespace vrlib
 			{
 
 			}
-
+			//TODO: deferred and forward code looks quite the same.... look for some code reuse
 			void ModelRenderer::drawDeferredPass()
 			{
 				if (!model)
@@ -173,7 +173,7 @@ namespace vrlib
 				},
 					[this, &context](const vrlib::Material &material)
 				{
-					if (material.texture->usesAlphaChannel)
+					if ((material.texture && material.texture->usesAlphaChannel) || material.color.diffuse.a < 0.999f)
 						return false;
 					if (material.texture)
 					{
@@ -230,7 +230,7 @@ namespace vrlib
 				},
 					[this, &context](const vrlib::Material &material)
 				{
-					if (!material.texture->usesAlphaChannel)
+					if (material.color.diffuse.a >= 0.999f && (!material.texture || !material.texture->usesAlphaChannel))
 						return false;
 					if (material.texture)
 					{
