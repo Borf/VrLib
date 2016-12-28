@@ -224,7 +224,16 @@ namespace vrlib
 				if (dynamic_cast<components::Collider*>(component))
 				{
 					if (rigidBody)
+					{
+						if (rigidBody->body->getCollisionShape() == components::RigidBody::emptyShape)
+						{ //if the body doesn't have a collisionshape, the worldtransform will change due to the offset calculation in the getTransform in the rigidbody
+							btTransform wt = rigidBody->body->getWorldTransform();
+							glm::vec3 offset = getComponent<components::Collider>()->offset; //TODO: null check
+							wt.setOrigin(wt.getOrigin() + btVector3(offset.x, offset.y, offset.z));
+							rigidBody->body->setWorldTransform(wt);
+						}
 						rigidBody->updateCollider(getScene().world);
+					}
 				}
 
 				if (!renderAble)

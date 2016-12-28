@@ -27,6 +27,7 @@ namespace vrlib
 			{
 				this->mass = json["mass"];
 				this->type = Type::Static; //TODO
+				body = nullptr;
 			}
 
 
@@ -106,6 +107,7 @@ namespace vrlib
 				}
 				else
 					body->setCollisionShape(emptyShape);
+
 				world->addRigidBody(body);
 			}
 
