@@ -72,6 +72,7 @@ namespace vrlib
 			btDiscreteDynamicsWorld*                world;
 			DebugDraw*								debugDrawer;
 
+			void reset();
 
 			bool testBodyCollision(Node* n1, Node* n2);
 			void castRay(const math::Ray& ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true) const;

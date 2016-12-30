@@ -45,7 +45,7 @@ namespace vrlib
 			void setParent(Node* newParent);
 
 			json::Value asJson(json::Value &meshes) const;
-			void fromJson(const json::Value &json, const json::Value &totalJson);
+			void fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> & = nullptr);
 
 			template<class T> T* getComponent() const
 			{
@@ -60,7 +60,12 @@ namespace vrlib
 
 			template<class T> void removeComponent()
 			{
-				components.erase(std::remove_if(components.begin(), components.end(), [](const Component* c) { return dynamic_cast<const T*>(c) != nullptr; }), components.end());
+				components.erase(std::remove_if(components.begin(), components.end(), [](Component* c) { 
+					T* t = dynamic_cast<T*>(c);
+					if (t)
+						delete t;
+					return t != nullptr; 
+				}), components.end());
 			}
 
 
@@ -92,6 +97,20 @@ namespace vrlib
 						return cn;
 				}
 				return nullptr;
+			}
+
+			template<class T> std::vector<Node*> findNodesWithComponent()
+			{
+				std::vector<vrlib::tien::Node*> ret;
+
+				if (getComponent<T>())
+					ret.push_back(this);
+				for (auto c : children)
+				{
+					auto v2 = c->findNodesWithComponent<T>();
+					ret.insert(ret.end(), v2.begin(), v2.end());
+				}
+				return ret;
 			}
 
 			Node* findNodeWithName(const std::string &name);

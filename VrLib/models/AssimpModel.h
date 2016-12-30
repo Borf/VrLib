@@ -101,6 +101,8 @@ namespace vrlib
 
 		void playAnimation(const std::string& animation, float fadeInTime = 0, bool playOnce = false);
 		void stopAnimation(const std::string& animation, float fadeOutTime = 0);
+		void stopAnimations();
+		void resetToInitial();
 		void update(double elapsedTime);
 		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<bool(const Material&)> &materialCallback = nullptr);
 		void drawSkeleton();

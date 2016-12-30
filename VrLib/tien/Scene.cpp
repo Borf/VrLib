@@ -156,10 +156,20 @@ namespace vrlib
 				return 0;
 			}
 		};
+		void Scene::reset()
+		{
+			while (getFirstChild())
+				delete getFirstChild();
+		}
+
+
+
 		bool Scene::testBodyCollision(Node * n1, Node * n2)
 		{
 			if (!n1 || !n2)
 				return false;
+			if (!n1->rigidBody || !n2->rigidBody)
+				return false; // needs a rigidbody for collision testing
 			if (!n1->getComponent<vrlib::tien::components::RigidBody>()->body || !n2->getComponent<vrlib::tien::components::RigidBody>()->body)
 				return false;
 

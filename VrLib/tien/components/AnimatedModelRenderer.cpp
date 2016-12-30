@@ -181,6 +181,13 @@ namespace vrlib
 				((vrlib::State*)modelInstance)->playAnimation(animation, 0, true);
 			}
 
+			void AnimatedModelRenderer::resetAnimation()
+			{
+				((vrlib::State*)modelInstance)->stopAnimations();
+				((vrlib::State*)modelInstance)->resetToInitial();
+			}
+
+
 			void AnimatedModelRenderer::ModelRenderContext::init()
 			{
 				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/animatedModel.vert", "data/vrlib/tien/shaders/animatedModel.frag");

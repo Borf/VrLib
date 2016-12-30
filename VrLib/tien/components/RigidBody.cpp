@@ -119,7 +119,21 @@ namespace vrlib
 				body->setAngularVelocity(btVector3(0, 0, 0));
 			}
 
+			void RigidBody::setType(Type newType)
+			{
+				world->removeRigidBody(body);
+				if (newType == Type::Dynamic)
+				{
+					body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+				}
+				else if (newType == Type::Static || newType == Type::Kinematic)
+				{
+					body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+				}
+				world->addRigidBody(body);
 
+				type = newType;
+			}
 
 
 

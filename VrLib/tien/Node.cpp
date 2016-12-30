@@ -79,7 +79,7 @@ namespace vrlib
 			return v;
 		}
 
-		void Node::fromJson(const json::Value &json, const json::Value &totalJson)
+		void Node::fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> &callback)
 		{
 			setTreeDirty(this, true);
 			name = json["name"];
@@ -121,14 +121,23 @@ namespace vrlib
 							addComponent(new vrlib::tien::components::BoxCollider(c));
 					}
 					else
-						logger << "Unhandled component: " << c["type"].asString() << Log::newline;
+					{
+						if (callback)
+						{
+							vrlib::tien::Component* newComponent = callback(c);
+							if (newComponent)
+								addComponent(newComponent);
+							else
+								logger << "Unhandled component: " << c["type"].asString() << Log::newline;
+						}
+					}
 				}
 
 
 
 			if(json.isMember("children"))
 				for (auto c : json["children"])
-					(new Node("", this))->fromJson(c, totalJson);
+					(new Node("", this))->fromJson(c, totalJson, callback);
 		}
 
 

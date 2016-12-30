@@ -79,6 +79,8 @@ namespace vrlib
 
 				void playAnimation(const std::string &animation, bool loop = true);
 				void playAnimation(const std::string &animation, std::function<void()> callbackOnDone);
+				void resetAnimation();
+
 
 				void AnimatedModelRenderer::buildEditor(EditorBuilder * builder);
 

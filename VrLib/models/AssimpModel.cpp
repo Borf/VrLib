@@ -774,6 +774,20 @@ namespace vrlib
 		}
 	}
 
+	void State::stopAnimations()
+	{
+		for (size_t i = 0; i < faders.size(); i++)
+			delete faders[i];
+		faders.clear();
+
+		animations.clear(); //TODO: memory leak !
+	}
+
+	void State::resetToInitial()
+	{
+		model->rootBone->update(this->boneMatrices, 0, NULL);
+	}
+
 
 
 	template class AssimpModel < gl::VertexP3 >;
