@@ -102,8 +102,8 @@ namespace vrlib
 			if (treeDirty)
 			{
 				updateRenderables();
-				if (!cameraNode)
-					cameraNode = findNodeWithComponent<components::Camera>();
+				//if (!cameraNode)
+				//	cameraNode = findNodeWithComponent<components::Camera>();
 				treeDirty = false;
 			}
 
@@ -160,6 +160,10 @@ namespace vrlib
 		{
 			while (getFirstChild())
 				delete getFirstChild();
+
+			renderables.clear();
+			lights.clear();
+			cameraNode = nullptr;
 		}
 
 

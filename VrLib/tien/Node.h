@@ -86,13 +86,13 @@ namespace vrlib
 			}
 
 
-			template<class T> Node* findNodeWithComponent()
+			template<class T> const Node* findNodeWithComponent() const
 			{
 				if (getComponent<T>())
 					return this;
 				for (auto c : children)
 				{
-					Node* cn = c->findNodeWithComponent<T>();
+					const Node* cn = c->findNodeWithComponent<T>();
 					if (cn)
 						return cn;
 				}

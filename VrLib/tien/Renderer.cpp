@@ -111,13 +111,13 @@ namespace vrlib
 
 
 			//let's first update the camera matrices
-			if (!scene.cameraNode)
+			glm::mat4 modelViewMatrix = modelMatrix;
+			if (scene.cameraNode)
 			{
-				logger << "No camera found" << Log::newline;
-				return;
+				components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
+				modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
+
 			}
-			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
-			glm::mat4 modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 			
 			//update the lights / shadowmaps
@@ -247,12 +247,27 @@ namespace vrlib
 
 
 			//draw skybox (it's a special forward rendered object. Maybe this could be turned into a renderable?)
-			auto skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
+			vrlib::tien::components::SkyBox* skybox = nullptr;
+			if (scene.cameraNode)
+				skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
+			else if (scene.findNodeWithComponent<vrlib::tien::components::SkyBox>())
+				skybox = scene.findNodeWithComponent<vrlib::tien::components::SkyBox>()->getComponent<vrlib::tien::components::SkyBox>();
+
+
 			if (skybox)
 			{
 				if (!skybox->initialized)
 					skybox->initialize();
 				skybox->render(projectionMatrix, modelViewMatrix);
+			}
+			else
+			{
+				glActiveTexture(GL_TEXTURE0);
+				glDepthMask(GL_TRUE);
+				glEnable(GL_DEPTH_TEST);
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glDisable(GL_CULL_FACE);
 			}
 
 
