@@ -21,7 +21,7 @@ namespace vrlib
 				rotation(rotation), 
 				scale(scale)
 			{
-
+				buildTransform();
 			}
 
 			Transform::Transform(const vrlib::json::Value & json)
@@ -29,6 +29,7 @@ namespace vrlib
 				position = glm::vec3(json["position"][0].asFloat(), json["position"][1].asFloat(), json["position"][2].asFloat());
 				rotation = glm::quat(json["rotation"][3].asFloat(), json["rotation"][0].asFloat(), json["rotation"][1].asFloat(), json["rotation"][2].asFloat());
 				scale = glm::vec3(json["scale"][0].asFloat(), json["scale"][1].asFloat(), json["scale"][2].asFloat());
+				buildTransform();
 			}
 
 			Transform::~Transform()
@@ -65,8 +66,25 @@ namespace vrlib
 					rigidBody->body->setWorldTransform(t);
 					rigidBody->body->setLinearVelocity(btVector3(0, 0, 0));
 				}
-
 			}
+
+
+			glm::quat Transform::getGlobalRotation() const
+			{
+				return glm::quat(globalTransform);
+
+				std::function<glm::quat(Node*)> parentRot;
+				parentRot = [&parentRot](Node* n)
+				{
+					glm::quat rot;
+					if (n->transform)
+						rot = n->transform->rotation;
+					if (n->parent)
+						return parentRot(n->parent) * rot;
+				};
+				return parentRot(node);
+			}
+
 
 			void Transform::setGlobalRotation(const glm::quat &rotation)
 			{
@@ -123,13 +141,13 @@ namespace vrlib
 			{
 				builder->addTitle("Transform");
 
-				builder->beginGroup("Translate", false);
+				builder->beginGroup("Local Translate", false);
 				builder->addTextBox(builder->toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
 				builder->addTextBox(builder->toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
 				builder->addTextBox(builder->toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
 				builder->endGroup();
 
-				builder->beginGroup("Scale", false);
+				builder->beginGroup("Local Scale", false);
 				builder->addTextBox(builder->toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
 				builder->addTextBox(builder->toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
 				builder->addTextBox(builder->toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
@@ -139,7 +157,7 @@ namespace vrlib
 				glm::vec3 euler = glm::eulerAngles(rotation);
 
 				//TODO: use yaw/pitch/roll for rotation
-				builder->beginGroup("Rotation", false);
+				builder->beginGroup("Local Rotation", false);
 				builder->addTextBox(builder->toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.x = (float)glm::radians(atof(newValue.c_str()));
@@ -156,6 +174,15 @@ namespace vrlib
 					rotation = glm::quat(euler);
 				});
 				builder->endGroup();
+
+
+				glm::vec3 globalPosition = getGlobalPosition();
+
+				builder->beginGroup("Global Translate", false);
+				for(int i = 0; i < 3; i++)
+				builder->addTextBox(builder->toString(globalPosition[i]), [this,i](const std::string & newValue) { auto gp = getGlobalPosition(); gp[i] = (float)atof(newValue.c_str()); setGlobalPosition(gp);  });
+				builder->endGroup();
+
 
 			}
 		}

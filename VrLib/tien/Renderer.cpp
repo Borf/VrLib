@@ -94,7 +94,7 @@ namespace vrlib
 
 		}
 
-		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix)
+		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode)
 		{
 			//first let's initialize the gbuffers
 			int viewport[4];
@@ -112,10 +112,10 @@ namespace vrlib
 
 			//let's first update the camera matrices
 			glm::mat4 modelViewMatrix = modelMatrix;
-			if (scene.cameraNode)
+			if (cameraNode)
 			{
-				components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
-				modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
+				components::Camera* camera = cameraNode->getComponent<components::Camera>();
+				modelViewMatrix = modelMatrix * glm::inverse(cameraNode->transform->globalTransform);
 
 			}
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
@@ -153,7 +153,11 @@ namespace vrlib
 				context->frameSetup(projectionMatrix, modelViewMatrix);
 			//and then actually draw to the gbuffer
 			for (Node* c : scene.renderables)
-				c->getComponent<components::Renderable>()->drawDeferredPass();
+			{
+				auto r = c->getComponent<components::Renderable>();
+				if (r->visible)
+					r->drawDeferredPass();
+			}
 			gbuffers->unbind();
 
 			//reset the old viewport, and clear it. Use scissoring to only clear this part of the viewport
@@ -241,13 +245,19 @@ namespace vrlib
 			for (components::Renderable::RenderContext* context : scene.renderContextsForward)
 				context->frameSetup(projectionMatrix, modelViewMatrix);
 			for (Node* c : scene.renderables)
-				c->getComponent<components::Renderable>()->drawForwardPass();
+			{
+				auto r = c->getComponent<components::Renderable>();
+				if(r->visible)
+					r->drawForwardPass();
+			}
 
 
 
 
 			//draw skybox (it's a special forward rendered object. Maybe this could be turned into a renderable?)
 			vrlib::tien::components::SkyBox* skybox = nullptr;
+			if(cameraNode)
+				skybox = cameraNode->getComponent<vrlib::tien::components::SkyBox>();
 			if (scene.cameraNode)
 				skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
 			else if (scene.findNodeWithComponent<vrlib::tien::components::SkyBox>())

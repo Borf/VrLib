@@ -221,7 +221,16 @@ namespace vrlib
 			{
 				Scene& scene = getScene();
 				if (!transform)
+				{
 					transform = dynamic_cast<components::Transform*>(component);
+					if (transform)
+					{
+						if (parent && parent->transform) //todo: what if parent has no transform, but parent-parent does
+							transform->globalTransform = parent->transform->globalTransform * transform->transform;
+						else
+							transform->globalTransform = transform->transform; //tmp
+					}
+				}
 				if (!light)
 					light = dynamic_cast<components::Light*>(component);
 				if (!rigidBody)

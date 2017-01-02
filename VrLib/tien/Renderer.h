@@ -82,7 +82,7 @@ namespace vrlib
 
 			void buildOverlay();
 
-			virtual void render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix);
+			virtual void render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix, Node* cameraNode);
 
 
 			bool drawPhysicsDebug;

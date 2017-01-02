@@ -20,7 +20,7 @@ namespace vrlib
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) = 0;
 					virtual void useCubemap(bool use) {};
 				};
-
+				bool visible = true;
 				RenderContext* renderContextDeferred = nullptr;
 				RenderContext* renderContextShadow = nullptr;
 				RenderContext* renderContextForward = nullptr;

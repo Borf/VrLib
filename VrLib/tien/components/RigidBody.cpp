@@ -143,11 +143,12 @@ namespace vrlib
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 				
-				glm::vec3 position = transform->position;
-				position += transform->rotation * (node->getComponent<Collider>() ? node->getComponent<Collider>()->offset : glm::vec3(0,0,0));
+				glm::vec3 position = transform->getGlobalPosition();
+				glm::quat rotation = transform->getGlobalRotation();
+				position += rotation * (node->getComponent<Collider>() ? node->getComponent<Collider>()->offset : glm::vec3(0,0,0));
 
 				worldTrans.setOrigin(btVector3(position.x, position.y, position.z));
-				worldTrans.setRotation(btQuaternion(transform->rotation.x, transform->rotation.y, transform->rotation.z, transform->rotation.w));
+				worldTrans.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
 			}
 			void RigidBody::setWorldTransform(const btTransform & worldTrans)
 			{

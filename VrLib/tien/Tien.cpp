@@ -44,7 +44,7 @@ namespace vrlib
 		void Tien::render(const glm::mat4 &projectionMatrix, const glm::mat4& modelViewMatrix)
 		{
 			if (playState == PlayState::Playing || playState == PlayState::Paused)
-				renderer.render(scene, projectionMatrix, modelViewMatrix);
+				renderer.render(scene, projectionMatrix, modelViewMatrix, scene.cameraNode);
 		}
 
 
