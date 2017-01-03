@@ -229,8 +229,6 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
 
 				glm::vec3 lightDir(t->globalTransform * glm::vec4(1, 0, 0, 1) - t->globalTransform * glm::vec4(0, 0, 0,1));
-				logger << "Dir: " << lightDir << Log::newline;
-
 				postLightingShader->setUniform(PostLightingUniform::lightDirection, -lightDir);
 
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
