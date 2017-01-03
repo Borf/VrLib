@@ -8,6 +8,7 @@ namespace vrlib
 	namespace gl { class FBO; }
 	namespace tien
 	{
+		class Tien;
 		namespace components
 		{
 			class Light : public Component
@@ -18,6 +19,7 @@ namespace vrlib
 				glm::mat4 modelViewMatrix;
 
 				friend class vrlib::tien::Renderer;
+				friend class vrlib::tien::Tien;
 			public:
 				Light() {};
 				Light(const vrlib::json::Value &json);

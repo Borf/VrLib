@@ -95,8 +95,9 @@ namespace vrlib
 				Albedo,
 				Normals,
 				Specular,
-				SunLightmap,
+				Lightmaps,
 			} drawMode;
+			int debugLightMapIndex = 0;
 
 		};
 	}

@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <sstream>
+
 using vrlib::Log;
 
 namespace vrlib
@@ -97,12 +99,15 @@ namespace vrlib
 				if (shadow != Shadow::shadowmap)
 					return;
 
-				if (type == Type::directional)
+				if (type == Type::directional || type == Type::spot)
 				{
 					if (!shadowMapDirectional)
-						shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
+						if (type == Type::directional)
+							shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
+						else
+							shadowMapDirectional = new vrlib::gl::FBO(512, 512, true, 0, true); //shadowmap
 
-					float size = 10.0f;
+					float size = 5.0f;
 
 					glm::vec3 frustumCenter = node->getScene().frustum->getCenter(); //todo: cache?
 					glm::vec3 eyePos = glm::vec3(glm::inverse(node->getScene().frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1));
@@ -115,11 +120,18 @@ namespace vrlib
 					//printf("dir:   \t%f\t%f\t%f\n", dir.x, dir.y, dir.z);
 
 					glm::vec3 lightPosition = frustumCenter - 50.0f * lightDir;
-					projectionMatrix = glm::ortho(-size, size*2, -size, size*2, 0.0f, 250.0f); //TODO: auto generate
-					//projectionMatrix = glm::ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 250.0f);
-					
 
-					modelViewMatrix = glm::lookAt(lightPosition, lightPosition + lightDir, glm::vec3(0, 1, 0));
+					if (type == Type::directional)
+						projectionMatrix = glm::ortho(-size, size*2, -size, size*2, 0.0f, 250.0f); //TODO: auto generate depth
+					else
+						projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 5.0f); //TODO: autogenerate 1 and range
+
+
+					if(type == Type::directional)
+						modelViewMatrix = glm::lookAt(lightPosition, lightPosition + lightDir, glm::vec3(0, 1, 0));
+					else
+						modelViewMatrix = glm::lookAt(node->transform->getGlobalPosition(), node->transform->getGlobalPosition() + lightDir, glm::vec3(0, 1, 0));
+
 					Scene& scene = node->getScene();
 
 					shadowMapDirectional->bind();
@@ -182,10 +194,17 @@ namespace vrlib
 				builder->addTitle("Light");
 
 				char rgb[10];
-				sprintf(rgb, "%02X%02X%02X", (int)(color.r * 256), (int)(color.g * 256), (int)(color.b * 256));
+				sprintf(rgb, "%02X%02X%02X", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
 
 				builder->beginGroup("Color");
-				builder->addTextBox(rgb, [this](const std::string &) {});
+				builder->addTextBox(rgb, [this](const std::string &newValue) {
+					std::stringstream c(newValue);
+					unsigned int rgb;
+					c >> std::hex >> rgb;
+					color.b = ((rgb >> 0) & 255) / 255.0f;
+					color.g = ((rgb >> 8) & 255) / 255.0f;
+					color.r = ((rgb >> 16) & 255) / 255.0f;
+				});
 				builder->endGroup();
 
 				builder->beginGroup("Intensity");

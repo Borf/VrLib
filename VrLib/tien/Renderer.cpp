@@ -198,23 +198,21 @@ namespace vrlib
 			glDepthMask(GL_FALSE);
 			glEnable(GL_CULL_FACE);
 			glDisable(GL_DEPTH_TEST);
+			glCullFace(GL_BACK);
 
 			//every light adds shading to the scene, so draw the lights.
 			//TODO: check which spheres are visible for pointlights
+			//TODO: first draw ambient shading, then add diffuse/specular for every light
 			for (Node* c : scene.lights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
 				components::Transform* t = c->getComponent<components::Transform>();
 				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
 
-				if (l->type == components::Light::Type::directional)
-					glCullFace(GL_BACK);
-				else
-					glCullFace(GL_FRONT);
-
+			
 				if (l->shadow == components::Light::Shadow::shadowmap && l->shadowMapDirectional)
 				{
-					if(l->type == components::Light::Type::directional)
+					if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot)
 						l->shadowMapDirectional->use(3);
 					else
 						l->shadowMapDirectional->use(4);
@@ -237,7 +235,7 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
 				
 
-				if(l->type == components::Light::Type::directional)
+				if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
 					glDrawArrays(GL_QUADS, 0, 4);
 				else
 					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y-sphere.x);
@@ -439,10 +437,11 @@ namespace vrlib
 					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[0]);
 				if (drawMode == DrawMode::Normals)
 					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[1]);
-				if (drawMode == DrawMode::SunLightmap)
+				if (drawMode == DrawMode::Lightmaps)
 				{
-					auto light = scene.lights.back()->getComponent<vrlib::tien::components::Light>();
-					light->shadowMapDirectional->use();
+					auto light = scene.lights[debugLightMapIndex]->getComponent<vrlib::tien::components::Light>();
+					if(light->shadowMapDirectional)
+						light->shadowMapDirectional->use();
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 					glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 				}
@@ -461,10 +460,11 @@ namespace vrlib
 
 
 
-				if (drawMode == DrawMode::SunLightmap)
+				if (drawMode == DrawMode::Lightmaps)
 				{
-					auto light = scene.lights.back()->getComponent<vrlib::tien::components::Light>();
-					light->shadowMapDirectional->use();
+					auto light = scene.lights[debugLightMapIndex]->getComponent<vrlib::tien::components::Light>();
+					if(light->shadowMapDirectional)
+						light->shadowMapDirectional->use();
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 				}
