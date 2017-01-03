@@ -227,6 +227,12 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
+
+				glm::vec3 lightDir(t->globalTransform * glm::vec4(1, 0, 0, 1) - t->globalTransform * glm::vec4(0, 0, 0,1));
+				logger << "Dir: " << lightDir << Log::newline;
+
+				postLightingShader->setUniform(PostLightingUniform::lightDirection, -lightDir);
+
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
 				if(l->type == components::Light::Type::directional)

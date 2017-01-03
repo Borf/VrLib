@@ -7,6 +7,9 @@
 #include <VrLib/Model.h>
 #include <VrLib/json.h>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 namespace vrlib
 {
@@ -143,12 +146,11 @@ namespace vrlib
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 				
-				glm::vec3 position = transform->getGlobalPosition();
-				glm::quat rotation = transform->getGlobalRotation();
-				position += rotation * (node->getComponent<Collider>() ? node->getComponent<Collider>()->offset : glm::vec3(0,0,0));
+				glm::mat4 mat(transform->globalTransform);
+				if(node->getComponent<Collider>())
+					mat = glm::translate(mat, node->getComponent<Collider>()->offset);
 
-				worldTrans.setOrigin(btVector3(position.x, position.y, position.z));
-				worldTrans.setRotation(btQuaternion(rotation.x, rotation.y, rotation.z, rotation.w));
+				worldTrans.setFromOpenGLMatrix(glm::value_ptr(mat));
 			}
 			void RigidBody::setWorldTransform(const btTransform & worldTrans)
 			{
@@ -157,7 +159,8 @@ namespace vrlib
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 
-				transform->position = glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z());
+				//todo: check
+				transform->setGlobalPosition(glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z()));
 				transform->rotation = glm::quat(worldTrans.getRotation().w(), worldTrans.getRotation().x(), worldTrans.getRotation().y(), worldTrans.getRotation().z());
 				transform->position -= transform->rotation * node->getComponent<Collider>()->offset;
 			}

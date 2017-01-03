@@ -81,6 +81,7 @@ namespace vrlib
 						rot = n->transform->rotation;
 					if (n->parent)
 						return parentRot(n->parent) * rot;
+					return rot;
 				};
 				return parentRot(node);
 			}
