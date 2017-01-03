@@ -49,10 +49,10 @@ namespace vrlib
 
 
 				float intensity;
-				glm::vec4 color;
+				glm::vec4 color = glm::vec4(1,1,1,1);
 
 
-				float spotlightAngle;
+				float spotlightAngle = 45.0f;
 				float range; //point / spotlight
 
 				virtual void buildEditor(EditorBuilder* builder) override;

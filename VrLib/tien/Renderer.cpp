@@ -53,6 +53,7 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
 			postLightingShader->registerUniform(PostLightingUniform::lightRange, "lightRange");
 			postLightingShader->registerUniform(PostLightingUniform::lightColor, "lightColor");
+			postLightingShader->registerUniform(PostLightingUniform::lightSpotAngle, "lightSpotAngle");
 			postLightingShader->registerUniform(PostLightingUniform::lightCastShadow, "lightCastShadow");
 			postLightingShader->registerUniform(PostLightingUniform::cameraPosition, "cameraPosition");
 			postLightingShader->use();
@@ -233,6 +234,9 @@ namespace vrlib
 
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
+				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
+				
+
 				if(l->type == components::Light::Type::directional)
 					glDrawArrays(GL_QUADS, 0, 4);
 				else
