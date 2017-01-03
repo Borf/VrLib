@@ -50,7 +50,7 @@ namespace vrlib
 				return ret;
 			}
 
-			void Transform::setGlobalPosition(const glm::vec3 &position)
+			void Transform::setGlobalPosition(const glm::vec3 &position, bool resetPhyics)
 			{
 				glm::vec3 parentPos;
 				if (node->parent && node->parent->transform)
@@ -59,7 +59,7 @@ namespace vrlib
 				this->position = position - parentPos;
 
 				auto rigidBody = node->getComponent<RigidBody>();
-				if (rigidBody && rigidBody->body)
+				if (resetPhyics && rigidBody && rigidBody->body)
 				{
 					btTransform t;
 					rigidBody->body->getMotionState()->getWorldTransform(t);
@@ -84,6 +84,22 @@ namespace vrlib
 					return rot;
 				};
 				return parentRot(node);
+			}
+
+			glm::vec3 Transform::getGlobalScale() const
+			{
+				std::function<glm::vec3(Node*)> parentScale;
+				parentScale = [&parentScale](Node* n)
+				{
+					glm::vec3 scale(1,1,1);
+					if (n->transform)
+						scale = n->transform->scale;
+					if (n->parent)
+						return parentScale(n->parent) * scale;
+					return scale;
+				};
+				return parentScale(node);
+
 			}
 
 

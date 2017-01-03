@@ -145,12 +145,21 @@ namespace vrlib
 			{
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
-				
+#if 1
 				glm::mat4 mat(transform->globalTransform);
+				mat = glm::scale(mat, 1.0f / transform->getGlobalScale());
 				if(node->getComponent<Collider>())
 					mat = glm::translate(mat, node->getComponent<Collider>()->offset);
 
 				worldTrans.setFromOpenGLMatrix(glm::value_ptr(mat));
+#else
+				glm::vec3 position = transform->getGlobalPosition();
+				position += transform->rotation * (node->getComponent<Collider>() ? node->getComponent<Collider>()->offset : glm::vec3(0, 0, 0));
+
+				worldTrans.setOrigin(btVector3(position.x, position.y, position.z));
+				worldTrans.setRotation(btQuaternion(transform->rotation.x, transform->rotation.y, transform->rotation.z, transform->rotation.w));
+#endif
+
 			}
 			void RigidBody::setWorldTransform(const btTransform & worldTrans)
 			{
@@ -160,9 +169,15 @@ namespace vrlib
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 
 				//todo: check
-				transform->setGlobalPosition(glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z()));
+				transform->setGlobalPosition(glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z()), false);
+				//transform->position = (glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z()));
 				transform->rotation = glm::quat(worldTrans.getRotation().w(), worldTrans.getRotation().x(), worldTrans.getRotation().y(), worldTrans.getRotation().z());
 				transform->position -= transform->rotation * node->getComponent<Collider>()->offset;
+
+				float f[16];
+				worldTrans.getOpenGLMatrix(f);
+				transform->globalTransform = glm::make_mat4(f);
+
 			}
 
 
