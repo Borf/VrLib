@@ -23,6 +23,7 @@
 #include "components/MeshRenderer.h"
 #include "components/RigidBody.h"
 #include "components/BoxCollider.h"
+#include "components/MeshCollider.h"
 
 namespace vrlib
 {
@@ -99,6 +100,8 @@ namespace vrlib
 			if(json.isMember("components"))
 				for (auto c : json["components"])
 				{
+					if (!c.isMember("type"))
+						continue;
 					if (c["type"] == "transform")
 						addComponent(new vrlib::tien::components::Transform(c));
 					else if (c["type"] == "camera")
@@ -119,6 +122,13 @@ namespace vrlib
 					{
 						if(c["collider"] == "box")
 							addComponent(new vrlib::tien::components::BoxCollider(c));
+						if (c["collider"] == "mesh")
+						{
+							bool convex = true;
+							if (c.isMember("convex"))
+								convex = c["convex"].asBool();
+							addComponent(new vrlib::tien::components::MeshCollider(this, convex));
+						}
 					}
 					else
 					{

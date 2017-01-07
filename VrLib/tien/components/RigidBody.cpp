@@ -64,7 +64,9 @@ namespace vrlib
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 				btCollisionShape* shape = collider ? collider->getShape() : emptyShape;
 
-				shape->setLocalScaling(btVector3(transform->scale.x, transform->scale.y, transform->scale.z));
+				glm::vec3 scale = transform->getGlobalScale();
+
+				shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 				btVector3 fallInertia(0,0,0);
 				if(shape != emptyShape)
 					shape->calculateLocalInertia(mass, fallInertia);
@@ -86,10 +88,11 @@ namespace vrlib
 			{
 				std::vector<Collider*> colliders = node->getComponents<Collider>();
 				world->removeRigidBody(body);
+				glm::vec3 scale = node->transform->getGlobalScale();
 
 				if (colliders.size() == 1)
 				{
-					colliders[0]->getShape()->setLocalScaling(btVector3(node->transform->scale.x, node->transform->scale.y, node->transform->scale.z));
+					colliders[0]->getShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					body->setCollisionShape(colliders[0]->getShape());
 					btVector3 inertia;
 					body->getCollisionShape()->calculateLocalInertia(mass, inertia);
@@ -102,7 +105,7 @@ namespace vrlib
 					for(auto c : colliders)
 						compound->addChildShape(btTransform(), c->getShape());
 					body->setCollisionShape(compound);
-					compound->setLocalScaling(btVector3(node->transform->scale.x, node->transform->scale.y, node->transform->scale.z));
+					compound->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					btVector3 inertia;
 					compound->calculateLocalInertia(mass, inertia);
 					body->setMassProps(mass, inertia);
