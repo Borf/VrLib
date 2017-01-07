@@ -102,7 +102,7 @@ namespace vrlib
 					if (c["type"] == "transform")
 						addComponent(new vrlib::tien::components::Transform(c));
 					else if (c["type"] == "camera")
-						addComponent(new vrlib::tien::components::Camera());
+						addComponent(new vrlib::tien::components::Camera(c));
 					else if (c["type"] == "modelrenderer")
 						addComponent(new vrlib::tien::components::ModelRenderer(c));
 					else if (c["type"] == "animatedmodelrenderer")
@@ -138,6 +138,13 @@ namespace vrlib
 			if(json.isMember("children"))
 				for (auto c : json["children"])
 					(new Node("", this))->fromJson(c, totalJson, callback);
+		}
+
+		void Node::addDebugChildSphere()
+		{
+			auto n = new vrlib::tien::Node("debug", this);
+			n->addComponent(new vrlib::tien::components::Transform(glm::vec3(0, 0, 0), glm::quat(), glm::vec3(0.02f, 0.02f, 0.02f)));
+			n->addComponent(new vrlib::tien::components::ModelRenderer("sphere.shape"));
 		}
 
 

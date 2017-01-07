@@ -80,7 +80,7 @@ namespace vrlib
 
 			void AnimatedModelRenderer::drawDeferredPass()
 			{
-				if (!castShadow)
+				if (!castShadow || !model || !visible)
 					return;
 				components::Transform* t = node->getComponent<Transform>();
 
@@ -270,6 +270,7 @@ namespace vrlib
 					if (cache.find(fileName) == cache.end())
 						cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 					model = cache[fileName];
+					modelInstance = model->getInstance();
 				});
 				builder->endGroup();
 
@@ -280,23 +281,27 @@ namespace vrlib
 				builder->beginGroup("Cull backfaces");
 				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
 				builder->endGroup();
-
+				if (!model)
+					return;
 				builder->beginGroup("Animation");
-				std::vector<std::string> animations = model->getAnimationNames();
-				builder->addComboBox("", animations, [this](const std::string &newValue)
+				if (model)
 				{
-					if(!((vrlib::State*)modelInstance)->animations.empty())
-						((vrlib::State*)modelInstance)->stopAnimation(((vrlib::State*)modelInstance)->animations[0]->animation->name);
-					playAnimation(newValue, true); //TODO: this doesn't work yet?
-				});
+					std::vector<std::string> animations = model->getAnimationNames();
+					builder->addComboBox("", animations, [this](const std::string &newValue)
+					{
+						if (!((vrlib::State*)modelInstance)->animations.empty())
+							((vrlib::State*)modelInstance)->stopAnimation(((vrlib::State*)modelInstance)->animations[0]->animation->name);
+						playAnimation(newValue, true); //TODO: this doesn't work yet?
+					});
+				}
 				builder->endGroup();
 
 
 				builder->addTitle("Materials");
 				builder->beginGroup("Has alpha materials");
-				builder->addCheckbox(model->hasAlphaMaterial(), [](bool newValue) {});
+				if(model)
+					builder->addCheckbox(model->hasAlphaMaterial(), [](bool newValue) {});
 				builder->endGroup();
-
 				int index = 0; //TODO: material name?
 				for (auto m : model->getMaterials())
 				{

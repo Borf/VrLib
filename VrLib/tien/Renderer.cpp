@@ -95,11 +95,19 @@ namespace vrlib
 
 		}
 
+		std::map<Node*, vrlib::gl::FBO*> gbufferMap;
+
 		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode)
 		{
 			//first let's initialize the gbuffers
 			int viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
+
+			if (gbufferMap.find(cameraNode) == gbufferMap.end())
+				gbuffers = nullptr;
+			else
+				gbuffers = gbufferMap[cameraNode];
+
 			if (gbuffers && (gbuffers->getWidth() != viewport[2] - viewport[0] ||
 				gbuffers->getHeight() != viewport[3] - viewport[1]))
 			{
@@ -110,14 +118,17 @@ namespace vrlib
 			if(!gbuffers)
 				gbuffers = new vrlib::gl::FBO(viewport[2] - viewport[0], viewport[3] - viewport[1], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
 
+			if (gbufferMap.find(cameraNode) == gbufferMap.end())
+				gbufferMap[cameraNode] = gbuffers;
 
-			//let's first update the camera matrices
+
+
+			//let's first update the camera stuff
 			glm::mat4 modelViewMatrix = modelMatrix;
 			if (cameraNode)
 			{
 				components::Camera* camera = cameraNode->getComponent<components::Camera>();
 				modelViewMatrix = modelMatrix * glm::inverse(cameraNode->transform->globalTransform);
-
 			}
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 			
@@ -264,9 +275,9 @@ namespace vrlib
 			vrlib::tien::components::SkyBox* skybox = nullptr;
 			if(cameraNode)
 				skybox = cameraNode->getComponent<vrlib::tien::components::SkyBox>();
-			if (scene.cameraNode)
+			if (!skybox && scene.cameraNode)
 				skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
-			else if (scene.findNodeWithComponent<vrlib::tien::components::SkyBox>())
+			if (!skybox && scene.findNodeWithComponent<vrlib::tien::components::SkyBox>())
 				skybox = scene.findNodeWithComponent<vrlib::tien::components::SkyBox>()->getComponent<vrlib::tien::components::SkyBox>();
 
 
@@ -276,16 +287,13 @@ namespace vrlib
 					skybox->initialize();
 				skybox->render(projectionMatrix, modelViewMatrix);
 			}
-			else
-			{
-				glActiveTexture(GL_TEXTURE0);
-				glDepthMask(GL_TRUE);
-				glEnable(GL_DEPTH_TEST);
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				glDisable(GL_CULL_FACE);
-			}
 
+			glActiveTexture(GL_TEXTURE0);
+			glDepthMask(GL_TRUE);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_CULL_FACE);
 
 			//We're done drawing, now let's add more stuff for debugging if needed
 			if (drawPhysicsDebug)
@@ -470,8 +478,6 @@ namespace vrlib
 				}
 
 			}
-
-
 		}
 
 

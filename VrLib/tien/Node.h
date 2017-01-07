@@ -47,6 +47,8 @@ namespace vrlib
 			json::Value asJson(json::Value &meshes) const;
 			void fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> & = nullptr);
 
+			void addDebugChildSphere();
+
 			template<class T> T* getComponent() const
 			{
 				for (auto c : components)

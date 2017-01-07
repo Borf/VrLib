@@ -125,7 +125,7 @@ namespace vrlib
 						projectionMatrix = glm::ortho(-size, size, -size, size, 0.0f, 250.0f); //TODO: auto generate depth
 					else
 						//projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 5.0f); //TODO: auto generate depth
-						projectionMatrix = glm::perspective(glm::radians(spotlightAngle), 1.0f, 0.01f, 25.0f); //TODO: autogenerate range
+						projectionMatrix = glm::perspective(glm::radians(spotlightAngle), 1.0f, .01f, 10.0f); //TODO: autogenerate range
 
 
 					if(type == Type::directional)
@@ -150,7 +150,11 @@ namespace vrlib
 
 					glCullFace(GL_FRONT);
 					for (Node* c : scene.renderables)
-						c->getComponent<components::Renderable>()->drawShadowMap();
+					{
+						auto r = c->getComponent<components::Renderable>();
+						if(r->visible)
+							r->drawShadowMap();
+					}
 					glCullFace(GL_BACK);
 
 					shadowMapDirectional->unbind();
@@ -179,10 +183,13 @@ namespace vrlib
 						}
 
 						for (Node* c : scene.renderables)
-							c->getComponent<components::Renderable>()->drawShadowMap();
+						{
+							auto r = c->getComponent<components::Renderable>();
+							if (r->visible)
+								r->drawShadowMap();
+						}
 					}
-
-						shadowMapDirectional->unbind();
+					shadowMapDirectional->unbind();
 				}
 
 

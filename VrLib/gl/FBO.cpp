@@ -167,6 +167,12 @@ namespace vrlib
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
+
+		FBO::~FBO()
+		{
+
+		}
+
 		void FBO::bind()
 		{
 			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);

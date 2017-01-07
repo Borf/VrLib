@@ -270,7 +270,7 @@ namespace vrlib
 
 			void ModelRenderer::drawShadowMap()
 			{
-				if (!castShadow || !model)
+				if (!castShadow || !model || !visible)
 					return;
 				if (!cullBackFaces)
 					glDisable(GL_CULL_FACE);
