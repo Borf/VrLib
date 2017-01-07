@@ -190,7 +190,7 @@ namespace vrlib
 
 			void AnimatedModelRenderer::ModelRenderContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/animatedModel.vert", "data/vrlib/tien/shaders/animatedModel.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/AnimatedModelRenderer.deferred.vert", "data/vrlib/tien/shaders/AnimatedModelRenderer.deferred.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_normal", 1);
 				renderShader->bindAttributeLocation("a_bitangent", 2);
@@ -233,7 +233,7 @@ namespace vrlib
 
 			void AnimatedModelRenderer::ModelShadowRenderContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/animatedModelShadow.vert", "data/vrlib/tien/shaders/animatedModelShadow.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/AnimatedModelRenderer.shadow.vert", "data/vrlib/tien/shaders/AnimatedModelRenderer.shadow.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_boneIds", 5);
 				renderShader->bindAttributeLocation("a_boneWeights", 6);

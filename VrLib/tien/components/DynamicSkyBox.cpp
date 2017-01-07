@@ -33,7 +33,7 @@ namespace vrlib
 			void DynamicSkyBox::initialize()
 			{
 				skydome = vrlib::Model::getModel<vrlib::gl::VertexP3>("data/vrlib/tien/models/skydome.obj");
-				skydomeShader = new vrlib::gl::Shader<SkydomeUniforms>("data/vrlib/tien/shaders/skydome.vert", "data/vrlib/tien/shaders/skydome.frag");
+				skydomeShader = new vrlib::gl::Shader<SkydomeUniforms>("data/vrlib/tien/shaders/DynamicSkyBox.skydome.vert", "data/vrlib/tien/shaders/DynamicSkyBox.skydome.frag");
 				skydomeShader->bindAttributeLocation("a_position", 0);
 				skydomeShader->link();
 				skydomeShader->bindFragLocation("fragColor", 0);
@@ -52,7 +52,7 @@ namespace vrlib
 
 				sun = vrlib::Model::getModel<vrlib::gl::VertexP3N3T2>("data/vrlib/tien/models/sun.obj");
 				moon = vrlib::Model::getModel<vrlib::gl::VertexP3N3T2>("data/vrlib/tien/models/moon.obj");
-				billboardShader = new vrlib::gl::Shader<BillboardUniforms>("data/vrlib/tien/shaders/billboard.vert", "data/vrlib/tien/shaders/billboard.frag");
+				billboardShader = new vrlib::gl::Shader<BillboardUniforms>("data/vrlib/tien/shaders/DynamicSkyBox.billboard.vert", "data/vrlib/tien/shaders/DynamicSkyBox.billboard.frag");
 				billboardShader->bindAttributeLocation("a_position", 0);
 				billboardShader->bindAttributeLocation("a_texcoord", 2);
 				billboardShader->link();
