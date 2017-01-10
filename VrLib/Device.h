@@ -39,12 +39,12 @@ namespace vrlib
 	template <class R, class T>
 	class DeviceImpl : public Device
 	{
-		T*	driver;
+		T*	driver = nullptr;
 		R	data;
 	public:
 		virtual void init(std::string name);
 		virtual R getData() const;
-		virtual bool isInitialized() const { return driver != NULL; }
+		virtual bool isInitialized() const { return driver != nullptr; }
 	};
 
 
