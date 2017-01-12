@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include <VrLib/json.h>
 #include <VrLib/tien/Node.h>
+#include <VrLib/tien/components/RigidBody.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -20,7 +21,7 @@ namespace vrlib
 				rotation(rotation), 
 				scale(scale)
 			{
-
+				buildTransform();
 			}
 
 			Transform::Transform(const vrlib::json::Value & json)
@@ -28,6 +29,7 @@ namespace vrlib
 				position = glm::vec3(json["position"][0].asFloat(), json["position"][1].asFloat(), json["position"][2].asFloat());
 				rotation = glm::quat(json["rotation"][3].asFloat(), json["rotation"][0].asFloat(), json["rotation"][1].asFloat(), json["rotation"][2].asFloat());
 				scale = glm::vec3(json["scale"][0].asFloat(), json["scale"][1].asFloat(), json["scale"][2].asFloat());
+				buildTransform();
 			}
 
 			Transform::~Transform()
@@ -48,14 +50,58 @@ namespace vrlib
 				return ret;
 			}
 
-			void Transform::setGlobalPosition(const glm::vec3 &position)
+			void Transform::setGlobalPosition(const glm::vec3 &position, bool resetPhyics)
 			{
 				glm::vec3 parentPos;
 				if (node->parent && node->parent->transform)
 					parentPos = node->parent->transform->getGlobalPosition();
 
-				this->position = position - parentPos;//TODO
+				this->position = position - parentPos;
+
+				auto rigidBody = node->getComponent<RigidBody>();
+				if (resetPhyics && rigidBody && rigidBody->body)
+				{
+					btTransform t;
+					rigidBody->body->getMotionState()->getWorldTransform(t);
+					rigidBody->body->setWorldTransform(t);
+					rigidBody->body->setLinearVelocity(btVector3(0, 0, 0));
+				}
 			}
+
+
+			glm::quat Transform::getGlobalRotation() const
+			{
+				return glm::quat(globalTransform);
+
+				std::function<glm::quat(Node*)> parentRot;
+				parentRot = [&parentRot](Node* n)
+				{
+					glm::quat rot;
+					if (n->transform)
+						rot = n->transform->rotation;
+					if (n->parent)
+						return parentRot(n->parent) * rot;
+					return rot;
+				};
+				return parentRot(node);
+			}
+
+			glm::vec3 Transform::getGlobalScale() const
+			{
+				std::function<glm::vec3(Node*)> parentScale;
+				parentScale = [&parentScale](Node* n)
+				{
+					glm::vec3 scale(1,1,1);
+					if (n->transform)
+						scale = n->transform->scale;
+					if (n->parent)
+						return parentScale(n->parent) * scale;
+					return scale;
+				};
+				return parentScale(node);
+
+			}
+
 
 			void Transform::setGlobalRotation(const glm::quat &rotation)
 			{
@@ -106,51 +152,54 @@ namespace vrlib
 			}
 
 
-			std::string toString(float value)
-			{
-				std::ostringstream ss;
-				ss << value;
-				return ss.str();
-			}
 
 
 			void Transform::buildEditor(EditorBuilder * builder)
 			{
 				builder->addTitle("Transform");
 
-				builder->beginGroup("Translate", false);
-				builder->addTextBox(toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
+				builder->beginGroup("Local Translate", false);
+				builder->addTextBox(builder->toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
 				builder->endGroup();
 
-				builder->beginGroup("Scale", false);
-				builder->addTextBox(toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
-				builder->addTextBox(toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
+				builder->beginGroup("Local Scale", false);
+				builder->addTextBox(builder->toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
+				builder->addTextBox(builder->toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
 				builder->addCheckbox(true, [](bool newValue) {});
 				builder->endGroup();
 
 				glm::vec3 euler = glm::eulerAngles(rotation);
 
 				//TODO: use yaw/pitch/roll for rotation
-				builder->beginGroup("Rotation", false);
-				builder->addTextBox(toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
+				builder->beginGroup("Local Rotation", false);
+				builder->addTextBox(builder->toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.x = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
-				builder->addTextBox(toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
+				builder->addTextBox(builder->toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.y = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
-				builder->addTextBox(toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
+				builder->addTextBox(builder->toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
 					glm::vec3 euler = glm::eulerAngles(rotation);
 					euler.z = (float)glm::radians(atof(newValue.c_str()));
 					rotation = glm::quat(euler);
 				});
 				builder->endGroup();
+
+
+				glm::vec3 globalPosition = getGlobalPosition();
+
+				builder->beginGroup("Global Translate", false);
+				for(int i = 0; i < 3; i++)
+				builder->addTextBox(builder->toString(globalPosition[i]), [this,i](const std::string & newValue) { auto gp = getGlobalPosition(); gp[i] = (float)atof(newValue.c_str()); setGlobalPosition(gp);  });
+				builder->endGroup();
+
 
 			}
 		}

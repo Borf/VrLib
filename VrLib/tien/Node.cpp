@@ -21,6 +21,9 @@
 #include "components/ModelRenderer.h"
 #include "components/DynamicSkyBox.h"
 #include "components/MeshRenderer.h"
+#include "components/RigidBody.h"
+#include "components/BoxCollider.h"
+#include "components/MeshCollider.h"
 
 namespace vrlib
 {
@@ -77,7 +80,7 @@ namespace vrlib
 			return v;
 		}
 
-		void Node::fromJson(const json::Value &json, const json::Value &totalJson)
+		void Node::fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> &callback)
 		{
 			setTreeDirty(this, true);
 			name = json["name"];
@@ -97,10 +100,12 @@ namespace vrlib
 			if(json.isMember("components"))
 				for (auto c : json["components"])
 				{
+					if (!c.isMember("type"))
+						continue;
 					if (c["type"] == "transform")
 						addComponent(new vrlib::tien::components::Transform(c));
 					else if (c["type"] == "camera")
-						addComponent(new vrlib::tien::components::Camera());
+						addComponent(new vrlib::tien::components::Camera(c));
 					else if (c["type"] == "modelrenderer")
 						addComponent(new vrlib::tien::components::ModelRenderer(c));
 					else if (c["type"] == "animatedmodelrenderer")
@@ -111,15 +116,45 @@ namespace vrlib
 						addComponent(new vrlib::tien::components::Light(c));
 					else if (c["type"] == "meshrenderer")
 						addComponent(new vrlib::tien::components::MeshRenderer(c, totalJson));
+					else if (c["type"] == "rigidbody")
+						addComponent(new vrlib::tien::components::RigidBody(c));
+					else if (c["type"] == "collider")
+					{
+						if(c["collider"] == "box")
+							addComponent(new vrlib::tien::components::BoxCollider(c));
+						if (c["collider"] == "mesh")
+						{
+							bool convex = true;
+							if (c.isMember("convex"))
+								convex = c["convex"].asBool();
+							addComponent(new vrlib::tien::components::MeshCollider(this, convex));
+						}
+					}
 					else
-						logger << "Unhandled component: " << c["type"].asString() << Log::newline;
+					{
+						if (callback)
+						{
+							vrlib::tien::Component* newComponent = callback(c);
+							if (newComponent)
+								addComponent(newComponent);
+							else
+								logger << "Unhandled component: " << c["type"].asString() << Log::newline;
+						}
+					}
 				}
 
 
 
 			if(json.isMember("children"))
 				for (auto c : json["children"])
-					(new Node("", this))->fromJson(c, totalJson);
+					(new Node("", this))->fromJson(c, totalJson, callback);
+		}
+
+		void Node::addDebugChildSphere()
+		{
+			auto n = new vrlib::tien::Node("debug", this);
+			n->addComponent(new vrlib::tien::components::Transform(glm::vec3(0, 0, 0), glm::quat(), glm::vec3(0.02f, 0.02f, 0.02f)));
+			n->addComponent(new vrlib::tien::components::ModelRenderer("sphere.shape"));
 		}
 
 
@@ -203,7 +238,16 @@ namespace vrlib
 			{
 				Scene& scene = getScene();
 				if (!transform)
+				{
 					transform = dynamic_cast<components::Transform*>(component);
+					if (transform)
+					{
+						if (parent && parent->transform) //todo: what if parent has no transform, but parent-parent does
+							transform->globalTransform = parent->transform->globalTransform * transform->transform;
+						else
+							transform->globalTransform = transform->transform; //tmp
+					}
+				}
 				if (!light)
 					light = dynamic_cast<components::Light*>(component);
 				if (!rigidBody)
@@ -215,7 +259,16 @@ namespace vrlib
 				if (dynamic_cast<components::Collider*>(component))
 				{
 					if (rigidBody)
+					{
+						if (rigidBody->body->getCollisionShape() == components::RigidBody::emptyShape)
+						{ //if the body doesn't have a collisionshape, the worldtransform will change due to the offset calculation in the getTransform in the rigidbody
+							btTransform wt = rigidBody->body->getWorldTransform();
+							glm::vec3 offset = getComponent<components::Collider>()->offset; //TODO: null check
+							wt.setOrigin(wt.getOrigin() + btVector3(offset.x, offset.y, offset.z));
+							rigidBody->body->setWorldTransform(wt);
+						}
 						rigidBody->updateCollider(getScene().world);
+					}
 				}
 
 				if (!renderAble)

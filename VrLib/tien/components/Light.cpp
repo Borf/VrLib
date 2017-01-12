@@ -10,6 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <sstream>
+
 using vrlib::Log;
 
 namespace vrlib
@@ -97,24 +99,40 @@ namespace vrlib
 				if (shadow != Shadow::shadowmap)
 					return;
 
-				if (type == Type::directional)
+				if (type == Type::directional || type == Type::spot)
 				{
 					if (!shadowMapDirectional)
-						shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
+						if (type == Type::directional)
+							shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
+						else
+							shadowMapDirectional = new vrlib::gl::FBO(512, 512, true, 0, true); //shadowmap
 
-					float size = 10.0f;
+					float size = 5.0f;
 
 					glm::vec3 frustumCenter = node->getScene().frustum->getCenter(); //todo: cache?
 					glm::vec3 eyePos = glm::vec3(glm::inverse(node->getScene().frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1));
 					glm::vec3 dir = frustumCenter - eyePos;
+					glm::vec3 lightDir(node->transform->globalTransform * glm::vec4(1, 0, 0, 1) - node->transform->globalTransform * glm::vec4(0, 0, 0, 1));
+
+
 					frustumCenter = eyePos + size * 0.5f * glm::normalize(dir);
 					//printf("Eyepos:\t%f\t%f\t%f\n", eyePos.x, eyePos.y, eyePos.z);
 					//printf("dir:   \t%f\t%f\t%f\n", dir.x, dir.y, dir.z);
 
-					glm::vec3 lightPosition = frustumCenter + 50.0f * node->transform->position;
-					projectionMatrix = glm::ortho(-size, size*2, -size, size*2, 0.0f, 250.0f); //TODO: auto generate
-					//projectionMatrix = glm::ortho(-25.0f, 25.0f, -25.0f, 25.0f, 0.0f, 250.0f);
-					modelViewMatrix = glm::lookAt(lightPosition, lightPosition - node->transform->position, glm::vec3(0, 1, 0));
+					glm::vec3 lightPosition = frustumCenter - 50.0f * lightDir;
+
+					if (type == Type::directional)
+						projectionMatrix = glm::ortho(-size, size, -size, size, 0.0f, 250.0f); //TODO: auto generate depth
+					else
+						//projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 5.0f); //TODO: auto generate depth
+						projectionMatrix = glm::perspective(glm::radians(spotlightAngle), 1.0f, .01f, 10.0f); //TODO: autogenerate range
+
+
+					if(type == Type::directional)
+						modelViewMatrix = glm::lookAt(lightPosition, lightPosition + lightDir, glm::vec3(0, 1, 0));
+					else
+						modelViewMatrix = glm::lookAt(node->transform->getGlobalPosition(), node->transform->getGlobalPosition() + lightDir, glm::vec3(0, 1, 0));
+
 					Scene& scene = node->getScene();
 
 					shadowMapDirectional->bind();
@@ -132,7 +150,11 @@ namespace vrlib
 
 					glCullFace(GL_FRONT);
 					for (Node* c : scene.renderables)
-						c->getComponent<components::Renderable>()->drawShadowMap();
+					{
+						auto r = c->getComponent<components::Renderable>();
+						if(r->visible)
+							r->drawShadowMap();
+					}
 					glCullFace(GL_BACK);
 
 					shadowMapDirectional->unbind();
@@ -161,10 +183,13 @@ namespace vrlib
 						}
 
 						for (Node* c : scene.renderables)
-							c->getComponent<components::Renderable>()->drawShadowMap();
+						{
+							auto r = c->getComponent<components::Renderable>();
+							if (r->visible)
+								r->drawShadowMap();
+						}
 					}
-
-						shadowMapDirectional->unbind();
+					shadowMapDirectional->unbind();
 				}
 
 
@@ -177,14 +202,21 @@ namespace vrlib
 				builder->addTitle("Light");
 
 				char rgb[10];
-				sprintf(rgb, "%02X%02X%02X", (int)(color.r * 256), (int)(color.g * 256), (int)(color.b * 256));
+				sprintf(rgb, "%02X%02X%02X", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
 
 				builder->beginGroup("Color");
-				builder->addTextBox(rgb, [this](const std::string &) {});
+				builder->addTextBox(rgb, [this](const std::string &newValue) {
+					std::stringstream c(newValue);
+					unsigned int rgb;
+					c >> std::hex >> rgb;
+					color.b = ((rgb >> 0) & 255) / 255.0f;
+					color.g = ((rgb >> 8) & 255) / 255.0f;
+					color.r = ((rgb >> 16) & 255) / 255.0f;
+				});
 				builder->endGroup();
 
 				builder->beginGroup("Intensity");
-				builder->addTextBox(std::to_string(intensity), [this](const std::string &) {});
+				builder->addTextBox(builder->toString(intensity), [this](const std::string &newValue) { intensity = (float)atof(newValue.c_str()); });
 				builder->endGroup();
 
 				builder->beginGroup("Light type");
@@ -202,11 +234,11 @@ namespace vrlib
 				builder->endGroup();
 
 				builder->beginGroup("Spotlight Angle");
-				builder->addTextBox(std::to_string(spotlightAngle), [this](const std::string &) {});
+				builder->addTextBox(builder->toString(spotlightAngle), [this](const std::string &newValue) { spotlightAngle = glm::clamp((float)atof(newValue.c_str()), 0.0f, 179.0f); });
 				builder->endGroup();
 
 				builder->beginGroup("Range");
-				builder->addTextBox(std::to_string(range), [this](const std::string &) {});
+				builder->addTextBox(builder->toString(range), [this](const std::string &newValue) { range = (float)atof(newValue.c_str()); });
 				builder->endGroup();
 
 				builder->beginGroup("Baking");

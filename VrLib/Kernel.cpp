@@ -95,6 +95,8 @@ namespace vrlib
 			getchar();
 			return;
 		}
+		std::ofstream(".config.combined.json") << config;
+
 		setLocalConfig();
 		loadDeviceDrivers();
 		loadCluster();

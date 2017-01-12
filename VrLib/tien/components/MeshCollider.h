@@ -10,8 +10,18 @@ namespace vrlib
 		{
 			class MeshCollider : public Collider
 			{
+				bool convex;
 			public:
+				btCollisionShape* shape;
+
+				MeshCollider(Node* node, bool convex);
+
 				virtual btCollisionShape* getShape() override;
+				virtual json::Value toJson(json::Value &meshes) const override;
+				void buildEditor(EditorBuilder * builder) override;
+
+
+				void buildShape(Node* node);
 			};
 		}
 	}

@@ -7,6 +7,9 @@
 #include <VrLib/Model.h>
 #include <VrLib/json.h>
 
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 
 namespace vrlib
 {
@@ -20,6 +23,13 @@ namespace vrlib
 			{
 				this->mass = mass;
 				this->type = type;
+				body = nullptr;
+			}
+
+			RigidBody::RigidBody(const json::Value & json)
+			{
+				this->mass = json["mass"];
+				this->type = Type::Static; //TODO
 				body = nullptr;
 			}
 
@@ -54,7 +64,9 @@ namespace vrlib
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 				btCollisionShape* shape = collider ? collider->getShape() : emptyShape;
 
-				shape->setLocalScaling(btVector3(transform->scale.x, transform->scale.y, transform->scale.z));
+				glm::vec3 scale = transform->getGlobalScale();
+
+				shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 				btVector3 fallInertia(0,0,0);
 				if(shape != emptyShape)
 					shape->calculateLocalInertia(mass, fallInertia);
@@ -76,10 +88,11 @@ namespace vrlib
 			{
 				std::vector<Collider*> colliders = node->getComponents<Collider>();
 				world->removeRigidBody(body);
+				glm::vec3 scale = node->transform->getGlobalScale();
 
 				if (colliders.size() == 1)
 				{
-					colliders[0]->getShape()->setLocalScaling(btVector3(node->transform->scale.x, node->transform->scale.y, node->transform->scale.z));
+					colliders[0]->getShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					body->setCollisionShape(colliders[0]->getShape());
 					btVector3 inertia;
 					body->getCollisionShape()->calculateLocalInertia(mass, inertia);
@@ -92,7 +105,7 @@ namespace vrlib
 					for(auto c : colliders)
 						compound->addChildShape(btTransform(), c->getShape());
 					body->setCollisionShape(compound);
-					compound->setLocalScaling(btVector3(node->transform->scale.x, node->transform->scale.y, node->transform->scale.z));
+					compound->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					btVector3 inertia;
 					compound->calculateLocalInertia(mass, inertia);
 					body->setMassProps(mass, inertia);
@@ -100,6 +113,7 @@ namespace vrlib
 				}
 				else
 					body->setCollisionShape(emptyShape);
+
 				world->addRigidBody(body);
 			}
 
@@ -111,7 +125,21 @@ namespace vrlib
 				body->setAngularVelocity(btVector3(0, 0, 0));
 			}
 
+			void RigidBody::setType(Type newType)
+			{
+				world->removeRigidBody(body);
+				if (newType == Type::Dynamic)
+				{
+					body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_KINEMATIC_OBJECT);
+				}
+				else if (newType == Type::Static || newType == Type::Kinematic)
+				{
+					body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+				}
+				world->addRigidBody(body);
 
+				type = newType;
+			}
 
 
 
@@ -120,22 +148,59 @@ namespace vrlib
 			{
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
-				
-				glm::vec3 position = transform->position;
-				position += transform->rotation * (node->getComponent<Collider>() ? node->getComponent<Collider>()->offset : glm::vec3(0,0,0));
+#if 1
+				glm::mat4 mat(transform->globalTransform);
+				mat = glm::scale(mat, 1.0f / transform->getGlobalScale());
+				if(node->getComponent<Collider>())
+					mat = glm::translate(mat, node->getComponent<Collider>()->offset);
+
+				worldTrans.setFromOpenGLMatrix(glm::value_ptr(mat));
+#else
+				glm::vec3 position = transform->getGlobalPosition();
+				position += transform->rotation * (node->getComponent<Collider>() ? node->getComponent<Collider>()->offset : glm::vec3(0, 0, 0));
 
 				worldTrans.setOrigin(btVector3(position.x, position.y, position.z));
 				worldTrans.setRotation(btQuaternion(transform->rotation.x, transform->rotation.y, transform->rotation.z, transform->rotation.w));
+#endif
+
 			}
 			void RigidBody::setWorldTransform(const btTransform & worldTrans)
 			{
+				if (!node->getComponent<Collider>())
+					return;
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
 
-				transform->position = glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z());
+				//todo: check
+				transform->setGlobalPosition(glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z()), false);
+				//transform->position = (glm::vec3(worldTrans.getOrigin().x(), worldTrans.getOrigin().y(), worldTrans.getOrigin().z()));
 				transform->rotation = glm::quat(worldTrans.getRotation().w(), worldTrans.getRotation().x(), worldTrans.getRotation().y(), worldTrans.getRotation().z());
 				transform->position -= transform->rotation * node->getComponent<Collider>()->offset;
+
+				float f[16];
+				worldTrans.getOpenGLMatrix(f);
+				transform->globalTransform = glm::make_mat4(f);
+
 			}
+
+
+
+
+			void RigidBody::buildEditor(EditorBuilder * builder)
+			{
+				builder->addTitle("Rigid Body");
+
+				builder->beginGroup("Mass");
+				builder->addTextBox(builder->toString(mass), [this](const std::string & newValue) { mass = (float)atof(newValue.c_str());  });
+				builder->endGroup();
+
+				builder->beginGroup("Type");
+				builder->addComboBox("static", { "static", "dynamic", "kinematic" }, [](const std::string &newValue) {});
+				builder->endGroup();
+				builder->endGroup();
+
+			}
+
 		}
 	}
 }

@@ -16,6 +16,15 @@ namespace vrlib
 		{
 			class RigidBody : public Component, btMotionState
 			{
+			public:
+				enum class Type
+				{
+					Static,
+					Kinematic,
+					Dynamic,
+					Auto
+				};
+			private:
 				friend class vrlib::tien::Scene;
 				friend class vrlib::tien::Node;
 				
@@ -24,25 +33,22 @@ namespace vrlib
 				void init(btDynamicsWorld* world);
 				void updateCollider(btDynamicsWorld* world);
 
+				Type type;
 
-				enum class Type
-				{
-					Static,
-					Kinematic,
-					Dynamic,
-					Auto
-				} type;
 			public:
+
+
 				virtual void getWorldTransform(btTransform & worldTrans) const override;
 				virtual void setWorldTransform(const btTransform & worldTrans) override;
 
 				btDynamicsWorld* world;
 
 				RigidBody(float mass, Type type = Type::Auto);
+				RigidBody(const json::Value &json);
 				~RigidBody();
 				btRigidBody* body;
 				json::Value toJson(json::Value &meshes) const override;
-
+				void buildEditor(EditorBuilder * builder) override;
 				inline float getMass() const {return mass; };
 				void setMass(float newMass);
 

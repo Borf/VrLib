@@ -1,6 +1,7 @@
 #include "Component.h"
 #include <VrLib/gui/Window.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include "..\..\tien\Component.h"
 
 namespace vrlib
 {

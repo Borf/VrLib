@@ -15,8 +15,12 @@ namespace vrlib
 			{
 			public:
 				Camera();
+				Camera(const vrlib::json::Value &json);
 				~Camera();
-				vrlib::gl::FBO* target;
+
+				bool useFbo = false;
+				glm::ivec2 fboSize;
+				vrlib::gl::FBO* target = nullptr;
 
 				void render();
 				json::Value toJson(json::Value &meshes) const override;

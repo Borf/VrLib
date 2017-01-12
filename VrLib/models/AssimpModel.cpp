@@ -154,7 +154,7 @@ namespace vrlib
 
 			
 			aiString texPath;
-			
+			//TODO: make a proper function for this.... >_<
 			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_DIFFUSE, 0, &texPath) == aiReturn_SUCCESS)
 			{
 				std::string file = texPath.C_Str();
@@ -209,6 +209,42 @@ namespace vrlib
 			}
 
 
+			m.material.color.shinyness = 0;
+			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_SPECULAR, 0, &texPath) == aiReturn_SUCCESS)
+			{
+				std::string file = texPath.C_Str();
+				m.material.specularmap = vrlib::Texture::loadCached(path + "/" + file);
+				while (!m.material.specularmap && file.find("/") != std::string::npos)
+				{
+					file = file.substr(file.find("/") + 1);
+					m.material.specularmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				while (!m.material.specularmap && file.find("\\") != std::string::npos)
+				{
+					file = file.substr(file.find("\\") + 1);
+					m.material.specularmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				m.material.color.shinyness = 1;
+			}
+			else
+				m.material.specularmap = NULL;
+
+			if (scene->mMaterials[mesh->mMaterialIndex]->GetTexture(aiTextureType_SHININESS, 0, &texPath) == aiReturn_SUCCESS)
+			{ //not used
+				std::string file = texPath.C_Str();
+				m.material.specularmap = vrlib::Texture::loadCached(path + "/" + file);
+				while (!m.material.specularmap && file.find("/") != std::string::npos)
+				{
+					file = file.substr(file.find("/") + 1);
+					m.material.specularmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				while (!m.material.specularmap && file.find("\\") != std::string::npos)
+				{
+					file = file.substr(file.find("\\") + 1);
+					m.material.specularmap = vrlib::Texture::loadCached(path + "/" + file);
+				}
+				m.material.color.shinyness = 1;
+			}
 
 			aiColor4D color;
 			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_AMBIENT, &color) == aiReturn_SUCCESS)
@@ -216,7 +252,7 @@ namespace vrlib
 			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_DIFFUSE, &color) == aiReturn_SUCCESS)
 				m.material.color.diffuse = glm::vec4(color.r, color.g, color.b, color.a);
 			if (aiGetMaterialColor(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_COLOR_SPECULAR, &color) == aiReturn_SUCCESS)
-				m.material.color.specular = glm::vec4(color.r, color.g, color.b, color.a);
+				m.material.color.specular = glm::vec3(color.r, color.g, color.b);
 
 			float opacity;
 			if (aiGetMaterialFloat(scene->mMaterials[mesh->mMaterialIndex], AI_MATKEY_OPACITY, &opacity) == aiReturn_SUCCESS)
@@ -397,7 +433,7 @@ namespace vrlib
 
 
 	template<class VertexFormat>
-	void AssimpModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const vrlib::Material&)> &materialCallback)
+	void AssimpModel<VertexFormat>::draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<bool(const vrlib::Material&)> &materialCallback)
 	{
 		vao->bind();
 		for (const Mesh& mesh : meshes)
@@ -405,7 +441,8 @@ namespace vrlib
 			if (modelviewMatrixCallback)
 				modelviewMatrixCallback(mesh.globalTransform);
 			if (materialCallback)
-				materialCallback(mesh.material);
+				if (!materialCallback(mesh.material))
+					continue;
 			else
 			{
 				if (mesh.material.texture)
@@ -468,7 +505,7 @@ namespace vrlib
 	{
 		this->model = model;
 		boneMatrices.resize(model->bones.size());
-		
+		model->rootBone->update(this->boneMatrices, 0, NULL);
 		//static_cast<AssimpModel<vrlib::gl::VertexP3N3T2B4B4>*>(model)->bones;
 	}
 
@@ -477,7 +514,7 @@ namespace vrlib
 	{
 		if (animations.empty())
 		{
-			model->rootBone->update(this->boneMatrices, 0, NULL);
+			//model->rootBone->update(this->boneMatrices, 0, NULL);
 		}
 		for (auto a : animations)
 		{
@@ -530,7 +567,7 @@ namespace vrlib
 		}*/
 	}
 
-	void State::draw(const std::function<void(const glm::mat4&)>& modelviewMatrixCallback, const std::function<void(const Material&)>& materialCallback)
+	void State::draw(const std::function<void(const glm::mat4&)>& modelviewMatrixCallback, const std::function<bool(const Material&)>& materialCallback)
 	{
 		model->draw(modelviewMatrixCallback, materialCallback);
 
@@ -735,6 +772,20 @@ namespace vrlib
 				return;
 			}
 		}
+	}
+
+	void State::stopAnimations()
+	{
+		for (size_t i = 0; i < faders.size(); i++)
+			delete faders[i];
+		faders.clear();
+
+		animations.clear(); //TODO: memory leak !
+	}
+
+	void State::resetToInitial()
+	{
+		model->rootBone->update(this->boneMatrices, 0, NULL);
 	}
 
 

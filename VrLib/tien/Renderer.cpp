@@ -53,6 +53,7 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
 			postLightingShader->registerUniform(PostLightingUniform::lightRange, "lightRange");
 			postLightingShader->registerUniform(PostLightingUniform::lightColor, "lightColor");
+			postLightingShader->registerUniform(PostLightingUniform::lightSpotAngle, "lightSpotAngle");
 			postLightingShader->registerUniform(PostLightingUniform::lightCastShadow, "lightCastShadow");
 			postLightingShader->registerUniform(PostLightingUniform::cameraPosition, "cameraPosition");
 			postLightingShader->use();
@@ -85,6 +86,7 @@ namespace vrlib
 			simpleDebugShader->registerUniform(SimpleDebugUniform::s_texture, "s_texture");
 			simpleDebugShader->registerUniform(SimpleDebugUniform::textureFactor, "textureFactor");
 			simpleDebugShader->registerUniform(SimpleDebugUniform::color, "color");
+			simpleDebugShader->registerUniform(SimpleDebugUniform::showAlpha, "showAlpha");
 
 			buildOverlay();
 
@@ -93,63 +95,91 @@ namespace vrlib
 
 		}
 
-		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix)
+		std::map<Node*, vrlib::gl::FBO*> gbufferMap;
+
+		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode)
 		{
+			//first let's initialize the gbuffers
 			int viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
+
+			if (gbufferMap.find(cameraNode) == gbufferMap.end())
+				gbuffers = nullptr;
+			else
+				gbuffers = gbufferMap[cameraNode];
+
+			if (gbuffers && (gbuffers->getWidth() != viewport[2] - viewport[0] ||
+				gbuffers->getHeight() != viewport[3] - viewport[1]))
+			{
+				delete gbuffers;
+				gbuffers = nullptr;
+				logger << "Performance warning: gbuffer got resized" << Log::newline;
+			}
 			if(!gbuffers)
 				gbuffers = new vrlib::gl::FBO(viewport[2] - viewport[0], viewport[3] - viewport[1], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
 
+			if (gbufferMap.find(cameraNode) == gbufferMap.end())
+				gbufferMap[cameraNode] = gbuffers;
 
-			if (!scene.cameraNode)
+
+
+			//let's first update the camera stuff
+			glm::mat4 modelViewMatrix = modelMatrix;
+			if (cameraNode)
 			{
-				logger << "No camera found" << Log::newline;
-				return;
+				components::Camera* camera = cameraNode->getComponent<components::Camera>();
+				modelViewMatrix = modelMatrix * glm::inverse(cameraNode->transform->globalTransform);
 			}
-			components::Camera* camera = scene.cameraNode->getComponent<components::Camera>();
-
-			glm::mat4 modelViewMatrix = modelMatrix * glm::inverse(scene.cameraNode->transform->globalTransform);
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 			
+			//update the lights / shadowmaps
 			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_POLYGON_OFFSET_FILL);
+			glPolygonOffset(1.0, 1.0f); //no idea what these values are or should be
 			for (auto l : scene.lights)
 			{
 				if (!l->light)continue;
 				if (l->light->shadow == components::Light::Shadow::shadowmap)
 				{
 					l->light->generateShadowMap();
-					//TODO: generate depthmap for light
 				}
 			}
+			glPolygonOffset(0, 0);
+			glDisable(GL_POLYGON_OFFSET_FILL);
 
 
 
-
-			//TODO: use camera
+			//fill the gbuffer
 			gbuffers->bind();
 			int oldFBO = gbuffers->oldFBO;
 			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_BLEND);
 
-
-			for (components::Renderable::RenderContext* context : scene.renderContexts)
+			//call the setup for each rendercontext. This sets the projection matrix and view matrix
+			for (components::Renderable::RenderContext* context : scene.renderContextsDeferred)
 				context->frameSetup(projectionMatrix, modelViewMatrix);
-
+			//and then actually draw to the gbuffer
 			for (Node* c : scene.renderables)
-				if(c->getComponent<components::Renderable>()->deferred)
-					c->getComponent<components::Renderable>()->draw();
+			{
+				auto r = c->getComponent<components::Renderable>();
+				if (r->visible)
+					r->drawDeferredPass();
+			}
 			gbuffers->unbind();
+
+			//reset the old viewport, and clear it. Use scissoring to only clear this part of the viewport
 			glScissor(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glEnable(GL_SCISSOR_TEST);
 			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glClearColor(0.1f, 0.1f, 0.1f, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glDisable(GL_SCISSOR_TEST);
-
+			//copy the depth buffer (for lighting and later forward rendering)
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldFBO);
 			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
@@ -160,7 +190,7 @@ namespace vrlib
 			glDisableVertexAttribArray(4);
 			glDisableVertexAttribArray(5);
 
-
+			//draw the gbuffer in multiple passes. Every light needs a pass
 			gbuffers->use();
 			postLightingShader->use();
 			postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2], viewport[3]));
@@ -168,7 +198,8 @@ namespace vrlib
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
 			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
-			postLightingShader->setUniform(PostLightingUniform::cameraPosition, scene.cameraNode->transform->getGlobalPosition() );
+			glm::vec3 cameraPosition(glm::inverse(modelViewMatrix) * glm::vec4(0, 0, 0, 1));
+			postLightingShader->setUniform(PostLightingUniform::cameraPosition, cameraPosition );
 			
 
 			overlayVao->bind();
@@ -178,28 +209,21 @@ namespace vrlib
 			glDepthMask(GL_FALSE);
 			glEnable(GL_CULL_FACE);
 			glDisable(GL_DEPTH_TEST);
+			glCullFace(GL_BACK);
 
-			//if (!scene.lights.empty() && scene.lights.front()->getComponent<components::Light>()->type != components::Light::Type::directional)
-			//	glEnable(GL_BLEND);
-
+			//every light adds shading to the scene, so draw the lights.
+			//TODO: check which spheres are visible for pointlights
+			//TODO: first draw ambient shading, then add diffuse/specular for every light
 			for (Node* c : scene.lights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
 				components::Transform* t = c->getComponent<components::Transform>();
 				glm::vec3 pos(t->globalTransform * glm::vec4(0, 0, 0, 1));
 
-				//if(l->type == components::Light::Type::directional)
-				//else
-//					glEnable(GL_DEPTH_TEST);
-
-				if (l->type == components::Light::Type::directional)
-					glCullFace(GL_BACK);
-				else
-					glCullFace(GL_FRONT);
-
+			
 				if (l->shadow == components::Light::Shadow::shadowmap && l->shadowMapDirectional)
 				{
-					if(l->type == components::Light::Type::directional)
+					if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot)
 						l->shadowMapDirectional->use(3);
 					else
 						l->shadowMapDirectional->use(4);
@@ -213,23 +237,50 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
+
+				glm::vec3 lightDir(t->globalTransform * glm::vec4(1, 0, 0, 1) - t->globalTransform * glm::vec4(0, 0, 0,1));
+				postLightingShader->setUniform(PostLightingUniform::lightDirection, -lightDir);
+
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
-				if(l->type == components::Light::Type::directional)
+				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
+				
+
+				if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
 					glDrawArrays(GL_QUADS, 0, 4);
 				else
 					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y-sphere.x);
 				glEnable(GL_BLEND);
 			}
 			glCullFace(GL_BACK);
-
+			//done with all the deferred rendering, let's draw the forward rendered objects (objects with alpha)
 			glEnable(GL_DEPTH_TEST);
-			glDepthMask(GL_TRUE);
+			glDepthMask(GL_FALSE);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//call the setup for each rendercontext. This sets the projection matrix and view matrix
+			for (components::Renderable::RenderContext* context : scene.renderContextsForward)
+				context->frameSetup(projectionMatrix, modelViewMatrix);
 			for (Node* c : scene.renderables)
-				if (!c->getComponent<components::Renderable>()->deferred)
-					c->getComponent<components::Renderable>()->draw();
+			{
+				auto r = c->getComponent<components::Renderable>();
+				if(r->visible)
+					r->drawForwardPass();
+			}
 
-			auto skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
+
+
+
+			//draw skybox (it's a special forward rendered object. Maybe this could be turned into a renderable?)
+			vrlib::tien::components::SkyBox* skybox = nullptr;
+			if(cameraNode)
+				skybox = cameraNode->getComponent<vrlib::tien::components::SkyBox>();
+			if (!skybox && scene.cameraNode)
+				skybox = scene.cameraNode->getComponent<vrlib::tien::components::SkyBox>();
+			if (!skybox && scene.findNodeWithComponent<vrlib::tien::components::SkyBox>())
+				skybox = scene.findNodeWithComponent<vrlib::tien::components::SkyBox>()->getComponent<vrlib::tien::components::SkyBox>();
+
+
 			if (skybox)
 			{
 				if (!skybox->initialized)
@@ -237,6 +288,14 @@ namespace vrlib
 				skybox->render(projectionMatrix, modelViewMatrix);
 			}
 
+			glActiveTexture(GL_TEXTURE0);
+			glDepthMask(GL_TRUE);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_CULL_FACE);
+
+			//We're done drawing, now let's add more stuff for debugging if needed
 			if (drawPhysicsDebug)
 			{
 				scene.world->debugDrawWorld();
@@ -257,7 +316,9 @@ namespace vrlib
 					glEnable(GL_DEPTH_TEST);
 				}
 			}
+			
 
+			//draw the boundingbox of the light. TODO: improve this code
 			if (drawLightDebug)
 			{
 				std::vector<vrlib::gl::VertexP3C4> verts;
@@ -357,6 +418,7 @@ namespace vrlib
 			//camera->target->bind();
 			//camera->target->unbind();
 
+
 			glDisable(GL_BLEND);
 			if (drawMode != DrawMode::Default)
 			{
@@ -370,25 +432,33 @@ namespace vrlib
 				glBindVertexArray(0);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-				
+
 				simpleDebugShader->use();
 				simpleDebugShader->setUniform(SimpleDebugUniform::modelViewMatrix, glm::mat4());
 				simpleDebugShader->setUniform(SimpleDebugUniform::projectionMatrix, glm::mat4());
 				simpleDebugShader->setUniform(SimpleDebugUniform::textureFactor, 1.0f);
 				simpleDebugShader->setUniform(SimpleDebugUniform::s_texture, 0);
-				simpleDebugShader->setUniform(SimpleDebugUniform::color, glm::vec4(1,1,1,1));
+				simpleDebugShader->setUniform(SimpleDebugUniform::color, glm::vec4(1, 1, 1, 1));
+				simpleDebugShader->setUniform(SimpleDebugUniform::showAlpha, false);
 
 				if (drawMode == DrawMode::Albedo)
 					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[0]);
 				if (drawMode == DrawMode::Normals)
 					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[1]);
-				if (drawMode == DrawMode::SunLightmap)
+				if (drawMode == DrawMode::Lightmaps)
 				{
-					auto light = scene.lights.back()->getComponent<vrlib::tien::components::Light>();
-					light->shadowMapDirectional->use();
+					auto light = scene.lights[debugLightMapIndex]->getComponent<vrlib::tien::components::Light>();
+					if(light->shadowMapDirectional)
+						light->shadowMapDirectional->use();
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 					glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
 				}
+				if (drawMode == DrawMode::Specular)
+				{
+					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[1]);
+					simpleDebugShader->setUniform(SimpleDebugUniform::showAlpha, true);
+				}
+
 
 				vrlib::gl::setAttributes<vrlib::gl::VertexP3T2>(verts);
 				glDisable(GL_BLEND);
@@ -396,17 +466,18 @@ namespace vrlib
 				glDrawArrays(GL_QUADS, 0, 4);
 
 
-				if (drawMode == DrawMode::SunLightmap)
+
+
+				if (drawMode == DrawMode::Lightmaps)
 				{
-					auto light = scene.lights.back()->getComponent<vrlib::tien::components::Light>();
-					light->shadowMapDirectional->use();
+					auto light = scene.lights[debugLightMapIndex]->getComponent<vrlib::tien::components::Light>();
+					if(light->shadowMapDirectional)
+						light->shadowMapDirectional->use();
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 				}
 
 			}
-
-
 		}
 
 

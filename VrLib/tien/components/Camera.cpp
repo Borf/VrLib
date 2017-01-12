@@ -17,6 +17,14 @@ namespace vrlib
 
 			}
 
+			Camera::Camera(const vrlib::json::Value & json)
+			{
+				if (json.isMember("useFbo"))
+					useFbo = json["useFbo"];
+				if (useFbo)
+					fboSize = glm::ivec2(json["fboSize"][0].asInt(), json["fboSize"][1].asInt());
+			}
+
 			Camera::~Camera()
 			{
 				if (node->getScene().cameraNode == node)
@@ -34,6 +42,12 @@ namespace vrlib
 			{
 				json::Value ret;
 				ret["type"] = "camera";
+				ret["useFbo"] = useFbo;
+				if (useFbo)
+				{
+					ret["fboSize"].push_back(fboSize[0]);
+					ret["fboSize"].push_back(fboSize[1]);
+				}
 				return ret;
 			}
 			void Camera::buildEditor(EditorBuilder * builder)

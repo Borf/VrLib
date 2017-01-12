@@ -18,6 +18,7 @@ namespace vrlib
 			private:
 				void buildTransform();
 				friend class vrlib::tien::Scene;
+				friend class vrlib::tien::Node;
 			public:
 				glm::vec3 position;
 				glm::quat rotation;
@@ -34,11 +35,13 @@ namespace vrlib
 
 				void lookAt(const glm::vec3 &position, const glm::vec3 &target, const glm::vec3 &up);
 				void lookAt(const glm::vec3 &target, const glm::vec3 &up = glm::vec3(0,1,0));
-				void setGlobalPosition(const glm::vec3 &position);
+				void setGlobalPosition(const glm::vec3 &position, bool resetPhyics = true);
 				void setGlobalRotation(const glm::quat &rotation);
 				void setGlobalScale(const glm::vec3 &scale);
 
 				glm::vec3 getGlobalPosition() const;
+				glm::quat getGlobalRotation() const;
+				glm::vec3 getGlobalScale() const;
 
 				bool moveTo(const glm::vec3 &target, float speed);
 				void rotate(const glm::vec3 &angle);

@@ -5,6 +5,7 @@
 
 
 class btPoint2PointConstraint;
+class btDiscreteDynamicsWorld;
 
 namespace vrlib
 {
@@ -20,6 +21,7 @@ namespace vrlib
 			{
 				const vrlib::PositionalDevice &device;
 				btPoint2PointConstraint* constraint;
+				btDiscreteDynamicsWorld* world;
 			public:
 				TransformAttach(const vrlib::PositionalDevice &device);
 				~TransformAttach();

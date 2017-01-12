@@ -34,6 +34,7 @@ namespace vrlib
 				lightColor,
 				lightRange,
 				lightCastShadow,
+				lightSpotAngle,
 				cameraPosition,
 				s_color,
 				s_normal,
@@ -56,7 +57,8 @@ namespace vrlib
 				modelViewMatrix,
 				s_texture,
 				textureFactor,
-				color
+				color,
+				showAlpha,
 			};
 			vrlib::gl::Shader<SimpleDebugUniform>* simpleDebugShader;
 
@@ -81,7 +83,7 @@ namespace vrlib
 
 			void buildOverlay();
 
-			virtual void render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix);
+			virtual void render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelViewMatrix, Node* cameraNode);
 
 
 			bool drawPhysicsDebug;
@@ -92,8 +94,10 @@ namespace vrlib
 				Default,
 				Albedo,
 				Normals,
-				SunLightmap
+				Specular,
+				Lightmaps,
 			} drawMode;
+			int debugLightMapIndex = 0;
 
 		};
 	}

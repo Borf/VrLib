@@ -34,11 +34,13 @@ namespace vrlib
 	public:
 		Texture* texture = nullptr;
 		Texture* normalmap = nullptr;
+		Texture* specularmap = nullptr;
 		struct
 		{
 			glm::vec4 diffuse = glm::vec4(0.7f, 0.7f, 0.7f, 1.0f);
 			glm::vec4 ambient = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-			glm::vec4 specular;
+			glm::vec3 specular = glm::vec3(1, 1, 1);
+			float shinyness = 0;
 		} color;
 
 	};
@@ -52,7 +54,7 @@ namespace vrlib
 
 		
 		virtual void update(double elapsedTime) {};
-		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback = nullptr, const std::function<void(const Material&)> &materialCallback = nullptr);
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback = nullptr, const std::function<bool(const Material&)> &materialCallback = nullptr);
 
 	};
 
@@ -71,7 +73,8 @@ namespace vrlib
 		virtual std::vector<glm::vec3> getVertices(int amount) const = 0;
 		virtual std::vector<glm::vec3> getTriangles() const = 0;
 		virtual std::pair<std::vector<unsigned int>, std::vector<glm::vec3>> getIndexedTriangles() const { throw "not implemented"; };
-		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<void(const Material&)> &materialCallback = nullptr) = 0;
+		virtual void draw(const std::function<void(const glm::mat4&)> &modelviewMatrixCallback, const std::function<bool(const Material&)> &materialCallback = nullptr) = 0;
+
 
 		virtual std::vector<Material*> getMaterials() = 0;
 

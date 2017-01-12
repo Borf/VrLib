@@ -39,7 +39,7 @@ namespace vrlib
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 				};
-				class ModelRenderShadowContext : public Renderable::RenderContext, public Singleton<ModelRenderShadowContext>
+				class ModelShadowRenderContext : public Renderable::RenderContext, public Singleton<ModelShadowRenderContext>
 				{
 				public:
 					enum class RenderUniform
@@ -85,7 +85,8 @@ namespace vrlib
 				void updateMesh();
 
 
-				void draw() override;
+				void drawDeferredPass() override;
+				void drawForwardPass() override {};
 				void drawShadowMap() override;
 
 				bool castShadow;

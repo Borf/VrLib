@@ -29,16 +29,18 @@ namespace vrlib
 						normalMatrix,
 						s_texture,
 						s_normalmap,
+						s_specularmap,
 						diffuseColor,
 						textureFactor,
-						boneMatrices
+						boneMatrices,
+						shinyness,
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 				};
-				class ModelRenderShadowContext : public Renderable::RenderContext, public Singleton<ModelRenderShadowContext>
+				class ModelShadowRenderContext : public Renderable::RenderContext, public Singleton<ModelShadowRenderContext>
 				{
 				public:
 					enum class RenderUniform
@@ -70,16 +72,20 @@ namespace vrlib
 				float animationSpeed = 1;
 
 				void update(float elapsedTime, Scene& scene) override;
-				void draw() override;
+				void drawDeferredPass() override;
+				void drawForwardPass() override;
 				void drawShadowMap() override;
 				json::Value toJson(json::Value &meshes) const override;
 
 				void playAnimation(const std::string &animation, bool loop = true);
 				void playAnimation(const std::string &animation, std::function<void()> callbackOnDone);
+				void resetAnimation();
+
 
 				void AnimatedModelRenderer::buildEditor(EditorBuilder * builder);
 
 				bool castShadow;
+				bool cullBackFaces;
 			};
 		}
 	}

@@ -116,7 +116,7 @@ namespace vrlib
 					if (textures[i] == Color)
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 					else if (textures[i] == Normal)
-						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
 					else if (textures[i] == Position)
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGB, GL_FLOAT, NULL);
 					else if (textures[i] == Depth)
@@ -165,6 +165,12 @@ namespace vrlib
 			}
 			unbind();
 			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+
+
+		FBO::~FBO()
+		{
+
 		}
 
 		void FBO::bind()

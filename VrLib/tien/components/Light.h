@@ -8,6 +8,7 @@ namespace vrlib
 	namespace gl { class FBO; }
 	namespace tien
 	{
+		class Tien;
 		namespace components
 		{
 			class Light : public Component
@@ -18,6 +19,7 @@ namespace vrlib
 				glm::mat4 modelViewMatrix;
 
 				friend class vrlib::tien::Renderer;
+				friend class vrlib::tien::Tien;
 			public:
 				Light() {};
 				Light(const vrlib::json::Value &json);
@@ -49,10 +51,10 @@ namespace vrlib
 
 
 				float intensity;
-				glm::vec4 color;
+				glm::vec4 color = glm::vec4(1,1,1,1);
 
 
-				float spotlightAngle;
+				float spotlightAngle = 45.0f;
 				float range; //point / spotlight
 
 				virtual void buildEditor(EditorBuilder* builder) override;

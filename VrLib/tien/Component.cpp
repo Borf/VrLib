@@ -1,9 +1,19 @@
 #include "Component.h"
 
+#include <VrLib/json.h>
+#include <sstream>
+
 namespace vrlib
 {
 	namespace tien
 	{
+
+		json::Value Component::toJson(json::Value &meshes) const 
+		{ 
+			throw "Cannot serialize..."; 
+		};
+
+
 		void Component::buildEditor(EditorBuilder * builder)
 		{
 			std::string componentName = typeid(*this).name();
@@ -12,5 +22,14 @@ namespace vrlib
 
 			builder->addTitle("Generic Component: " + componentName);
 		}
+
+		std::string EditorBuilder::toString(float value) const
+		{
+			std::ostringstream ss;
+			ss << value;
+			return ss.str();
+		}
+
+
 	}
 }

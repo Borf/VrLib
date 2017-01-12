@@ -1,6 +1,7 @@
 #include "Tien.h"
 #include "Renderer.h"
 #include "Scene.h"
+#include "components/Light.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <VrLib/gl/FBO.h>
@@ -34,17 +35,25 @@ namespace vrlib
 			if ((GetAsyncKeyState(VK_F2) & 1) == 1)
 				renderer.drawLightDebug = !renderer.drawLightDebug;
 			if ((GetAsyncKeyState(VK_F3) & 1) == 1)
-				renderer.drawMode = (Renderer::DrawMode)(((int)renderer.drawMode + 1) % 4);
+				renderer.drawMode = (Renderer::DrawMode)(((int)renderer.drawMode + 1) % 5);
+			if ((GetAsyncKeyState(VK_F4) & 1) == 1)
+			{
+				do
+				{
+					renderer.debugLightMapIndex = renderer.debugLightMapIndex = (renderer.debugLightMapIndex + 1) % scene.lights.size();
+				} while (!scene.lights[renderer.debugLightMapIndex]->light->shadowMapDirectional);
+				logger << "Viewing lightmap for " << scene.lights[renderer.debugLightMapIndex]->name << Log::newline;
+			}
 #endif
 
-			if (playState == PlayState::Playing)
-				scene.update(elapsedTime);
+			if (playState != PlayState::Stopped)
+				scene.update(playState == PlayState::Playing ? elapsedTime : 0);
 		}
 
 		void Tien::render(const glm::mat4 &projectionMatrix, const glm::mat4& modelViewMatrix)
 		{
-			if (playState == PlayState::Playing)
-				renderer.render(scene, projectionMatrix, modelViewMatrix);
+			if (playState == PlayState::Playing || playState == PlayState::Paused)
+				renderer.render(scene, projectionMatrix, modelViewMatrix, scene.cameraNode);
 		}
 
 

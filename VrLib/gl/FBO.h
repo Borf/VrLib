@@ -41,7 +41,7 @@ namespace vrlib
 			FBO(int width, int height, bool depth = false, int textureCount = 1, bool hasDepthTexture = false);
 			FBO(int width, int height, bool hasDepthTexture, Type buf1, Type buf2 = None, Type buf3 = None, Type buf4 = None);
 
-			//~FBO();
+			~FBO();
 
 			void bind();
 			void bind(int index);

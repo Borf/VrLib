@@ -20,6 +20,13 @@ namespace vrlib
 
 			TransformAttach::~TransformAttach()
 			{
+				RigidBody* rigidBody = node->getComponent<RigidBody>();
+				if (rigidBody)
+				{
+					rigidBody->body->setGravity(btVector3(0, -9.8f, 0));
+					if (constraint)
+						world->removeConstraint(constraint);
+				}
 			}
 
 			json::Value TransformAttach::toJson(json::Value &meshes) const
@@ -32,7 +39,7 @@ namespace vrlib
 
 			void TransformAttach::postUpdate(Scene& scene)
 			{
-				if (!device.isInitialized())
+				if (!device.isInitialized() || !scene.cameraNode)
 					return;
 				glm::mat4 mat = scene.cameraNode->transform->globalTransform * device.getData();
 
@@ -41,7 +48,7 @@ namespace vrlib
 
 
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
-				if (rigidBody && rigidBody->body && rigidBody->getMass() > 0)
+				if (rigidBody && rigidBody->body && rigidBody->getType() == RigidBody::Type::Dynamic)
 				{
 					node->getComponent<Transform>()->setGlobalRotation(rot);
 					btTransform t;
@@ -49,12 +56,13 @@ namespace vrlib
 					rigidBody->body->setWorldTransform(t);
 
 					if (constraint == nullptr)
-					{
+					{ //TODO: make this work better
 						rigidBody->body->setGravity(btVector3(0, 0, 0));
 						constraint = new btPoint2PointConstraint(*rigidBody->body, btVector3(0,0,0));
-						constraint->m_setting.m_impulseClamp = 0.5f;
-						constraint->m_setting.m_tau = 0.001f;
-
+						constraint->m_setting.m_impulseClamp = 3;	//0
+						constraint->m_setting.m_tau = 0.00001f;			//.3
+						constraint->m_setting.m_damping = .3f;		//1
+						world = scene.world;
 						scene.world->addConstraint(constraint);
 					}
 					constraint->setPivotB(btVector3(pos.x, pos.y, pos.z));
