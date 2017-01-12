@@ -214,7 +214,7 @@ namespace vrlib
 		}
 #ifdef WIN32
 		else if (name == "vrpn")
-			return new VrpnDeviceDriver();
+			return new VrpnDeviceDriver(config["driverconfig"]["vrpn"]);
 		else if (name == "XBOX")
 		{
 			XBOXDeviceDriver* driver = new XBOXDeviceDriver();

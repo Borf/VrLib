@@ -94,8 +94,9 @@ namespace vrlib
 				{
 					colliders[0]->getShape()->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
 					body->setCollisionShape(colliders[0]->getShape());
-					btVector3 inertia;
-					body->getCollisionShape()->calculateLocalInertia(mass, inertia);
+					btVector3 inertia(0,0,0);
+					if(mass > 0)
+						body->getCollisionShape()->calculateLocalInertia(mass, inertia);
 					body->setMassProps(mass, inertia);
 					resetMotion();
 				}
@@ -106,8 +107,9 @@ namespace vrlib
 						compound->addChildShape(btTransform(), c->getShape());
 					body->setCollisionShape(compound);
 					compound->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
-					btVector3 inertia;
-					compound->calculateLocalInertia(mass, inertia);
+					btVector3 inertia(0, 0, 0);
+					if (mass > 0)
+						compound->calculateLocalInertia(mass, inertia);
 					body->setMassProps(mass, inertia);
 					resetMotion();
 				}

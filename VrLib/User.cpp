@@ -14,7 +14,7 @@ namespace vrlib
 	{
 	}
 
-	float eyeDist = 0.025f; //cave
+	float eyeDist = 0.02f; //cave
 	//float eyeDist = 0.1f; //oculus
 
 	glm::vec3 User::getEyePosition(int eye)

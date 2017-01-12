@@ -95,31 +95,33 @@ namespace vrlib
 
 		}
 
-		std::map<Node*, vrlib::gl::FBO*> gbufferMap;
+		std::map<std::pair<Node*, int>, vrlib::gl::FBO*> gbufferMap;
 
-		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode)
+		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode, int renderId)
 		{
 			//first let's initialize the gbuffers
 			int viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
 
-			if (gbufferMap.find(cameraNode) == gbufferMap.end())
+			if (gbufferMap.find(std::pair<Node*, int>(cameraNode,renderId)) == gbufferMap.end())
 				gbuffers = nullptr;
 			else
-				gbuffers = gbufferMap[cameraNode];
+				gbuffers = gbufferMap[std::pair<Node*, int>(cameraNode, renderId)];
 
-			if (gbuffers && (gbuffers->getWidth() != viewport[2] - viewport[0] ||
-				gbuffers->getHeight() != viewport[3] - viewport[1]))
+			if (gbuffers && (gbuffers->getWidth() != viewport[2] ||
+				gbuffers->getHeight() != viewport[3]))
 			{
+				logger << "Performance warning: gbuffer got resized" << Log::newline;
+				logger << "Old size: " << gbuffers->getWidth() << ", " << gbuffers->getHeight() << Log::newline;
+				logger << "New size: " << viewport[2] << ", " << viewport[3]<< Log::newline;
 				delete gbuffers;
 				gbuffers = nullptr;
-				logger << "Performance warning: gbuffer got resized" << Log::newline;
 			}
-			if(!gbuffers)
-				gbuffers = new vrlib::gl::FBO(viewport[2] - viewport[0], viewport[3] - viewport[1], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
-
-			if (gbufferMap.find(cameraNode) == gbufferMap.end())
-				gbufferMap[cameraNode] = gbuffers;
+			if (!gbuffers)
+			{
+				gbuffers = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
+				gbufferMap[std::pair<Node*, int>(cameraNode, renderId)] = gbuffers;
+			}
 
 
 

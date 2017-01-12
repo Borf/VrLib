@@ -8,6 +8,8 @@
 
 #include <vrpn/vrpn_Tracker.h>
 
+#include <VrLib/json.h>
+
 
 
 namespace vrlib
@@ -23,25 +25,53 @@ namespace vrlib
 
 		glm::mat4 customRot = glm::rotate(glm::mat4(), glm::radians(180.0f), glm::vec3(0, 1, 0));
 
-		glm::mat4 rot = glm::toMat4(glm::quat(
-			(float)t.quat[2],
-			(float)t.quat[1],
+		glm::mat4 rot;
+		
+		rot = glm::rotate(rot, glm::radians(90.0f), glm::vec3(0, 1, 0));
+
+		rot = rot * glm::toMat4(glm::quat(
 			(float)t.quat[0],
+			(float)t.quat[1],
+			(float)t.quat[2],
 			(float)t.quat[3]));
-		rot = rot * customRot;
+		rot = glm::rotate(rot, glm::radians(-90.0f), glm::vec3(0, 1, 0));
 
-		rot = glm::scale(glm::mat4(), glm::vec3(1, -1, 1)) * rot;
-		rot = rot * glm::rotate(glm::mat4(), glm::radians(-90.0f), glm::vec3(0, 0, 1));
+		auto it = driver->postTransforms.find(t.sensor);
+		if (it != driver->postTransforms.end())
+			rot *= it->second;
+		
+		//rot = glm::scale(glm::mat4(), glm::vec3(1, -1, 1)) * rot;
 
 
+
+		rot = glm::inverse(rot);
 
 		driver->data[t.sensor] = glm::translate(glm::mat4(), glm::vec3((float)t.pos[0], (float)t.pos[1], (float)t.pos[2])) * rot;
 	}
 
-	VrpnDeviceDriver::VrpnDeviceDriver()
+	VrpnDeviceDriver::VrpnDeviceDriver(const json::Value &config)
 	{
 		tracker = new vrpn_Tracker_Remote("test_tracker@localhost");
 		tracker->register_change_handler(this, handle_tracker_pos_quat);
+
+		if (!config.isNull())
+		{
+			for (const json::Value &t : config)
+			{
+				if (t.isMember("transform"))
+				{
+					glm::mat4 transform;
+					if (t["transform"].isMember("rot"))
+					{
+						transform = glm::rotate(transform, glm::radians(t["transform"]["rot"][0].asFloat()), glm::vec3(1, 0, 0));
+						transform = glm::rotate(transform, glm::radians(t["transform"]["rot"][1].asFloat()), glm::vec3(0, 1, 0));
+						transform = glm::rotate(transform, glm::radians(t["transform"]["rot"][2].asFloat()), glm::vec3(0, 0, 1));
+					}
+					postTransforms[t["id"].asInt()] = transform;
+				}
+			}
+		}
+
 	}
 
 	void VrpnDeviceDriver::update()

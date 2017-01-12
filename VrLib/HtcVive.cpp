@@ -9,9 +9,6 @@ namespace vrlib
 		controllers[0].transform.init("WandPosition");
 		controllers[1].transform.init("WandPositionLeft");
 
-
-
-
 		controllers[0].applicationMenuButton.init("buttonRightMenu");
 		controllers[0].gripButton.init("buttonRightGrip");
 		controllers[0].touchButton.init("buttonRightTouch");
@@ -21,6 +18,14 @@ namespace vrlib
 		controllers[1].gripButton.init("buttonLeftGrip");
 		controllers[1].touchButton.init("buttonLeftTouch");
 		controllers[1].triggerButton.init("buttonLeftTrigger");
+
+
+		if (!controllers[0].applicationMenuButton.isInitialized())
+		{//uhoh, we're not on the vive...
+			controllers[0].triggerButton.init("LeftButton");
+			controllers[0].touchButton.init("RightButton");
+
+		}
 
 
 	}
