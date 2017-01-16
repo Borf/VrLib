@@ -77,6 +77,8 @@ namespace vrlib
 					model = cache[fileName];
 				});
 				builder->endGroup();
+				if (!model)
+					return;
 
 				builder->beginGroup("Casts Shadows");
 				builder->addCheckbox(castShadow, [this](bool newValue) {castShadow = newValue; });

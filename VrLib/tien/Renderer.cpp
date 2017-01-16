@@ -57,12 +57,15 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::lightSpotAngle, "lightSpotAngle");
 			postLightingShader->registerUniform(PostLightingUniform::lightCastShadow, "lightCastShadow");
 			postLightingShader->registerUniform(PostLightingUniform::cameraPosition, "cameraPosition");
+			postLightingShader->registerUniform(PostLightingUniform::debug, "debug");
+			
 			postLightingShader->use();
 			postLightingShader->setUniform(PostLightingUniform::s_color, 0);
 			postLightingShader->setUniform(PostLightingUniform::s_normal, 1);
 			postLightingShader->setUniform(PostLightingUniform::s_depth, 2);
 			postLightingShader->setUniform(PostLightingUniform::s_shadowmap, 3);
 			postLightingShader->setUniform(PostLightingUniform::s_shadowmapcube, 4);
+			postLightingShader->setUniform(PostLightingUniform::debug, false);
 			gbuffers = nullptr;
 
 
@@ -90,6 +93,14 @@ namespace vrlib
 			simpleDebugShader->registerUniform(SimpleDebugUniform::showAlpha, "showAlpha");
 
 			buildOverlay();
+
+
+			glGenTextures(1, &fakeDepthBuffer);
+			glBindTexture(GL_TEXTURE_2D, fakeDepthBuffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
 
 
 			mHead.init("MainUserHead");
@@ -179,7 +190,7 @@ namespace vrlib
 			glScissor(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glEnable(GL_SCISSOR_TEST);
 			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
-			glClearColor(0.1f, 0.1f, 0.1f, 1);
+			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glDisable(GL_SCISSOR_TEST);
 			//copy the depth buffer (for lighting and later forward rendering)
@@ -234,7 +245,13 @@ namespace vrlib
 					postLightingShader->setUniform(PostLightingUniform::lightCastShadow, true);
 				}
 				else
+				{
 					postLightingShader->setUniform(PostLightingUniform::lightCastShadow, false);
+
+					glActiveTexture(GL_TEXTURE3);
+					glBindTexture(GL_TEXTURE_2D, fakeDepthBuffer);
+					glActiveTexture(GL_TEXTURE0);
+				}
 
 
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
@@ -252,7 +269,27 @@ namespace vrlib
 				if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
 					glDrawArrays(GL_QUADS, 0, 4);
 				else
-					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y-sphere.x);
+				{
+					glEnable(GL_STENCIL_TEST);
+					glStencilFunc(GL_ALWAYS, 0x80, 0xFF);
+					glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+					glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+					glClearStencil(0x80);
+					glStencilMask(0xFF);
+					glClear(GL_STENCIL_BUFFER_BIT);
+					glColorMask(false, false, false, false);
+					glDisable(GL_CULL_FACE);
+					glEnable(GL_DEPTH_TEST);
+					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					glColorMask(true, true,true,true);
+
+					glEnable(GL_CULL_FACE);
+					glCullFace(GL_FRONT);
+					glDisable(GL_DEPTH_TEST);
+					glStencilFunc(GL_NOTEQUAL, 0x80, 0xFF);
+					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					glDisable(GL_STENCIL_TEST);
+				}
 				glEnable(GL_BLEND);
 			}
 			glCullFace(GL_BACK);
@@ -320,7 +357,6 @@ namespace vrlib
 				}
 			}
 			
-
 			//draw the boundingbox of the light. TODO: improve this code
 			if (drawLightDebug)
 			{

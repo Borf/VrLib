@@ -42,6 +42,7 @@ namespace vrlib
 				s_depth,
 				s_shadowmap,
 				s_shadowmapcube,
+				debug,
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
 			enum class PhysicsDebugUniform
@@ -73,6 +74,7 @@ namespace vrlib
 			glm::ivec2 sphere;
 			glm::ivec2 cone;
 
+			GLuint fakeDepthBuffer = -1;
 
 			vrlib::PositionalDevice mHead;
 
