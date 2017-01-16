@@ -52,11 +52,12 @@ namespace vrlib
 
 			void Transform::setGlobalPosition(const glm::vec3 &position, bool resetPhyics)
 			{
-				glm::vec3 parentPos;
+				glm::mat4 parentMat;
 				if (node->parent && node->parent->transform)
-					parentPos = node->parent->transform->getGlobalPosition();
+					parentMat = node->parent->transform->globalTransform;
 
-				this->position = position - parentPos;
+				parentMat = glm::inverse(parentMat);
+				this->position = glm::vec3(parentMat * glm::vec4(position, 1));
 
 				auto rigidBody = node->getComponent<RigidBody>();
 				if (resetPhyics && rigidBody && rigidBody->body)
