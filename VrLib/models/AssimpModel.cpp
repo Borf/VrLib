@@ -441,8 +441,10 @@ namespace vrlib
 			if (modelviewMatrixCallback)
 				modelviewMatrixCallback(mesh.globalTransform);
 			if (materialCallback)
+			{
 				if (!materialCallback(mesh.material))
 					continue;
+			}
 			else
 			{
 				if (mesh.material.texture)

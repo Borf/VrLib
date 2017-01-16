@@ -456,7 +456,8 @@ namespace vrlib
 			drawBone(b, glm::mat4());
 		}*/
 
-		drawBone(bones[0], glm::mat4());
+		
+		//drawBone(bones[0], glm::mat4());
 
 		glEnd();
 		glPopMatrix();

@@ -97,6 +97,7 @@ namespace vrlib
 		{ KeyboardButton::KEY_X		,		"x",			'X' },
 		{ KeyboardButton::KEY_Y		,		"y",			'Y' },
 		{ KeyboardButton::KEY_Z		,		"z",			'Z' },
+		{ KeyboardButton::KEY_PERIOD,		".",			VK_OEM_PERIOD },
 		{ KeyboardButton::KEY_SPACEBAR,		"spacebar",		' ' },
 		{ KeyboardButton::KEY_TAB		,		"tab",			VK_TAB },
 
