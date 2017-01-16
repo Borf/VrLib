@@ -68,6 +68,15 @@ namespace vrlib
 			newParent->children.push_back(this);
 		}
 
+		bool Node::isChildOf(Node * parent)
+		{
+			if (this == parent)
+				return true;
+			if (this->parent == nullptr)
+				return false;
+			return this->parent->isChildOf(parent);
+		}
+
 		json::Value Node::asJson(json::Value &meshes) const
 		{
 			vrlib::json::Value v;

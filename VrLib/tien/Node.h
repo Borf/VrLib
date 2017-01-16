@@ -3,6 +3,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <type_traits>
 
 namespace vrlib
 {
@@ -25,6 +26,7 @@ namespace vrlib
 			virtual void setTreeDirty(Node* newNode, bool isNewNode) { if(parent) parent->setTreeDirty(newNode, isNewNode); };
 			std::vector<Component*> components;
 			friend class Scene;
+			friend class components::Renderable;
 			std::vector<Node*> children;
 		public:
 			components::Transform* transform;
@@ -43,6 +45,7 @@ namespace vrlib
 			Node* getFirstChild() const { return children.empty() ? nullptr : children.front(); }
 			Node* getNextSibling() const;
 			void setParent(Node* newParent);
+			bool isChildOf(Node* parent);
 
 			json::Value asJson(json::Value &meshes) const;
 			void fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> & = nullptr);
@@ -62,12 +65,29 @@ namespace vrlib
 
 			template<class T> void removeComponent()
 			{
-				components.erase(std::remove_if(components.begin(), components.end(), [](Component* c) { 
+				components.erase(std::remove_if(components.begin(), components.end(), [this](Component* c) { 
 					T* t = dynamic_cast<T*>(c);
 					if (t)
 						delete t;
+					if (std::is_same<T, components::Renderable>::value)
+						renderAble = nullptr;
+					if (std::is_same<T, components::Light>::value)
+						light = nullptr;
+					//TODO: etc
+
 					return t != nullptr; 
 				}), components.end());
+			}
+
+			template<class T> void removeComponent(T* c)
+			{
+				components.erase(std::remove(components.begin(), components.end(), c), components.end());
+				if (std::is_same<T, components::Renderable>::value)
+					renderAble = nullptr;
+				if (std::is_same<T, components::Light>::value)
+					light = nullptr;
+				//TODO: etc
+				delete c;
 			}
 
 

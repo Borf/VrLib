@@ -34,6 +34,7 @@ namespace vrlib
 				lightColor,
 				lightRange,
 				lightCastShadow,
+				lightAmbient,
 				lightSpotAngle,
 				cameraPosition,
 				s_color,

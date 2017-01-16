@@ -4,6 +4,8 @@
 #include <functional>
 #include <vector>
 
+class TienEdit;
+
 namespace vrlib
 {
 	namespace json { class Value; }
@@ -27,9 +29,8 @@ namespace vrlib
 			virtual void addCheckbox(bool value, std::function<void(bool)> onChange) = 0;
 			virtual void addButton(const std::string &value, std::function<void()> onClick) = 0;
 			virtual TextComponent* addComboBox(const std::string &value, const std::vector<std::string> &values, std::function<void(const std::string &)> onClick) = 0;
-
-			virtual std::string toString(float value) const;
-
+			virtual void addDivider() = 0;
+			virtual void updateComponentsPanel() = 0;
 			enum BrowseType
 			{
 				Model,
@@ -38,13 +39,16 @@ namespace vrlib
 				Prefab
 			};
 			virtual void addBrowseButton(BrowseType type, std::function<void(const std::string &)> onClick) = 0;
+
+
+			virtual std::string toString(float value) const;
 		};
 
 		class Component
 		{
 		protected:
 			Component() { node = nullptr; }
-			virtual ~Component() {}
+			virtual ~Component() {};
 			Node* node;
 			friend class Node;
 		public:
@@ -52,7 +56,7 @@ namespace vrlib
 			virtual void postUpdate(Scene& scene) {};
 			virtual json::Value toJson(json::Value &meshes) const;
 
-			virtual void buildEditor(EditorBuilder* builder);
+			virtual void buildEditor(EditorBuilder* builder, bool folded);
 		};
 	}
 }

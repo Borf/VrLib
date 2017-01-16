@@ -289,6 +289,7 @@
     <ClCompile Include="VrLib\tien\components\MeshCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\MeshRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
+    <ClCompile Include="VrLib\tien\components\Renderable.cpp" />
     <ClCompile Include="VrLib\tien\components\RigidBody.cpp" />
     <ClCompile Include="VrLib\tien\components\SkyBox.cpp" />
     <ClCompile Include="VrLib\tien\components\SphereCollider.cpp" />

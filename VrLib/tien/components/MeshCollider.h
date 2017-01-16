@@ -18,7 +18,7 @@ namespace vrlib
 
 				virtual btCollisionShape* getShape() override;
 				virtual json::Value toJson(json::Value &meshes) const override;
-				void buildEditor(EditorBuilder * builder) override;
+				void buildEditor(EditorBuilder * builder, bool folded) override;
 
 
 				void buildShape(Node* node);

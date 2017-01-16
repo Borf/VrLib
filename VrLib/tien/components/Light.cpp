@@ -53,6 +53,10 @@ namespace vrlib
 				range = json["range"];
 				for (int i = 0; i < 4; i++)
 					color[i] = json["color"][i];
+				if(json.isMember("spotlihtAngle"))
+					spotlightAngle = json["spotlightAngle"];
+				if (json.isMember("directionalAmbient"))
+					directionalAmbient = json["directionalAmbient"];
 
 			}
 			json::Value Light::toJson(json::Value &meshes) const
@@ -83,6 +87,8 @@ namespace vrlib
 					ret["color"].push_back(color[i]);
 
 				ret["range"] = range;
+				ret["spotlightAngle"] = spotlightAngle;
+				ret["directionalAmbient"] = directionalAmbient;
 
 				return ret;
 			}
@@ -197,7 +203,7 @@ namespace vrlib
 			}
 
 
-			void Light::buildEditor(EditorBuilder * builder)
+			void Light::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Light");
 
@@ -223,13 +229,14 @@ namespace vrlib
 				builder->addComboBox(type == Type::directional ? "Directional" :
 									(type == Type::point ? "Point" :
 									(type == Type::spot ? "Spot" :
-										"none")), { "Directional", "Point", "Spot" }, [this](const std::string &newValue) {
+										"none")), { "Directional", "Point", "Spot" }, [this, builder](const std::string &newValue) {
 					if (newValue == "Directional")
 						type = Type::directional;
 					else if (newValue == "Point")
 						type = Type::point;
 					else if (newValue == "Spot")
 						type = Type::spot;
+					builder->updateComponentsPanel();
 				});
 				builder->endGroup();
 
@@ -240,6 +247,11 @@ namespace vrlib
 				builder->beginGroup("Range");
 				builder->addTextBox(builder->toString(range), [this](const std::string &newValue) { range = (float)atof(newValue.c_str()); });
 				builder->endGroup();
+
+				builder->beginGroup("Ambient");
+				builder->addTextBox(builder->toString(directionalAmbient), [this](const std::string &newValue) { directionalAmbient = (float)atof(newValue.c_str()); });
+				builder->endGroup();
+
 
 				builder->beginGroup("Baking");
 				builder->addComboBox(baking == Baking::realtime ? "Realtime" : "Baked", { "Realtime", "Baked" }, [this](const std::string &newValue) {

@@ -713,5 +713,8 @@
     <ClCompile Include="VrLib\math\Rectangle.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="VrLib\tien\components\Renderable.cpp">
+      <Filter>tien\components</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

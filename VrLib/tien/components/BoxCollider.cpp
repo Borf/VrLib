@@ -73,10 +73,11 @@ namespace vrlib
 			}
 
 
-			void BoxCollider::buildEditor(EditorBuilder * builder)
+			void BoxCollider::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Box Collider");
-
+				if (folded)
+					return;
 				builder->beginGroup("Size", false);
 				for(int i = 0; i < 3; i++)
 					builder->addTextBox(builder->toString(size[i]), [this, i](const std::string & newValue) 

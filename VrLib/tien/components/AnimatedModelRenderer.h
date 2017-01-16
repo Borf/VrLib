@@ -82,7 +82,7 @@ namespace vrlib
 				void resetAnimation();
 
 
-				void AnimatedModelRenderer::buildEditor(EditorBuilder * builder);
+				void AnimatedModelRenderer::buildEditor(EditorBuilder * builder, bool folded) override;
 
 				bool castShadow;
 				bool cullBackFaces;

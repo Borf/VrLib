@@ -61,10 +61,11 @@ namespace vrlib
 				return ret;
 			}
 
-			void ModelRenderer::buildEditor(EditorBuilder * builder)
+			void ModelRenderer::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Model Renderer");
-
+				if (folded)
+					return;
 				builder->beginGroup("Filename", false);
 				EditorBuilder::TextComponent* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});
 				builder->addBrowseButton(EditorBuilder::BrowseType::Model, [this, filenameBox](const std::string &file) 

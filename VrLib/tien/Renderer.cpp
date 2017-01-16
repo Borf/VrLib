@@ -51,6 +51,7 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::lightType, "lightType");
 			postLightingShader->registerUniform(PostLightingUniform::lightPosition, "lightPosition");
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
+			postLightingShader->registerUniform(PostLightingUniform::lightAmbient, "lightAmbient");
 			postLightingShader->registerUniform(PostLightingUniform::lightRange, "lightRange");
 			postLightingShader->registerUniform(PostLightingUniform::lightColor, "lightColor");
 			postLightingShader->registerUniform(PostLightingUniform::lightSpotAngle, "lightSpotAngle");
@@ -246,7 +247,7 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
 				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
-				
+				postLightingShader->setUniform(PostLightingUniform::lightAmbient, l->directionalAmbient);
 
 				if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
 					glDrawArrays(GL_QUADS, 0, 4);

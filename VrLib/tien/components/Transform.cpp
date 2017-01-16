@@ -154,9 +154,12 @@ namespace vrlib
 
 
 
-			void Transform::buildEditor(EditorBuilder * builder)
+			void Transform::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Transform");
+
+				if (folded)
+					return;
 
 				builder->beginGroup("Local Translate", false);
 				builder->addTextBox(builder->toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });

@@ -50,7 +50,7 @@ namespace vrlib
 				}
 				return ret;
 			}
-			void Camera::buildEditor(EditorBuilder * builder)
+			void Camera::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Camera");
 			}

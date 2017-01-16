@@ -257,9 +257,11 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::outputPosition, use);
 			}
 
-			void AnimatedModelRenderer::buildEditor(EditorBuilder * builder)
+			void AnimatedModelRenderer::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Model Renderer");
+				if (folded)
+					return;
 
 				builder->beginGroup("Filename", false);
 				EditorBuilder::TextComponent* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});

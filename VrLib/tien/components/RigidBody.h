@@ -48,7 +48,7 @@ namespace vrlib
 				~RigidBody();
 				btRigidBody* body;
 				json::Value toJson(json::Value &meshes) const override;
-				void buildEditor(EditorBuilder * builder) override;
+				void buildEditor(EditorBuilder * builder, bool folded) override;
 				inline float getMass() const {return mass; };
 				void setMass(float newMass);
 

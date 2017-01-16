@@ -1,20 +1,20 @@
 #include "Component.h"
 
 #include <VrLib/json.h>
+#include "Node.h"
 #include <sstream>
 
 namespace vrlib
 {
 	namespace tien
 	{
-
-		json::Value Component::toJson(json::Value &meshes) const 
+		json::Value Component::toJson(json::Value &meshes) const
 		{ 
 			throw "Cannot serialize..."; 
 		};
 
 
-		void Component::buildEditor(EditorBuilder * builder)
+		void Component::buildEditor(EditorBuilder * builder, bool folded)
 		{
 			std::string componentName = typeid(*this).name();
 			if (componentName.substr(0, 31) == "class vrlib::tien::components::") //TODO: a nicer way to do this

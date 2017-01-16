@@ -188,10 +188,12 @@ namespace vrlib
 
 
 
-			void RigidBody::buildEditor(EditorBuilder * builder)
+			void RigidBody::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Rigid Body");
-
+				if (folded)
+					return;
+				
 				builder->beginGroup("Mass");
 				builder->addTextBox(builder->toString(mass), [this](const std::string & newValue) { mass = (float)atof(newValue.c_str());  });
 				builder->endGroup();

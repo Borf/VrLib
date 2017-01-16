@@ -27,6 +27,9 @@ namespace vrlib
 				virtual void drawDeferredPass() = 0;
 				virtual void drawForwardPass() = 0;
 				virtual void drawShadowMap() = 0;
+
+
+				~Renderable();
 			};
 		}
 	}

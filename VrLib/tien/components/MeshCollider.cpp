@@ -93,7 +93,7 @@ namespace vrlib
 				return ret;
 			}
 
-			void MeshCollider::buildEditor(EditorBuilder * builder)
+			void MeshCollider::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Mesh Collider");
 

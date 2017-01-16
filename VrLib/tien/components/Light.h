@@ -49,6 +49,7 @@ namespace vrlib
 				} shadow = Shadow::none;
 
 
+				float directionalAmbient = 0;
 
 				float intensity;
 				glm::vec4 color = glm::vec4(1,1,1,1);
@@ -57,7 +58,7 @@ namespace vrlib
 				float spotlightAngle = 45.0f;
 				float range; //point / spotlight
 
-				virtual void buildEditor(EditorBuilder* builder) override;
+				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 
 			};
 		}
