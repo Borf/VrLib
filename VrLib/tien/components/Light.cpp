@@ -57,7 +57,8 @@ namespace vrlib
 					spotlightAngle = json["spotlightAngle"];
 				if (json.isMember("directionalAmbient"))
 					directionalAmbient = json["directionalAmbient"];
-
+				if (json.isMember("cutoff"))
+					cutoff = json["cutoff"];
 			}
 			json::Value Light::toJson(json::Value &meshes) const
 			{
@@ -89,6 +90,7 @@ namespace vrlib
 				ret["range"] = range;
 				ret["spotlightAngle"] = spotlightAngle;
 				ret["directionalAmbient"] = directionalAmbient;
+				ret["cutoff"] = cutoff;
 
 				return ret;
 			}
@@ -252,6 +254,9 @@ namespace vrlib
 				builder->addTextBox(builder->toString(directionalAmbient), [this](const std::string &newValue) { directionalAmbient = (float)atof(newValue.c_str()); });
 				builder->endGroup();
 
+				builder->beginGroup("Cutoff");
+				builder->addTextBox(builder->toString(cutoff), [this](const std::string &newValue) { cutoff = (float)atof(newValue.c_str()); });
+				builder->endGroup();
 
 				builder->beginGroup("Baking");
 				builder->addComboBox(baking == Baking::realtime ? "Realtime" : "Baked", { "Realtime", "Baked" }, [this](const std::string &newValue) {

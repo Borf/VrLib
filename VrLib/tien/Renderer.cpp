@@ -53,6 +53,8 @@ namespace vrlib
 			postLightingShader->registerUniform(PostLightingUniform::lightDirection, "lightDirection");
 			postLightingShader->registerUniform(PostLightingUniform::lightAmbient, "lightAmbient");
 			postLightingShader->registerUniform(PostLightingUniform::lightRange, "lightRange");
+			postLightingShader->registerUniform(PostLightingUniform::lightCutoff, "lightCutoff");			
+			postLightingShader->registerUniform(PostLightingUniform::lightIntensity, "lightIntensity");
 			postLightingShader->registerUniform(PostLightingUniform::lightColor, "lightColor");
 			postLightingShader->registerUniform(PostLightingUniform::lightSpotAngle, "lightSpotAngle");
 			postLightingShader->registerUniform(PostLightingUniform::lightCastShadow, "lightCastShadow");
@@ -254,7 +256,8 @@ namespace vrlib
 				}
 
 
-				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(l->range, l->range, l->range)));
+				float adjustedRange = l->range * 4;
+				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
 
@@ -262,6 +265,8 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightDirection, -lightDir);
 
 				postLightingShader->setUniform(PostLightingUniform::lightRange, l->range);
+				postLightingShader->setUniform(PostLightingUniform::lightCutoff, l->cutoff);
+				postLightingShader->setUniform(PostLightingUniform::lightIntensity, l->intensity);
 				postLightingShader->setUniform(PostLightingUniform::lightColor, l->color);
 				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
 				postLightingShader->setUniform(PostLightingUniform::lightAmbient, l->directionalAmbient);
