@@ -230,7 +230,7 @@ namespace vrlib
 			//every light adds shading to the scene, so draw the lights.
 			//TODO: check which spheres are visible for pointlights
 			//TODO: first draw ambient shading, then add diffuse/specular for every light
-			for (Node* c : scene.lights)
+			for (Node* c : scene.lights) //TODO Sphere frustum test each light for performance gain
 			{
 				components::Light* l = c->getComponent<components::Light>();
 				components::Transform* t = c->getComponent<components::Transform>();
@@ -256,7 +256,14 @@ namespace vrlib
 				}
 
 
-				float adjustedRange = l->range * 4;
+				//formula from http://ogldev.atspace.co.uk/www/tutorial36/tutorial36.html and https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
+				float kC = 1;
+				float kL = 2.0f / l->range;
+				float kQ = 1.0f / (l->range * l->range);
+				float maxChannel = glm::max(glm::max(l->color.r, l->color.g), l->color.b);
+				float adjustedRange = (-kL + glm::sqrt(kL * kL - 4 * kQ * (kC - 256.0f * maxChannel * l->intensity))) / (2 * kQ);
+
+				//float adjustedRange = l->range * (glm::sqrt(l->intensity / glm::max(0.00001f, l->cutoff)) - 1);
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
