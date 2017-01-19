@@ -286,11 +286,16 @@ namespace vrlib
 					return true; //TODO: spotlight
 
 				glm::vec3 position = node->transform->getGlobalPosition();
+				glm::vec3 camerapos(glm::inverse(frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1));
+				float rrange = realRange();
+				//TODO: occlusion test?
+				if (glm::distance(camerapos, position) < rrange)
+					return true;
 
 				if (glm::distance(glm::vec3(glm::inverse(frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1)), position) > 30) 
 					return false;
 
-				if (frustum->sphereInFrustum(position, realRange() * 0.1))
+				if (frustum->sphereInFrustum(position, rrange * 0.1))
 					return true;
 				return false;
 			}

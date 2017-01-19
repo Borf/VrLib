@@ -243,6 +243,8 @@ namespace vrlib
 			glCullFace(GL_BACK);
 
 			//every light adds shading to the scene, so draw the lights.
+			//TODO: add instanced rendering for the visible lights
+			//TODO: sort the visible lights to group them
 			for (Node* c : visibleLights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
