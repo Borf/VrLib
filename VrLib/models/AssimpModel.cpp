@@ -438,8 +438,6 @@ namespace vrlib
 		vao->bind();
 		for (const Mesh& mesh : meshes)
 		{
-			if (modelviewMatrixCallback)
-				modelviewMatrixCallback(mesh.globalTransform);
 			if (materialCallback)
 			{
 				if (!materialCallback(mesh.material))
@@ -450,6 +448,8 @@ namespace vrlib
 				if (mesh.material.texture)
 					mesh.material.texture->bind();
 			}
+			if (modelviewMatrixCallback)
+				modelviewMatrixCallback(mesh.globalTransform);
 			if (mesh.indexCount == 0)
 				continue;
 			glDrawElements(GL_TRIANGLES, mesh.indexCount, GL_UNSIGNED_INT, (void*)(mesh.indexStart * sizeof(unsigned int)));

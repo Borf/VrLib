@@ -75,6 +75,7 @@ namespace vrlib
 
 				std::string fileName;
 				static std::map<std::string, vrlib::Model*> cache;
+				bool hasForward = false;
 			public:
 				ModelRenderer(const vrlib::json::Value &json);
 //				ModelRenderer(const std::string &fileName);

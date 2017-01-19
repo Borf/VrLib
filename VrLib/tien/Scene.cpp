@@ -139,7 +139,7 @@ namespace vrlib
 				for (Component* c : n->components)
 					c->postUpdate(*this);
 			});
-			updateTransforms(this, glm::mat4());
+			updateTransforms(this, glm::mat4()); //TODO: optimize this, don't do the entire tree, only dynamic objects?
 
 		}
 

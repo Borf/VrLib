@@ -48,6 +48,7 @@ namespace vrlib
 					castShadow = true;
 					cullBackFaces = true;
 				}
+				hasForward = false;
 			}
 
 
@@ -171,13 +172,17 @@ namespace vrlib
 
 				model->draw([this, t, &context](const glm::mat4 &modelMatrix)
 				{
-					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
-					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::normalMatrix, glm::mat3(glm::transpose(glm::inverse(t->globalTransform * modelMatrix))));
+					glm::mat4 mat(t->globalTransform * modelMatrix);
+					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::modelMatrix, mat);
+					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(mat))));
 				},
 					[this, &context](const vrlib::Material &material)
 				{
 					if ((material.texture && material.texture->usesAlphaChannel) || material.color.diffuse.a < 0.999f)
+					{
+						hasForward = true;
 						return false;
+					}
 					if (material.texture)
 					{
 						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::textureFactor, 1.0f);
@@ -214,7 +219,7 @@ namespace vrlib
 
 			void ModelRenderer::drawForwardPass()
 			{
-				if (!model)
+				if (!model || !hasForward)
 					return;
 				ModelForwardRenderContext* context = dynamic_cast<ModelForwardRenderContext*>(renderContextForward);
 				if (!context)
