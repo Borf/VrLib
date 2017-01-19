@@ -6,6 +6,7 @@
 namespace vrlib
 {
 	namespace gl { class FBO; }
+	namespace math { class Frustum;  }
 	namespace tien
 	{
 		class Tien;
@@ -60,7 +61,8 @@ namespace vrlib
 				float cutoff = 0;
 
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
-
+				bool inFrustum(vrlib::math::Frustum* frustum);
+				float realRange();
 			};
 		}
 	}

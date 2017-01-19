@@ -47,6 +47,17 @@ namespace vrlib
 				debug,
 			};
 			vrlib::gl::Shader<PostLightingUniform>* postLightingShader;
+
+			enum class PostLightingStencilUniform
+			{
+				lightType,
+				projectionMatrix,
+				modelViewMatrix,
+			};
+			vrlib::gl::Shader<PostLightingStencilUniform>* postLightingStencilShader;
+
+
+
 			enum class PhysicsDebugUniform
 			{
 				projectionMatrix,

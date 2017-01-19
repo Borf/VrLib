@@ -33,7 +33,7 @@ namespace vrlib
 
 
 			// Normalizing the planes.
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 6; i++)
 				planes[i] = -planes[i] / glm::length(glm::vec3(planes[i]));
 		}
 		glm::vec3 Frustum::getCenter()
@@ -56,6 +56,16 @@ namespace vrlib
 			for (int i = 0; i < 8; i++)
 				total += drawVert(glm::vec3(((i >> 0) & 1) * 2 - 1, ((i >> 1) & 1) * 2 - 1, ((i >> 2) & 1)));
 			return total /= 8.0f;
+		}
+		bool Frustum::sphereInFrustum(const glm::vec3 & center, float radius) const
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				float dist = planes[i].x * center.x + planes[i].y * center.y + planes[i].z * center.z + planes[i].w - radius;
+				if (dist > 0)
+					return false;
+			}
+			return true;
 		}
 	}
 }

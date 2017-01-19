@@ -72,6 +72,13 @@ namespace vrlib
 
 
 
+			postLightingStencilShader = new vrlib::gl::Shader<PostLightingStencilUniform>("data/vrlib/tien/shaders/postLighting.stencil.vert", "data/vrlib/tien/shaders/postLighting.stencil.frag");
+			postLightingStencilShader->bindAttributeLocation("a_position", 0);
+			postLightingStencilShader->link();
+			postLightingStencilShader->bindFragLocation("fragColor", 0);
+			postLightingStencilShader->registerUniform(PostLightingStencilUniform::modelViewMatrix, "modelViewMatrix");
+			postLightingStencilShader->registerUniform(PostLightingStencilUniform::projectionMatrix, "projectionMatrix");
+			postLightingStencilShader->registerUniform(PostLightingStencilUniform::lightType, "lightType");
 
 
 			physicsDebugShader = new vrlib::gl::Shader<PhysicsDebugUniform>("data/vrlib/tien/shaders/physicsdebug.vert", "data/vrlib/tien/shaders/physicsdebug.frag");
@@ -148,11 +155,19 @@ namespace vrlib
 			}
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 			
+			std::vector<vrlib::tien::Node*> visibleLights;
+			for (auto l : scene.lights)
+			{
+				if (l->light->inFrustum(scene.frustum))
+					visibleLights.push_back(l);
+			}
+
+
 			//update the lights / shadowmaps
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_POLYGON_OFFSET_FILL);
 			glPolygonOffset(1.0, 1.0f); //no idea what these values are or should be
-			for (auto l : scene.lights)
+			for (auto l : visibleLights)
 			{
 				if (!l->light)continue;
 				if (l->light->shadow == components::Light::Shadow::shadowmap)
@@ -228,9 +243,7 @@ namespace vrlib
 			glCullFace(GL_BACK);
 
 			//every light adds shading to the scene, so draw the lights.
-			//TODO: check which spheres are visible for pointlights
-			//TODO: first draw ambient shading, then add diffuse/specular for every light
-			for (Node* c : scene.lights) //TODO Sphere frustum test each light for performance gain
+			for (Node* c : visibleLights)
 			{
 				components::Light* l = c->getComponent<components::Light>();
 				components::Transform* t = c->getComponent<components::Transform>();
@@ -256,14 +269,8 @@ namespace vrlib
 				}
 
 
-				//formula from http://ogldev.atspace.co.uk/www/tutorial36/tutorial36.html and https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
-				float kC = 1;
-				float kL = 2.0f / l->range;
-				float kQ = 1.0f / (l->range * l->range);
-				float maxChannel = glm::max(glm::max(l->color.r, l->color.g), l->color.b);
-				float adjustedRange = (-kL + glm::sqrt(kL * kL - 4 * kQ * (kC - 256.0f * maxChannel * l->intensity))) / (2 * kQ);
 
-				//float adjustedRange = l->range * (glm::sqrt(l->intensity / glm::max(0.00001f, l->cutoff)) - 1);
+				float adjustedRange = l->realRange();
 				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
@@ -282,18 +289,23 @@ namespace vrlib
 					glDrawArrays(GL_QUADS, 0, 4);
 				else
 				{
+					postLightingStencilShader->use();
+					postLightingStencilShader->setUniform(PostLightingStencilUniform::lightType, (int)l->type);
+					postLightingStencilShader->setUniform(PostLightingStencilUniform::projectionMatrix, projectionMatrix);
+					postLightingStencilShader->setUniform(PostLightingStencilUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
+
 					glEnable(GL_STENCIL_TEST);
 					glStencilFunc(GL_ALWAYS, 0x80, 0xFF);
 					glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 					glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 					glClearStencil(0x80);
-					glStencilMask(0xFF);
 					glClear(GL_STENCIL_BUFFER_BIT);
 					glColorMask(false, false, false, false);
 					glDisable(GL_CULL_FACE);
 					glEnable(GL_DEPTH_TEST);
 					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
 					glColorMask(true, true,true,true);
+					postLightingShader->use();
 
 					glEnable(GL_CULL_FACE);
 					glCullFace(GL_FRONT);
@@ -373,7 +385,7 @@ namespace vrlib
 			if (drawLightDebug)
 			{
 				std::vector<vrlib::gl::VertexP3C4> verts;
-				for (auto l : scene.lights)
+				for (auto l : visibleLights)
 				{
 					if (!l->light)continue;
 					verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(glm::inverse(l->light->projectionMatrix * l->light->modelViewMatrix) * glm::vec4( 0, 0,-1, 1)), glm::vec4(1, 0, 1, 1)));

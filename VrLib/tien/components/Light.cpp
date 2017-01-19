@@ -4,6 +4,7 @@
 #include <VrLib/gl/FBO.h>
 #include <VrLib/Log.h>
 #include <VrLib/json.h>
+#include <VrLib/math/Frustum.h>
 #include "../Node.h"
 #include "../Scene.h"
 
@@ -277,6 +278,32 @@ namespace vrlib
 						shadow = Shadow::shadowvolume;
 				});				
 				builder->endGroup();
+			}
+
+			bool Light::inFrustum(vrlib::math::Frustum * frustum)
+			{
+				if (type == Type::directional || type == Type::spot)
+					return true; //TODO: spotlight
+
+				glm::vec3 position = node->transform->getGlobalPosition();
+
+				if (glm::distance(glm::vec3(glm::inverse(frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1)), position) > 30) 
+					return false;
+
+				if (frustum->sphereInFrustum(position, realRange() * 0.1))
+					return true;
+				return false;
+			}
+
+			float Light::realRange()
+			{
+				//formula from http://ogldev.atspace.co.uk/www/tutorial36/tutorial36.html and https://imdoingitwrong.wordpress.com/2011/01/31/light-attenuation/
+				float kC = 1;
+				float kL = 2.0f / range;
+				float kQ = 1.0f / (range * range);
+				float maxChannel = glm::max(glm::max(color.r, color.g), color.b);
+				float adjustedRange = (-kL + glm::sqrt(kL * kL - 4 * kQ * (kC - 256.0f * maxChannel * intensity))) / (2 * kQ);
+				return adjustedRange;
 			}
 
 		}

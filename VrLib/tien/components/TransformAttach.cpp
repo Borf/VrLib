@@ -39,9 +39,13 @@ namespace vrlib
 
 			void TransformAttach::postUpdate(Scene& scene)
 			{
-				if (!device.isInitialized() || !scene.cameraNode)
+				if (!device.isInitialized())
 					return;
-				glm::mat4 mat = scene.cameraNode->transform->globalTransform * device.getData();
+
+
+				glm::mat4 mat = device.getData();
+				if (scene.cameraNode)
+					mat = scene.cameraNode->transform->globalTransform * mat;
 
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
 				glm::quat rot(mat);

@@ -20,6 +20,8 @@ namespace vrlib
 
 			glm::vec3 getCenter();
 
+			bool sphereInFrustum(const glm::vec3 &position, float radius) const;
+
 		};
 
 	}
