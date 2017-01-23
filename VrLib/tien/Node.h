@@ -33,7 +33,7 @@ namespace vrlib
 			components::RigidBody* rigidBody;
 			components::Renderable* renderAble;
 			components::Light* light;
-
+			bool enabled = true;
 			std::string guid;
 			std::string name;
 			Node* parent;

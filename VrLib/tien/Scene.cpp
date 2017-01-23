@@ -111,6 +111,8 @@ namespace vrlib
 				world->stepSimulation(elapsedTime);
 			fortree([this, &elapsedTime](Node* n)
 			{
+				if (!n->enabled)
+					return;
 				for (Component* c : n->components)
 					c->update(elapsedTime, *this);
 			});
@@ -120,6 +122,8 @@ namespace vrlib
 			std::function<void(Node*, const glm::mat4 &)> updateTransforms;
 			updateTransforms = [this, &updateTransforms](Node* n, const glm::mat4 &parentTransform)
 			{
+				if (!n->enabled)
+					return;
 				components::Transform* transform = n->getComponent<components::Transform>();
 				if (transform)
 				{
@@ -136,6 +140,8 @@ namespace vrlib
 
 			fortree([this, &elapsedTime](Node* n)
 			{
+				if (enabled)
+					return;
 				for (Component* c : n->components)
 					c->postUpdate(*this);
 			});

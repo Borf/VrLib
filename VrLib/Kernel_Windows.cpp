@@ -282,7 +282,8 @@ namespace vrlib
 			ShowCursor(FALSE);
 		ShowWindow(hWnd, SW_SHOW);
 		UpdateWindow(hWnd);
-
+		SetActiveWindow(hWnd);
+		BringWindowToTop(hWnd);
 
 #ifdef __GLEW_H__
 #ifdef GL_DEBUG_OUTPUT

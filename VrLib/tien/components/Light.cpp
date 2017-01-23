@@ -307,7 +307,7 @@ namespace vrlib
 				float kL = 2.0f / range;
 				float kQ = 1.0f / (range * range);
 				float maxChannel = glm::max(glm::max(color.r, color.g), color.b);
-				float adjustedRange = (-kL + glm::sqrt(kL * kL - 4 * kQ * (kC - 256.0f * maxChannel * intensity))) / (2 * kQ);
+				float adjustedRange = (-kL + glm::sqrt(kL * kL - 4 * kQ * (kC - 128.0f * maxChannel * intensity))) / (2 * kQ);
 				return adjustedRange;
 			}
 

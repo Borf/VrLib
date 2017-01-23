@@ -155,9 +155,11 @@ namespace vrlib
 			}
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 			
-			std::vector<vrlib::tien::Node*> visibleLights;
+			std::vector<vrlib::tien::Node*> visibleLights; //TODO: only calculate once per eye
 			for (auto l : scene.lights)
 			{
+				if (!l->enabled)
+					continue;
 				if (l->light->inFrustum(scene.frustum))
 					visibleLights.push_back(l);
 			}
@@ -198,7 +200,7 @@ namespace vrlib
 			for (Node* c : scene.renderables)
 			{
 				auto r = c->getComponent<components::Renderable>();
-				if (r->visible)
+				if (r->visible && c->enabled)
 					r->drawDeferredPass();
 			}
 			gbuffers->unbind();
@@ -330,7 +332,7 @@ namespace vrlib
 			for (Node* c : scene.renderables)
 			{
 				auto r = c->getComponent<components::Renderable>();
-				if(r->visible)
+				if(r->visible && c->enabled)
 					r->drawForwardPass();
 			}
 
