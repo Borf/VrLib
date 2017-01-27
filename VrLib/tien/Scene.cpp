@@ -140,7 +140,7 @@ namespace vrlib
 
 			fortree([this, &elapsedTime](Node* n)
 			{
-				if (enabled)
+				if (!n->enabled)
 					return;
 				for (Component* c : n->components)
 					c->postUpdate(*this);

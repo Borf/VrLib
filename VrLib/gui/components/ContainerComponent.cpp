@@ -15,7 +15,8 @@ namespace vrlib
 			{
 				glm::mat4 matrix = glm::translate(parentMatrix, glm::vec3(position.x, position.y, 0));
 				for (auto c : *this)
-					c->draw(matrix);
+					if(c)
+						c->draw(matrix);
 			}
 
 			Component* ContainerComponent::getComponent_internal(const std::string &name)
@@ -23,7 +24,9 @@ namespace vrlib
 				Component* subEl = NULL;
 
 				for (auto el : *this)
-					if (el->name == name)
+					if (!el)
+						;
+					else if (el->name == name)
 						return el;
 					else if (dynamic_cast<ContainerComponent*>(el))
 						if (subEl = dynamic_cast<ContainerComponent*>(el)->getComponent_internal(name))
@@ -49,7 +52,7 @@ namespace vrlib
 				{
 					if (dynamic_cast<ContainerComponent*>(el))
 						dynamic_cast<ContainerComponent*>(el)->foreach(callback);
-					else
+					else if(el)
 						callback(el);
 				}
 			}
@@ -62,7 +65,7 @@ namespace vrlib
 				{
 					if (dynamic_cast<ContainerComponent*>(el))
 						dynamic_cast<ContainerComponent*>(el)->foreachWithMatrix(callback, matrix);
-					else
+					else if(el)
 						callback(matrix, el);
 				}
 			}
