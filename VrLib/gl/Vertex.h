@@ -77,6 +77,15 @@ namespace vrlib
 			float tanx, tany, tanz;
 			float tx, ty;
 			VertexP3N2B2T2T2() {};
+			VertexP3N2B2T2T2(const glm::vec3& position, const glm::vec3 &normal, const glm::vec2 &texCoord, const glm::vec3 &tangent)
+			{
+				px = position.x;	py = position.y;	pz = position.z;
+				nx = normal.x;		ny = normal.y;		nz = normal.z;
+				tx = texCoord.x;	ty = texCoord.y;
+				tanx = tangent.x;	tany = tangent.y;	tanz = tangent.z;
+				glm::vec3 biTan = glm::normalize(glm::cross(normal, tangent));
+				bitanx = biTan.x;	bitany = biTan.y;	bitanz = biTan.z;
+			}
 		};
 
 		struct VertexP3N2B2T2T2B4B4
@@ -154,7 +163,18 @@ namespace vrlib
 		template<>			inline void setP3<VertexP3N3T2B4B4>(VertexP3N3T2B4B4& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N2B2T2T2>(VertexP3N2B2T2T2& vertex, const glm::vec3 &p)	{ vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
 		template<>			inline void setP3<VertexP3N2B2T2T2B4B4>(VertexP3N2B2T2T2B4B4& vertex, const glm::vec3 &p) { vertex.px = p.x;		vertex.py = p.y;	vertex.pz = p.z; }
-		
+	
+		template<class T>	inline glm::vec3 getP3(T& vertex)												{ return glm::vec3();	}
+		template<>			inline glm::vec3 getP3<VertexP3>(VertexP3& vertex)								{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3T2>(VertexP3T2& vertex)							{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3N3>(VertexP3N3& vertex)							{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3C4>(VertexP3C4& vertex)							{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3N3T2>(VertexP3N3T2& vertex)						{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3N3T2B4B4>(VertexP3N3T2B4B4& vertex)				{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3N2B2T2T2>(VertexP3N2B2T2T2& vertex)				{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+		template<>			inline glm::vec3 getP3<VertexP3N2B2T2T2B4B4>(VertexP3N2B2T2T2B4B4& vertex)		{ return glm::vec3(vertex.px, vertex.py, vertex.pz); }
+
+
 
 		template<class T>	inline void setN3(T& vertex, const glm::vec3 &n)								{	}
 		template<>			inline void setN3<VertexP3N3>(VertexP3N3& vertex, const glm::vec3 &n)			{ vertex.nx = n.x;		vertex.ny = n.y;	vertex.nz = n.z; }

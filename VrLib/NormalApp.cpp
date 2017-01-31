@@ -37,8 +37,8 @@ namespace vrlib
 
 		char hostname[255];
 		gethostname(hostname, 255);
-		if(strcmp(hostname, "BorfDesktop") == 0)
-			kernel->config["local"]["window"]["vsync"] = true;
+//		if(strcmp(hostname, "BorfDesktop") == 0)
+//			kernel->config["local"]["window"]["vsync"] = true;
 
 
 		kernel->viewports.push_back(new NullViewPort());

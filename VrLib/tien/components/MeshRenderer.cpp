@@ -5,6 +5,7 @@
 #include <VrLib/json.h>
 #include <VrLib/util.h>
 #include <VrLib/Image.h>
+#include <VrLib/math/Ray.h>
 #include "Transform.h"
 #include "../Node.h"
 
@@ -76,6 +77,81 @@ namespace vrlib
 				return ret;
 			}
 
+			void MeshRenderer::buildEditor(EditorBuilder * builder, bool folded)
+			{
+				builder->addTitle("Mesh Renderer");
+				if (folded)
+					return;
+				builder->beginGroup("Mesh Vertices");
+				builder->addLabel(std::to_string(mesh->vertices.size()));
+				builder->endGroup();
+
+
+				builder->beginGroup("Casts Shadows");
+				builder->addCheckbox(castShadow, [this](bool newValue) {castShadow = newValue; });
+				builder->endGroup();
+
+				builder->beginGroup("Cull backfaces");
+				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
+				builder->endGroup();
+
+				{
+					builder->addTitle("Material");
+
+					builder->beginGroup("Ambient", true);
+					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->endGroup();
+					builder->beginGroup("Diffuse", true);
+					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->endGroup();
+					builder->beginGroup("Specular", true);
+					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->endGroup();
+
+					builder->beginGroup("Texture", false);
+					auto textureBox = builder->addTextureBox((materialOverride.texture && materialOverride.texture->image) ? materialOverride.texture->image->fileName : "", [this](const std::string &newFile) {
+						materialOverride.texture = vrlib::Texture::loadCached(newFile);
+					});
+					builder->addSmallButton("x", [this, textureBox]()
+					{
+						textureBox->setText("");
+						materialOverride.texture = nullptr;
+					});
+					builder->endGroup();
+
+					builder->beginGroup("Normalmap", false);
+					auto normalBox = builder->addTextureBox((materialOverride.normalmap && materialOverride.normalmap->image) ? materialOverride.normalmap->image->fileName : "", [this](const std::string &newFile) {
+						materialOverride.normalmap = vrlib::Texture::loadCached(newFile);
+					});
+					builder->addSmallButton("x", [this, normalBox]()
+					{
+						normalBox->setText("");
+						materialOverride.normalmap = nullptr;
+					});
+					builder->endGroup();
+
+					builder->beginGroup("Specularmap", false);
+					auto specBox = builder->addTextureBox((materialOverride.specularmap && materialOverride.specularmap->image) ? materialOverride.specularmap->image->fileName : "", [this](const std::string &newFile) {
+						materialOverride.specularmap = vrlib::Texture::loadCached(newFile);
+					});
+					builder->addSmallButton("x", [this, specBox]()
+					{
+						specBox->setText("");
+						materialOverride.specularmap = nullptr;
+					});
+					builder->endGroup();
+
+					builder->beginGroup("Shinyness");
+					builder->addTextBox(builder->toString(materialOverride.color.shinyness), [this](const std::string &newValue) { materialOverride.color.shinyness = atof(newValue.c_str()); });
+					builder->endGroup();
+
+				}
+
+				builder->beginGroup("");
+
+				builder->endGroup();
+			}
+
 			void MeshRenderer::updateMesh()
 			{
 				vbo.setData(mesh->vertices.size(), &mesh->vertices[0], GL_STATIC_DRAW);
@@ -86,6 +162,15 @@ namespace vrlib
 				vao->bind();
 				vio.bind();
 				vao->unBind();
+			}
+
+			void MeshRenderer::update(float elapsedTime, Scene & scene)
+			{
+				if (mesh != prevMesh)
+				{
+					materialOverride = mesh->material;
+					prevMesh = mesh;
+				}
 			}
 
 
@@ -141,7 +226,7 @@ namespace vrlib
 
 			void MeshRenderer::ModelRenderContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/default.vert", "data/vrlib/tien/shaders/default.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/ModelRenderer.deferred.vert", "data/vrlib/tien/shaders/ModelRenderer.deferred.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_normal", 1);
 				renderShader->bindAttributeLocation("a_bitangent", 2);
@@ -179,7 +264,7 @@ namespace vrlib
 
 			void MeshRenderer::ModelShadowRenderContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/ModelRenderer.shadow.vert", "data/vrlib/tien/shaders/ModelRenderer.shadow.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_normal", 1);
 				renderShader->bindAttributeLocation("a_bitangent", 2);
@@ -275,6 +360,26 @@ namespace vrlib
 
 
 				return ret;
+			}
+
+			std::vector<float> MeshRenderer::Mesh::collisionFractions(const vrlib::math::Ray & ray)
+			{
+				std::vector<float> result;
+//				if (!aabb.hasRayCollision(ray, 0, 10000)) //TODO
+//					return result;
+				float f = 0;
+
+				glm::vec3 v[3];
+
+				for (size_t i = 0; i < indices.size(); i += 3)
+				{
+					for (int ii = 0; ii < 3; ii++)
+						v[ii] = gl::getP3(vertices[indices[i + ii]]);
+					if (ray.LineIntersectPolygon(v, 3, f))
+						if (f > 0)
+							result.push_back(f);
+				}
+				return result;
 			}
 
 		}

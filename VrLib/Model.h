@@ -58,13 +58,23 @@ namespace vrlib
 
 	};
 
+	
+	class CollisionMesh
+	{
+	public:
+		math::AABB aabb;
 
-	class Model
+		virtual std::vector<glm::vec3> collisions(const vrlib::math::Ray &ray);
+		virtual std::vector<float> collisionFractions(const vrlib::math::Ray &ray) = 0;
+
+	};
+
+
+	class Model : public CollisionMesh
 	{
 	protected:
 		Model(){};
 	public:
-		math::AABB aabb;
 
 		template<class VertexFormat>
 		static Model* getModel(const std::string &fileName, const ModelLoadOptions &options = ModelLoadOptions());
@@ -95,10 +105,8 @@ namespace vrlib
 		template<class VertexFormat>
 		void recenterToCenterBottom(std::vector<VertexFormat> &vertices);
 
-		std::vector<glm::vec3> collisions(const vrlib::math::Ray &ray);
-		std::vector<float> collisionFractions(const vrlib::math::Ray &ray);
-
-
+		std::vector<float> collisionFractions(const vrlib::math::Ray &ray) override;
+		
 		virtual std::vector<std::string> getAnimationNames() const { return std::vector<std::string>(); };
 	};
 }

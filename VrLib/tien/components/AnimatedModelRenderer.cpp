@@ -264,15 +264,11 @@ namespace vrlib
 					return;
 
 				builder->beginGroup("Filename", false);
-				EditorBuilder::TextComponent* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});
-				builder->addBrowseButton(EditorBuilder::BrowseType::Model, [this, filenameBox](const std::string &file)
-				{
+				builder->addModelBox(fileName, [this](const std::string &file) {
 					fileName = file;
-					filenameBox->setText(fileName);
 					if (cache.find(fileName) == cache.end())
 						cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 					model = cache[fileName];
-					modelInstance = model->getInstance();
 				});
 				builder->endGroup();
 

@@ -295,7 +295,7 @@ namespace vrlib
 				if (glm::distance(glm::vec3(glm::inverse(frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1)), position) > 30) 
 					return false;
 
-				if (frustum->sphereInFrustum(position, rrange * 0.1))
+				if (frustum->sphereInFrustum(position, rrange * 0.1f))
 					return true;
 				return false;
 			}

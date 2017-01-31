@@ -19,6 +19,8 @@ namespace vrlib
 		{
 			class MeshRenderer : public Renderable
 			{
+			public:
+				class Mesh;
 			private:
 				class ModelRenderContext : public Renderable::RenderContext, public Singleton<ModelRenderContext>
 				{
@@ -58,9 +60,11 @@ namespace vrlib
 				gl::VIO<unsigned int> vio;
 				gl::VAO* vao;
 
+				vrlib::Material materialOverride;
+				Mesh* prevMesh = nullptr;
 
 			public:
-				class Mesh
+				class Mesh : public CollisionMesh
 				{
 				public:
 					Mesh();
@@ -72,6 +76,8 @@ namespace vrlib
 					std::vector<unsigned int> indices;
 
 					vrlib::json::Value toJson();
+
+					virtual std::vector<float> collisionFractions(const vrlib::math::Ray & ray) override;
 				};
 
 
@@ -82,14 +88,17 @@ namespace vrlib
 				Mesh* mesh;
 
 				json::Value toJson(json::Value &meshes) const override;
+				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 				void updateMesh();
 
+				virtual void update(float elapsedTime, Scene& scene) override;
 
 				void drawDeferredPass() override;
 				void drawForwardPass() override {};
 				void drawShadowMap() override;
 
 				bool castShadow;
+				bool cullBackFaces = true;
 			};
 		}
 	}

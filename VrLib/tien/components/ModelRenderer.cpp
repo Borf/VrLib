@@ -16,16 +16,6 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
 
-/*			ModelRenderer::ModelRenderer(const std::string &fileName) : fileName(fileName)
-			{
-				if (cache.find(fileName) == cache.end())
-					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
-				model = cache[fileName];
-				renderContextDeferred = ModelDeferredRenderContext::getInstance();
-				renderContextShadow = ModelShadowRenderContext::getInstance();
-				castShadow = true;
-			}*/
-
 			ModelRenderer::ModelRenderer(const vrlib::json::Value &json)
 			{
 				if (json.isString())
@@ -49,6 +39,28 @@ namespace vrlib
 					cullBackFaces = true;
 				}
 				hasForward = false;
+				for (auto m : model->getMaterials())
+					materialOverrides[m] = *m;
+				prevModel = model;
+
+				if (json.isMember("materialoverrides"))
+				{
+					std::vector<Material*> orig = model->getMaterials();
+					int i = 0;
+					for (const json::Value &v : json["materialoverrides"])
+					{
+						Material* overrideMaterial = &materialOverrides[orig[i]];
+						if (v.isMember("texture"))
+							overrideMaterial->texture = vrlib::Texture::loadCached(v["texture"]);
+						if (v.isMember("normalmap"))
+							overrideMaterial->normalmap = vrlib::Texture::loadCached(v["normalmap"]);
+						if (v.isMember("specularmap"))
+							overrideMaterial->specularmap = vrlib::Texture::loadCached(v["specularmap"]);
+
+						i++;
+					}
+				}
+
 			}
 
 
@@ -59,6 +71,19 @@ namespace vrlib
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;
 				ret["cullBackFaces"] = cullBackFaces;
+
+				for (vrlib::Material* m : model->getMaterials()) //TODO: getMaterials might not always return same order
+				{
+					const Material &overrideMaterial = materialOverrides.find(m)->second;
+					json::Value v;					
+					if (m->texture != overrideMaterial.texture && overrideMaterial.texture)
+						v["texture"] = overrideMaterial.texture->image->fileName;
+					if (m->normalmap != overrideMaterial.normalmap && overrideMaterial.normalmap)
+						v["normalmap"] = overrideMaterial.normalmap->image->fileName;
+					if (m->specularmap != overrideMaterial.specularmap && overrideMaterial.specularmap)
+						v["specularmap"] = overrideMaterial.specularmap->image->fileName;
+					ret["materialoverrides"].push_back(v);
+				}
 				return ret;
 			}
 
@@ -68,18 +93,13 @@ namespace vrlib
 				if (folded)
 					return;
 				builder->beginGroup("Filename", false);
-				EditorBuilder::TextComponent* filenameBox = builder->addTextBox(fileName, [this](const std::string &) {});
-				builder->addBrowseButton(EditorBuilder::BrowseType::Model, [this, filenameBox](const std::string &file) 
-				{
+				builder->addModelBox(fileName, [this](const std::string &file) {
 					fileName = file;
-					filenameBox->setText(fileName);
 					if (cache.find(fileName) == cache.end())
 						cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 					model = cache[fileName];
 				});
 				builder->endGroup();
-				if (!model)
-					return;
 
 				builder->beginGroup("Casts Shadows");
 				builder->addCheckbox(castShadow, [this](bool newValue) {castShadow = newValue; });
@@ -89,14 +109,19 @@ namespace vrlib
 				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
 				builder->endGroup();
 
+				if (!model)
+					return;
+
 				builder->addTitle("Materials");
 				builder->beginGroup("Has alpha materials");
 				builder->addCheckbox(model->hasAlphaMaterial(), [](bool newValue) {});
 				builder->endGroup();
 
 				int index = 0; //TODO: material name?
-				for (auto m : model->getMaterials())
+				for (auto materialLookup : materialOverrides)
 				{
+					Material* m = &materialLookup.second;
+
 					builder->addTitle("Material " + std::to_string(index));
 
 					builder->beginGroup("Ambient", true);
@@ -110,38 +135,40 @@ namespace vrlib
 					builder->endGroup();
 
 					builder->beginGroup("Texture", false);
-					builder->addTextBox((m->texture && m->texture->image) ? m->texture->image->fileName : "", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
+					auto textureBox = builder->addTextureBox((m->texture && m->texture->image) ? m->texture->image->fileName : "", [this, materialLookup](const std::string &newFile)	{
+						materialOverrides[materialLookup.first].texture = vrlib::Texture::loadCached(newFile);
+					});
+					builder->addSmallButton("x", [this, materialLookup, textureBox]()
 					{
-
+						textureBox->setText("");
+						materialOverrides[materialLookup.first].texture = nullptr;
 					});
 					builder->endGroup();
 
 					builder->beginGroup("Normalmap", false);
-					builder->addTextBox((m->normalmap && m->normalmap->image) ? m->normalmap->image->fileName : "", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
+					auto normalBox = builder->addTextureBox((m->normalmap && m->normalmap->image) ? m->normalmap->image->fileName : "", [this, materialLookup](const std::string &newFile) {
+						materialOverrides[materialLookup.first].normalmap = vrlib::Texture::loadCached(newFile);
+					});
+					builder->addSmallButton("x", [this, materialLookup, normalBox]()
 					{
-
+						normalBox->setText("");
+						materialOverrides[materialLookup.first].normalmap = nullptr;
 					});
 					builder->endGroup();
 
-					builder->beginGroup("Specularmap");
-					builder->addTextBox((m->specularmap && m->specularmap->image) ? m->specularmap->image->fileName : "", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
-					{
-
+					builder->beginGroup("Specularmap", false);
+					auto specBox = builder->addTextureBox((m->specularmap && m->specularmap->image) ? m->specularmap->image->fileName : "", [this, materialLookup](const std::string &newFile) {
+						materialOverrides[materialLookup.first].specularmap = vrlib::Texture::loadCached(newFile);
 					});
-					builder->addTextBox(std::to_string(m->color.shinyness), [](const std::string &newValue) {});
+					builder->addSmallButton("x", [this, materialLookup, specBox]()
+					{
+						specBox->setText("");
+						materialOverrides[materialLookup.first].specularmap = nullptr;
+					});
 					builder->endGroup();
 
-
-					builder->beginGroup("Glow");
-					builder->addTextBox("", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
-					{
-
-					});
-					builder->addTextBox("1.0", [](const std::string &newValue) {});
+					builder->beginGroup("Shinyness");
+					builder->addTextBox(builder->toString(m->color.shinyness), [m](const std::string &newValue) { m->color.shinyness = (float)atof(newValue.c_str()); });
 					builder->endGroup();
 
 					index++;
@@ -176,8 +203,10 @@ namespace vrlib
 					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::modelMatrix, mat);
 					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(mat))));
 				},
-					[this, &context](const vrlib::Material &material)
+					[this, &context](const vrlib::Material &m)
 				{
+					Material& material = materialOverrides[const_cast<vrlib::Material*>(&m)];
+
 					if ((material.texture && material.texture->usesAlphaChannel) || material.color.diffuse.a < 0.999f)
 					{
 						hasForward = true;
@@ -197,6 +226,11 @@ namespace vrlib
 						{
 							glActiveTexture(GL_TEXTURE2);
 							material.specularmap->bind();
+						}
+						else
+						{
+							glActiveTexture(GL_TEXTURE2);
+							context->white->bind();
 						}
 					
 						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::shinyness, material.color.shinyness);
@@ -236,8 +270,10 @@ namespace vrlib
 					context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::modelMatrix, t->globalTransform * modelMatrix);
 					context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::normalMatrix, glm::mat3(glm::transpose(glm::inverse(t->globalTransform * modelMatrix))));
 				},
-					[this, &context](const vrlib::Material &material)
+					[this, &context](const vrlib::Material &m)
 				{
+					Material& material = materialOverrides[const_cast<vrlib::Material*>(&m)];
+
 					if (material.color.diffuse.a >= 0.999f && (!material.texture || !material.texture->usesAlphaChannel))
 						return false;
 					if (material.texture)
@@ -295,6 +331,17 @@ namespace vrlib
 			}
 
 
+			void ModelRenderer::update(float elapsedTime, Scene& scene)
+			{
+				if (model != prevModel)
+				{
+					materialOverrides.clear();
+					for (auto m : model->getMaterials())
+						materialOverrides[m] = *m;
+					prevModel = model;
+				}
+			}
+
 
 
 			void ModelRenderer::ModelDeferredRenderContext::init()
@@ -325,7 +372,7 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::s_specularmap, 2);
 
 				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
-
+				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 			}
 
 			void ModelRenderer::ModelDeferredRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)

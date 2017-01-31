@@ -13,6 +13,16 @@
 
 namespace vrlib
 {
+	std::vector<glm::vec3> CollisionMesh::collisions(const vrlib::math::Ray & ray)
+	{
+		std::vector<float> col = collisionFractions(ray);
+		std::vector<glm::vec3> result;
+		for (auto c : col)
+			result.push_back(ray.mOrigin + c * ray.mDir);
+		return result;
+	}
+
+
 	template<class VertexFormat>
 	Model* Model::getModel(const std::string &fileName, const ModelLoadOptions &options /*= ModelLoadOptions()*/)
 	{
@@ -143,15 +153,6 @@ namespace vrlib
 		calculateAABB(getTriangles());
 	}
 
-	std::vector<glm::vec3> Model::collisions(const math::Ray &ray)
-	{
-		std::vector<float> col = collisionFractions(ray);
-		std::vector<glm::vec3> result;
-		for(auto c : col)
-			result.push_back(ray.mOrigin + c * ray.mDir);
-		return result;
-	}
-
 	std::vector<float> Model::collisionFractions(const math::Ray &ray)
 	{
 		std::vector<float> result;
@@ -166,7 +167,6 @@ namespace vrlib
 					result.push_back(f);
 		return result;
 	}
-
 
 
 #define prototypes(x) \
@@ -184,23 +184,5 @@ namespace vrlib
 	prototypes(VertexP3N2B2T2T2);
 	prototypes(VertexP3N2B2T2T2B4B4);
 
-	/*template Model* Model::getModel< gl::VertexP3 >(const std::string &fileName, const ModelLoadOptions &options);
-	template Model* Model::getModel< gl::VertexP3N3 >(const std::string &fileName, const ModelLoadOptions &options);
-	template Model* Model::getModel< gl::VertexP3N3T2 >(const std::string &fileName, const ModelLoadOptions &options);
-
-	template void Model::handleModelLoadOptions< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices, const ModelLoadOptions &options);
-	template void Model::handleModelLoadOptions< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices, const ModelLoadOptions &options);
-	template void Model::handleModelLoadOptions< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices, const ModelLoadOptions &options);
-
-	template void Model::scaleToSize< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices, float maxSize);
-	template void Model::scaleToSize< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices, float maxSize);
-	template void Model::scaleToSize< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices, float maxSize);
-
-	template void Model::recenterToCenter< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices);
-	template void Model::recenterToCenter< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices);
-	template void Model::recenterToCenter< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices);
-
-	template void Model::recenterToCenterBottom< gl::VertexP3 >(std::vector<gl::VertexP3> &vertices);
-	template void Model::recenterToCenterBottom< gl::VertexP3N3 >(std::vector<gl::VertexP3N3> &vertices);
-	template void Model::recenterToCenterBottom< gl::VertexP3N3T2 >(std::vector<gl::VertexP3N3T2> &vertices);*/
+	
 }

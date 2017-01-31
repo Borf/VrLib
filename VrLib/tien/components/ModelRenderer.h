@@ -3,10 +3,13 @@
 #include "Renderable.h"
 #include <string>
 #include <map>
+#include <vrlib/util/optional> //TODO: move this to std::optional when available
+
 namespace vrlib
 {
 	class Model;
 	class Texture;
+	class Material;
 
 	namespace tien
 	{
@@ -31,6 +34,7 @@ namespace vrlib
 						textureFactor,
 						shinyness,
 					};
+					vrlib::Texture* white;
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
 					virtual void init() override;
@@ -73,6 +77,9 @@ namespace vrlib
 					virtual void useCubemap(bool) override;
 				};
 
+				std::map<vrlib::Material*, vrlib::Material> materialOverrides;
+				vrlib::Model* prevModel = nullptr;
+
 				std::string fileName;
 				static std::map<std::string, vrlib::Model*> cache;
 				bool hasForward = false;
@@ -82,7 +89,7 @@ namespace vrlib
 				~ModelRenderer();
 
 				vrlib::Model* model;
-
+				virtual void update(float elapsedTime, Scene& scene) override;
 				void drawDeferredPass() override;
 				void drawForwardPass() override;
 				void drawShadowMap() override;

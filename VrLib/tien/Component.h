@@ -26,9 +26,13 @@ namespace vrlib
 			virtual void beginGroup(const std::string &name, bool vertical = true) = 0;
 			virtual void endGroup() = 0;
 			virtual TextComponent* addTextBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
+			virtual TextComponent* addTextureBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
+			virtual TextComponent* addModelBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual void addCheckbox(bool value, std::function<void(bool)> onChange) = 0;
 			virtual void addButton(const std::string &value, std::function<void()> onClick) = 0;
+			virtual void addSmallButton(const std::string &value, std::function<void()> onClick) = 0;
 			virtual TextComponent* addComboBox(const std::string &value, const std::vector<std::string> &values, std::function<void(const std::string &)> onClick) = 0;
+			virtual TextComponent* addLabel(const std::string &value) = 0;
 			virtual void addDivider() = 0;
 			virtual void updateComponentsPanel() = 0;
 			enum BrowseType

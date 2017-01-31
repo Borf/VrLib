@@ -6,6 +6,7 @@
 #include "components/Camera.h"
 #include "components/RigidBody.h"
 #include "components/Collider.h"
+#include "components/MeshRenderer.h"
 
 #include <VrLib/math/Ray.h>
 #include <VrLib/Model.h>
@@ -262,7 +263,7 @@ namespace vrlib
 						return;
 
 					vrlib::math::Ray inverseRay = glm::inverse(node->transform->globalTransform) * ray;
-					vrlib::Model* model = nullptr;
+					vrlib::CollisionMesh* model = nullptr;
 					{
 						vrlib::tien::components::ModelRenderer* renderer = node->getComponent<vrlib::tien::components::ModelRenderer>();
 						if (renderer)
@@ -273,7 +274,11 @@ namespace vrlib
 						if (renderer)
 							model = renderer->model;
 					}
-
+					{
+						vrlib::tien::components::MeshRenderer* renderer = node->getComponent<vrlib::tien::components::MeshRenderer>();
+						if (renderer)
+							model = renderer->mesh;
+					}
 
 					if (model)
 					{
