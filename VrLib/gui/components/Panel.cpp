@@ -6,7 +6,7 @@
 #include <VrLib/gui/Window.h>
 #include <VrLib/gl/shader.h>
 #include <VrLib/Model.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/Log.h>
 
 #include <VrLib/gui/components/Button.h>
@@ -30,48 +30,49 @@ namespace vrlib
 			Panel::Panel(const std::string &jsonFileName)
 			{
 				std::ifstream file(jsonFileName.c_str());
-				json::Value config = json::readJson(file);
+				json config;
+				file>>config;
 				loadJson(config);
 			}
 
 
-			void Panel::loadJson(const json::Value &config)
+			void Panel::loadJson(const json &config)
 			{
-				for (const json::Value &element : config)
+				for (const json &element : config)
 				{
 					Component* component = NULL;
 					if (element["type"] == "button")
-						component = new Button(element["value"].asString());
+						component = new Button(element["value"].get<std::string>());
 					else if (element["type"] == "checkbox")
 					{
 						component = new CheckBox();
-						if (element.isMember("value"))
+						if (element.find("value") != element.end())
 							((CheckBox*)component)->value = element["value"];
 					}
 					else if (element["type"] == "panel")
 					{
 						component = new Panel();
-						if (element.isMember("components"))
+						if (element.find("components") != element.end())
 							((Panel*)component)->loadJson(element["components"]);
 					}
 					else if (element["type"] == "label")
 					{
-						component = new Label(element["value"]);
+						component = new Label(element["value"].get<std::string>());
 					}
 					else if (element["type"] == "slider")
 						component = new Slider(element["min"], element["max"], element["value"]);
 					else
-						logger << "Unknown panel element type: " << element["type"].asString() << Log::newline;
+						logger << "Unknown panel element type: " << element["type"] << Log::newline;
 
 
 					if (component)
 					{
-						if (element.isMember("position"))
+						if (element.find("position") != element.end())
 							component->position = glm::vec2(element["position"][0], element["position"][1]);
-						if (element.isMember("size"))
+						if (element.find("size") != element.end())
 							component->size = glm::vec2(element["size"][0], element["size"][1]);
-						if (element.isMember("name"))
-							component->name = element["name"].asString();
+						if (element.find("name") != element.end())
+							component->name = element["name"].get<std::string>();
 
 						push_back(component);
 					}

@@ -2,7 +2,7 @@
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/util.h>
 #include <VrLib/Image.h>
 #include <VrLib/math/Ray.h>
@@ -27,26 +27,26 @@ namespace vrlib
 				renderContextShadow = ModelShadowRenderContext::getInstance();
 			}
 
-			MeshRenderer::MeshRenderer(const json::Value &json, const json::Value &totalJson)
+			MeshRenderer::MeshRenderer(const json &data, const json &totalJson)
 			{
 				vao = nullptr;
 				this->mesh = nullptr;
 				static std::map<std::string, Mesh*> meshes;	//TODO: clear cache !
 
-				if (json.isMember("mesh") && json["mesh"].asString() != "")
+				if (data.find("mesh") != data.end() && data["mesh"] != "")
 				{
-					if (meshes.find(json["mesh"]) == meshes.end())
+					if (meshes.find(data["mesh"]) == meshes.end())
 					{
 						for (const auto& m : totalJson["meshes"])
-							if (m["id"].asString() == json["mesh"].asString())
-								meshes[json["mesh"]] = new Mesh(m);
+							if (m["id"] == data["mesh"])
+								meshes[data["mesh"]] = new Mesh(m);
 					}
-					mesh = meshes[json["mesh"]];
+					mesh = meshes[data["mesh"]];
 				}
 
 				if(mesh)
 					updateMesh();
-				castShadow = json["castShadow"];
+				castShadow = data["castShadow"];
 				renderContextDeferred = ModelRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
 			}
@@ -56,9 +56,9 @@ namespace vrlib
 
 			}
 
-			vrlib::json::Value MeshRenderer::toJson(json::Value &meshes) const
+			json MeshRenderer::toJson(json &meshes) const
 			{
-				vrlib::json::Value ret;
+				json ret;
 				ret["type"] = "meshrenderer";
 				ret["castShadow"] = castShadow;
 				ret["mesh"] = "";
@@ -142,7 +142,7 @@ namespace vrlib
 					builder->endGroup();
 
 					builder->beginGroup("Shinyness");
-					builder->addTextBox(builder->toString(materialOverride.color.shinyness), [this](const std::string &newValue) { materialOverride.color.shinyness = atof(newValue.c_str()); });
+					builder->addTextBox(builder->toString(materialOverride.color.shinyness), [this](const std::string &newValue) { materialOverride.color.shinyness = (float)atof(newValue.c_str()); });
 					builder->endGroup();
 
 				}
@@ -296,13 +296,13 @@ namespace vrlib
 				guid = vrlib::util::getGuid();
 			}
 
-			MeshRenderer::Mesh::Mesh(const json::Value & json)
+			MeshRenderer::Mesh::Mesh(const json &data)
 			{
-				guid = json["id"];
+				guid = data["id"];
 
-				for (int i : json["indices"])
+				for (int i : data["indices"])
 					indices.push_back(i);
-				for (const auto &v : json["vertices"])
+				for (const auto &v : data["vertices"])
 				{
 					vrlib::gl::VertexP3N2B2T2T2 vv;
 					vrlib::gl::setP3(vv, glm::vec3(v["pos"][0], v["pos"][1], v["pos"][2]));
@@ -313,16 +313,16 @@ namespace vrlib
 					vertices.push_back(vv);
 				}
 
-				if(json["material"].isMember("diffuse"))
-					material.texture = vrlib::Texture::loadCached(json["material"]["diffuse"].asString());
-				if (json["material"].isMember("normal"))
-					material.normalmap = vrlib::Texture::loadCached(json["material"]["normal"].asString());
+				if(data["material"].find("diffuse") != data["material"].end())
+					material.texture = vrlib::Texture::loadCached(data["material"]["diffuse"]);
+				if (data["material"].find("normal") != data["material"].end())
+					material.normalmap = vrlib::Texture::loadCached(data["material"]["normal"]);
 
 			}
 
-			vrlib::json::Value MeshRenderer::Mesh::toJson()
+			json MeshRenderer::Mesh::toJson()
 			{
-				vrlib::json::Value ret;
+				json ret;
 				ret["id"] = guid;
 
 				for (auto i : indices)
@@ -330,7 +330,7 @@ namespace vrlib
 
 				for (auto &v : vertices)
 				{
-					vrlib::json::Value vv;
+					json vv;
 					vv["pos"].push_back(v.px);
 					vv["pos"].push_back(v.py);
 					vv["pos"].push_back(v.pz);

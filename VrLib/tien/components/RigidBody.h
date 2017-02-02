@@ -44,10 +44,10 @@ namespace vrlib
 				btDynamicsWorld* world;
 
 				RigidBody(float mass, Type type = Type::Auto);
-				RigidBody(const json::Value &json);
+				RigidBody(const json &json);
 				~RigidBody();
 				btRigidBody* body;
-				json::Value toJson(json::Value &meshes) const override;
+				json toJson(json &meshes) const override;
 				void buildEditor(EditorBuilder * builder, bool folded) override;
 				inline float getMass() const {return mass; };
 				void setMass(float newMass);

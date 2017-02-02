@@ -29,7 +29,7 @@ namespace vrlib
 				virtual void initialize() override;
 				virtual void update(float elapsedTime, Scene& scene) override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
-				virtual json::Value toJson(json::Value &meshes) const;
+				virtual json toJson(json &meshes) const;
 				virtual void setTexture(int side, const std::string &texture);
 			};
 		}

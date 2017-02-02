@@ -3,7 +3,7 @@
 
 #include <VrLib/gl/FBO.h>
 #include <VrLib/Log.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/math/Frustum.h>
 #include "../Node.h"
 #include "../Scene.h"
@@ -40,30 +40,30 @@ namespace vrlib
 			
 
 
-			Light::Light(const vrlib::json::Value & json)
+			Light::Light(const json & data)
 			{
-				if (json["lighttype"] == "directional")	type = Type::directional;
-				if (json["lighttype"] == "point")		type = Type::point;
-				if (json["lighttype"] == "spot")		type = Type::spot;
+				if (data["lighttype"] == "directional")	type = Type::directional;
+				if (data["lighttype"] == "point")		type = Type::point;
+				if (data["lighttype"] == "spot")		type = Type::spot;
 
-				if (json["shadow"] == "none")			shadow = Shadow::none;
-				if (json["shadow"] == "shadowmap")		shadow = Shadow::shadowmap;
-				if (json["shadow"] == "shadowvolume")	shadow = Shadow::shadowvolume;
+				if (data["shadow"] == "none")			shadow = Shadow::none;
+				if (data["shadow"] == "shadowmap")		shadow = Shadow::shadowmap;
+				if (data["shadow"] == "shadowvolume")	shadow = Shadow::shadowvolume;
 
-				intensity = json["intensity"];
-				range = json["range"];
+				intensity = data["intensity"];
+				range = data["range"];
 				for (int i = 0; i < 4; i++)
-					color[i] = json["color"][i];
-				if(json.isMember("spotlihtAngle"))
-					spotlightAngle = json["spotlightAngle"];
-				if (json.isMember("directionalAmbient"))
-					directionalAmbient = json["directionalAmbient"];
-				if (json.isMember("cutoff"))
-					cutoff = json["cutoff"];
+					color[i] = data["color"][i];
+				if(data.find("spotlihtAngle") != data.end())
+					spotlightAngle = data["spotlightAngle"];
+				if (data.find("directionalAmbient") != data.end())
+					directionalAmbient = data["directionalAmbient"];
+				if (data.find("cutoff") != data.end())
+					cutoff = data["cutoff"];
 			}
-			json::Value Light::toJson(json::Value &meshes) const
+			json Light::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "light";
 
 				switch (type)

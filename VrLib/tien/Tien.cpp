@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <VrLib/gl/FBO.h>
 #include <VrLib/Log.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 using vrlib::logger;
 

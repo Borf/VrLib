@@ -6,7 +6,7 @@
 #include <VrLib/Texture.h>
 #include <VrLib/Model.h>
 #include <VrLib/gl/Vertex.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace vrlib
@@ -15,16 +15,16 @@ namespace vrlib
 	{
 		namespace components
 		{
-			DynamicSkyBox::DynamicSkyBox(const vrlib::json::Value & json)
+			DynamicSkyBox::DynamicSkyBox(const json & json)
 			{
 				timeOfDay = json["timeOfDay"];
 				//TODO: light
 			}
 
 
-			json::Value DynamicSkyBox::toJson(json::Value &meshes) const
+			json DynamicSkyBox::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "dynamicskybox";
 				ret["timeOfDay"] = timeOfDay;
 				ret["light"] = light ? light->guid : "";

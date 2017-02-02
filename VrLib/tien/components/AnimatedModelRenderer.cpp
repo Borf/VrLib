@@ -5,7 +5,7 @@
 #include "Transform.h"
 #include "../Node.h"
 #include <VrLib/models/AssimpModel.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/Image.h>
 
 
@@ -17,12 +17,12 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> AnimatedModelRenderer::cache;
 
-			AnimatedModelRenderer::AnimatedModelRenderer(const vrlib::json::Value &json)
+			AnimatedModelRenderer::AnimatedModelRenderer(const json &data)
 			{
-				if (json.isString())
-					fileName = json;
+				if (data.is_string())
+					fileName = data.get<std::string>();
 				else
-					fileName = json["file"];
+					fileName = data["file"].get<std::string>();
 
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2B4B4>(fileName);
@@ -33,12 +33,12 @@ namespace vrlib
 				renderContextDeferred = ModelRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
 				callbackOnDone = nullptr;
-				if (json.isObject())
+				if (data.is_object())
 				{
-					castShadow = json["castShadow"];
-					cullBackFaces = json["cullBackFaces"];
-					if (json.isMember("animation"))
-						this->playAnimation(json["animation"]);
+					castShadow = data["castShadow"];
+					cullBackFaces = data["cullBackFaces"];
+					if (data.find("animation") != data.end())
+						this->playAnimation(data["animation"]);
 				}
 				else
 				{
@@ -51,9 +51,9 @@ namespace vrlib
 			{
 
 			}
-			json::Value AnimatedModelRenderer::toJson(json::Value &meshes) const
+			json AnimatedModelRenderer::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "animatedmodelrenderer";
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;

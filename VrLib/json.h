@@ -1,5 +1,8 @@
 #pragma once
 
+#if 0
+
+
 #include <string>
 #include <map>
 #include <vector>
@@ -100,7 +103,7 @@ namespace vrlib
 			virtual bool operator == (const float other) { return asFloat() == other; }
 
 
-			std::ostream& prettyPrint(std::ostream& stream, vrlib::json::Value& printConfig = null, int level = 0) const;
+			std::ostream& prettyPrint(std::ostream& stream, json& printConfig = null, int level = 0) const;
 
 			class Iterator;
 		private:
@@ -142,3 +145,6 @@ namespace vrlib
 
 	}
 }
+
+
+#endif

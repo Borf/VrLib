@@ -23,10 +23,10 @@ namespace vrlib
 				friend class vrlib::tien::Tien;
 			public:
 				Light() {};
-				Light(const vrlib::json::Value &json);
+				Light(const json &data);
 				~Light();
 
-				json::Value toJson(json::Value &meshes) const override;
+				json toJson(json &meshes) const override;
 
 
 				enum class Type

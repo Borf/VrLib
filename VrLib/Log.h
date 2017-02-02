@@ -1,6 +1,7 @@
 #pragma once
 
 #include <VrLib/VrLib.h>
+#include <VrLib/json.hpp>
 
 #include <string>
 #include <glm/glm.hpp>
@@ -31,7 +32,7 @@ namespace vrlib
 		Log& operator <<(const glm::vec3 &vec);
 		Log& operator <<(const glm::vec4 &vec);
 		Log& operator <<(const EndLine& endline);
-
+		Log& operator <<(const json &json);
 
 		static std::string format(char* fmt, ...); //TODO: move this to a better spot
 	};

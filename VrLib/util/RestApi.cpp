@@ -2,7 +2,7 @@
 #include "RestApi.h"
 
 #include <VrLib/Log.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <string.h>
@@ -46,16 +46,16 @@ namespace vrlib
 	{
 		std::vector<std::string> headers;
 		headers.push_back("Content-Type: application/json");
-		json::Value postData;
+		json postData;
 		postData["name"] = myHostname;
 		postData["platform"] = "cave";
 		postData["scenarios"].push_back("Presentatie1.json");
 		postData["scenarios"].push_back("Presentatie2.json");
 		postData["scenarios"].push_back("Presentatie3.json");
-		json::Value ret = callApi(POST, "environment", headers, postData);
+		json ret = callApi(POST, "environment", headers, postData);
 
 
-		int id = ret["success"]["id"].asInt();
+		int id = ret["success"]["id"];
 
 		logger << ret << Log::newline;
 
@@ -63,15 +63,15 @@ namespace vrlib
 
 		while (sessionId == 0)
 		{
-			json::Value ret = callApi(PUT, "environment/" + std::to_string(id), headers, json::Value());
+			json ret = callApi(PUT, "environment/" + std::to_string(id), headers, json());
 
-			sessionId = ret["success"]["sessionid"].asInt();
+			sessionId = ret["success"]["sessionid"];
 			if (sessionId != 0)
 				break;
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
 
-		json::Value session = callApi(GET, "session:" + std::to_string(sessionId), headers, json::Value());
+		json session = callApi(GET, "session:" + std::to_string(sessionId), headers, json());
 
 	}
 
@@ -93,7 +93,7 @@ namespace vrlib
 		return ret;
 	}
 
-	json::Value RestApi::callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json::Value &postData /*= Json::nullValue*/)
+	json RestApi::callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData /*= Json::nullValue*/)
 	{
 		std::string request;
 		if (method == POST)
@@ -138,8 +138,7 @@ namespace vrlib
 			return NULL;
 		}
 	
-		std::string postDataStr;
-		postDataStr<< postData;;
+		std::string postDataStr = postData.dump();
 
 		request += " /" + url + " HTTP/1.1\r\n";
 
@@ -205,7 +204,7 @@ namespace vrlib
 		}
 
 
-		json::Value ret(buffer);
+		json ret(buffer);
 
 		closesocket(s);
 
@@ -215,8 +214,8 @@ namespace vrlib
 		return ret;
 	}
 
-	json::Value RestApi::buildJson(const std::string &data)
+	json RestApi::buildJson(const std::string &data)
 	{
-		return json::Value(data);
+		return json(data);
 	}
 }

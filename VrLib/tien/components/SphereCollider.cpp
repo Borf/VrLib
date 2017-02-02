@@ -1,5 +1,5 @@
 #include "SphereCollider.h"
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 namespace vrlib
 {
@@ -12,9 +12,9 @@ namespace vrlib
 				return nullptr;
 			}
 
-			json::Value SphereCollider::toJson(json::Value &meshes) const
+			json SphereCollider::toJson(json &meshes) const
 			{
-				return json::Value();
+				return json();
 			}
 
 		}

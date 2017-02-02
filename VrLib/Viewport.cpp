@@ -6,7 +6,7 @@
 #include <VrLib/Viewports/SimulatorViewport.h>
 #include <VrLib/Viewports/RiftViewport.h>
 #include <VrLib/Viewports/OpenVRViewport.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 
 namespace vrlib
@@ -49,64 +49,64 @@ namespace vrlib
 		glLoadIdentity();
 	}
 
-	Viewport* Viewport::createViewport(Kernel* kernel, json::Value viewportConfig, json::Value otherConfigs)
+	Viewport* Viewport::createViewport(Kernel* kernel, json viewportConfig, json otherConfigs)
 	{
 		Viewport* viewport = NULL;
-		if (viewportConfig["type"].asString() == "viewport")
+		if (viewportConfig["type"] == "viewport")
 		{
-			glm::vec3 tl(viewportConfig["topleft"][0u].asFloat(), viewportConfig["topleft"][1u].asFloat(), viewportConfig["topleft"][2u].asFloat());
-			glm::vec3 tr(viewportConfig["topright"][0u].asFloat(), viewportConfig["topright"][1u].asFloat(), viewportConfig["topright"][2u].asFloat());
-			glm::vec3 bl(viewportConfig["bottomleft"][0u].asFloat(), viewportConfig["bottomleft"][1u].asFloat(), viewportConfig["bottomleft"][2u].asFloat());
-			glm::vec3 br(viewportConfig["bottomright"][0u].asFloat(), viewportConfig["bottomright"][1u].asFloat(), viewportConfig["bottomright"][2u].asFloat());
+			glm::vec3 tl(viewportConfig["topleft"][0u], viewportConfig["topleft"][1u], viewportConfig["topleft"][2u]);
+			glm::vec3 tr(viewportConfig["topright"][0u], viewportConfig["topright"][1u], viewportConfig["topright"][2u]);
+			glm::vec3 bl(viewportConfig["bottomleft"][0u], viewportConfig["bottomleft"][1u], viewportConfig["bottomleft"][2u]);
+			glm::vec3 br(viewportConfig["bottomright"][0u], viewportConfig["bottomright"][1u], viewportConfig["bottomright"][2u]);
 
 			int eye = 0;
-			if (viewportConfig["eye"].asString() == "left")
+			if (viewportConfig["eye"] == "left")
 				eye = 1;
-			if (viewportConfig["eye"].asString() == "right")
+			if (viewportConfig["eye"] == "right")
 				eye = 2;
 
-			ProjectionViewport* port = new ProjectionViewport(kernel->getUser(viewportConfig["user"].asString()), eye, tl, tr, bl, br);
+			ProjectionViewport* port = new ProjectionViewport(kernel->getUser(viewportConfig["user"]), eye, tl, tr, bl, br);
 			viewport = port;
 		}
-		else if (viewportConfig["type"].asString() == "simulator")
+		else if (viewportConfig["type"] == "simulator")
 		{
 			PositionalDevice* simCamera = new PositionalDevice();
-			simCamera->init(viewportConfig["camera"].asString());
-			SimulatorViewport* port = new SimulatorViewport(kernel->getUser(viewportConfig["user"].asString()), simCamera);
+			simCamera->init(viewportConfig["camera"]);
+			SimulatorViewport* port = new SimulatorViewport(kernel->getUser(viewportConfig["user"]), simCamera);
 			port->setWindowSize(kernel->windowWidth, kernel->windowHeight);
 			for (size_t ii = 0; ii < otherConfigs.size(); ii++)
 			{
 				for (size_t iii = 0; iii < otherConfigs[ii]["viewports"].size(); iii++)
 				{
-					json::Value viewportConfig = otherConfigs[ii]["viewports"][iii];
-					if (viewportConfig["type"].asString() == "viewport")
+					json viewportConfig = otherConfigs[ii]["viewports"][iii];
+					if (viewportConfig["type"] == "viewport")
 					{
-						glm::vec3 tl(otherConfigs[ii]["viewports"][iii]["topleft"][0u].asFloat(), otherConfigs[ii]["viewports"][iii]["topleft"][1u].asFloat(), otherConfigs[ii]["viewports"][iii]["topleft"][2u].asFloat());
-						glm::vec3 tr(otherConfigs[ii]["viewports"][iii]["topright"][0u].asFloat(), otherConfigs[ii]["viewports"][iii]["topright"][1u].asFloat(), otherConfigs[ii]["viewports"][iii]["topright"][2u].asFloat());
-						glm::vec3 bl(otherConfigs[ii]["viewports"][iii]["bottomleft"][0u].asFloat(), otherConfigs[ii]["viewports"][iii]["bottomleft"][1u].asFloat(), otherConfigs[ii]["viewports"][iii]["bottomleft"][2u].asFloat());
-						glm::vec3 br(otherConfigs[ii]["viewports"][iii]["bottomright"][0u].asFloat(), otherConfigs[ii]["viewports"][iii]["bottomright"][1u].asFloat(), otherConfigs[ii]["viewports"][iii]["bottomright"][2u].asFloat());
+						glm::vec3 tl(otherConfigs[ii]["viewports"][iii]["topleft"][0u], otherConfigs[ii]["viewports"][iii]["topleft"][1u], otherConfigs[ii]["viewports"][iii]["topleft"][2u]);
+						glm::vec3 tr(otherConfigs[ii]["viewports"][iii]["topright"][0u], otherConfigs[ii]["viewports"][iii]["topright"][1u], otherConfigs[ii]["viewports"][iii]["topright"][2u]);
+						glm::vec3 bl(otherConfigs[ii]["viewports"][iii]["bottomleft"][0u], otherConfigs[ii]["viewports"][iii]["bottomleft"][1u], otherConfigs[ii]["viewports"][iii]["bottomleft"][2u]);
+						glm::vec3 br(otherConfigs[ii]["viewports"][iii]["bottomright"][0u], otherConfigs[ii]["viewports"][iii]["bottomright"][1u], otherConfigs[ii]["viewports"][iii]["bottomright"][2u]);
 						port->addViewPort(tl, tr, bl, br);
 					}
 				}
 			}
 			viewport = port;
 		}
-		else if (viewportConfig["type"].asString() == "riftviewport")
+		else if (viewportConfig["type"] == "riftviewport")
 		{
-			RiftViewport* port = new RiftViewport(kernel->getUser(viewportConfig["user"].asString()), kernel->oculusDriver, kernel);
+			RiftViewport* port = new RiftViewport(kernel->getUser(viewportConfig["user"]), kernel->oculusDriver, kernel);
 			viewport = port;
 		}
-		else if (viewportConfig["type"].asString() == "openvr")
+		else if (viewportConfig["type"] == "openvr")
 		{
-			OpenVRViewport* port = new OpenVRViewport(kernel->getUser(viewportConfig["user"].asString()), kernel->openvrDriver, kernel);
+			OpenVRViewport* port = new OpenVRViewport(kernel->getUser(viewportConfig["user"]), kernel->openvrDriver, kernel);
 			viewport = port;
 		}
 		else
-			logger << "Unknown viewport type: " << viewportConfig["type"].asString() << Log::newline;
+			logger << "Unknown viewport type: " << viewportConfig["type"] << Log::newline;
 		if (viewport)
 		{
-			viewport->setScreenPosition(viewportConfig["x"].asFloat(), viewportConfig["y"].asFloat());
-			viewport->setScreenSize(viewportConfig["width"].asFloat(), viewportConfig["height"].asFloat());
+			viewport->setScreenPosition(viewportConfig["x"], viewportConfig["y"]);
+			viewport->setScreenSize(viewportConfig["width"], viewportConfig["height"]);
 		}
 
 		return viewport;

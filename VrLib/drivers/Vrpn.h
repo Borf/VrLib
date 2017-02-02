@@ -3,7 +3,7 @@
 #ifdef WIN32
 
 #include <VrLib/Device.h>
-
+#include <VrLib/json.hpp>
 #include <glm/glm.hpp>
 #include <map>
 
@@ -12,7 +12,6 @@ class vrpn_Tracker_Remote;
 
 namespace vrlib
 {
-	namespace json { class Value; }
 	class VrpnDeviceDriver : public DeviceDriver
 	{
 	public:
@@ -35,7 +34,7 @@ namespace vrlib
 
 		std::map<int, glm::mat4> postTransforms;
 
-		VrpnDeviceDriver(const json::Value &json);
+		VrpnDeviceDriver(const json &json);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 
 		virtual void update();

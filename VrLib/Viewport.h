@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
-
+#include <VrLib/json.hpp>
 #include <list>
 
 namespace vrlib
@@ -9,7 +9,6 @@ namespace vrlib
 	class User;
 	class Application;
 	class Kernel;
-	namespace json { class Value; }
 
 	class Viewport
 	{
@@ -34,7 +33,7 @@ namespace vrlib
 
 		void resetOpenGL();
 
-		static Viewport* createViewport(Kernel* kernel, json::Value viewportConfig, json::Value otherConfigs);
+		static Viewport* createViewport(Kernel* kernel, json viewportConfig, json otherConfigs);
 	};
 
 

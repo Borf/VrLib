@@ -2,6 +2,7 @@
 
 #include "SkyBox.h"
 #include <VrLib/gl/shader.h>
+#include <VrLib/json.hpp>
 
 namespace vrlib
 {
@@ -38,7 +39,7 @@ namespace vrlib
 				vrlib::Model* moon;
 			public:
 				DynamicSkyBox() {};
-				DynamicSkyBox(const vrlib::json::Value &json);
+				DynamicSkyBox(const json &data);
 				virtual void initialize() override;
 				virtual void update(float elapsedTime, Scene& scene) override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
@@ -46,7 +47,7 @@ namespace vrlib
 
 				Node* light = nullptr;
 				float timeOfDay = 14;
-				virtual json::Value toJson(json::Value &meshes) const override;
+				virtual json toJson(json &meshes) const override;
 			};
 		}
 	}

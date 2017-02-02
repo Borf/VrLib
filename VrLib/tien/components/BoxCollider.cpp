@@ -5,7 +5,7 @@
 #include "Transform.h"
 #include "../Node.h"
 #include <VrLib/Model.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 
 namespace vrlib
@@ -46,12 +46,12 @@ namespace vrlib
 				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
-			BoxCollider::BoxCollider(const json::Value & json)
+			BoxCollider::BoxCollider(const json & json)
 			{
 				for (int i = 0; i < 3; i++)
-					offset[i] = json["offset"][i].asFloat();
+					offset[i] = json["offset"][i];
 				for (int i = 0; i < 3; i++)
-					size[i] = json["size"][i].asFloat();
+					size[i] = json["size"][i];
 				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
@@ -60,9 +60,9 @@ namespace vrlib
 				return shape;
 			}
 
-			json::Value BoxCollider::toJson(json::Value &meshes) const
+			json BoxCollider::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "collider";
 				ret["collider"] = "box";
 				for (int i = 0; i < 3; i++)

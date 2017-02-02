@@ -1,5 +1,5 @@
 #include "Transform.h"
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/tien/Node.h>
 #include <VrLib/tien/components/RigidBody.h>
 
@@ -24,11 +24,11 @@ namespace vrlib
 				buildTransform();
 			}
 
-			Transform::Transform(const vrlib::json::Value & json)
+			Transform::Transform(const json & json)
 			{
-				position = glm::vec3(json["position"][0].asFloat(), json["position"][1].asFloat(), json["position"][2].asFloat());
-				rotation = glm::quat(json["rotation"][3].asFloat(), json["rotation"][0].asFloat(), json["rotation"][1].asFloat(), json["rotation"][2].asFloat());
-				scale = glm::vec3(json["scale"][0].asFloat(), json["scale"][1].asFloat(), json["scale"][2].asFloat());
+				position = glm::vec3(json["position"][0], json["position"][1], json["position"][2]);
+				rotation = glm::quat(json["rotation"][3], json["rotation"][0], json["rotation"][1], json["rotation"][2]);
+				scale = glm::vec3(json["scale"][0], json["scale"][1], json["scale"][2]);
 				buildTransform();
 			}
 
@@ -37,9 +37,9 @@ namespace vrlib
 
 			}
 
-			json::Value Transform::toJson(json::Value &meshes) const
+			json Transform::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "transform";
 				for (int i = 0; i < 3; i++)
 					ret["position"].push_back(position[i]);

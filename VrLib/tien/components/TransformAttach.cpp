@@ -3,7 +3,7 @@
 #include "RigidBody.h"
 #include "../Scene.h"
 #include <VrLib/tien/Node.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <btBulletDynamicsCommon.h>
 
 namespace vrlib
@@ -29,9 +29,9 @@ namespace vrlib
 				}
 			}
 
-			json::Value TransformAttach::toJson(json::Value &meshes) const
+			json TransformAttach::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "transformattach";
 				ret["attach"] = device.name;
 				return ret;

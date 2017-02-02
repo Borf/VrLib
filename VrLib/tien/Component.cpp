@@ -1,6 +1,6 @@
 #include "Component.h"
 
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include "Node.h"
 #include <sstream>
 
@@ -8,7 +8,7 @@ namespace vrlib
 {
 	namespace tien
 	{
-		json::Value Component::toJson(json::Value &meshes) const
+		json Component::toJson(json &meshes) const
 		{ 
 			throw "Cannot serialize..."; 
 		};

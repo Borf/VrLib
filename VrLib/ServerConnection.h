@@ -12,21 +12,20 @@ typedef int SOCKET;
 
 #endif
 
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 namespace vrlib
 {
-	namespace json { class Value; }
 	class ServerConnection;
 	class Tunnel
 	{
 	private:
-		std::list<json::Value> queue;
+		std::list<json> queue;
 		ServerConnection* connection;
 	public:
 		std::string id;
-		void send(const json::Value &data);
-		json::Value recv();
+		void send(const json &data);
+		json recv();
 		int available();
 
 		std::mutex mtx;
@@ -48,8 +47,8 @@ namespace vrlib
 #endif
 		const int apiPort = 6666;
 		SOCKET s;
-		std::map<std::string, std::function<void(const json::Value &)>> callbacks;
-		std::map<std::string, std::function<void(const json::Value &)>> singleCallbacks;
+		std::map<std::string, std::function<void(const json &)>> callbacks;
+		std::map<std::string, std::function<void(const json &)>> singleCallbacks;
 
 		std::function<void(Tunnel*)> tunnelCallback;
 		std::map<std::string, Tunnel*> tunnels;
@@ -65,11 +64,11 @@ namespace vrlib
 
 		void update(double frameTime);
 		bool isConnected();
-		void send(const json::Value &value, int sock = 0);
+		void send(const json &value, int sock = 0);
 		void waitForConnection();
 
-		void callBackOnce(const std::string &action, std::function<void(const json::Value &)> callback);
-		json::Value call(const std::string &action, const json::Value& data = json::Value::null);
+		void callBackOnce(const std::string &action, std::function<void(const json &)> callback);
+		json call(const std::string &action, const json& data = nullptr);
 		Tunnel* createTunnel(const std::string &sessionId);
 		void onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel, const std::string &key = "");
 		inline void onTunnelCreate(const std::string &key, const std::function<void(Tunnel*)> &onTunnel) {		onTunnelCreate(onTunnel, key);	};

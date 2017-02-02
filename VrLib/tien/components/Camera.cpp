@@ -1,7 +1,7 @@
 #include "Camera.h"
 
 #include <VrLib/gl/FBO.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 #include <VrLib/tien/Node.h>
 #include <VrLib/tien/Scene.h>
@@ -17,12 +17,12 @@ namespace vrlib
 
 			}
 
-			Camera::Camera(const vrlib::json::Value & json)
+			Camera::Camera(const json & data)
 			{
-				if (json.isMember("useFbo"))
-					useFbo = json["useFbo"];
+				if (data.find("useFbo") != data.end())
+					useFbo = data["useFbo"];
 				if (useFbo)
-					fboSize = glm::ivec2(json["fboSize"][0].asInt(), json["fboSize"][1].asInt());
+					fboSize = glm::ivec2(data["fboSize"][0], data["fboSize"][1]);
 			}
 
 			Camera::~Camera()
@@ -38,9 +38,9 @@ namespace vrlib
 			{
 
 			}
-			json::Value Camera::toJson(json::Value &meshes) const
+			json Camera::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "camera";
 				ret["useFbo"] = useFbo;
 				if (useFbo)

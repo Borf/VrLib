@@ -15,7 +15,7 @@ namespace vrlib
 			{
 			public:
 				Camera();
-				Camera(const vrlib::json::Value &json);
+				Camera(const json &data);
 				~Camera();
 
 				bool useFbo = false;
@@ -23,7 +23,7 @@ namespace vrlib
 				vrlib::gl::FBO* target = nullptr;
 
 				void render();
-				json::Value toJson(json::Value &meshes) const override;
+				json toJson(json &meshes) const override;
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 
 			};

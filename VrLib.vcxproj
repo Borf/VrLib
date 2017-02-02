@@ -144,6 +144,7 @@
     <ClInclude Include="VrLib\HtcVive.h" />
     <ClInclude Include="VrLib\Image.h" />
     <ClInclude Include="VrLib\json.h" />
+    <ClInclude Include="VrLib\json.hpp" />
     <ClInclude Include="VrLib\Kernel.h" />
     <ClInclude Include="VrLib\Kernel_Windows.h" />
     <ClInclude Include="VrLib\Log.h" />

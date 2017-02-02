@@ -1,5 +1,5 @@
 #include "MeshCollider.h"
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/Model.h>
 #include <VrLib/tien/Node.h>
 #include <VrLib/tien/components/ModelRenderer.h>
@@ -83,9 +83,9 @@ namespace vrlib
 				return shape;
 			}
 
-			json::Value MeshCollider::toJson(json::Value & meshes) const
+			json MeshCollider::toJson(json & meshes) const
 			{
-				json::Value ret;
+				json ret;
 
 				ret["type"] = "collider";
 				ret["collider"] = "mesh";

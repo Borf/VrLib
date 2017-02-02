@@ -1,7 +1,7 @@
 #include "ServerConnection.h"
 
 #include <VrLib/Log.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <GL/glew.h>
 #include <ctime>
 #include <string.h>
@@ -29,15 +29,15 @@ namespace vrlib
 		s = 0;
 		tunnelCallback = nullptr;
 
-		callbacks["session/start"] = [](const json::Value &) { };
-		callbacks["tunnel/connect"] = [this](const json::Value & data)
+		callbacks["session/start"] = [](const json &) { };
+		callbacks["tunnel/connect"] = [this](const json & data)
 		{
-			Tunnel* t = new Tunnel(data["data"]["id"].asString(), this);
+			Tunnel* t = new Tunnel(data["data"]["id"], this);
 			tunnels[t->id] = t;
 			if (tunnelCallback)
 				tunnelCallback(t);
 		};
-		callbacks["tunnel/send"] = [this](const json::Value & data)
+		callbacks["tunnel/send"] = [this](const json & data)
 		{
 			if (tunnels.find(data["data"]["id"]) == tunnels.end())
 			{
@@ -127,7 +127,7 @@ namespace vrlib
 			lastConnected = true;
 			logger << "Connected to remote API" << Log::newline;
 
-			json::Value packet;
+			json packet;
 			packet["id"] = "session/start";
 			packet["data"]["host"] = hostname;
 			packet["data"]["file"] = applicationName;
@@ -155,10 +155,10 @@ namespace vrlib
 					unsigned int len = *((unsigned int*)&buffer[0]);
 					if (buffer.size() >= len + 4)
 					{
-						json::Value data = json::readJson(buffer.substr(4, len));
+						json data = json::parse(buffer.substr(4, len));
 						buffer = buffer.substr(4 + len);
 
-						if (!data.isMember("id"))
+						if (data.find("id") == data.end())
 						{
 							logger << "Invalid packet from server" << Log::newline;
 							logger << data << Log::newline;
@@ -197,10 +197,9 @@ namespace vrlib
 		}
 	}
 
-	void ServerConnection::send(const json::Value &value, int sock)
+	void ServerConnection::send(const json &value, int sock)
 	{
-		std::string data;
-		data << value;
+		std::string data = value.dump();
 		unsigned int len = data.size();
 		int rc = ::send(sock == 0 ? s : sock, (char*)&len, 4, 0);
 		if (rc < 0)
@@ -229,23 +228,23 @@ namespace vrlib
 	}
 
 
-	void ServerConnection::callBackOnce(const std::string &action, std::function<void(const json::Value &)> callback)
+	void ServerConnection::callBackOnce(const std::string &action, std::function<void(const json &)> callback)
 	{
 		singleCallbacks[action] = callback;
 	}
 
-	json::Value ServerConnection::call(const std::string &action, const json::Value& data)
+	json ServerConnection::call(const std::string &action, const json& data)
 	{
-		json::Value result;
+		json result;
 		if (s == 0)
 			return result;
 		bool done = false;
-		callBackOnce(action, [&done, &result](const vrlib::json::Value &data)
+		callBackOnce(action, [&done, &result](const json &data)
 		{
 			result = data["data"];
 			done = true;
 		});
-		json::Value packet;
+		json packet;
 		packet["id"] = action;
 		packet["data"] = data;
 		send(packet);
@@ -274,7 +273,7 @@ namespace vrlib
 
 	void ServerConnection::sendFps(float fps)
 	{
-		json::Value v;
+		json v;
 		v["id"] = "session/report";
 		v["data"]["fps"] = fps;
 		send(v);
@@ -285,9 +284,9 @@ namespace vrlib
 	Tunnel* ServerConnection::createTunnel(const std::string &sessionId)
 	{
 		waitForConnection();
-		json::Value data;
+		json data;
 		data["session"] = sessionId;
-		json::Value result = call("tunnel/create", data);
+		json result = call("tunnel/create", data);
 
 		if (result["status"] == "ok")
 		{
@@ -303,7 +302,7 @@ namespace vrlib
 	void ServerConnection::onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel, const std::string &key)
 	{
 		waitForConnection();
-		json::Value v;
+		json v;
 		v["id"] = "session/enable";
 		v["data"].push_back("tunnel");
 		if(key != "")
@@ -312,21 +311,21 @@ namespace vrlib
 		tunnelCallback = onTunnel;
 	}
 
-	void Tunnel::send(const json::Value &data)
+	void Tunnel::send(const json &data)
 	{
 		if (!this)
 			return;
-		json::Value packet;
+		json packet;
 		packet["id"] = "tunnel/send";
 		packet["data"]["dest"] = id;
 		packet["data"]["data"] = data;
 		connection->send(packet);
 	}
 
-	json::Value Tunnel::recv()
+	json Tunnel::recv()
 	{
 		mtx.lock();
-		json::Value res = queue.front();
+		json res = queue.front();
 		queue.pop_front();
 		mtx.unlock();
 		return res;

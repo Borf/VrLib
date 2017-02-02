@@ -118,6 +118,13 @@ namespace vrlib
 		return (*this) << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
 	}
 
+	Log& Log::operator<<(const json& data)
+	{
+		std::cout << data;
+		return *this;
+	}
+
+
 	std::string Log::format(char* fmt, ...)
 	{
 		char text[10240];
