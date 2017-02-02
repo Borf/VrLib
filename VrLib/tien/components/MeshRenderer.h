@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 
+#include <VrLib/json.hpp>
 #include <VrLib/Model.h>
 #include <VrLib/gl/VIO.h>
 #include <VrLib/gl/VAO.h>
@@ -68,26 +69,26 @@ namespace vrlib
 				{
 				public:
 					Mesh();
-					Mesh(const json::Value &json);
+					Mesh(const json &data);
 					std::string guid;
 
 					vrlib::Material material;
 					std::vector<vrlib::gl::VertexP3N2B2T2T2> vertices;
 					std::vector<unsigned int> indices;
 
-					vrlib::json::Value toJson();
+					json toJson();
 
 					virtual std::vector<float> collisionFractions(const vrlib::math::Ray & ray) override;
 				};
 
 
 				MeshRenderer(Mesh* mesh = nullptr);
-				MeshRenderer(const json::Value &json, const json::Value &totalJson);
+				MeshRenderer(const json &data, const json &totalJson);
 				~MeshRenderer();
 
 				Mesh* mesh;
 
-				json::Value toJson(json::Value &meshes) const override;
+				json toJson(json &meshes) const override;
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 				void updateMesh();
 

@@ -5,7 +5,7 @@
 #include "../Node.h"
 #include <btBulletDynamicsCommon.h>
 #include <VrLib/Model.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -26,7 +26,7 @@ namespace vrlib
 				body = nullptr;
 			}
 
-			RigidBody::RigidBody(const json::Value & json)
+			RigidBody::RigidBody(const json & json)
 			{
 				this->mass = json["mass"];
 				this->type = Type::Static; //TODO
@@ -39,9 +39,9 @@ namespace vrlib
 				world->removeRigidBody(body);
 				delete body;
 			}
-			json::Value RigidBody::toJson(json::Value &meshes) const
+			json RigidBody::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "rigidbody";
 				ret["mass"] = mass;
 				switch (type)

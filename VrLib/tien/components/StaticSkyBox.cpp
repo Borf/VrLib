@@ -6,7 +6,7 @@
 #include <VrLib/Texture.h>
 #include <VrLib/Model.h>
 #include <VrLib/gl/Vertex.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <VrLib/gl/Cubemap.h>
 
@@ -65,9 +65,9 @@ namespace vrlib
 
 
 
-			json::Value StaticSkyBox::toJson(json::Value &meshes) const
+			json StaticSkyBox::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "StaticSkyBox";
 				return ret;
 			}

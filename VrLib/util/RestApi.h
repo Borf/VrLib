@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VrLib/Singleton.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <string>
 #include <vector>
 
@@ -24,8 +24,8 @@ namespace vrlib
 	private:
 		enum Method { POST, GET, PUT };
 
-		json::Value callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json::Value &postData = json::Value::null);
-		json::Value buildJson(const std::string &data);
+		json callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData = nullptr);
+		json buildJson(const std::string &data);
 
 	};
 

@@ -2,6 +2,7 @@
 
 #include <VrLib/Device.h>
 #include <VrLib/drivers/Keyboard.h>
+#include <VrLib/json.hpp>
 #include <map>
 #include <list>
 
@@ -9,11 +10,6 @@
 
 namespace vrlib
 {
-	namespace json
-	{
-		class Value;
-	}
-
 	class KeyboardDeviceDriver;
 
 
@@ -60,7 +56,7 @@ namespace vrlib
 		friend class Kernel;
 
 	public:
-		Sim2dInputDeviceDriver(const json::Value &config);
+		Sim2dInputDeviceDriver(const json &config);
 		void update(KeyboardDeviceDriver* keyboardDriver, double elapsedTime);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 	};

@@ -4,7 +4,7 @@
 #include <VrLib/drivers/Keyboard.h>
 
 #include <list>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 #ifdef WIN32
 #include <OVR_CAPI.h>
@@ -23,9 +23,9 @@ namespace vrlib
 			virtual glm::mat4 getData();
 		};
 
-		json::Value config;
+		json config;
 	public:
-		OculusDeviceDriver(json::Value config);
+		OculusDeviceDriver(json config);
 		void update(KeyboardDeviceDriver* keyboardDriver);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 

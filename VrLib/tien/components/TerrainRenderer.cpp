@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/Texture.h>
 #include <VrLib/Image.h>
 
@@ -26,9 +26,9 @@ namespace vrlib
 			}
 
 
-			json::Value TerrainRenderer::toJson(json::Value &meshes) const
+			json TerrainRenderer::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "terrainrenderer";
 				return ret;
 			}

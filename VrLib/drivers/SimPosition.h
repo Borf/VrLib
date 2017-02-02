@@ -2,6 +2,7 @@
 
 #include <VrLib/Device.h>
 #include <VrLib/drivers/Keyboard.h>
+#include <VrLib/json.hpp>
 #include <map>
 #include <list>
 
@@ -9,11 +10,7 @@
 
 namespace vrlib
 {
-	namespace json
-	{
-		class Value;
-	}
-
+	
 	class KeyboardDeviceDriver;
 
 
@@ -77,7 +74,7 @@ namespace vrlib
 		int mouseOffsetY;
 
 	public:
-		SimPositionDeviceDriver(json::Value config);
+		SimPositionDeviceDriver(const json &config);
 		void update(KeyboardDeviceDriver* keyboardDriver, double elapsedTime);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 		void mouseMove(int xOffset, int yOffset);

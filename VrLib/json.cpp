@@ -1,3 +1,4 @@
+#if 0
 #include "Log.h"
 #include "json.h"
 #include <iomanip>
@@ -528,7 +529,7 @@ namespace vrlib
 			return stream;
 		}
 
-		std::ostream& Value::prettyPrint(std::ostream& stream, vrlib::json::Value& printConfig, int level) const
+		std::ostream& Value::prettyPrint(std::ostream& stream, json& printConfig, int level) const
 		{
 			stream << std::fixed << std::setprecision(6);
 			switch (type)
@@ -587,7 +588,7 @@ namespace vrlib
 						}
 					}
 
-					vrlib::json::Value childPrintConfig = vrlib::json::Value::null;
+					json childPrintConfig = json::null;
 					if (!printConfig.isNull())
 					{
 						if (printConfig.isMember("elements"))
@@ -659,7 +660,7 @@ namespace vrlib
 						indent(stream, level + 1);
 					}
 
-					vrlib::json::Value childPrintConfig = vrlib::json::Value::null;
+					json childPrintConfig = json::null;
 					if (!printConfig.isNull())
 					{
 						if (printConfig.isMember(v.first))
@@ -790,3 +791,5 @@ namespace vrlib
 		}
 	}
 }
+
+#endif

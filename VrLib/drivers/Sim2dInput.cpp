@@ -1,7 +1,7 @@
 #include <VrLib/drivers/Sim2dInput.h>
 #include <VrLib/drivers/Keyboard.h>
 #include <VrLib/Log.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
@@ -16,14 +16,14 @@ namespace vrlib
 	}
 
 
-	Sim2dInputDeviceDriver::Sim2dInputDeviceDriver(const json::Value &config)
+	Sim2dInputDeviceDriver::Sim2dInputDeviceDriver(const json &config)
 	{
 
 
-		for (json::Value::Iterator it = config.begin(); it != config.end(); it++)
+		for (json::const_iterator it = config.cbegin(); it != config.cend(); it++)
 		{
 			std::string key = it.key();
-			json::Value &value = it.value();
+			const json &value = it.value();
 
 			static struct ActionMapping { std::string str; Action action; } actionMapping[] = {
 				{ "xneg", X_NEG },
@@ -32,8 +32,8 @@ namespace vrlib
 				{ "ypos", Y_POS }
 			};
 			for (int ii = 0; ii < sizeof(actionMapping) / sizeof(ActionMapping); ii++)
-				if (value.isMember(actionMapping[ii].str))
-					keyHandlers[key].push_back(keyhandler(actionMapping[ii].action, KeyboardDeviceDriver::parseString(value[actionMapping[ii].str].asString())));
+				if (value.find(actionMapping[ii].str) != value.end())
+					keyHandlers[key].push_back(keyhandler(actionMapping[ii].action, KeyboardDeviceDriver::parseString(value[actionMapping[ii].str])));
 		}
 	}
 

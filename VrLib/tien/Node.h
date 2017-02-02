@@ -4,10 +4,10 @@
 #include <functional>
 #include <algorithm>
 #include <type_traits>
+#include <VrLib/json.hpp>
 
 namespace vrlib
 {
-	namespace json { class Value; }
 	namespace tien
 	{
 		class Component;
@@ -47,8 +47,8 @@ namespace vrlib
 			void setParent(Node* newParent);
 			bool isChildOf(Node* parent);
 
-			json::Value asJson(json::Value &meshes) const;
-			void fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> & = nullptr);
+			json asJson(json &meshes) const;
+			void fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> & = nullptr);
 
 			void addDebugChildSphere();
 

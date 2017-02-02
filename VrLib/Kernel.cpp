@@ -76,7 +76,8 @@ namespace vrlib
 			logger << "Could not open file " << fileName << Log::newline;
 			return;
 		}
-		json::Value newValue = json::readJson(file);
+		json newValue;
+		file >> newValue;
 		mergeConfig(config, newValue);
 	}
 
@@ -88,7 +89,7 @@ namespace vrlib
 
 	void Kernel::start()
 	{
-		if (config.isNull() || config.size() == 0)
+		if (config.is_null() || config.size() == 0)
 		{
 			logger << "No configuration file loaded" << Log::newline;
 			logger << "Press enter key to exit" << Log::newline;
@@ -114,10 +115,10 @@ namespace vrlib
 		double time = 0;
 		double frameTime;
 		double lastFps = 0;
-		if (config.isMember("users"))
+		if (config.find("users") != config.end())
 		{
 			headDevice = new PositionalDevice();
-			headDevice->init(config["users"][0u]["src"].asString());
+			headDevice->init(config["users"][0u]["src"]);
 		}
 		else
 			headDevice = NULL;
@@ -156,13 +157,13 @@ namespace vrlib
 	}
 
 
-	void Kernel::mergeConfig(json::Value &config, const json::Value &newConfig)
+	void Kernel::mergeConfig(json &config, const json &newConfig)
 	{
-		for (json::Value::Iterator it = newConfig.begin(); it != newConfig.end(); it++)
-			if (config.isMember(it.key()))
-				if (config[it.key()].isObject())
+		for (json::const_iterator it = newConfig.cbegin(); it != newConfig.cend(); it++)
+			if (config.find(it.key()) != config.end())
+				if (config[it.key()].is_object())
 					mergeConfig(config[it.key()], it.value());
-				else if (config[it.key()].isArray())
+				else if (config[it.key()].is_array())
 				{
 					for (size_t ii = 0; ii < newConfig[it.key()].size(); ii++)
 						config[it.key()].push_back(it.value()[ii]);
@@ -303,61 +304,64 @@ namespace vrlib
 	{
 		char hostname[1024];
 		gethostname(hostname, 1024);
-		localConfig = json::Value::null;
-		if(config.isMember("computers"))
+		localConfig = nullptr;
+		if(config.find("computers") != config.end())
 			for (size_t i = 0; i < config["computers"].size(); i++)
 			{
-				if (config["computers"][i]["host"].asString() == hostname)
+				if (config["computers"][i]["host"] == hostname)
 				{
 					localConfig = config["computers"][i];
 					logger << "Found config: " << hostname << Log::newline;
 				}
 			}
-		if (localConfig.isNull() && config.isMember("local"))
+		if (localConfig.is_null() && config.find("local") != config.end())
 			localConfig = config["local"];
 
-		if (localConfig.isNull())
+		if (localConfig.is_null())
 		{
 			logger << "Couldn't find config for this host!: Hostname '" << hostname << "'" << Log::newline;
 			for (size_t i = 0; i < config["computers"].size(); i++)
-				logger << "Found: " << config["computers"][i]["host"].asString() << Log::newline;
+				logger << "Found: " << config["computers"][i]["host"] << Log::newline;
 		}
 	}
 
 	void Kernel::loadDeviceDrivers()
 	{
-		if (!config.isMember("devices"))
+		if (config.find("devices") == config.end())
 			return;
 		for (size_t i = 0; i < config["devices"].size(); i++)
 		{
-			if (drivers.find(config["devices"][i]["driver"].asString()) == drivers.end())
-				drivers[config["devices"][i]["driver"].asString()] = getDeviceDriver(config["devices"][i]["driver"].asString());
+			if (drivers.find(config["devices"][i]["driver"]) == drivers.end())
+				drivers[config["devices"][i]["driver"]] = getDeviceDriver(config["devices"][i]["driver"]);
 
-			DeviceDriver* driver = drivers[config["devices"][i]["driver"].asString()];
+			DeviceDriver* driver = drivers[config["devices"][i]["driver"]];
 			if (!driver)
 				continue;
-			adaptors[config["devices"][i]["name"].asString()] = driver->getAdaptor(config["devices"][i].get("src", "").asString());
+			std::string src = "";
+			src = config["devices"][i]["src"];
+
+			adaptors[config["devices"][i]["name"]] = driver->getAdaptor(src);
 		}
 	}
 
 	void Kernel::loadCluster()
 	{
-		if (localConfig.isMember("mode"))
+		if (localConfig.find("mode") != localConfig.end())
 		{
-			if (localConfig["mode"].asString() == "slave")
+			if (localConfig["mode"] == "slave")
 			{
 				clusterManager = new ClusterSlave();
 			}
-			else if (localConfig["mode"].asString() == "master")
+			else if (localConfig["mode"] == "master")
 			{
 				std::vector<std::pair<std::string, std::string> > clusterNodes;
 				for (size_t i = 0; i < config["computers"].size(); i++)
-					if (config["computers"][i]["mode"].asString() == "slave")
-						clusterNodes.push_back(std::pair<std::string, std::string>(config["computers"][i]["host"].asString(), config["computers"][i]["ip"].asString()));
+					if (config["computers"][i]["mode"] == "slave")
+						clusterNodes.push_back(std::pair<std::string, std::string>(config["computers"][i]["host"], config["computers"][i]["ip"]));
 				clusterManager = new ClusterMaster(clusterNodes);
 			}
 			else
-				logger << "Unknown configuration mode: " << localConfig["mode"].asString() << Log::newline;
+				logger << "Unknown configuration mode: " << localConfig["mode"] << Log::newline;
 		}
 		else
 			clusterManager = NULL;
@@ -366,7 +370,7 @@ namespace vrlib
 
 	void Kernel::createViewports(User* user)
 	{
-		if (!localConfig.isMember("viewports"))
+		if (localConfig.find("viewports") == localConfig.end())
 			return;
 		for (size_t i = 0; i < localConfig["viewports"].size(); i++)
 		{

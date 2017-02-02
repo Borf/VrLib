@@ -8,7 +8,7 @@
 #include <rpc.h>
 #endif
 
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/util.h>
 
 #include "components/Transform.h"
@@ -77,9 +77,9 @@ namespace vrlib
 			return this->parent->isChildOf(parent);
 		}
 
-		json::Value Node::asJson(json::Value &meshes) const
+		json Node::asJson(json &meshes) const
 		{
-			vrlib::json::Value v;
+			json v;
 			v["name"] = name;
 			v["uuid"] = guid;
 			for (auto c : components)
@@ -89,11 +89,11 @@ namespace vrlib
 			return v;
 		}
 
-		void Node::fromJson(const json::Value &json, const json::Value &totalJson, const std::function<Component*(const json::Value &)> &callback)
+		void Node::fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> &callback)
 		{
 			setTreeDirty(this, true);
-			name = json["name"];
-			guid = json["uuid"];
+			name = data["name"].get<std::string>();
+			guid = data["uuid"].get<std::string>();
 
 			for (auto c : components)
 				delete c;
@@ -106,10 +106,10 @@ namespace vrlib
 			light = nullptr;
 
 
-			if(json.isMember("components"))
-				for (auto c : json["components"])
+			if(data.find("components") != data.end())
+				for (auto c : data["components"])
 				{
-					if (!c.isMember("type"))
+					if (c.find("type") == c.end())
 						continue;
 					if (c["type"] == "transform")
 						addComponent(new vrlib::tien::components::Transform(c));
@@ -134,8 +134,8 @@ namespace vrlib
 						if (c["collider"] == "mesh")
 						{
 							bool convex = true;
-							if (c.isMember("convex"))
-								convex = c["convex"].asBool();
+							if (c.find("convex") != c.end())
+								convex = c["convex"];
 							addComponent(new vrlib::tien::components::MeshCollider(this, convex));
 						}
 					}
@@ -147,15 +147,15 @@ namespace vrlib
 							if (newComponent)
 								addComponent(newComponent);
 							else
-								logger << "Unhandled component: " << c["type"].asString() << Log::newline;
+								logger << "Unhandled component: " << c["type"] << Log::newline;
 						}
 					}
 				}
 
 
 
-			if(json.isMember("children"))
-				for (auto c : json["children"])
+			if(data.find("children") != data.end())
+				for (auto c : data["children"])
 					(new Node("", this))->fromJson(c, totalJson, callback);
 		}
 

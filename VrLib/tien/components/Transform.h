@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <VrLib/json.hpp>
 
 #include "../Component.h"
 
@@ -28,9 +29,9 @@ namespace vrlib
 				glm::mat4 globalTransform;
 
 				Transform(const glm::vec3 &position = glm::vec3(0, 0, 0), const glm::quat &rotation = glm::quat(), const glm::vec3 &scale = glm::vec3(1, 1, 1));
-				Transform(const vrlib::json::Value &json);
+				Transform(const json &data);
 				~Transform();
-				json::Value toJson(json::Value &meshes) const override;
+				json toJson(json &meshes) const override;
 
 
 				void lookAt(const glm::vec3 &position, const glm::vec3 &target, const glm::vec3 &up);

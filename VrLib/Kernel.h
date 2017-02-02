@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VrLib/VrLib.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 
 
 #include <glm/vec2.hpp>
@@ -73,7 +73,6 @@ namespace vrlib
 	class XBOXDeviceDriver;
 	class ServerConnection;
 	class Sim2dInputDeviceDriver;
-	namespace json { class Value; }
 
 
 	class KernelWindows;
@@ -84,8 +83,8 @@ namespace vrlib
 		bool running;
 		int 	frameCount;
 
-		json::Value config;
-		json::Value localConfig;
+		json config;
+		json localConfig;
 
 		Application* currentApplication;
 		Application* newApplication;
@@ -121,7 +120,7 @@ namespace vrlib
 		//virtual HWND GetHWND();
 
 
-		void mergeConfig(json::Value &config, const json::Value &newConfig);
+		void mergeConfig(json &config, const json &newConfig);
 		DeviceDriver* getDeviceDriver(std::string name);
 		void registerClusterData(ClusterDataBase*);
 		void loadCluster();

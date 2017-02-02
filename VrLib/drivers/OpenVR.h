@@ -5,7 +5,7 @@
 #include <VrLib/Device.h>
 
 #include <list>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <openvr.h>
 
 
@@ -48,7 +48,7 @@ namespace vrlib
 		};
 
 
-		json::Value config;
+		json config;
 
 	public:
 		vr::IVRSystem *m_pHMD;
@@ -71,7 +71,7 @@ namespace vrlib
 		glm::vec2 touch1;
 
 
-		OpenVRDriver(json::Value config);
+		OpenVRDriver(json config);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 		virtual void update();
 	};
@@ -85,7 +85,7 @@ namespace vrlib
 {
 	class OpenVRDriver : public DeviceDriver
 	{
-		OpenVRDriver(json::Value config) {}
+		OpenVRDriver(json config) {}
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options) { return nullptr; }
 		virtual void update() {};
 	

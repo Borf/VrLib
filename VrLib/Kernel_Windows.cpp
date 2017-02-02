@@ -192,15 +192,19 @@ namespace vrlib
 	void KernelWindows::createWindow()
 	{
 		//Open Window
-		const char* title = "";
-		windowWidth = localConfig["window"]["width"].asInt();
-		windowHeight = localConfig["window"]["height"].asInt();
+		char* title = "";
+		windowWidth = localConfig["window"]["width"];
+		windowHeight = localConfig["window"]["height"];
 		if (currentApplication && currentApplication->title != "")
-			title = currentApplication->title.c_str();
+			title = (char*)currentApplication->title.c_str();
 		if (newApplication && newApplication->title != "")
-			title = newApplication->title.c_str();
-		if(localConfig["window"].isMember("title"))
-			title = localConfig["window"]["title"].asString().c_str();
+			title = (char*)newApplication->title.c_str();
+		if (localConfig["window"].find("title") != localConfig["window"].end())
+		{
+			std::string t = localConfig["window"]["title"].get<std::string>();
+			title = new char[t.size()+1];
+			strcpy(title, t.c_str());
+		}
 
 		WNDCLASS windowClass;
 		DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
@@ -231,7 +235,7 @@ namespace vrlib
 		if (y < 0)
 			y = CW_USEDEFAULT;
 
-		hWnd = CreateWindowEx(dwExStyle, title, title, localConfig["window"]["border"].asBool() ? WS_OVERLAPPEDWINDOW : (WS_OVERLAPPED | WS_POPUP),
+		hWnd = CreateWindowEx(dwExStyle, title, title, localConfig["window"]["border"] ? WS_OVERLAPPEDWINDOW : (WS_OVERLAPPED | WS_POPUP),
 			x, y, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
 
 
@@ -278,7 +282,7 @@ namespace vrlib
 		logger << "Using OpenGL " << (const char*)glGetString(GL_VERSION) << Log::newline;
 		logger << "Using OpenGL " << glVersion[0] << "." << glVersion[1] << Log::newline; // Output which version of OpenGL we are using
 
-		if(!localConfig["window"].isMember("cursor") || localConfig["window"]["cursor"].asBool() == false)
+		if(localConfig["window"].find("cursor") == localConfig["window"].end() || localConfig["window"]["cursor"].get<bool>() == false)
 			ShowCursor(FALSE);
 		ShowWindow(hWnd, SW_SHOW);
 		UpdateWindow(hWnd);
@@ -300,10 +304,10 @@ namespace vrlib
 		logger << "Using Renderer: " << std::string((char*)glGetString(GL_RENDERER)) << Log::newline;
 
 
-		if (localConfig["window"].isMember("vsync"))
+		if (localConfig["window"].find("vsync") != localConfig["window"].end())
 		{
-			logger << "SwapInterval: " << (localConfig["window"]["vsync"].asBool() ? 1 : 0) << Log::newline;
-			wglSwapIntervalEXT(localConfig["window"]["vsync"].asBool() ? 1 : 0);
+			logger << "SwapInterval: " << (localConfig["window"]["vsync"].get<bool>() ? 1 : 0) << Log::newline;
+			wglSwapIntervalEXT(localConfig["window"]["vsync"].get<bool>() ? 1 : 0);
 		}
 		else
 			wglSwapIntervalEXT(0);

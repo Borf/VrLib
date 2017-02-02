@@ -2,7 +2,7 @@
 #include <VrLib/Model.h>
 #include <VrLib/Texture.h>
 #include <VrLib/gl/Vertex.h>
-#include <VrLib/json.h>
+#include <VrLib/json.hpp>
 #include <VrLib/Image.h>
 #include "Transform.h"
 #include "../Node.h"
@@ -16,22 +16,22 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
 
-			ModelRenderer::ModelRenderer(const vrlib::json::Value &json)
+			ModelRenderer::ModelRenderer(const json &data)
 			{
-				if (json.isString())
-					fileName = json;
+				if (data.is_string())
+					fileName = data.get<std::string>();
 				else
-					fileName = json["file"];
+					fileName = data["file"].get<std::string>();
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 				model = cache[fileName];
 				renderContextDeferred = ModelDeferredRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
 				renderContextForward = ModelForwardRenderContext::getInstance();
-				if (json.isObject())
+				if (data.is_object())
 				{
-					castShadow = json["castShadow"];
-					cullBackFaces = json["cullBackFaces"];
+					castShadow = data["castShadow"];
+					cullBackFaces = data["cullBackFaces"];
 				}
 				else
 				{
@@ -43,18 +43,18 @@ namespace vrlib
 					materialOverrides[m] = *m;
 				prevModel = model;
 
-				if (json.isMember("materialoverrides"))
+				if (data.find("materialoverrides") != data.end())
 				{
 					std::vector<Material*> orig = model->getMaterials();
 					int i = 0;
-					for (const json::Value &v : json["materialoverrides"])
+					for (const json &v : data["materialoverrides"])
 					{
 						Material* overrideMaterial = &materialOverrides[orig[i]];
-						if (v.isMember("texture"))
+						if (v.find("texture") != v.end())
 							overrideMaterial->texture = vrlib::Texture::loadCached(v["texture"]);
-						if (v.isMember("normalmap"))
+						if (v.find("normalmap") != v.end())
 							overrideMaterial->normalmap = vrlib::Texture::loadCached(v["normalmap"]);
-						if (v.isMember("specularmap"))
+						if (v.find("specularmap") != v.end())
 							overrideMaterial->specularmap = vrlib::Texture::loadCached(v["specularmap"]);
 
 						i++;
@@ -64,9 +64,9 @@ namespace vrlib
 			}
 
 
-			json::Value ModelRenderer::toJson(json::Value &meshes) const
+			json ModelRenderer::toJson(json &meshes) const
 			{
-				json::Value ret;
+				json ret;
 				ret["type"] = "modelrenderer";
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;
@@ -75,7 +75,7 @@ namespace vrlib
 				for (vrlib::Material* m : model->getMaterials()) //TODO: getMaterials might not always return same order
 				{
 					const Material &overrideMaterial = materialOverrides.find(m)->second;
-					json::Value v;					
+					json v;					
 					if (m->texture != overrideMaterial.texture && overrideMaterial.texture)
 						v["texture"] = overrideMaterial.texture->image->fileName;
 					if (m->normalmap != overrideMaterial.normalmap && overrideMaterial.normalmap)

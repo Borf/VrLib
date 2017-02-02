@@ -3,12 +3,12 @@
 #include <string>
 #include <functional>
 #include <vector>
+#include <VrLib/json.hpp>
 
 class TienEdit;
 
 namespace vrlib
 {
-	namespace json { class Value; }
 	namespace tien
 	{
 		class Node;
@@ -58,7 +58,7 @@ namespace vrlib
 		public:
 			virtual void update(float elapsedTime, Scene& scene) {};
 			virtual void postUpdate(Scene& scene) {};
-			virtual json::Value toJson(json::Value &meshes) const;
+			virtual json toJson(json &meshes) const;
 
 			virtual void buildEditor(EditorBuilder* builder, bool folded);
 		};
