@@ -113,7 +113,9 @@ namespace vrlib
 				return glm::vec3(hsv.z, hsv.z, hsv.z);
 			}
 			hh = hsv.x;
-			while (hh >= 360.0) hh = 0.0;
+			hh = fmod(hh, 360);
+			while (hh < 0) hh += 360.0;
+
 			hh /= 60.0;
 			i = (long)hh;
 			ff = hh - i;
