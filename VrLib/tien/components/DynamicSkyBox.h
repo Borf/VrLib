@@ -44,6 +44,8 @@ namespace vrlib
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
 
 
+				virtual void buildEditor(EditorBuilder * builder, bool folded) override;
+
 				Node* light = nullptr;
 				float timeOfDay = 14;
 				virtual json::Value toJson(json::Value &meshes) const override;

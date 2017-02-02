@@ -158,6 +158,19 @@ namespace vrlib
 
 			}
 
+
+			void DynamicSkyBox::buildEditor(EditorBuilder * builder, bool folded)
+			{
+				builder->addTitle("Dynamic skybox");
+				if (folded)
+					return;
+
+				builder->beginGroup("Time");
+				builder->addTextBox(builder->toString(timeOfDay), [this](const std::string & newValue) { timeOfDay = (float)atof(newValue.c_str());  });
+				builder->endGroup();
+
+			}
+
 		}
 	}
 }
