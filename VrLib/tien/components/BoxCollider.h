@@ -16,9 +16,9 @@ namespace vrlib
 				btBoxShape* shape;
 				glm::vec3 size;
 			public:
+				static BoxCollider* fromJson(const json &json);
 				BoxCollider(Node* n = nullptr);
 				BoxCollider(const glm::vec3 &size);
-				BoxCollider(const json &json);
 
 				virtual btCollisionShape* getShape() override;
 

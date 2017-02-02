@@ -46,13 +46,15 @@ namespace vrlib
 				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
-			BoxCollider::BoxCollider(const json & json)
+			BoxCollider* BoxCollider::fromJson(const json & json)
 			{
+				BoxCollider* ret = new BoxCollider();
 				for (int i = 0; i < 3; i++)
-					offset[i] = json["offset"][i];
+					ret->offset[i] = json["offset"][i];
 				for (int i = 0; i < 3; i++)
-					size[i] = json["size"][i];
-				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
+					ret->size[i] = json["size"][i];
+				ret->shape = new btBoxShape(btVector3(ret->size.x / 2.0f, ret->size.y / 2.0f, ret->size.z / 2.0f));
+				return ret;
 			}
 
 			btCollisionShape* BoxCollider::getShape()

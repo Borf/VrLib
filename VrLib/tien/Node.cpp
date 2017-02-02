@@ -130,7 +130,7 @@ namespace vrlib
 					else if (c["type"] == "collider")
 					{
 						if(c["collider"] == "box")
-							addComponent(new vrlib::tien::components::BoxCollider(c));
+							addComponent(vrlib::tien::components::BoxCollider::fromJson(c));
 						if (c["collider"] == "mesh")
 						{
 							bool convex = true;
