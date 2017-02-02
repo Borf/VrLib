@@ -176,6 +176,13 @@ namespace vrlib
 			if (out.x < 0.0)
 				out.x += 360.0;
 
+			if (glm::isnan(out.x) || glm::isinf(out.x))
+				out.x = 0;
+			if (glm::isnan(out.y) || glm::isinf(out.y))
+				out.y = 1;
+			if (glm::isnan(out.z) || glm::isinf(out.z))
+				out.z = 1;
+
 			return out;
 		}
 

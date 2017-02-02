@@ -125,13 +125,13 @@ namespace vrlib
 					builder->addTitle("Material " + std::to_string(index));
 
 					builder->beginGroup("Ambient", true);
-					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->addColorBox(m->color.ambient, [m](const glm::vec4 &newColor) { m->color.ambient = newColor;  }); //TODO: color picker
 					builder->endGroup();
 					builder->beginGroup("Diffuse", true);
-					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->addColorBox(m->color.diffuse, [m](const glm::vec4 &newColor) { m->color.diffuse = newColor;  }); //TODO: color picker
 					builder->endGroup();
 					builder->beginGroup("Specular", true);
-					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->addColorBox(glm::vec4(m->color.specular,1), [m](const glm::vec4 &newColor) { m->color.specular = glm::vec3(newColor);  }); //TODO: color picker
 					builder->endGroup();
 
 					builder->beginGroup("Texture", false);
