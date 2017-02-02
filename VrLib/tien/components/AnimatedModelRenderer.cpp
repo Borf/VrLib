@@ -317,36 +317,20 @@ namespace vrlib
 
 					builder->beginGroup("Texture", false);
 					builder->addTextBox((m->texture && m->texture->image) ? m->texture->image->fileName : "", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
-					{
-
-					});
 					builder->endGroup();
 
 					builder->beginGroup("Normalmap", false);
 					builder->addTextBox((m->normalmap && m->normalmap->image) ? m->normalmap->image->fileName : "", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
-					{
-
-					});
 					builder->endGroup();
 
 					builder->beginGroup("Specularmap");
 					builder->addTextBox((m->normalmap && m->normalmap->image) ? m->normalmap->image->fileName : "", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
-					{
-
-					});
 					builder->addTextBox("1.0", [](const std::string &newValue) {});
 					builder->endGroup();
 
 
 					builder->beginGroup("Glow");
 					builder->addTextBox("", [](const std::string &newFile) {});
-					builder->addBrowseButton(EditorBuilder::BrowseType::Texture, [](const std::string &onClick)
-					{
-
-					});
 					builder->addTextBox("1.0", [](const std::string &newValue) {});
 					builder->endGroup();
 

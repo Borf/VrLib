@@ -100,60 +100,80 @@ namespace vrlib
 
 		glm::vec3 randomHsv()
 		{
-			glm::vec3 in((rand() / (float)RAND_MAX) * 360, 1, 1);
-			glm::vec3 out;
-			float      hh, p, q, t, ff;
+			return hsv2rgb(glm::vec3((rand() / (float)RAND_MAX) * 360, 1, 1));
+		}
+
+
+		glm::vec3 hsv2rgb(glm::vec3 hsv)
+		{
+			double      hh, p, q, t, ff;
 			long        i;
 
-			if (in.y <= 0.0) {       // < is bogus, just shuts up warnings
-				out.r = in.z;
-				out.g = in.z;
-				out.b = in.z;
-				return out;
+			if (hsv.y <= 0.0) {       // < is bogus, just shuts up warnings
+				return glm::vec3(hsv.z, hsv.z, hsv.z);
 			}
-			hh = in.x;
-			if (hh >= 360.0) hh = 0.0;
+			hh = hsv.x;
+			while (hh >= 360.0) hh = 0.0;
 			hh /= 60.0;
 			i = (long)hh;
 			ff = hh - i;
-			p = in.z * (1.0f - in.y);
-			q = in.z * (1.0f - (in.y * ff));
-			t = in.z * (1.0f - (in.y * (1.0f - ff)));
+			p = hsv.z * (1.0 - hsv.y);
+			q = hsv.z * (1.0 - (hsv.y * ff));
+			t = hsv.z * (1.0 - (hsv.y * (1.0 - ff)));
 
 			switch (i) {
 			case 0:
-				out.r = in.z;
-				out.g = t;
-				out.b = p;
-				break;
+				return glm::vec3(hsv.z, t, p);
 			case 1:
-				out.r = q;
-				out.g = in.z;
-				out.b = p;
-				break;
+				return glm::vec3(q, hsv.z, p);
 			case 2:
-				out.r = p;
-				out.g = in.z;
-				out.b = t;
-				break;
-
+				return glm::vec3(p, hsv.z, t);
 			case 3:
-				out.r = p;
-				out.g = q;
-				out.b = in.z;
-				break;
+				return glm::vec3(p, q, hsv.z);
 			case 4:
-				out.r = t;
-				out.g = p;
-				out.b = in.z;
-				break;
+				return glm::vec3(t, p, hsv.z);
 			case 5:
 			default:
-				out.r = in.z;
-				out.g = p;
-				out.b = q;
-				break;
+				return glm::vec3(hsv.z, p, q);
 			}
+		}
+
+
+		glm::vec3 rgb2hsv(glm::vec3 rgb)
+		{
+			glm::vec3         out;
+			float      min, max, delta;
+
+			min = rgb.r < rgb.g ? rgb.r : rgb.g;
+			min = min  < rgb.b ? min : rgb.b;
+
+			max = rgb.r > rgb.g ? rgb.r : rgb.g;
+			max = max  > rgb.b ? max : rgb.b;
+
+			out.z = max;                                // v
+			delta = max - min;
+			if (max > 0.0) {
+				out.y = (delta / max);                  // s
+			}
+			else {
+				// r = g = b = 0                        // s = 0, v is undefined
+				out.y = 0.0;
+				out.x = NAN;                            // its now undefined
+				return out;
+			}
+			if (rgb.r >= max)                           // > is bogus, just keeps compilor happy
+				out.x = (rgb.g - rgb.b) / delta;        // between yellow & magenta
+			else
+				if (rgb.g >= max)
+					out.x = 2.0f + (rgb.b - rgb.r) / delta;  // between cyan & yellow
+				else
+					out.x = 4.0f + (rgb.r - rgb.g) / delta;  // between magenta & cyan
+
+			out.x *= 60.0;                              // degrees
+
+			if (out.x < 0.0)
+				out.x += 360.0;
+
 			return out;
 		}
 

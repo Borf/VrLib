@@ -171,6 +171,8 @@ namespace vrlib
 					materialOverride = mesh->material;
 					prevMesh = mesh;
 				}
+//				if(...)
+//				mesh->material.texture->update(elapsedTime);
 			}
 
 

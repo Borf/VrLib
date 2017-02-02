@@ -92,7 +92,7 @@ namespace vrlib
 
 	void Video::update(float elapsedTime)
 	{
-		videoFrameTime -= elapsedTime;
+		videoFrameTime -= elapsedTime + 0.1f;
 		if (videoFrameTime < 0)
 		{
 			videoFrameTime = 1 / 24.0f;

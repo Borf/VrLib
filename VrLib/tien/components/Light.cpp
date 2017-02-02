@@ -214,14 +214,17 @@ namespace vrlib
 				sprintf(rgb, "%02X%02X%02X", (int)(color.r * 255), (int)(color.g * 255), (int)(color.b * 255));
 
 				builder->beginGroup("Color");
-				builder->addTextBox(rgb, [this](const std::string &newValue) {
+				/*builder->addTextBox(rgb, [this](const std::string &newValue) {
 					std::stringstream c(newValue);
 					unsigned int rgb;
 					c >> std::hex >> rgb;
 					color.b = ((rgb >> 0) & 255) / 255.0f;
 					color.g = ((rgb >> 8) & 255) / 255.0f;
 					color.r = ((rgb >> 16) & 255) / 255.0f;
-				});
+				});*/
+
+				builder->addColorBox(color, [this](const glm::vec4 &newColor) {this->color = newColor; });
+
 				builder->endGroup();
 
 				builder->beginGroup("Intensity");

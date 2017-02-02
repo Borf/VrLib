@@ -4,6 +4,7 @@
 #include <functional>
 #include <vector>
 #include <VrLib/json.hpp>
+#include <glm/glm.hpp>
 
 class TienEdit;
 
@@ -20,6 +21,8 @@ namespace vrlib
 		public:
 			class TextComponent { public: virtual std::string getText() const = 0; virtual void setText(const std::string &text) = 0; };
 			class BoolComponent { public: virtual bool getValue() const = 0; virtual void setValue(bool newValue) = 0; };
+			class ColorComponent { public: virtual glm::vec4 getColor() const = 0; virtual void setColor(const glm::vec4 &color) = 0; };
+			class FloatComponent { public: virtual float getValue() const = 0; virtual void setValue(float value) = 0; };
 
 			virtual TextComponent* addTitle(const std::string &name) = 0;
 
@@ -28,6 +31,10 @@ namespace vrlib
 			virtual TextComponent* addTextBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual TextComponent* addTextureBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual TextComponent* addModelBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
+			virtual ColorComponent* addColorBox(const glm::vec4 &value, std::function<void(const glm::vec4 &)> onChange) = 0;
+
+			virtual FloatComponent* addFloatBox(float value, float min, float max, std::function<void(float &)> onChange) = 0;
+
 			virtual void addCheckbox(bool value, std::function<void(bool)> onChange) = 0;
 			virtual void addButton(const std::string &value, std::function<void()> onClick) = 0;
 			virtual void addSmallButton(const std::string &value, std::function<void()> onClick) = 0;
@@ -42,7 +49,6 @@ namespace vrlib
 				Node,
 				Prefab
 			};
-			virtual void addBrowseButton(BrowseType type, std::function<void(const std::string &)> onClick) = 0;
 
 
 			virtual std::string toString(float value) const;
