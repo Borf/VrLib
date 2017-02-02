@@ -54,7 +54,7 @@ namespace vrlib
 				range = data["range"];
 				for (int i = 0; i < 4; i++)
 					color[i] = data["color"][i];
-				if(data.find("spotlihtAngle") != data.end())
+				if(data.find("spotlightAngle") != data.end())
 					spotlightAngle = data["spotlightAngle"];
 				if (data.find("directionalAmbient") != data.end())
 					directionalAmbient = data["directionalAmbient"];

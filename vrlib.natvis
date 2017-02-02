@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+	<Type Name="nlohmann::basic_json&lt;*&gt;">
+		<DisplayString>Name: {m_EnglishName,sb}</DisplayString>
+	
+	</Type>
+</AutoVisualizer>

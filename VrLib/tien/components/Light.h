@@ -52,7 +52,7 @@ namespace vrlib
 
 				float directionalAmbient = 0;
 
-				float intensity;
+				float intensity = 1;
 				glm::vec4 color = glm::vec4(1,1,1,1);
 
 
