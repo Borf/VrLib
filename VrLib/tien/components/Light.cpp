@@ -228,7 +228,7 @@ namespace vrlib
 				builder->endGroup();
 
 				builder->beginGroup("Intensity");
-				builder->addTextBox(builder->toString(intensity), [this](const std::string &newValue) { intensity = (float)atof(newValue.c_str()); });
+				builder->addFloatBox(intensity, 0, 180, [this](float newValue) { intensity = newValue; });
 				builder->endGroup();
 
 				builder->beginGroup("Light type");
@@ -247,19 +247,19 @@ namespace vrlib
 				builder->endGroup();
 
 				builder->beginGroup("Spotlight Angle");
-				builder->addTextBox(builder->toString(spotlightAngle), [this](const std::string &newValue) { spotlightAngle = glm::clamp((float)atof(newValue.c_str()), 0.0f, 179.0f); });
+				builder->addFloatBox(spotlightAngle, 0, 180, [this](float newValue) { spotlightAngle = newValue; });
 				builder->endGroup();
 
 				builder->beginGroup("Range");
-				builder->addTextBox(builder->toString(range), [this](const std::string &newValue) { range = (float)atof(newValue.c_str()); });
+				builder->addFloatBox(range, 0, 100, [this](float newValue) { range = newValue; });
 				builder->endGroup();
 
 				builder->beginGroup("Ambient");
-				builder->addTextBox(builder->toString(directionalAmbient), [this](const std::string &newValue) { directionalAmbient = (float)atof(newValue.c_str()); });
+				builder->addFloatBox(directionalAmbient, 0, 100, [this](float newValue) { directionalAmbient  = newValue; });
 				builder->endGroup();
 
 				builder->beginGroup("Cutoff");
-				builder->addTextBox(builder->toString(cutoff), [this](const std::string &newValue) { cutoff = (float)atof(newValue.c_str()); });
+				builder->addFloatBox(cutoff, 0, 1, [this](float newValue) { cutoff = newValue; });
 				builder->endGroup();
 
 				builder->beginGroup("Baking");
