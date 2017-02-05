@@ -33,7 +33,7 @@ namespace vrlib
 			virtual TextComponent* addModelBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual ColorComponent* addColorBox(const glm::vec4 &value, std::function<void(const glm::vec4 &)> onChange) = 0;
 
-			virtual FloatComponent* addFloatBox(float value, float min, float max, std::function<void(float &)> onChange) = 0;
+			virtual FloatComponent* addFloatBox(float value, float min, float max, std::function<void(float)> onChange) = 0;
 
 			virtual void addCheckbox(bool value, std::function<void(bool)> onChange) = 0;
 			virtual void addButton(const std::string &value, std::function<void()> onClick) = 0;

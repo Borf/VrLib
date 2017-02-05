@@ -163,15 +163,13 @@ namespace vrlib
 					return;
 
 				builder->beginGroup("Local Translate", false);
-				builder->addTextBox(builder->toString(position.x), [this](const std::string & newValue) { position.x = (float)atof(newValue.c_str());  });
-				builder->addTextBox(builder->toString(position.y), [this](const std::string & newValue) { position.y = (float)atof(newValue.c_str());  });
-				builder->addTextBox(builder->toString(position.z), [this](const std::string & newValue) { position.z = (float)atof(newValue.c_str());  });
+				for(int i = 0; i < 3; i++)
+					builder->addFloatBox(position[i], -1000, 1000, [this, i](float newValue) { position[i] = newValue;  });
 				builder->endGroup();
 
 				builder->beginGroup("Local Scale", false);
-				builder->addTextBox(builder->toString(scale.x), [this](const std::string & newValue) { scale.x = (float)atof(newValue.c_str());  });
-				builder->addTextBox(builder->toString(scale.y), [this](const std::string & newValue) { scale.y = (float)atof(newValue.c_str());  });
-				builder->addTextBox(builder->toString(scale.z), [this](const std::string & newValue) { scale.z = (float)atof(newValue.c_str());  });
+				for (int i = 0; i < 3; i++)
+					builder->addFloatBox(scale[i], -1000, 1000, [this, i](float newValue) { scale[i] = newValue;  });
 				builder->addCheckbox(true, [](bool newValue) {});
 				builder->endGroup();
 
@@ -179,21 +177,12 @@ namespace vrlib
 
 				//TODO: use yaw/pitch/roll for rotation
 				builder->beginGroup("Local Rotation", false);
-				builder->addTextBox(builder->toString(glm::degrees(euler.x)), [this](const std::string & newValue) {
-					glm::vec3 euler = glm::eulerAngles(rotation);
-					euler.x = (float)glm::radians(atof(newValue.c_str()));
-					rotation = glm::quat(euler);
-				});
-				builder->addTextBox(builder->toString(glm::degrees(euler.y)), [this](const std::string & newValue) {
-					glm::vec3 euler = glm::eulerAngles(rotation);
-					euler.y = (float)glm::radians(atof(newValue.c_str()));
-					rotation = glm::quat(euler);
-				});
-				builder->addTextBox(builder->toString(glm::degrees(euler.z)), [this](const std::string & newValue) {
-					glm::vec3 euler = glm::eulerAngles(rotation);
-					euler.z = (float)glm::radians(atof(newValue.c_str()));
-					rotation = glm::quat(euler);
-				});
+				for(int i = 0; i < 3; i++)
+					builder->addFloatBox(glm::degrees(euler[i]), -360, 360, [this, i](float newValue) {
+						glm::vec3 euler = glm::eulerAngles(rotation);
+						euler[i] = (float)glm::radians(newValue);
+						rotation = glm::quat(euler);
+					});
 				builder->endGroup();
 
 

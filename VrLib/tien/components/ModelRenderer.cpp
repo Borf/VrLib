@@ -168,7 +168,7 @@ namespace vrlib
 					builder->endGroup();
 
 					builder->beginGroup("Shinyness");
-					builder->addTextBox(builder->toString(m->color.shinyness), [m](const std::string &newValue) { m->color.shinyness = (float)atof(newValue.c_str()); });
+					builder->addFloatBox(m->color.shinyness, 0, 300, [m](float newValue) { m->color.shinyness = newValue; });
 					builder->endGroup();
 
 					index++;
