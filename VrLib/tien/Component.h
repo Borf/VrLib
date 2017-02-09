@@ -65,6 +65,7 @@ namespace vrlib
 			virtual void update(float elapsedTime, Scene& scene) {};
 			virtual void postUpdate(Scene& scene) {};
 			virtual json toJson(json &meshes) const;
+			virtual void updateNodePointer(Node* oldNode, Node* newNode) {}
 
 			virtual void buildEditor(EditorBuilder* builder, bool folded);
 		};

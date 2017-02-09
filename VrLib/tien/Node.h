@@ -49,6 +49,8 @@ namespace vrlib
 
 			json asJson(json &meshes) const;
 			void fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> & = nullptr);
+			
+			void updateNodePointer(vrlib::tien::Node* oldNode, vrlib::tien::Node* newNode);
 
 			void addDebugChildSphere();
 

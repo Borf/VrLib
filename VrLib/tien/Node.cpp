@@ -159,6 +159,19 @@ namespace vrlib
 					(new Node("", this))->fromJson(c, totalJson, callback);
 		}
 
+		void Node::updateNodePointer(vrlib::tien::Node * oldNode, vrlib::tien::Node * newNode)
+		{
+			for (size_t i = 0; i < children.size(); i++)
+			{
+				if (children[i] == oldNode)
+					children[i] = newNode;
+			}
+			for (auto c : components)
+				c->updateNodePointer(oldNode, newNode);
+			for (auto c : children)
+				c->updateNodePointer(oldNode, newNode);
+		}
+
 		void Node::addDebugChildSphere()
 		{
 			auto n = new vrlib::tien::Node("debug", this);
