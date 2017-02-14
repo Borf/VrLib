@@ -39,8 +39,9 @@ namespace vrlib
 					cullBackFaces = true;
 				}
 				hasForward = false;
-				for (auto m : model->getMaterials())
-					materialOverrides[m] = *m;
+				if(model)
+					for (auto m : model->getMaterials())
+						materialOverrides[m] = *m;
 				prevModel = model;
 
 				if (data.find("materialoverrides") != data.end())
