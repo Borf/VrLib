@@ -5,6 +5,7 @@
 #include <VrLib/Log.h>
 #include <VrLib/json.hpp>
 #include <VrLib/math/Frustum.h>
+#include "../Renderer.h"
 #include "../Node.h"
 #include "../Scene.h"
 
@@ -147,6 +148,7 @@ namespace vrlib
 					shadowMapDirectional->bind();
 					glViewport(0, 0, shadowMapDirectional->getWidth(), shadowMapDirectional->getHeight());
 					glClearColor(1, 0, 0, 1);
+					Renderer::drawCalls++;
 					glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 					glDisable(GL_CULL_FACE);
 					glCullFace(GL_BACK);

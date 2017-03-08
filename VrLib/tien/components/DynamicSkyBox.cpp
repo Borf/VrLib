@@ -1,7 +1,7 @@
 #include "DynamicSkyBox.h"
 #include "Light.h"
 #include "Transform.h"
-
+#include "../Renderer.h"
 #include <VrLib/tien/Node.h>
 #include <VrLib/Texture.h>
 #include <VrLib/Model.h>
@@ -121,6 +121,7 @@ namespace vrlib
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 				skydome->draw([](const glm::mat4 &mat) {});
+				Renderer::drawCalls++;
 
 				glm::vec3 cameraPos(modelviewMatrix * glm::vec4(0, 0, 0, 1));
 				glm::vec3 pos = 4 * 45.0f * sunDirection;
@@ -138,6 +139,7 @@ namespace vrlib
 					billboardShader->setUniform(BillboardUniforms::mat, mat);
 					sun->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 						material.texture->bind();
+						Renderer::drawCalls++;
 						return true;
 					});
 				}
@@ -150,6 +152,7 @@ namespace vrlib
 					billboardShader->setUniform(BillboardUniforms::mat, mat);
 					moon->draw([](const glm::mat4 &mat) {}, [this](const Material& material) {
 						material.texture->bind();
+						Renderer::drawCalls++;
 						return true;
 					});
 				}

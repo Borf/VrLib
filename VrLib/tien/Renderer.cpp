@@ -21,6 +21,7 @@ namespace vrlib
 {
 	namespace tien
 	{
+		int Renderer::drawCalls = 0;
 		Renderer::Renderer()
 		{
 			drawPhysicsDebug = false;
@@ -120,6 +121,8 @@ namespace vrlib
 
 		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode, int renderId)
 		{
+			drawCalls = 0;
+
 			//first let's initialize the gbuffers
 			int viewport[4];
 			glGetIntegerv(GL_VIEWPORT, viewport);
@@ -188,6 +191,7 @@ namespace vrlib
 			glViewport(0, 0, gbuffers->getWidth(), gbuffers->getHeight());
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			Renderer::drawCalls++;
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -289,8 +293,11 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
 				postLightingShader->setUniform(PostLightingUniform::lightAmbient, l->directionalAmbient);
 
-				if(l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
+				if (l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
+				{
 					glDrawArrays(GL_QUADS, 0, 4);
+					Renderer::drawCalls++;
+				}
 				else
 				{
 					postLightingStencilShader->use();
@@ -308,6 +315,7 @@ namespace vrlib
 					glDisable(GL_CULL_FACE);
 					glEnable(GL_DEPTH_TEST);
 					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					Renderer::drawCalls++;
 					glColorMask(true, true,true,true);
 					postLightingShader->use();
 
@@ -316,6 +324,7 @@ namespace vrlib
 					glDisable(GL_DEPTH_TEST);
 					glStencilFunc(GL_NOTEQUAL, 0x80, 0xFF);
 					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					Renderer::drawCalls++;
 					glDisable(GL_STENCIL_TEST);
 				}
 				glEnable(GL_BLEND);

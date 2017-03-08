@@ -4,6 +4,7 @@
 #include <VrLib/gl/Vertex.h>
 #include "Transform.h"
 #include "../Node.h"
+#include "../Renderer.h"
 #include <VrLib/models/AssimpModel.h>
 #include <VrLib/json.hpp>
 #include <VrLib/Image.h>
@@ -101,6 +102,8 @@ namespace vrlib
 				},
 					[this, &context](const vrlib::Material &material)
 				{
+					Renderer::drawCalls++;
+
 					if (material.texture)
 					{
 						context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, glm::vec4(1,1,1,1));
@@ -165,6 +168,7 @@ namespace vrlib
 
 				modelInstance->draw([this, t, &context](const glm::mat4 &modelMatrix)
 				{
+					Renderer::drawCalls++;
 					context->renderShader->setUniform(ModelShadowRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 				});
 			}

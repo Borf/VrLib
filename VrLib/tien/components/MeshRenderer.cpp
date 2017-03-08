@@ -8,7 +8,7 @@
 #include <VrLib/math/Ray.h>
 #include "Transform.h"
 #include "../Node.h"
-
+#include "../Renderer.h"
 
 namespace vrlib
 {
@@ -208,6 +208,7 @@ namespace vrlib
 				{
 					vao->bind();
 					glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+					Renderer::drawCalls++;
 					vao->unBind();
 				}
 			}
@@ -222,7 +223,7 @@ namespace vrlib
 				context->renderShader->use(); //TODO: only call this once!
 				context->renderShader->setUniform(ModelShadowRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 
-
+				//TODO
 			}
 
 

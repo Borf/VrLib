@@ -16,6 +16,9 @@ namespace vrlib
 	{
 		namespace components
 		{
+			const float margin = 0.001f;
+
+
 			MeshCollider::MeshCollider(Node* node, bool convex)
 			{
 				this->convex = convex;
@@ -26,7 +29,7 @@ namespace vrlib
 			void MeshCollider::buildShape(Node* node)
 			{
 				Model* model = node->getComponent<ModelRenderer>()->model;
-				glm::vec3 centerOfGravity(0, 0, 0);
+				glm::vec3 centerOfGravity = model->aabb.center();;
 				auto verts = model->getIndexedTriangles();
 
 				if (node->rigidBody)
@@ -35,11 +38,12 @@ namespace vrlib
 						convex = true;
 				}
 
+				this->offset = node->transform->getGlobalScale() * centerOfGravity;
 
 				if (convex)
 				{
 					btConvexHullShape* objShape = new btConvexHullShape();
-					objShape->setMargin(0);
+					objShape->setMargin(margin);
 
 					glm::vec3 scale(1, 1, 1);// = node->transform->getGlobalScale();
 
@@ -50,12 +54,13 @@ namespace vrlib
 
 					btShapeHull* hull = new btShapeHull(objShape);
 					btScalar margin = objShape->getMargin();
-					hull->buildHull(margin);
+					hull->buildHull(0);
 					btConvexHullShape* simplifiedConvexShape = new btConvexHullShape((btScalar*)hull->getVertexPointer(), hull->numVertices());
 					delete objShape;
 					objShape = simplifiedConvexShape;
 					delete hull;
 					shape = objShape;
+					shape->setMargin(margin);
 				}
 				else
 				{
@@ -74,6 +79,7 @@ namespace vrlib
 					btVector3 aabbMin(-100000, -100000, -100000), aabbMax(100000, 100000, 100000);
 					btBvhTriangleMeshShape* objShape = new btBvhTriangleMeshShape(m_indexVertexArrays, true, aabbMin, aabbMax);
 					shape = objShape;
+					shape->setMargin(margin);
 				}
 			}
 

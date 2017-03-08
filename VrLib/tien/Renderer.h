@@ -115,6 +115,8 @@ namespace vrlib
 			} drawMode;
 			int debugLightMapIndex = 0;
 
+			static int drawCalls;
+
 		};
 	}
 }

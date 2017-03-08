@@ -6,7 +6,7 @@
 #include <VrLib/Image.h>
 #include "Transform.h"
 #include "../Node.h"
-
+#include "../Renderer.h"
 
 namespace vrlib
 {
@@ -245,6 +245,7 @@ namespace vrlib
 						context->defaultNormalMap->bind();
 						glActiveTexture(GL_TEXTURE0);
 					}
+					Renderer::drawCalls++;
 					return true;
 				});
 
@@ -304,6 +305,7 @@ namespace vrlib
 						context->defaultNormalMap->bind();
 						glActiveTexture(GL_TEXTURE0);
 					}
+					Renderer::drawCalls++;
 					return true;
 				});
 
