@@ -117,7 +117,7 @@ namespace vrlib
 						else
 							shadowMapDirectional = new vrlib::gl::FBO(512, 512, true, 0, true); //shadowmap
 
-					float size = 5.0f;
+					float size = 5.0f * node->transform->scale.x;
 
 					glm::vec3 frustumCenter = node->getScene().frustum->getCenter(); //todo: cache?
 					glm::vec3 eyePos = glm::vec3(glm::inverse(node->getScene().frustum->modelviewMatrix) * glm::vec4(0, 0, 0, 1));
