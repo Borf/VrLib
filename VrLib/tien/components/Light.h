@@ -21,6 +21,7 @@ namespace vrlib
 
 				friend class vrlib::tien::Renderer;
 				friend class vrlib::tien::Tien;
+				bool shadowmapGenerated = false;
 			public:
 				Light() {};
 				Light(const json &data);
@@ -63,6 +64,8 @@ namespace vrlib
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 				bool inFrustum(vrlib::math::Frustum* frustum);
 				float realRange();
+
+				void rebake() { shadowmapGenerated = false;  }
 			};
 		}
 	}

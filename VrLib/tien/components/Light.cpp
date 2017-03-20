@@ -51,6 +51,12 @@ namespace vrlib
 				if (data["shadow"] == "shadowmap")		shadow = Shadow::shadowmap;
 				if (data["shadow"] == "shadowvolume")	shadow = Shadow::shadowvolume;
 
+				if (data.find("baking") != data.end())
+				{
+					if (data["baking"] == "baked")			baking = Baking::baked;
+					if (data["baking"] == "realtime")		baking = Baking::realtime;
+				}
+
 				intensity = data["intensity"];
 				range = data["range"];
 				for (int i = 0; i < 4; i++)
@@ -84,7 +90,14 @@ namespace vrlib
 				default:
 					ret["shadow"] = "error";
 				}
-
+				
+				switch (baking)
+				{
+				case Baking::baked:			ret["baking"] = "baked";			break;
+				case Baking::realtime:		ret["baking"] = "realtime";			break;
+				default:
+					ret["baking"] = "error";
+				}
 				ret["intensity"] = intensity;
 				for (int i = 0; i < 4; i++)
 					ret["color"].push_back(color[i]);
@@ -107,6 +120,9 @@ namespace vrlib
 			void Light::generateShadowMap()
 			{
 				if (shadow != Shadow::shadowmap)
+					return;
+
+				if (baking == Baking::baked && shadowmapGenerated)
 					return;
 
 				if (type == Type::directional || type == Type::spot)
@@ -167,8 +183,8 @@ namespace vrlib
 							r->drawShadowMap();
 					}
 					glCullFace(GL_BACK);
-
 					shadowMapDirectional->unbind();
+					shadowmapGenerated = true;
 				}
 				else if (type == Type::point)
 				{
@@ -201,6 +217,7 @@ namespace vrlib
 						}
 					}
 					shadowMapDirectional->unbind();
+					shadowmapGenerated = true;
 				}
 
 
