@@ -101,6 +101,7 @@ namespace vrlib
 			simpleDebugShader->registerUniform(SimpleDebugUniform::textureFactor, "textureFactor");
 			simpleDebugShader->registerUniform(SimpleDebugUniform::color, "color");
 			simpleDebugShader->registerUniform(SimpleDebugUniform::showAlpha, "showAlpha");
+			simpleDebugShader->registerUniform(SimpleDebugUniform::linearize, "linearize");
 
 			buildOverlay();
 
@@ -516,6 +517,7 @@ namespace vrlib
 				simpleDebugShader->setUniform(SimpleDebugUniform::s_texture, 0);
 				simpleDebugShader->setUniform(SimpleDebugUniform::color, glm::vec4(1, 1, 1, 1));
 				simpleDebugShader->setUniform(SimpleDebugUniform::showAlpha, false);
+				simpleDebugShader->setUniform(SimpleDebugUniform::linearize, false);
 
 				if (drawMode == DrawMode::Albedo)
 					glBindTexture(GL_TEXTURE_2D, gbuffers->texid[0]);
@@ -528,6 +530,7 @@ namespace vrlib
 						light->shadowMapDirectional->use();
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 					glTexParameteri(GL_TEXTURE_2D, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+					simpleDebugShader->setUniform(SimpleDebugUniform::linearize, true);
 				}
 				if (drawMode == DrawMode::Specular)
 				{

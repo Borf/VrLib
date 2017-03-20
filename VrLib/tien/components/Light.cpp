@@ -131,7 +131,7 @@ namespace vrlib
 						if (type == Type::directional)
 							shadowMapDirectional = new vrlib::gl::FBO(1024*4, 1024*4, true, 0, true); //shadowmap
 						else
-							shadowMapDirectional = new vrlib::gl::FBO(512, 512, true, 0, true); //shadowmap
+							shadowMapDirectional = new vrlib::gl::FBO(512, 512, true, 0, true); //shadowmap for spotlights
 
 					float size = 5.0f * node->transform->scale.x;
 
@@ -150,8 +150,7 @@ namespace vrlib
 					if (type == Type::directional)
 						projectionMatrix = glm::ortho(-size, size, -size, size, 0.0f, 250.0f); //TODO: auto generate depth
 					else
-						//projectionMatrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 5.0f); //TODO: auto generate depth
-						projectionMatrix = glm::perspective(glm::radians(spotlightAngle), 1.0f, .01f, 10.0f); //TODO: autogenerate range
+						projectionMatrix = glm::perspective(glm::radians(spotlightAngle), 1.0f, .1f, range); //TODO: test if range works
 
 
 					if(type == Type::directional)
@@ -242,12 +241,12 @@ namespace vrlib
 					color.r = ((rgb >> 16) & 255) / 255.0f;
 				});*/
 
-				builder->addColorBox(color, [this](const glm::vec4 &newColor) {this->color = newColor; });
+				builder->addColorBox(color, [this](const glm::vec4 &newColor) {this->color = newColor; rebake(); });
 
 				builder->endGroup();
 
 				builder->beginGroup("Intensity");
-				builder->addFloatBox(intensity, 0, 180, [this](float newValue) { intensity = newValue; });
+				builder->addFloatBox(intensity, 0, 180, [this](float newValue) { intensity = newValue; rebake(); });
 				builder->endGroup();
 
 				builder->beginGroup("Light type");
@@ -261,29 +260,31 @@ namespace vrlib
 						type = Type::point;
 					else if (newValue == "Spot")
 						type = Type::spot;
+					rebake();
 					builder->updateComponentsPanel();
 				});
 				builder->endGroup();
 
 				builder->beginGroup("Spotlight Angle");
-				builder->addFloatBox(spotlightAngle, 0, 180, [this](float newValue) { spotlightAngle = newValue; });
+				builder->addFloatBox(spotlightAngle, 0, 180, [this](float newValue) { spotlightAngle = newValue; rebake(); });
 				builder->endGroup();
 
 				builder->beginGroup("Range");
-				builder->addFloatBox(range, 0, 100, [this](float newValue) { range = newValue; });
+				builder->addFloatBox(range, 0, 100, [this](float newValue) { range = newValue; rebake(); });
 				builder->endGroup();
 
 				builder->beginGroup("Ambient");
-				builder->addFloatBox(directionalAmbient, 0, 100, [this](float newValue) { directionalAmbient  = newValue; });
+				builder->addFloatBox(directionalAmbient, 0, 100, [this](float newValue) { directionalAmbient  = newValue; rebake(); });
 				builder->endGroup();
 
 				builder->beginGroup("Cutoff");
-				builder->addFloatBox(cutoff, 0, 1, [this](float newValue) { cutoff = newValue; });
+				builder->addFloatBox(cutoff, 0, 1, [this](float newValue) { cutoff = newValue; rebake(); });
 				builder->endGroup();
 
 				builder->beginGroup("Baking");
 				builder->addComboBox(baking == Baking::realtime ? "Realtime" : "Baked", { "Realtime", "Baked" }, [this](const std::string &newValue) {
 					baking = newValue == "Realtime" ? Baking::realtime : Baking::baked;
+					rebake();
 				});
 				builder->endGroup();
 
@@ -298,6 +299,7 @@ namespace vrlib
 						shadow = Shadow::shadowmap;
 					else if (newValue == "Shadowvolume")
 						shadow = Shadow::shadowvolume;
+					rebake();
 				});				
 				builder->endGroup();
 			}

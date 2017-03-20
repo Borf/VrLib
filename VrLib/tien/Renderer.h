@@ -74,6 +74,7 @@ namespace vrlib
 				textureFactor,
 				color,
 				showAlpha,
+				linearize,
 			};
 			vrlib::gl::Shader<SimpleDebugUniform>* simpleDebugShader;
 
