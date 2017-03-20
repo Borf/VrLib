@@ -374,6 +374,8 @@ namespace vrlib
 			glDisable(GL_CULL_FACE);
 
 			//We're done drawing, now let's add more stuff for debugging if needed
+
+
 			if (drawPhysicsDebug)
 			{
 				scene.world->debugDrawWorld();
@@ -398,6 +400,32 @@ namespace vrlib
 			//draw the boundingbox of the light. TODO: improve this code
 			if (drawLightDebug)
 			{
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				glBindVertexArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+				physicsDebugShader->use();
+				physicsDebugShader->setUniform(PhysicsDebugUniform::projectionMatrix, projectionMatrix);
+
+				overlayVao->bind();
+
+				for (auto l : scene.lights)
+				{
+					if (l->light->type != components::Light::Type::spot)
+						continue;
+
+					float horSize = tan(glm::radians(l->light->spotlightAngle / 2)) * l->light->range;
+					glm::mat4 mm = modelMatrix;
+					mm *= l->transform->transform;
+					mm = glm::scale(mm, glm::vec3(l->light->range, horSize, horSize)); //todo: realrange?
+					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, mm);
+
+					glDrawArrays(GL_TRIANGLES, cone.x, cone.y - cone.x);
+				}
+				overlayVao->unBind();
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
 				std::vector<vrlib::gl::VertexP3C4> verts;
 				for (auto l : visibleLights)
 				{
@@ -890,6 +918,17 @@ namespace vrlib
 			vrlib::gl::setP3(vert, glm::vec3(0.262869, -0.809012, -0.525738)); verts.push_back(vert);
 
 			sphere.y = verts.size();
+			cone.x = verts.size();
+
+			const float inc = glm::pi<float>() / 8;
+			for (float angle = 0; angle < 2 * glm::pi<float>(); angle += inc)
+			{
+				vrlib::gl::setP3(vert, glm::vec3(0, 0, 0));								verts.push_back(vert);
+				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle), sin(angle)));			verts.push_back(vert);
+				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle+inc), sin(angle+inc)));	verts.push_back(vert);
+			}
+			cone.y = verts.size();
+
 			overlayVerts = new vrlib::gl::VBO<vrlib::gl::VertexP3>();
 			overlayVerts->setData(verts.size(), verts.data(), GL_STATIC_DRAW);
 			glDisableVertexAttribArray(0);
