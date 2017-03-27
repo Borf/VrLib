@@ -57,6 +57,7 @@ namespace vrlib
 			int getWidth();
 
 			void saveAsFile(const std::string &fileName);
+			void saveAsFileBackground(const std::string &fileName);
 
 		};
 	}

@@ -33,7 +33,8 @@ namespace vrlib
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 				gl::setAttributes<gl::VertexP3N3T2>(verts.data());
-				texture->bind();
+				if(texture)
+					texture->bind();
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 				glDisableVertexAttribArray(0);
 				glDisableVertexAttribArray(1);

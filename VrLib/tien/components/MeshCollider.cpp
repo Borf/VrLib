@@ -16,7 +16,7 @@ namespace vrlib
 	{
 		namespace components
 		{
-			const float margin = 0.001f;
+			const float margin = 0.01f;
 
 
 			MeshCollider::MeshCollider(Node* node, bool convex)

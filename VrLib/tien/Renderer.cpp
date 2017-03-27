@@ -280,7 +280,19 @@ namespace vrlib
 
 
 				float adjustedRange = l->realRange();
-				postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
+
+				if (l->type == components::Light::Type::point)
+					postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
+				else //if(l->type == components::Light::Type::spot)
+				{
+					float horSize = tan(glm::radians(l->spotlightAngle / 2)) * l->range;
+					glm::mat4 mm = modelViewMatrix;
+					mm *= t->transform;
+					mm = glm::scale(mm, glm::vec3(l->range, horSize, horSize)); //todo: realrange?
+					postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, mm);
+
+				}
+
 				postLightingShader->setUniform(PostLightingUniform::lightType, (int)l->type);
 				postLightingShader->setUniform(PostLightingUniform::lightPosition, pos);
 
@@ -294,7 +306,7 @@ namespace vrlib
 				postLightingShader->setUniform(PostLightingUniform::lightSpotAngle, glm::radians(l->spotlightAngle/2.0f));
 				postLightingShader->setUniform(PostLightingUniform::lightAmbient, l->directionalAmbient);
 
-				if (l->type == components::Light::Type::directional || l->type == components::Light::Type::spot) //TODO: use mesh for spot
+				if (l->type == components::Light::Type::directional)
 				{
 					glDrawArrays(GL_QUADS, 0, 4);
 					Renderer::drawCalls++;
@@ -304,7 +316,19 @@ namespace vrlib
 					postLightingStencilShader->use();
 					postLightingStencilShader->setUniform(PostLightingStencilUniform::lightType, (int)l->type);
 					postLightingStencilShader->setUniform(PostLightingStencilUniform::projectionMatrix, projectionMatrix);
-					postLightingStencilShader->setUniform(PostLightingStencilUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
+
+					if(l->type == components::Light::Type::point)
+						postLightingStencilShader->setUniform(PostLightingStencilUniform::modelViewMatrix, glm::scale(glm::translate(modelViewMatrix, pos), glm::vec3(adjustedRange, adjustedRange, adjustedRange)));
+					else //if(l->type == components::Light::Type::spot)
+					{
+						float horSize = tan(glm::radians(l->spotlightAngle / 2)) * l->range;
+						glm::mat4 mm = modelViewMatrix;
+						mm *= t->transform;
+						mm = glm::scale(mm, glm::vec3(l->range, horSize, horSize)); //todo: realrange?
+						postLightingStencilShader->setUniform(PostLightingStencilUniform::modelViewMatrix, mm);
+
+					}
+
 
 					glEnable(GL_STENCIL_TEST);
 					glStencilFunc(GL_ALWAYS, 0x80, 0xFF);
@@ -315,16 +339,24 @@ namespace vrlib
 					glColorMask(false, false, false, false);
 					glDisable(GL_CULL_FACE);
 					glEnable(GL_DEPTH_TEST);
-					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
-					Renderer::drawCalls++;
-					glColorMask(true, true,true,true);
-					postLightingShader->use();
+					if (l->type == components::Light::Type::point)
+						glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					else
+						glDrawArrays(GL_TRIANGLES, cone.x, cone.y - cone.x);
 
+					Renderer::drawCalls++;
+
+					glStencilFunc(GL_NOTEQUAL, 0x80, 0xFF);
 					glEnable(GL_CULL_FACE);
 					glCullFace(GL_FRONT);
 					glDisable(GL_DEPTH_TEST);
-					glStencilFunc(GL_NOTEQUAL, 0x80, 0xFF);
-					glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					glColorMask(true, true, true, true);
+					postLightingShader->use();
+
+					if (l->type == components::Light::Type::point)
+						glDrawArrays(GL_TRIANGLES, sphere.x, sphere.y - sphere.x);
+					else
+						glDrawArrays(GL_TRIANGLES, cone.x, cone.y - cone.x);
 					Renderer::drawCalls++;
 					glDisable(GL_STENCIL_TEST);
 				}
@@ -923,9 +955,13 @@ namespace vrlib
 			const float inc = glm::pi<float>() / 8;
 			for (float angle = 0; angle < 2 * glm::pi<float>(); angle += inc)
 			{
-				vrlib::gl::setP3(vert, glm::vec3(0, 0, 0));								verts.push_back(vert);
+				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle + inc), sin(angle + inc)));	verts.push_back(vert);
 				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle), sin(angle)));			verts.push_back(vert);
-				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle+inc), sin(angle+inc)));	verts.push_back(vert);
+				vrlib::gl::setP3(vert, glm::vec3(0, 0, 0));								verts.push_back(vert);
+
+				vrlib::gl::setP3(vert, glm::vec3(1, 0, 0));								verts.push_back(vert);
+				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle), sin(angle)));			verts.push_back(vert);
+				vrlib::gl::setP3(vert, glm::vec3(1, cos(angle + inc), sin(angle + inc)));	verts.push_back(vert);
 			}
 			cone.y = verts.size();
 

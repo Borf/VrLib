@@ -2,6 +2,7 @@
 #include <VrLib/Log.h>
 #include <glm/glm.hpp>
 #include <VrLib/stb_image_write.h>
+#include <thread>
 using vrlib::Log;
 
 namespace vrlib
@@ -246,8 +247,47 @@ namespace vrlib
 			char* data = new char[getWidth() * getHeight() * 4];
 			use();
 			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-			stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
+			const int rowSize = getWidth() * 4;
+			char* row = new char[rowSize];
+			for (int y = 0; y < getHeight() / 2; y++)
+			{
+				memcpy(row, data + rowSize * y, rowSize);
+				memcpy(data + rowSize * y, data + rowSize * (getHeight() - 1 - y), rowSize);
+				memcpy(data + rowSize * (getHeight()-1-y), row, rowSize);
+			}
+
+			if (fileName.substr(fileName.size() - 4) == ".bmp")
+				stbi_write_bmp(fileName.c_str(), getWidth(), getHeight(), 4, data);
+			else if (fileName.substr(fileName.size() - 4) == ".tga")
+				stbi_write_tga(fileName.c_str(), getWidth(), getHeight(), 4, data);
+			else
+				stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
 			delete[] data;
+		}
+		void FBO::saveAsFileBackground(const std::string &fileName)
+		{
+			char* data = new char[getWidth() * getHeight() * 4];
+			use();
+			glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			const int rowSize = getWidth() * 4;
+			char* row = new char[rowSize];
+			for (int y = 0; y < getHeight() / 2; y++)
+			{
+				memcpy(row, data + rowSize * y, rowSize);
+				memcpy(data + rowSize * y, data + rowSize * (getHeight() - 1 - y), rowSize);
+				memcpy(data + rowSize * (getHeight() - 1 - y), row, rowSize);
+			}
+			std::thread thread([data, fileName, this]()
+			{
+				if (fileName.substr(fileName.size() - 4) == ".bmp")
+					stbi_write_bmp(fileName.c_str(), getWidth(), getHeight(), 4, data);
+				else if (fileName.substr(fileName.size() - 4) == ".tga")
+					stbi_write_tga(fileName.c_str(), getWidth(), getHeight(), 4, data);
+				else
+					stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
+				delete[] data;
+			});
+			thread.detach();
 		}
 
 	}
