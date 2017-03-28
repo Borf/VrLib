@@ -13,7 +13,7 @@ namespace vrlib
 		FBO::FBO(int width, int height, bool depth /*= false*/, int textureCount, bool hasDepthTexture)
 		{
 			this->depthTexture = 0;
-			oldFBO = -1;
+			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
 			this->textureCount = textureCount;
 			depthBuffer = 0;
 			fboId = 0;
@@ -79,7 +79,7 @@ namespace vrlib
 		FBO::FBO(int width, int height, bool hasDepthTexture, Type buf1, Type buf2, Type buf3, Type buf4)
 		{
 			this->depthTexture = 0;
-			oldFBO = -1;
+			glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
 			this->textureCount = textureCount;
 			depthBuffer = 0;
 			fboId = 0;
