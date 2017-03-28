@@ -264,7 +264,7 @@ namespace vrlib
 				stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
 			delete[] data;
 		}
-		void FBO::saveAsFileBackground(const std::string &fileName)
+		void FBO::saveAsFileBackground(const std::string &fileName, std::function<void()> callback)
 		{
 			char* data = new char[getWidth() * getHeight() * 4];
 			use();
@@ -277,7 +277,7 @@ namespace vrlib
 				memcpy(data + rowSize * y, data + rowSize * (getHeight() - 1 - y), rowSize);
 				memcpy(data + rowSize * (getHeight() - 1 - y), row, rowSize);
 			}
-			std::thread thread([data, fileName, this]()
+			std::thread thread([data, fileName, this, callback]()
 			{
 				if (fileName.substr(fileName.size() - 4) == ".bmp")
 					stbi_write_bmp(fileName.c_str(), getWidth(), getHeight(), 4, data);
@@ -286,6 +286,7 @@ namespace vrlib
 				else
 					stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
 				delete[] data;
+				callback();
 			});
 			thread.detach();
 		}

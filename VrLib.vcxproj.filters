@@ -144,9 +144,6 @@
     <ClInclude Include="VrLib\drivers\HydraDriver.h">
       <Filter>drivers</Filter>
     </ClInclude>
-    <ClInclude Include="VrLib\json.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VrLib\Kernel_Windows.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -484,9 +481,6 @@
     </ClCompile>
     <ClCompile Include="VrLib\drivers\HydraDriver.cpp">
       <Filter>drivers</Filter>
-    </ClCompile>
-    <ClCompile Include="VrLib\json.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\gl\VBO.cpp">
       <Filter>gl</Filter>

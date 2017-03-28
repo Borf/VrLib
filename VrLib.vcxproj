@@ -143,7 +143,6 @@
     <ClInclude Include="VrLib\gui\Window.h" />
     <ClInclude Include="VrLib\HtcVive.h" />
     <ClInclude Include="VrLib\Image.h" />
-    <ClInclude Include="VrLib\json.h" />
     <ClInclude Include="VrLib\json.hpp" />
     <ClInclude Include="VrLib\Kernel.h" />
     <ClInclude Include="VrLib\Kernel_Windows.h" />
@@ -255,7 +254,6 @@
     <ClCompile Include="VrLib\gui\Window.cpp" />
     <ClCompile Include="VrLib\HtcVive.cpp" />
     <ClCompile Include="VrLib\Image.cpp" />
-    <ClCompile Include="VrLib\json.cpp" />
     <ClCompile Include="VrLib\Kernel.cpp" />
     <ClCompile Include="VrLib\Kernel_Windows.cpp" />
     <ClCompile Include="VrLib\Log.cpp" />
