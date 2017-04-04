@@ -42,7 +42,7 @@ namespace vrlib
 			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
 			world->setGravity(btVector3(0, -9.8f, 0));
 			world->setDebugDrawer(debugDrawer = new DebugDraw());
-			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe);
+			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawContactPoints | btIDebugDraw::DBG_DrawNormals);
 		}
 
 
@@ -318,6 +318,11 @@ namespace vrlib
 		{
 			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(from.x(), from.y(), from.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
 			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(to.x(), to.y(), to.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
+		}
+		void DebugDraw::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color)
+		{
+			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(PointOnB.x(), PointOnB.y(), PointOnB.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
+			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(PointOnB.x() + .1 * normalOnB.x(), PointOnB.y() + .1 * normalOnB.y(), PointOnB.z() + .1 * normalOnB.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
 		}
 
 

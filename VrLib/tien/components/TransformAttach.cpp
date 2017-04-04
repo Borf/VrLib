@@ -50,6 +50,12 @@ namespace vrlib
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
 				glm::quat rot(mat);
 
+				node->fortree([](Node* n)
+				{
+					if (n->rigidBody && n->rigidBody->body)
+						n->rigidBody->body->activate(true);
+				});
+
 
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
 				if (rigidBody && rigidBody->body && rigidBody->getType() == RigidBody::Type::Dynamic)

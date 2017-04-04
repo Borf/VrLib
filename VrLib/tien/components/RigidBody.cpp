@@ -72,7 +72,7 @@ namespace vrlib
 					shape->calculateLocalInertia(mass, fallInertia);
 				btRigidBody::btRigidBodyConstructionInfo cInfo(mass, this, shape, fallInertia);
 				body = new btRigidBody(cInfo);
-
+				body->setLinearFactor(btVector3(0.8, 0.8, 0.8));
 				body->setFriction(1.0f);
 				body->setRestitution(0.0f);
 				body->setUserPointer(node);
@@ -80,8 +80,8 @@ namespace vrlib
 					body->setCollisionFlags(btCollisionObject::CF_KINEMATIC_OBJECT);
 
 				world->addRigidBody(body);
-				body->setActivationState(DISABLE_DEACTIVATION);
-				body->setActivationState(ACTIVE_TAG);
+//				body->setActivationState(DISABLE_DEACTIVATION);
+//				body->setActivationState(ACTIVE_TAG);
 			}
 
 			void RigidBody::updateCollider(btDynamicsWorld* world)
