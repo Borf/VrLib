@@ -1,10 +1,13 @@
 #pragma once
 
 #include "../Component.h"
-
 #include <glm/glm.hpp>
 
-class btCollisionShape;
+namespace physx
+{
+	class PxShape;
+	class PxPhysics;
+}
 
 namespace vrlib
 {
@@ -16,7 +19,7 @@ namespace vrlib
 			{
 			public:
 				glm::vec3 offset;
-				virtual btCollisionShape* getShape() = 0;
+				virtual physx::PxShape* getShape(physx::PxPhysics* physics, const glm::vec3 &scale) = 0;
 
 			};
 		}

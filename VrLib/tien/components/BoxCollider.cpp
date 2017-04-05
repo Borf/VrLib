@@ -4,9 +4,9 @@
 #include "AnimatedModelRenderer.h"
 #include "Transform.h"
 #include "../Node.h"
+#include "../Scene.h"
 #include <VrLib/Model.h>
 #include <VrLib/json.hpp>
-#include <BulletCollision/CollisionShapes/btBoxShape.h>
 
 namespace vrlib
 {
@@ -37,28 +37,28 @@ namespace vrlib
 //					size *= transform->scale;
 					offset *= transform->scale;
 				}
-				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
 			BoxCollider::BoxCollider(const glm::vec3 &size)
 			{
 				this->size = size;
-				shape = new btBoxShape(btVector3(size.x / 2.0f, size.y / 2.0f, size.z / 2.0f));
 			}
 
-			BoxCollider* BoxCollider::fromJson(const json & json)
+			BoxCollider* BoxCollider::fromJson(const json & json, Scene* scene)
 			{
 				BoxCollider* ret = new BoxCollider();
 				for (int i = 0; i < 3; i++)
 					ret->offset[i] = json["offset"][i];
 				for (int i = 0; i < 3; i++)
 					ret->size[i] = json["size"][i];
-				ret->shape = new btBoxShape(btVector3(ret->size.x / 2.0f, ret->size.y / 2.0f, ret->size.z / 2.0f));
 				return ret;
 			}
 
-			btCollisionShape* BoxCollider::getShape()
+			physx::PxShape* BoxCollider::getShape(physx::PxPhysics* physics, const glm::vec3 &scale)
 			{
+				physx::PxShape * shape = physics->createShape(physx::PxBoxGeometry(size.x / 2 * scale.x, size.y / 2 * scale.x, size.z / 2 * scale.z), 
+					*node->getScene().gMaterial);
+				shape->setLocalPose(physx::PxTransform(physx::PxVec3(offset.x * scale.x, offset.y * scale.y, offset.z * scale.z)));
 				return shape;
 			}
 
@@ -85,7 +85,7 @@ namespace vrlib
 					builder->addTextBox(builder->toString(size[i]), [this, i](const std::string & newValue) 
 					{ 
 						size[i] = (float)atof(newValue.c_str());  
-						shape->setImplicitShapeDimensions(btVector3(size.x/2, size.y/2, size.z/2));
+//						shape->setImplicitShapeDimensions(btVector3(size.x/2, size.y/2, size.z/2));
 					});
 				builder->endGroup();
 

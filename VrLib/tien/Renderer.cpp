@@ -13,7 +13,6 @@
 #include <VrLib/gl/Vertex.h>
 #include <VrLib/math/Frustum.h>
 
-#include <btBulletCollisionCommon.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -410,7 +409,7 @@ namespace vrlib
 
 			if (drawPhysicsDebug)
 			{
-				scene.world->debugDrawWorld();
+/*				scene.world->debugDrawWorld();
 				if (scene.debugDrawer->verts.size() > 0)
 				{
 					glDisable(GL_DEPTH_TEST);
@@ -426,7 +425,7 @@ namespace vrlib
 					glDrawArrays(GL_LINES, 0, scene.debugDrawer->verts.size());
 					scene.debugDrawer->flush();
 					glEnable(GL_DEPTH_TEST);
-				}
+				}*/
 			}
 			
 			//draw the boundingbox of the light. TODO: improve this code
@@ -548,7 +547,6 @@ namespace vrlib
 					gl::setAttributes<gl::VertexP3C4>(&verts[0]);
 					glLineWidth(4.0f);
 					glDrawArrays(GL_LINES, 0, verts.size());
-					scene.debugDrawer->flush();
 				}
 				glEnable(GL_DEPTH_TEST);
 			}

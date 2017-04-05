@@ -10,7 +10,7 @@ namespace vrlib
 		{
 			class SphereCollider : public Collider
 			{
-				virtual btCollisionShape* getShape() override;
+				virtual physx::PxShape* getShape(physx::PxPhysics* physics, const glm::vec3 &scale) override;
 				virtual json toJson(json &meshes) const override;
 
 			};

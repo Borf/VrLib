@@ -4,7 +4,6 @@
 #include "../Scene.h"
 #include <VrLib/tien/Node.h>
 #include <VrLib/json.hpp>
-#include <btBulletDynamicsCommon.h>
 
 namespace vrlib
 {
@@ -14,7 +13,6 @@ namespace vrlib
 		{
 			TransformAttach::TransformAttach(const vrlib::PositionalDevice &device) : device(device)
 			{
-				constraint = nullptr;
 			}
 
 
@@ -23,9 +21,6 @@ namespace vrlib
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
 				if (rigidBody)
 				{
-					rigidBody->body->setGravity(btVector3(0, -9.8f, 0));
-					if (constraint)
-						world->removeConstraint(constraint);
 				}
 			}
 
@@ -50,15 +45,8 @@ namespace vrlib
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
 				glm::quat rot(mat);
 
-				node->fortree([](Node* n)
-				{
-					if (n->rigidBody && n->rigidBody->body)
-						n->rigidBody->body->activate(true);
-				});
-
-
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
-				if (rigidBody && rigidBody->body && rigidBody->getType() == RigidBody::Type::Dynamic)
+/*				if (rigidBody && rigidBody->body && rigidBody->getType() == RigidBody::Type::Dynamic)
 				{
 					node->getComponent<Transform>()->setGlobalRotation(rot);
 					btTransform t;
@@ -89,7 +77,7 @@ namespace vrlib
 						rigidBody->body->setWorldTransform(t);
 					}
 
-				}
+				}*/
 
 			}
 

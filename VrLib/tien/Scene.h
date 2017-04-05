@@ -4,9 +4,37 @@
 #include <list>
 #include <set>
 #include <VrLib/gl/Vertex.h>
-#include <btBulletDynamicsCommon.h>
+#include <PxPhysicsAPI.h>
 #include "components/Renderable.h"
 #include <VrLib/math/Frustum.h>
+
+#ifndef _DEBUG
+//#pragma comment(lib, "PhysX3GpuCHECKED_x86.lib")
+#pragma comment(lib, "PhysX3CHECKED_x86.lib")
+#pragma comment(lib, "PhysX3CookingCHECKED_x86.lib")
+#pragma comment(lib, "PhysX3CommonCHECKED_x86.lib")
+#pragma comment(lib, "PhysX3CharacterKinematicCHECKED_x86.lib")
+#pragma comment(lib, "PhysX3VehicleCHECKED.lib")
+#pragma comment(lib, "PhysX3ExtensionsCHECKED.lib")
+#pragma comment(lib, "PxTaskCHECKED_x86.lib")
+#pragma comment(lib, "PxPvdSDKCHECKED_x86.lib")
+#pragma comment(lib, "PxFoundationCHECKED_x86.lib")
+#pragma comment(lib, "PxPvdSDKCHECKED_x86.lib")
+#pragma comment(lib, "PxTaskCHECKED_x86.lib")
+#else
+//#pragma comment(lib, "PhysX3GpuDEBUG_x86.lib")
+#pragma comment(lib, "PhysX3DEBUG_x86.lib")
+#pragma comment(lib, "PhysX3CookingDEBUG_x86.lib")
+#pragma comment(lib, "PhysX3CommonDEBUG_x86.lib")
+#pragma comment(lib, "PhysX3CharacterKinematicDEBUG_x86.lib")
+#pragma comment(lib, "PhysX3VehicleDEBUG.lib")
+#pragma comment(lib, "PhysX3ExtensionsDEBUG.lib")
+#pragma comment(lib, "PxTaskDEBUG_x86.lib")
+#pragma comment(lib, "PxPvdSDKDEBUG_x86.lib")
+#pragma comment(lib, "PxFoundationDEBUG_x86.lib")
+#pragma comment(lib, "PxPvdSDKDEBUG_x86.lib")
+#pragma comment(lib, "PxTaskDEBUG_x86.lib")
+#endif
 
 
 namespace vrlib
@@ -15,21 +43,6 @@ namespace vrlib
 	namespace tien
 	{
 		namespace components { class Light;  }
-
-		class DebugDraw : public btIDebugDraw
-		{
-			int debugmode;
-		public:
-			std::vector<vrlib::gl::VertexP3C4> verts;
-			void flush();
-			virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override;
-			virtual void drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color) override;
-			virtual void reportErrorWarning(const char* warningString) override {	}
-			virtual void draw3dText(const btVector3& location, const char* textString) override {	}
-			virtual void setDebugMode(int debugMode) override { this->debugmode = debugMode; }
-			virtual int getDebugMode() const override { return this->debugmode; }
-		};
-
 
 		class Scene : public Node
 		{
@@ -64,13 +77,17 @@ namespace vrlib
 			friend class components::Light;
 
 
-			btBroadphaseInterface*                  broadphase;
-			btDefaultCollisionConfiguration*        collisionConfiguration;
-			btCollisionDispatcher*                  dispatcher;
-			btSequentialImpulseConstraintSolver*    solver;
+			const float						physicsRate = 1 / 90.0f; // physics speed
+			float							physicsTimer = 0;
+			physx::PxDefaultAllocator		gAllocator;
+			physx::PxDefaultErrorCallback	gErrorCallback;
+			physx::PxFoundation*			gFoundation = NULL;
+			physx::PxDefaultCpuDispatcher*	gDispatcher = NULL;
+			physx::PxPvd*					gPvd = NULL;
 		public:
-			btDiscreteDynamicsWorld*                world;
-			DebugDraw*								debugDrawer;
+			physx::PxMaterial*				gMaterial = NULL;
+			physx::PxPhysics*				gPhysics = NULL;
+			physx::PxScene*					gScene = NULL;
 
 			void reset();
 

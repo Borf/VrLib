@@ -60,12 +60,10 @@ namespace vrlib
 				this->position = glm::vec3(parentMat * glm::vec4(position, 1));
 
 				auto rigidBody = node->getComponent<RigidBody>();
-				if (resetPhyics && rigidBody && rigidBody->body)
+				if (resetPhyics && rigidBody && rigidBody->actor)
 				{
-					btTransform t;
-					rigidBody->body->getMotionState()->getWorldTransform(t);
-					rigidBody->body->setWorldTransform(t);
-					rigidBody->body->setLinearVelocity(btVector3(0, 0, 0));
+					rigidBody->actor->setGlobalPose(physx::PxTransform(physx::PxVec3(position.x, position.y, position.z)));
+
 				}
 			}
 

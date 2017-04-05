@@ -7,7 +7,7 @@ namespace vrlib
 	{
 		namespace components
 		{
-			btCollisionShape* SphereCollider::getShape()
+			physx::PxShape* SphereCollider::getShape(physx::PxPhysics* physics, const glm::vec3 &scale)
 			{
 				return nullptr;
 			}

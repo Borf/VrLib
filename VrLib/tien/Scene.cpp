@@ -11,8 +11,6 @@
 #include <VrLib/math/Ray.h>
 #include <VrLib/Model.h>
 
-#include <btBulletDynamicsCommon.h>
-
 #include <algorithm>
 
 
@@ -24,7 +22,6 @@ namespace vrlib
 		Scene::Scene() : Node("Root", nullptr)
 		{
 			cameraNode = nullptr;
-			world = nullptr;
 			frustum = new math::Frustum();
 		}
 
@@ -35,25 +32,41 @@ namespace vrlib
 
 		void Scene::init()
 		{
-			broadphase = new btDbvtBroadphase();
-			collisionConfiguration = new btDefaultCollisionConfiguration();
-			dispatcher = new btCollisionDispatcher(collisionConfiguration);
-			solver = new btSequentialImpulseConstraintSolver();
-			world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-			world->setGravity(btVector3(0, -9.8f, 0));
-			world->setDebugDrawer(debugDrawer = new DebugDraw());
-			debugDrawer->setDebugMode(btIDebugDraw::DBG_DrawWireframe | btIDebugDraw::DBG_DrawContactPoints | btIDebugDraw::DBG_DrawNormals);
+			gFoundation = PxCreateFoundation(PX_FOUNDATION_VERSION, gAllocator, gErrorCallback);
+
+			gPvd = PxCreatePvd(*gFoundation);
+			physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("localhost", 5425, 10);
+			gPvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+
+			gPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *gFoundation, physx::PxTolerancesScale(), true, gPvd);
+
+			physx::PxSceneDesc sceneDesc(gPhysics->getTolerancesScale());
+			sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
+			gDispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+			sceneDesc.cpuDispatcher = gDispatcher;
+			sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
+			gScene = gPhysics->createScene(sceneDesc);
+
+			physx::PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
+			if (pvdClient)
+			{
+				pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+				pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+				pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+			}
+
+			gMaterial = gPhysics->createMaterial(0.8f, 0.8f, 0.0f);
 		}
 
 
 		void Scene::addRigidBody(Node* node)
 		{
-			node->rigidBody->init(world);
+			node->rigidBody->init(gScene);
 		}
 		void Scene::addCollider(Node* node)
 		{
 			if (node->rigidBody)
-				node->rigidBody->updateCollider(world);
+				node->rigidBody->updateCollider(gScene);
 			else
 				throw "Not supported yet";
 		}
@@ -108,8 +121,18 @@ namespace vrlib
 				treeDirty = false;
 			}
 
-			if(world && elapsedTime > 0)
-				world->stepSimulation(elapsedTime);
+			if (gScene && elapsedTime > 0)
+			{
+				physicsTimer += elapsedTime;
+				while (physicsTimer > physicsRate)
+				{
+					physicsTimer -= physicsRate;
+					gScene->simulate(physicsRate);
+					gScene->fetchResults(true);
+				}
+			}
+
+
 			fortree([this, &elapsedTime](Node* n)
 			{
 				if (!n->enabled)
@@ -125,13 +148,12 @@ namespace vrlib
 			{
 				if (!n->enabled)
 					return;
-				components::Transform* transform = n->getComponent<components::Transform>();
-				if (transform)
+				if (n->transform && !n->rigidBody)
 				{
-					transform->buildTransform();
-					transform->globalTransform = parentTransform * transform->transform;
+					n->transform->buildTransform();
+					n->transform->globalTransform = parentTransform * n->transform->transform;
 					for (auto c : n->children)
-						updateTransforms(c, transform->globalTransform);
+						updateTransforms(c, n->transform->globalTransform);
 				}
 				else
 					for (auto c : n->children)
@@ -146,23 +168,13 @@ namespace vrlib
 				for (Component* c : n->components)
 					c->postUpdate(*this);
 			});
-			updateTransforms(this, glm::mat4()); //TODO: optimize this, don't do the entire tree, only dynamic objects?
+			//updateTransforms(this, glm::mat4()); //TODO: optimize this, don't do the entire tree, only dynamic objects?
 
 		}
 
 		
 		
 
-		class CollisionTest : public btCollisionWorld::ContactResultCallback
-		{
-		public:
-			bool collision = false;
-			virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) override
-			{
-				collision = true;
-				return 0;
-			}
-		};
 		void Scene::reset()
 		{
 			while (getFirstChild())
@@ -181,15 +193,16 @@ namespace vrlib
 				return false;
 			if (!n1->rigidBody || !n2->rigidBody)
 				return false; // needs a rigidbody for collision testing
-			if (!n1->getComponent<vrlib::tien::components::RigidBody>()->body || !n2->getComponent<vrlib::tien::components::RigidBody>()->body)
+			if (!n1->getComponent<vrlib::tien::components::RigidBody>()->actor || !n2->getComponent<vrlib::tien::components::RigidBody>()->actor)
 				return false;
 
 
-			CollisionTest test;
+			/*CollisionTest test;
 			world->contactPairTest(n1->getComponent<vrlib::tien::components::RigidBody>()->body,
 				n2->getComponent<vrlib::tien::components::RigidBody>()->body,
 				test);
-			return test.collision;
+			return test.collision;*/
+			return false;
 		}
 
 		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics) const
@@ -224,7 +237,7 @@ namespace vrlib
 		{
 			if (physics)
 			{
-				class Callback : public btCollisionWorld::RayResultCallback
+/*				class Callback : public btCollisionWorld::RayResultCallback
 				{
 					std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback;
 					const math::Ray& ray;
@@ -253,7 +266,7 @@ namespace vrlib
 				};
 				Callback _callback(callback, ray);
 				glm::vec3 worldTarget = ray.mOrigin + 1000.0f * ray.mDir;
-				world->rayTest(btVector3(ray.mOrigin.x, ray.mOrigin.y, ray.mOrigin.z), btVector3(worldTarget.x, worldTarget.y, worldTarget.z), _callback);
+				//world->rayTest(btVector3(ray.mOrigin.x, ray.mOrigin.y, ray.mOrigin.z), btVector3(worldTarget.x, worldTarget.y, worldTarget.z), _callback);*/
 			}
 			else
 			{
@@ -298,19 +311,8 @@ namespace vrlib
 
 
 
-		void DebugDraw::flush()
+/*		void DebugDraw::flush()
 		{
-			/*if (!verts.empty())
-			{
-				glLineWidth(2);
-				glColor3f(1.0, 0, 0);
-				vrlib::gl::setAttributes<vrlib::gl::VertexP3N3T2>(&verts[0]);
-				glDrawArrays(GL_LINES, 0, verts.size());
-				verts.clear();
-				glDisableVertexAttribArray(0);
-				glDisableVertexAttribArray(1);
-				glDisableVertexAttribArray(2);
-			}*/
 			verts.clear();
 		}
 
@@ -324,7 +326,7 @@ namespace vrlib
 			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(PointOnB.x(), PointOnB.y(), PointOnB.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
 			verts.push_back(vrlib::gl::VertexP3C4(glm::vec3(PointOnB.x() + .1 * normalOnB.x(), PointOnB.y() + .1 * normalOnB.y(), PointOnB.z() + .1 * normalOnB.z()), glm::vec4(color.x(), color.y(), color.z(), 1)));
 		}
-
+		*/
 
 	}
 }

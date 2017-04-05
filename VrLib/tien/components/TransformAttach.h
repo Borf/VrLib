@@ -20,8 +20,6 @@ namespace vrlib
 			class TransformAttach : public Component
 			{
 				const vrlib::PositionalDevice &device;
-				btPoint2PointConstraint* constraint;
-				btDiscreteDynamicsWorld* world;
 			public:
 				TransformAttach(const vrlib::PositionalDevice &device);
 				~TransformAttach();

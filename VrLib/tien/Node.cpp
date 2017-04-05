@@ -130,7 +130,7 @@ namespace vrlib
 					else if (c["type"] == "collider")
 					{
 						if(c["collider"] == "box")
-							addComponent(vrlib::tien::components::BoxCollider::fromJson(c));
+							addComponent(vrlib::tien::components::BoxCollider::fromJson(c, &getScene()));
 						if (c["collider"] == "mesh")
 						{
 							bool convex = true;
@@ -282,14 +282,14 @@ namespace vrlib
 				{
 					if (rigidBody)
 					{
-						if (rigidBody->body->getCollisionShape() == components::RigidBody::emptyShape)
+						/*if (rigidBody->body->getCollisionShape() == components::RigidBody::emptyShape)
 						{ //if the body doesn't have a collisionshape, the worldtransform will change due to the offset calculation in the getTransform in the rigidbody
 							btTransform wt = rigidBody->body->getWorldTransform();
 							glm::vec3 offset = getComponent<components::Collider>()->offset; //TODO: null check
 							wt.setOrigin(wt.getOrigin() + btVector3(offset.x, offset.y, offset.z));
 							rigidBody->body->setWorldTransform(wt);
 						}
-						rigidBody->updateCollider(getScene().world);
+						rigidBody->updateCollider(getScene().world);*/
 					}
 				}
 

@@ -6,19 +6,12 @@
 #include <VrLib/tien/components/Transform.h>
 #include <VrLib/tien/components/RigidBody.h>
 
-#include <btBulletDynamicsCommon.h>
-#include <BulletCollision/CollisionShapes/btShapeHull.h>
-#include <BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
-
 namespace vrlib
 {
 	namespace tien
 	{
 		namespace components
 		{
-			const float margin = 0.01f;
-
-
 			MeshCollider::MeshCollider(Node* node, bool convex)
 			{
 				this->convex = convex;
@@ -40,7 +33,7 @@ namespace vrlib
 
 				this->offset = node->transform->getGlobalScale() * centerOfGravity;
 
-				if (convex)
+		/*		if (convex)
 				{
 					btConvexHullShape* objShape = new btConvexHullShape();
 					objShape->setMargin(margin);
@@ -80,11 +73,11 @@ namespace vrlib
 					btBvhTriangleMeshShape* objShape = new btBvhTriangleMeshShape(m_indexVertexArrays, true, aabbMin, aabbMax);
 					shape = objShape;
 					shape->setMargin(margin);
-				}
+				}*/
 			}
 
 
-			btCollisionShape* MeshCollider::getShape()
+			physx::PxShape* MeshCollider::getShape(physx::PxPhysics* physics, const glm::vec3 &scale)
 			{
 				return shape;
 			}
