@@ -77,7 +77,7 @@ namespace vrlib
 		for (std::map<std::string, std::list<keyhandler> >::iterator it = keyHandlers.begin(); it != keyHandlers.end(); it++)
 		{
 			float speed = (float)(0.05 * elapsedTime);
-			if (it->first == "Wand")
+			if (it->first == "Wand" || it->first == "Wand2")
 				speed *= .333f;
 
 			for (std::list<keyhandler>::iterator it2 = it->second.begin(); it2 != it->second.end(); it2++)
