@@ -112,7 +112,10 @@ namespace vrlib
 					if (c.find("type") == c.end())
 						continue;
 					if (c["type"] == "transform")
+					{
 						addComponent(new vrlib::tien::components::Transform(c));
+						transform->buildTransform((parent && parent->transform) ? parent->transform->globalTransform : glm::mat4());
+					}
 					else if (c["type"] == "camera")
 						addComponent(new vrlib::tien::components::Camera(c));
 					else if (c["type"] == "modelrenderer")
@@ -151,8 +154,6 @@ namespace vrlib
 						}
 					}
 				}
-
-
 
 			if(data.find("children") != data.end())
 				for (auto c : data["children"])
@@ -290,6 +291,7 @@ namespace vrlib
 							rigidBody->body->setWorldTransform(wt);
 						}
 						rigidBody->updateCollider(getScene().world);*/
+						rigidBody->updateCollider(getScene().gScene);
 					}
 				}
 

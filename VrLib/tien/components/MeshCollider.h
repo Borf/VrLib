@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Collider.h"
+#include <PxPhysicsAPI.h>
 
 namespace vrlib
 {

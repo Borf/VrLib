@@ -2,6 +2,7 @@
 #include <VrLib/json.hpp>
 #include <VrLib/Model.h>
 #include <VrLib/tien/Node.h>
+#include <VrLib/tien/Scene.h>
 #include <VrLib/tien/components/ModelRenderer.h>
 #include <VrLib/tien/components/Transform.h>
 #include <VrLib/tien/components/RigidBody.h>
@@ -31,49 +32,52 @@ namespace vrlib
 						convex = true;
 				}
 
-				this->offset = node->transform->getGlobalScale() * centerOfGravity;
+				glm::vec3 scale = node->transform->getGlobalScale();
+				//this->offset = scale * centerOfGravity;
+				for (size_t i = 0; i < verts.second.size(); i++)
+					verts.second[i] *= scale;
 
-		/*		if (convex)
+
+				if (convex)
 				{
-					btConvexHullShape* objShape = new btConvexHullShape();
-					objShape->setMargin(margin);
+					physx::PxConvexMeshDesc convexDesc;
+					convexDesc.points.count = verts.second.size();;
+					convexDesc.points.stride = sizeof(physx::PxVec3);
+					convexDesc.points.data = &verts.second[0];
+					convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+					convexDesc.vertexLimit = 255;
 
-					glm::vec3 scale(1, 1, 1);// = node->transform->getGlobalScale();
+					physx::PxDefaultMemoryOutputStream buf;
+					if (!node->getScene().gCooking->cookConvexMesh(convexDesc, buf))
+						throw "oops";
 
+					physx::PxDefaultMemoryInputData input(buf.getData(), buf.getSize());
+					physx::PxConvexMesh* convexMesh = node->getScene().gPhysics->createConvexMesh(input);
 
-					for (const glm::vec3 &p : verts.second)
-						objShape->addPoint(btVector3(scale.x * (p.x - centerOfGravity.x), scale.y * (p.y - centerOfGravity.y), scale.z * (p.z - centerOfGravity.z)), false);
-					objShape->recalcLocalAabb();
+					shape = node->getScene().gPhysics->createShape(physx::PxConvexMeshGeometry(convexMesh), *node->getScene().gMaterial);
 
-					btShapeHull* hull = new btShapeHull(objShape);
-					btScalar margin = objShape->getMargin();
-					hull->buildHull(0);
-					btConvexHullShape* simplifiedConvexShape = new btConvexHullShape((btScalar*)hull->getVertexPointer(), hull->numVertices());
-					delete objShape;
-					objShape = simplifiedConvexShape;
-					delete hull;
-					shape = objShape;
-					shape->setMargin(margin);
 				}
 				else
 				{
-					btVector3* gVertices = new btVector3[verts.second.size()];
-					int* gIndices = new int[verts.first.size()];
-					for (size_t i = 0; i < verts.second.size(); i++)
-						gVertices[i] = btVector3(verts.second[i].x - centerOfGravity.x, verts.second[i].y - centerOfGravity.y, verts.second[i].z - centerOfGravity.z);
+					physx::PxTriangleMeshDesc meshDesc;
+					meshDesc.points.count = verts.second.size();;
+					meshDesc.points.stride = sizeof(physx::PxVec3);
+					meshDesc.points.data = &verts.second[0];
 
-					for (size_t i = 0; i < verts.first.size(); i++)
-						gIndices[i] = verts.first[i];
+					meshDesc.triangles.count = verts.first.size();
+					meshDesc.triangles.stride = 3 * sizeof(physx::PxU32);
+					meshDesc.triangles.data = &verts.first[0];
 
-					btTriangleIndexVertexArray* m_indexVertexArrays = new btTriangleIndexVertexArray(verts.second.size() / 3,
-						gIndices,
-						3 * sizeof(int),
-						verts.first.size(), (btScalar*)&gVertices[0].x(), sizeof(btVector3));
-					btVector3 aabbMin(-100000, -100000, -100000), aabbMax(100000, 100000, 100000);
-					btBvhTriangleMeshShape* objShape = new btBvhTriangleMeshShape(m_indexVertexArrays, true, aabbMin, aabbMax);
-					shape = objShape;
-					shape->setMargin(margin);
-				}*/
+					physx::PxDefaultMemoryOutputStream writeBuffer;
+					physx::PxTriangleMeshCookingResult::Enum result;
+					bool status = node->getScene().gCooking->cookTriangleMesh(meshDesc, writeBuffer);
+					if (!status)
+						throw "oops";
+
+					physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+					auto mesh = node->getScene().gPhysics->createTriangleMesh(readBuffer);
+					shape = node->getScene().gPhysics->createShape(physx::PxTriangleMeshGeometry(mesh), *node->getScene().gMaterial);
+				}
 			}
 
 

@@ -44,40 +44,26 @@ namespace vrlib
 
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
 				glm::quat rot(mat);
-
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
-/*				if (rigidBody && rigidBody->body && rigidBody->getType() == RigidBody::Type::Dynamic)
+
+				if (rigidBody && rigidBody->actor)
 				{
-					node->getComponent<Transform>()->setGlobalRotation(rot);
-					btTransform t;
-					rigidBody->body->getMotionState()->getWorldTransform(t);
-					rigidBody->body->setWorldTransform(t);
-
-					if (constraint == nullptr)
-					{ //TODO: make this work better
-						rigidBody->body->setGravity(btVector3(0, 0, 0));
-						constraint = new btPoint2PointConstraint(*rigidBody->body, btVector3(0,0,0));
-						constraint->m_setting.m_impulseClamp = 3;	//0
-						constraint->m_setting.m_tau = 0.00001f;			//.3
-						constraint->m_setting.m_damping = .3f;		//1
-						world = scene.world;
-						scene.world->addConstraint(constraint);
-					}
-					constraint->setPivotB(btVector3(pos.x, pos.y, pos.z));
-
+					physx::PxTransform tx(physx::PxVec3(pos.x, pos.y, pos.z), physx::PxQuat(rot.x, rot.y, rot.z, rot.w));
+					if(rigidBody->rigidDynamic)
+						rigidBody->rigidDynamic->setKinematicTarget(tx);
+					else
+						rigidBody->actor->setGlobalPose(tx, true);
 				}
 				else
 				{
 					node->getComponent<Transform>()->setGlobalPosition(pos);
 					node->getComponent<Transform>()->setGlobalRotation(rot);
-					if (rigidBody && rigidBody->body)
-					{
-						btTransform t;
-						rigidBody->body->getMotionState()->getWorldTransform(t);
-						rigidBody->body->setWorldTransform(t);
-					}
-
-				}*/
+				}
+				
+				node->fortree([](Node* n)
+				{
+					n->transform->buildTransform((n->parent && n->parent->transform) ? n->parent->transform->globalTransform : glm::mat4());
+				});
 
 			}
 

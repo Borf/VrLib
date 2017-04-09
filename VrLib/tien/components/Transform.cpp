@@ -21,7 +21,7 @@ namespace vrlib
 				rotation(rotation), 
 				scale(scale)
 			{
-				buildTransform();
+				buildTransform(glm::mat4());
 			}
 
 			Transform::Transform(const json & json)
@@ -29,7 +29,7 @@ namespace vrlib
 				position = glm::vec3(json["position"][0], json["position"][1], json["position"][2]);
 				rotation = glm::quat(json["rotation"][3], json["rotation"][0], json["rotation"][1], json["rotation"][2]);
 				scale = glm::vec3(json["scale"][0], json["scale"][1], json["scale"][2]);
-				buildTransform();
+				buildTransform(glm::mat4());
 			}
 
 			Transform::~Transform()
@@ -70,7 +70,7 @@ namespace vrlib
 
 			glm::quat Transform::getGlobalRotation() const
 			{
-				return glm::quat(globalTransform);
+//				return glm::quat(globalTransform);
 
 				std::function<glm::quat(Node*)> parentRot;
 				parentRot = [&parentRot](Node* n)
@@ -107,12 +107,30 @@ namespace vrlib
 				this->rotation = rotation;//TODO
 			}
 
-			void Transform::buildTransform()
+			void Transform::buildTransform(const glm::mat4 &parentTransform)
 			{
-				transform = glm::mat4();
-				transform = glm::translate(transform, position);
-				transform = transform * glm::toMat4(rotation);
-				transform = glm::scale(transform, scale);
+				if (node && node->rigidBody && node->rigidBody->actor)
+				{
+					auto mat = physx::PxMat44(node->rigidBody->actor->getGlobalPose());
+					glm::mat4 matrix = glm::make_mat4(mat.front());
+					matrix = glm::scale(matrix, node->transform->getGlobalScale());
+					node->transform->globalTransform = matrix;
+
+					node->transform->transform = node->transform->globalTransform * glm::inverse(parentTransform);
+					
+					//node->transform->position = glm::vec3(node->transform->transform * glm::vec4(0, 0, 0, 1));
+					//node->transform->rotation = glm::quat(node->transform->transform);
+
+				}
+				else
+				{
+					transform = glm::mat4();
+					transform = glm::translate(transform, position);
+					transform = transform * glm::toMat4(rotation);
+					transform = glm::scale(transform, scale);
+
+					globalTransform = parentTransform * transform;
+				}
 			}
 
 

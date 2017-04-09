@@ -409,8 +409,26 @@ namespace vrlib
 
 			if (drawPhysicsDebug)
 			{
-/*				scene.world->debugDrawWorld();
-				if (scene.debugDrawer->verts.size() > 0)
+				std::vector<gl::VertexP3C4> verts;
+				const physx::PxRenderBuffer& rb = scene.gScene->getRenderBuffer();
+				for (physx::PxU32 i = 0; i < rb.getNbLines(); i++)
+				{
+					const physx::PxDebugLine& line = rb.getLines()[i];
+					verts.push_back(gl::VertexP3C4(
+						glm::vec3(line.pos0.x, line.pos0.y, line.pos0.z), 
+						glm::vec4(	((line.color0 >> 0) & 256) / 255.0f, 
+									((line.color0 >> 8) & 256) / 255.0f,
+									((line.color0 >> 16) & 256) / 255.0f,
+									1.0f)));
+					verts.push_back(gl::VertexP3C4(
+						glm::vec3(line.pos1.x, line.pos1.y, line.pos1.z), 
+						glm::vec4(	((line.color1 >> 0) & 256) / 255.0f, 
+									((line.color1 >> 8) & 256) / 255.0f,
+									((line.color1 >> 16) & 256) / 255.0f,
+									1.0f)));
+				}
+
+				if (verts.size() > 0)
 				{
 					glDisable(GL_DEPTH_TEST);
 					glBindVertexArray(0);
@@ -420,12 +438,11 @@ namespace vrlib
 					physicsDebugShader->setUniform(PhysicsDebugUniform::modelViewMatrix, modelViewMatrix);
 					physicsDebugShader->setUniform(PhysicsDebugUniform::projectionMatrix, projectionMatrix);
 
-					gl::setAttributes<gl::VertexP3C4>(&scene.debugDrawer->verts[0]);
+					gl::setAttributes<gl::VertexP3C4>(&verts[0]);
 					glLineWidth(1.0f);
-					glDrawArrays(GL_LINES, 0, scene.debugDrawer->verts.size());
-					scene.debugDrawer->flush();
+					glDrawArrays(GL_LINES, 0, verts.size());
 					glEnable(GL_DEPTH_TEST);
-				}*/
+				}
 			}
 			
 			//draw the boundingbox of the light. TODO: improve this code

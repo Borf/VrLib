@@ -31,7 +31,19 @@ namespace vrlib
 		{
 #ifdef WIN32
 			if ((GetAsyncKeyState(VK_F1) & 1) == 1)
+			{
 				renderer.drawPhysicsDebug = !renderer.drawPhysicsDebug;
+				if (renderer.drawPhysicsDebug)
+				{
+					scene.gScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
+					scene.gScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+				}
+				else
+				{
+					scene.gScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 0.0f);
+					scene.gScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 0.0f);
+				}
+			}
 			if ((GetAsyncKeyState(VK_F2) & 1) == 1)
 				renderer.drawLightDebug = !renderer.drawLightDebug;
 			if ((GetAsyncKeyState(VK_F3) & 1) == 1)

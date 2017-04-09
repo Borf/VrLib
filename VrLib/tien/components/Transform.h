@@ -14,12 +14,15 @@ namespace vrlib
 
 		namespace components
 		{
+			class TransformAttach;
+
 			class Transform : public Component
 			{
 			private:
-				void buildTransform();
+				void buildTransform(const glm::mat4 &parentTransform);
 				friend class vrlib::tien::Scene;
 				friend class vrlib::tien::Node;
+				friend class vrlib::tien::components::TransformAttach;
 			public:
 				glm::vec3 position;
 				glm::quat rotation;

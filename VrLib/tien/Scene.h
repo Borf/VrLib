@@ -81,13 +81,14 @@ namespace vrlib
 			float							physicsTimer = 0;
 			physx::PxDefaultAllocator		gAllocator;
 			physx::PxDefaultErrorCallback	gErrorCallback;
-			physx::PxFoundation*			gFoundation = NULL;
-			physx::PxDefaultCpuDispatcher*	gDispatcher = NULL;
-			physx::PxPvd*					gPvd = NULL;
+			physx::PxFoundation*			gFoundation = nullptr;
+			physx::PxDefaultCpuDispatcher*	gDispatcher = nullptr;
+			physx::PxPvd*					gPvd = nullptr;
 		public:
-			physx::PxMaterial*				gMaterial = NULL;
-			physx::PxPhysics*				gPhysics = NULL;
-			physx::PxScene*					gScene = NULL;
+			physx::PxMaterial*				gMaterial = nullptr;
+			physx::PxPhysics*				gPhysics = nullptr;
+			physx::PxScene*					gScene = nullptr;
+			physx::PxCooking*				gCooking = nullptr;
 
 			void reset();
 

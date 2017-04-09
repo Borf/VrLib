@@ -40,12 +40,12 @@ namespace vrlib
 				RigidBody(float mass, Type type = Type::Auto);
 				RigidBody(const json &json);
 				~RigidBody();
-				physx::PxRigidActor* actor;
+				physx::PxRigidActor* actor = nullptr;
+				physx::PxRigidDynamic* rigidDynamic = nullptr;
 				json toJson(json &meshes) const override;
 				void buildEditor(EditorBuilder * builder, bool folded) override;
 				inline float getMass() const {return mass; };
 				void setMass(float newMass);
-				virtual void postUpdate(Scene& scene);
 
 				inline Type getType() const { return type; };
 				void setType(Type newType);

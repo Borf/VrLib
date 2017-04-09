@@ -6,6 +6,7 @@
 #include "../Scene.h"
 #include <VrLib/Model.h>
 #include <VrLib/json.hpp>
+#include <VrLib/Log.h>
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -75,27 +76,31 @@ namespace vrlib
 					return;
 
 				glm::vec3 globalPosition = transform->getGlobalPosition();
-				glm::quat globalRotation = transform->rotation;
+				glm::quat globalRotation = transform->getGlobalRotation();// glm::quat(glm::mat3(transform->globalTransform));
 				globalRotation = glm::normalize(globalRotation);
 
 				physx::PxTransform tx(physx::PxVec3(globalPosition.x, globalPosition.y, globalPosition.z), physx::PxQuat(globalRotation.x, globalRotation.y, globalRotation.z, globalRotation.w));
 
 				if (mass > 0)
-					actor = scene->getPhysics().createRigidDynamic(tx);
+					actor = rigidDynamic = scene->getPhysics().createRigidDynamic(tx);
 				else
 					actor = scene->getPhysics().createRigidStatic(tx);
 				actor->attachShape(*shape);
 				if(mass > 0)
 					physx::PxRigidBodyExt::updateMassAndInertia(*(physx::PxRigidBody*)actor, 1.0f);
 
+				if(type == Type::Kinematic)
+					rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
 				scene->addActor(*actor);
-
 			}
 
 			void RigidBody::updateCollider(physx::PxScene* world)
 			{
 				std::vector<Collider*> colliders = node->getComponents<Collider>();
 				glm::vec3 scale = node->transform->getGlobalScale();
+
+				logger << "Updating collider..." << Log::newline;
+				init(world);
 
 			}
 
@@ -133,20 +138,6 @@ namespace vrlib
 				builder->endGroup();
 
 			}
-
-			void RigidBody::postUpdate(Scene & scene)
-			{
-				if (actor && actor->getNbShapes() > 0)
-				{
-					auto mat = physx::PxMat44(actor->getGlobalPose());
-					glm::mat4 matrix = glm::make_mat4(mat.front());
-
-					matrix = glm::scale(matrix, node->transform->getGlobalScale());
-
-					node->transform->globalTransform = matrix;
-				}
-			}
-
 		}
 	}
 }

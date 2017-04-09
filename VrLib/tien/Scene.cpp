@@ -47,6 +47,10 @@ namespace vrlib
 			sceneDesc.filterShader = physx::PxDefaultSimulationFilterShader;
 			gScene = gPhysics->createScene(sceneDesc);
 
+			gCooking = PxCreateCooking(PX_PHYSICS_VERSION, *gFoundation, physx::PxCookingParams(gPhysics->getTolerancesScale()));
+			if (!gCooking)
+				throw("PxCreateCooking failed!");
+
 			physx::PxPvdSceneClient* pvdClient = gScene->getScenePvdClient();
 			if (pvdClient)
 			{
@@ -54,8 +58,7 @@ namespace vrlib
 				pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
 				pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 			}
-
-			gMaterial = gPhysics->createMaterial(0.8f, 0.8f, 0.0f);
+			gMaterial = gPhysics->createMaterial(0.2f, 0.2f, 0.0f);
 		}
 
 
@@ -124,13 +127,14 @@ namespace vrlib
 			if (gScene && elapsedTime > 0)
 			{
 				physicsTimer += elapsedTime;
-				while (physicsTimer > physicsRate)
+				while (physicsTimer > 0)
 				{
 					physicsTimer -= physicsRate;
 					gScene->simulate(physicsRate);
 					gScene->fetchResults(true);
 				}
 			}
+
 
 
 			fortree([this, &elapsedTime](Node* n)
@@ -148,10 +152,9 @@ namespace vrlib
 			{
 				if (!n->enabled)
 					return;
-				if (n->transform && !n->rigidBody)
+				if (n->transform)
 				{
-					n->transform->buildTransform();
-					n->transform->globalTransform = parentTransform * n->transform->transform;
+					n->transform->buildTransform(parentTransform);					
 					for (auto c : n->children)
 						updateTransforms(c, n->transform->globalTransform);
 				}
@@ -168,8 +171,6 @@ namespace vrlib
 				for (Component* c : n->components)
 					c->postUpdate(*this);
 			});
-			//updateTransforms(this, glm::mat4()); //TODO: optimize this, don't do the entire tree, only dynamic objects?
-
 		}
 
 		
@@ -193,9 +194,25 @@ namespace vrlib
 				return false;
 			if (!n1->rigidBody || !n2->rigidBody)
 				return false; // needs a rigidbody for collision testing
-			if (!n1->getComponent<vrlib::tien::components::RigidBody>()->actor || !n2->getComponent<vrlib::tien::components::RigidBody>()->actor)
+			if (!n1->rigidBody->actor || !n2->rigidBody->actor)
 				return false;
 
+			int countA = n1->rigidBody->actor->getNbShapes();
+			physx::PxShape** shapeA = new physx::PxShape*[countA];
+			n1->rigidBody->actor->getShapes(shapeA, countA, 0);
+
+			int countB = n2->rigidBody->actor->getNbShapes();
+			physx::PxShape** shapeB = new physx::PxShape*[countB];
+			n2->rigidBody->actor->getShapes(shapeB, countB, 0);
+			
+			for(int a = 0; a < countA; a++)
+				for(int b = 0; b < countB; b++)
+					if (physx::PxGeometryQuery::overlap(shapeA[a]->getGeometry().any(), n1->rigidBody->actor->getGlobalPose() * shapeA[a]->getLocalPose(),
+														shapeB[b]->getGeometry().any(), n2->rigidBody->actor->getGlobalPose() * shapeB[b]->getLocalPose()))
+						return true;
+
+			return false;
+			
 
 			/*CollisionTest test;
 			world->contactPairTest(n1->getComponent<vrlib::tien::components::RigidBody>()->body,
