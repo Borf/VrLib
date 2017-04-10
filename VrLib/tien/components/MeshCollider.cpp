@@ -62,11 +62,14 @@ namespace vrlib
 					physx::PxTriangleMeshDesc meshDesc;
 					meshDesc.points.count = verts.second.size();;
 					meshDesc.points.stride = sizeof(physx::PxVec3);
-					meshDesc.points.data = &verts.second[0];
+					meshDesc.points.data = new physx::PxVec3[verts.second.size()];
+					memcpy((void*)meshDesc.points.data, &verts.second[0], sizeof(physx::PxVec3) * verts.second.size());
 
 					meshDesc.triangles.count = verts.first.size();
 					meshDesc.triangles.stride = 3 * sizeof(physx::PxU32);
-					meshDesc.triangles.data = &verts.first[0];
+//					meshDesc.triangles.data = &verts.first[0];
+					meshDesc.triangles.data = new physx::PxU32[verts.first.size()];
+					memcpy((void*)meshDesc.triangles.data, &verts.first[0], sizeof(physx::PxU32) * verts.first.size());
 
 					physx::PxDefaultMemoryOutputStream writeBuffer;
 					physx::PxTriangleMeshCookingResult::Enum result;

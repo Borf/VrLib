@@ -35,7 +35,7 @@ namespace vrlib
 				if (transform)
 				{
 //					size *= transform->scale;
-					offset *= transform->getGlobalScale();
+					//offset *= transform->getGlobalScale();
 				}
 			}
 
