@@ -207,8 +207,8 @@ namespace vrlib
 			
 			for(int a = 0; a < countA; a++)
 				for(int b = 0; b < countB; b++)
-					if (physx::PxGeometryQuery::overlap(shapeA[a]->getGeometry().any(), n1->rigidBody->actor->getGlobalPose() * shapeA[a]->getLocalPose(),
-														shapeB[b]->getGeometry().any(), n2->rigidBody->actor->getGlobalPose() * shapeB[b]->getLocalPose()))
+					if (physx::PxGeometryQuery::overlap(shapeA[a]->getGeometry().any(), physx::PxShapeExt::getGlobalPose(*shapeA[a], *n1->rigidBody->actor),
+														shapeB[b]->getGeometry().any(), physx::PxShapeExt::getGlobalPose(*shapeB[b], *n2->rigidBody->actor)))
 						return true;
 
 			return false;
@@ -221,6 +221,36 @@ namespace vrlib
 			return test.collision;*/
 			return false;
 		}
+
+		bool Scene::testBodyCollision(Node * n1, const physx::PxGeometry &shapeB, const physx::PxTransform &transformB)
+		{
+			if (!n1)
+				return false;
+			if (!n1->rigidBody)
+				return false; // needs a rigidbody for collision testing
+			if (!n1->rigidBody->actor)
+				return false;
+
+			int countA = n1->rigidBody->actor->getNbShapes();
+			physx::PxShape** shapeA = new physx::PxShape*[countA];
+			n1->rigidBody->actor->getShapes(shapeA, countA, 0);
+
+			for (int a = 0; a < countA; a++)
+				if (physx::PxGeometryQuery::overlap(shapeA[a]->getGeometry().any(), physx::PxShapeExt::getGlobalPose(*shapeA[a], *n1->rigidBody->actor),
+					shapeB, transformB))
+					return true;
+
+			return false;
+
+
+			/*CollisionTest test;
+			world->contactPairTest(n1->getComponent<vrlib::tien::components::RigidBody>()->body,
+			n2->getComponent<vrlib::tien::components::RigidBody>()->body,
+			test);
+			return test.collision;*/
+			return false;
+		}
+
 
 		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics) const
 		{

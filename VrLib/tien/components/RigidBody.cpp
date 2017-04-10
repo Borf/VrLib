@@ -113,8 +113,8 @@ namespace vrlib
 
 			void RigidBody::setType(Type newType)
 			{
-
 				type = newType;
+				rigidDynamic->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, type == Type::Kinematic);
 			}
 
 

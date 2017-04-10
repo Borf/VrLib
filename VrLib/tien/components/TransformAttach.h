@@ -21,6 +21,8 @@ namespace vrlib
 			{
 				const vrlib::PositionalDevice &device;
 			public:
+				glm::mat4 offset;
+
 				TransformAttach(const vrlib::PositionalDevice &device);
 				~TransformAttach();
 				json toJson(json &meshes) const override;
