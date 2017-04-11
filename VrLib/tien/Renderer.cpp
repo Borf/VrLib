@@ -286,7 +286,7 @@ namespace vrlib
 				{
 					float horSize = tan(glm::radians(l->spotlightAngle / 2)) * l->range;
 					glm::mat4 mm = modelViewMatrix;
-					mm *= t->transform;
+					mm *= t->globalTransform;
 					mm = glm::scale(mm, glm::vec3(l->range, horSize, horSize)); //todo: realrange?
 					postLightingShader->setUniform(PostLightingUniform::modelViewMatrix, mm);
 
@@ -322,7 +322,7 @@ namespace vrlib
 					{
 						float horSize = tan(glm::radians(l->spotlightAngle / 2)) * l->range;
 						glm::mat4 mm = modelViewMatrix;
-						mm *= t->transform;
+						mm *= t->globalTransform;
 						mm = glm::scale(mm, glm::vec3(l->range, horSize, horSize)); //todo: realrange?
 						postLightingStencilShader->setUniform(PostLightingStencilUniform::modelViewMatrix, mm);
 
