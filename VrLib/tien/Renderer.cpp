@@ -5,6 +5,7 @@
 #include "components/Camera.h"
 #include "components/Light.h"
 #include "components/SkyBox.h"
+#include "components/PostProcessor.h"
 
 #include <VrLib/gl/FBO.h>
 #include <VrLib/gl/VAO.h>
@@ -118,6 +119,8 @@ namespace vrlib
 		}
 
 		std::map<std::pair<Node*, int>, vrlib::gl::FBO*> gbufferMap;
+		
+		std::map<std::pair<Node*, int>, vrlib::gl::FBO**> postProcessorBuffersMap;
 
 		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode, int renderId)
 		{
@@ -148,13 +151,43 @@ namespace vrlib
 			}
 
 
-
+			postProcessorBuffers = nullptr;
 			//let's first update the camera stuff
 			glm::mat4 modelViewMatrix = modelMatrix;
 			if (cameraNode)
 			{
 				components::Camera* camera = cameraNode->getComponent<components::Camera>();
 				modelViewMatrix = modelMatrix * glm::inverse(cameraNode->transform->globalTransform);
+
+				//only do postprocessing if needed
+				if (!cameraNode->getComponents<vrlib::tien::components::PostProcessor>().empty())
+				{
+					if (postProcessorBuffersMap.find(std::pair<Node*, int>(cameraNode, renderId)) == postProcessorBuffersMap.end())
+						postProcessorBuffers = nullptr;
+					else
+						postProcessorBuffers = postProcessorBuffersMap[std::pair<Node*, int>(cameraNode, renderId)];
+
+					if (postProcessorBuffers && (postProcessorBuffers[0]->getWidth() != viewport[2] ||
+						postProcessorBuffers[0]->getHeight() != viewport[3]))
+					{
+						logger << "Performance warning: postProcessorBuffer got resized" << Log::newline;
+						logger << "Old size: " << postProcessorBuffers[0]->getWidth() << ", " << postProcessorBuffers[0]->getHeight() << Log::newline;
+						logger << "New size: " << viewport[2] << ", " << viewport[3] << Log::newline;
+						delete postProcessorBuffers[0];
+						delete postProcessorBuffers[1];
+						delete postProcessorBuffers;
+						postProcessorBuffers = nullptr;
+					}
+					if (!postProcessorBuffers)
+					{
+						postProcessorBuffers = new vrlib::gl::FBO*[2]{ nullptr, nullptr };
+						postProcessorBuffers[0] = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
+						postProcessorBuffers[1] = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
+						postProcessorBuffersMap[std::pair<Node*, int>(cameraNode, renderId)] = postProcessorBuffers;
+					}
+				}
+
+
 			}
 			scene.frustum->setFromMatrix(projectionMatrix, modelViewMatrix);
 			
@@ -184,6 +217,10 @@ namespace vrlib
 			glDisable(GL_POLYGON_OFFSET_FILL);
 
 
+			if (postProcessorBuffers)
+			{
+				postProcessorBuffers[0]->bind(); //to overwrite the oldFBO
+			}
 
 			//fill the gbuffer
 			gbuffers->bind();
@@ -207,21 +244,34 @@ namespace vrlib
 				if (r->visible && c->enabled)
 					r->drawDeferredPass();
 			}
-			gbuffers->unbind();
+			gbuffers->unbind(); //gbuffers->oldFBO gets unset here...
 
 			//reset the old viewport, and clear it. Use scissoring to only clear this part of the viewport
-			glScissor(viewport[0], viewport[1], viewport[2], viewport[3]);
+			if (postProcessorBuffers)
+			{
+				glViewport(0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight());
+				glScissor(0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight());
+			}
+			else
+			{
+				glScissor(viewport[0], viewport[1], viewport[2], viewport[3]);
+				glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+			}
 			glEnable(GL_SCISSOR_TEST);
-			glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 			glClearColor(0, 0, 0, 1);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 			glDisable(GL_SCISSOR_TEST);
 			//copy the depth buffer (for lighting and later forward rendering)
 			glBindFramebuffer(GL_READ_FRAMEBUFFER, gbuffers->fboId);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldFBO);
-			glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
-				viewport[0], viewport[1], viewport[0]+viewport[2], viewport[1]+viewport[3],
-				GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			if (postProcessorBuffers)
+				glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
+					0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight(),
+					GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			else
+				glBlitFramebuffer(0, 0, gbuffers->getWidth(), gbuffers->getHeight(),
+					viewport[0], viewport[1], viewport[0]+viewport[2], viewport[1]+viewport[3],
+					GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 			glDisableVertexAttribArray(3);
 			glDisableVertexAttribArray(4);
@@ -230,8 +280,16 @@ namespace vrlib
 			//draw the gbuffer in multiple passes. Every light needs a pass
 			gbuffers->use();
 			postLightingShader->use();
-			postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2], viewport[3]));
-			postLightingShader->setUniform(PostLightingUniform::windowPos, glm::vec2(viewport[0], viewport[1]));
+			if (postProcessorBuffers)
+			{
+				postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight()));
+				postLightingShader->setUniform(PostLightingUniform::windowPos, glm::vec2(0, 0));
+			}
+			else
+			{
+				postLightingShader->setUniform(PostLightingUniform::windowSize, glm::vec2(viewport[2], viewport[3]));
+				postLightingShader->setUniform(PostLightingUniform::windowPos, glm::vec2(viewport[0], viewport[1]));
+			}
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrix, projectionMatrix);
 			postLightingShader->setUniform(PostLightingUniform::projectionMatrixInv, glm::inverse(projectionMatrix));
 			postLightingShader->setUniform(PostLightingUniform::modelViewMatrixInv, glm::inverse(modelViewMatrix));
@@ -403,6 +461,53 @@ namespace vrlib
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glDisable(GL_CULL_FACE);
+
+
+			//post processing...
+			if (postProcessorBuffers)
+			{
+				int originalFbo = postProcessorBuffers[0]->oldFBO;
+				postProcessorBuffers[0]->unbind();
+				int drawnFbo = 0;
+				auto postprocessors = cameraNode->getComponents<vrlib::tien::components::PostProcessor>();
+
+				glViewport(0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight());
+				glDisable(GL_DEPTH_TEST);
+				glDisable(GL_BLEND);
+
+				for (auto p : postprocessors)
+				{
+					int toDrawTo = 1 - drawnFbo;
+					postProcessorBuffers[toDrawTo]->bind();
+					postProcessorBuffers[drawnFbo]->use();
+
+					p->process();
+
+					for (int i = 0; i < 3; i++)
+					{
+				//		glActiveTexture(GL_TEXTURE0 + i);		glBindTexture(GL_TEXTURE_2D, 0);
+					}
+					postProcessorBuffers[toDrawTo]->unbind();
+
+					drawnFbo = 1 - drawnFbo;
+				}
+
+
+
+				//reset the old viewport, and clear it. Use scissoring to only clear this part of the viewport
+				glScissor(viewport[0], viewport[1], viewport[2], viewport[3]);
+				glEnable(GL_SCISSOR_TEST);
+				glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+				glClearColor(0, 0, 0, 1);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glDisable(GL_SCISSOR_TEST);
+				//copy the depth buffer (for lighting and later forward rendering)
+				glBindFramebuffer(GL_READ_FRAMEBUFFER, postProcessorBuffers[drawnFbo]->fboId);
+				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, originalFbo);
+				glBlitFramebuffer(0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight(),
+					viewport[0], viewport[1], viewport[0] + viewport[2], viewport[1] + viewport[3],
+					GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+			}
 
 			//We're done drawing, now let's add more stuff for debugging if needed
 
@@ -632,6 +737,12 @@ namespace vrlib
 				}
 
 			}
+
+
+
+
+
+
 		}
 
 

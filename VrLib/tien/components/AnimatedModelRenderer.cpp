@@ -28,9 +28,6 @@ namespace vrlib
 				if (cache.find(fileName) == cache.end())
 					cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2B4B4>(fileName);
 				model = cache[fileName];
-				if (!model)
-					return;
-				modelInstance = model->getInstance();
 				renderContextDeferred = ModelRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
 				callbackOnDone = nullptr;
@@ -38,13 +35,19 @@ namespace vrlib
 				{
 					castShadow = data["castShadow"];
 					cullBackFaces = data["cullBackFaces"];
-					if (data.find("animation") != data.end())
-						this->playAnimation(data["animation"]);
 				}
 				else
 				{
 					castShadow = true;
 					cullBackFaces = true;
+				}
+				if (!model)
+					return;
+				modelInstance = model->getInstance();
+				if (data.is_object())
+				{
+					if (data.find("animation") != data.end())
+						this->playAnimation(data["animation"]);
 				}
 			}
 
@@ -273,6 +276,7 @@ namespace vrlib
 					if (cache.find(fileName) == cache.end())
 						cache[fileName] = vrlib::Model::getModel<vrlib::gl::VertexP3N2B2T2T2>(fileName);
 					model = cache[fileName];
+					modelInstance = model->getInstance();
 				});
 				builder->endGroup();
 

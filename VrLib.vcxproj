@@ -180,6 +180,10 @@
     <ClInclude Include="VrLib\tien\components\MeshCollider.h" />
     <ClInclude Include="VrLib\tien\components\MeshRenderer.h" />
     <ClInclude Include="VrLib\tien\components\ModelRenderer.h" />
+    <ClInclude Include="VrLib\tien\components\PostProcessor.h" />
+    <ClInclude Include="VrLib\tien\components\postprocess\Bloom.h" />
+    <ClInclude Include="VrLib\tien\components\postprocess\Gamma.h" />
+    <ClInclude Include="VrLib\tien\components\postprocess\Noise.h" />
     <ClInclude Include="VrLib\tien\components\RigidBody.h" />
     <ClInclude Include="VrLib\tien\components\SkyBox.h" />
     <ClInclude Include="VrLib\tien\components\SphereCollider.h" />
@@ -288,6 +292,9 @@
     <ClCompile Include="VrLib\tien\components\MeshCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\MeshRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
+    <ClCompile Include="VrLib\tien\components\postprocess\Bloom.cpp" />
+    <ClCompile Include="VrLib\tien\components\postprocess\Gamma.cpp" />
+    <ClCompile Include="VrLib\tien\components\postprocess\Noise.cpp" />
     <ClCompile Include="VrLib\tien\components\Renderable.cpp" />
     <ClCompile Include="VrLib\tien\components\RigidBody.cpp" />
     <ClCompile Include="VrLib\tien\components\SkyBox.cpp" />

@@ -82,6 +82,7 @@ namespace vrlib
 
 
 			vrlib::gl::FBO* gbuffers;
+			vrlib::gl::FBO** postProcessorBuffers;
 
 			vrlib::gl::VBO<gl::VertexP3>* overlayVerts;
 			vrlib::gl::VAO* overlayVao;

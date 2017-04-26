@@ -24,6 +24,8 @@
 #include "components/RigidBody.h"
 #include "components/BoxCollider.h"
 #include "components/MeshCollider.h"
+#include "components/postprocess/Bloom.h"
+#include "components/postprocess/Gamma.h"
 
 namespace vrlib
 {
@@ -141,6 +143,13 @@ namespace vrlib
 								convex = c["convex"];
 							addComponent(new vrlib::tien::components::MeshCollider(this, convex));
 						}
+					}
+					else if (c["type"] == "postprocess")
+					{
+						if (c["postprocess"] == "bloom")
+							addComponent(new vrlib::tien::components::postprocessors::Bloom());
+						if (c["postprocess"] == "gamma")
+							addComponent(new vrlib::tien::components::postprocessors::Gamma());
 					}
 					else
 					{
