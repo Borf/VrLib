@@ -17,12 +17,10 @@ namespace vrlib
 					{
 
 					};
-					vrlib::gl::Shader<Uniforms>* shader;
 				public:
 					Bloom();
-
 					virtual json toJson(json &meshes) const;
-					virtual void process();
+					virtual void pass(int index);
 				};
 			}
 		}

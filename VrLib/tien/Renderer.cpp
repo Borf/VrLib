@@ -475,21 +475,33 @@ namespace vrlib
 				glDisable(GL_DEPTH_TEST);
 				glDisable(GL_BLEND);
 
+
+				std::vector<vrlib::gl::VertexP2> verts;
+				vrlib::gl::VertexP2 vert;
+				vrlib::gl::setP2(vert, glm::vec2(-1, -1));	verts.push_back(vert);
+				vrlib::gl::setP2(vert, glm::vec2(1, -1));	verts.push_back(vert);
+				vrlib::gl::setP2(vert, glm::vec2(1, 1));	verts.push_back(vert);
+				vrlib::gl::setP2(vert, glm::vec2(-1, 1));	verts.push_back(vert);
+
+				glBindVertexArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				vrlib::gl::setAttributes<vrlib::gl::VertexP2>(&verts[0]);
+
+
 				for (auto p : postprocessors)
 				{
-					int toDrawTo = 1 - drawnFbo;
-					postProcessorBuffers[toDrawTo]->bind();
-					postProcessorBuffers[drawnFbo]->use();
-
-					p->process();
-
-					for (int i = 0; i < 3; i++)
+					for (int pass = 0; pass < p->passes; pass++)
 					{
-				//		glActiveTexture(GL_TEXTURE0 + i);		glBindTexture(GL_TEXTURE_2D, 0);
-					}
-					postProcessorBuffers[toDrawTo]->unbind();
+						int toDrawTo = 1 - drawnFbo;
+						postProcessorBuffers[toDrawTo]->bind();
+						postProcessorBuffers[drawnFbo]->use();
 
-					drawnFbo = 1 - drawnFbo;
+						p->runPass(pass);
+						glDrawArrays(GL_QUADS, 0, 4);
+						postProcessorBuffers[toDrawTo]->unbind();
+
+						drawnFbo = 1 - drawnFbo;
+					}
 				}
 
 

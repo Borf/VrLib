@@ -737,5 +737,8 @@
     <ClCompile Include="VrLib\tien\components\postprocess\Gamma.cpp">
       <Filter>tien\components\postprocessors</Filter>
     </ClCompile>
+    <ClCompile Include="VrLib\tien\components\PostProcessor.cpp">
+      <Filter>tien\components</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

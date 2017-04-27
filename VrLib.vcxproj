@@ -292,6 +292,7 @@
     <ClCompile Include="VrLib\tien\components\MeshCollider.cpp" />
     <ClCompile Include="VrLib\tien\components\MeshRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
+    <ClCompile Include="VrLib\tien\components\PostProcessor.cpp" />
     <ClCompile Include="VrLib\tien\components\postprocess\Bloom.cpp" />
     <ClCompile Include="VrLib\tien\components\postprocess\Gamma.cpp" />
     <ClCompile Include="VrLib\tien\components\postprocess\Noise.cpp" />
