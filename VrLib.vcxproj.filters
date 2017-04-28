@@ -61,6 +61,9 @@
     <Filter Include="tien\components\postprocessors">
       <UniqueIdentifier>{a54c1be1-0278-470c-b18a-0c4bc8db35be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tien\components\postprocessors\shaders">
+      <UniqueIdentifier>{e834eae9-db36-4037-8fe2-71be6ce491c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VrLib\VrLib.h">
@@ -740,5 +743,19 @@
     <ClCompile Include="VrLib\tien\components\PostProcessor.cpp">
       <Filter>tien\components</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.frag">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.vert">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.frag">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.vert">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

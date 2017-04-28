@@ -324,6 +324,12 @@
     <ClCompile Include="VrLib\Viewports\SimulatorViewport.cpp" />
     <ClCompile Include="VrLib\VrLib.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.frag" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.vert" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.frag" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.vert" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

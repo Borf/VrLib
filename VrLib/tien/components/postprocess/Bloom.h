@@ -15,9 +15,12 @@ namespace vrlib
 				{
 					enum class Uniforms
 					{
-
+						Direction,
+						Strength
 					};
 				public:
+					float strength;
+
 					Bloom();
 					virtual json toJson(json &meshes) const;
 					virtual void pass(int index);
