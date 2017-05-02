@@ -12,10 +12,14 @@ namespace vrlib
 			{
 				DoF::DoF() : PostProcessor("Depth of Field")
 				{
+					focalDepth = 2;
+					focalDistance = 3;
+
 					loadShader<Uniforms>("data/vrlib/tien/shaders/postprocess/DoF.vert", "data/vrlib/tien/shaders/postprocess/DoF.frag");
-					addShaderParameter(Uniforms::Strength, "strength", strength);
+					addShaderParameter(Uniforms::FocalDistance, "focalDistance", focalDistance);
+					addShaderParameter(Uniforms::FocalDepth, "focalDepth", focalDepth);
 					shader->registerUniform((int)Uniforms::Direction, "direction");
-					passes = 2;
+					passes = 4;
 				}
 
 
@@ -24,9 +28,7 @@ namespace vrlib
 					shader->setUniform((int)Uniforms::Direction, (index % 2 == 0) ? 1 : 0);
 				}
 
-
-
-
+				
 				json DoF::toJson(json & meshes) const
 				{
 					json ret;

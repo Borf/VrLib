@@ -15,11 +15,13 @@ namespace vrlib
 				{
 					enum class Uniforms
 					{
-						Direction,
-						Strength
+						FocalDistance,
+						FocalDepth,
+						Direction
 					};
 				public:
-					float strength;
+					float focalDistance;
+					float focalDepth;
 
 					DoF();
 					virtual json toJson(json &meshes) const;
