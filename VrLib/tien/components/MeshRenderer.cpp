@@ -365,7 +365,7 @@ namespace vrlib
 				return ret;
 			}
 
-			std::vector<float> MeshRenderer::Mesh::collisionFractions(const vrlib::math::Ray & ray)
+			void MeshRenderer::Mesh::collisionFractions(const vrlib::math::Ray & ray, std::function<bool(float)> callback)
 			{
 				std::vector<float> result;
 //				if (!aabb.hasRayCollision(ray, 0, 10000)) //TODO
@@ -380,9 +380,9 @@ namespace vrlib
 						v[ii] = gl::getP3(vertices[indices[i + ii]]);
 					if (ray.LineIntersectPolygon(v, 3, f))
 						if (f > 0)
-							result.push_back(f);
+							if (!callback(f))
+								return;
 				}
-				return result;
 			}
 
 		}

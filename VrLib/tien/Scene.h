@@ -95,7 +95,17 @@ namespace vrlib
 			bool testBodyCollision(Node* n1, Node* n2);
 			bool testBodyCollision(Node* n1, const physx::PxGeometry&, const physx::PxTransform &);
 
+
+			/**
+			* casts a ray through the scene, using the physics world or the polygon meshes
+			* callback is called when a collision occurs. Callback should return true for further results, false for no more results
+			*/
 			void castRay(const math::Ray& ray, std::function<bool(Node* node, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true) const;
+
+			/**
+			* casts a ray through the scene, using the physics world or the polygon meshes
+			* callback is called when a collision occurs. Callback should return true for further results, false for no more results. Fraction is a fraction of the ray, based on a normalized ray
+			*/
 			void castRay(const math::Ray& ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true) const;
 			std::pair<Node*, glm::vec3> castRay(const math::Ray& ray, bool physics = true, const std::function<bool(vrlib::tien::Node*)> &filter = [](vrlib::tien::Node*) {return true; }) const;
 

@@ -345,7 +345,8 @@ namespace vrlib
 						std::vector<float> collisions = model->collisionFractions(inverseRay);
 						for (float& f : collisions)
 						{
-							callback(const_cast<vrlib::tien::Node*>(node), f, ray.mOrigin + f * ray.mDir, glm::vec3(0, 0, 0));
+							if (!callback(const_cast<vrlib::tien::Node*>(node), f, ray.mOrigin + f * ray.mDir, glm::vec3(0, 0, 0)))
+								return;
 						}
 					}
 

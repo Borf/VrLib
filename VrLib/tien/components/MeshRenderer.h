@@ -78,7 +78,7 @@ namespace vrlib
 
 					json toJson();
 
-					virtual std::vector<float> collisionFractions(const vrlib::math::Ray & ray) override;
+					virtual void collisionFractions(const vrlib::math::Ray & ray, std::function<bool(float)> callback) override;
 				};
 
 

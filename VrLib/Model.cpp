@@ -21,6 +21,16 @@ namespace vrlib
 			result.push_back(ray.mOrigin + c * ray.mDir);
 		return result;
 	}
+	std::vector<float> CollisionMesh::collisionFractions(const vrlib::math::Ray & ray)
+	{
+		std::vector<float> result;
+		collisionFractions(ray, [&result](float frac)
+		{
+			result.push_back(frac);
+			return true;
+		});
+		return result;
+	}
 
 
 	template<class VertexFormat>
@@ -153,19 +163,19 @@ namespace vrlib
 		calculateAABB(getTriangles());
 	}
 
-	std::vector<float> Model::collisionFractions(const math::Ray &ray)
+	void Model::collisionFractions(const math::Ray &ray, std::function<bool(float)> callback)
 	{
 		std::vector<float> result;
 		if (!aabb.hasRayCollision(ray, 0, 10000))
-			return result;
+			return;
 		std::vector<glm::vec3> verts = getTriangles();
 
 		float f = 0;
 		for (size_t i = 0; i < verts.size(); i += 3)
 			if (ray.LineIntersectPolygon(&verts[i], 3, f))
-				if(f > 0)
-					result.push_back(f);
-		return result;
+				if (f > 0)
+					if (!callback(f))
+						return;
 	}
 
 
