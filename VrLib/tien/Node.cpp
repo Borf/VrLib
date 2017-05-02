@@ -26,6 +26,7 @@
 #include "components/MeshCollider.h"
 #include "components/postprocess/Bloom.h"
 #include "components/postprocess/Gamma.h"
+#include "components/postprocess/DoF.h"
 
 namespace vrlib
 {
@@ -150,6 +151,8 @@ namespace vrlib
 							addComponent(new vrlib::tien::components::postprocessors::Bloom());
 						if (c["postprocess"] == "gamma")
 							addComponent(new vrlib::tien::components::postprocessors::Gamma());
+						if (c["postprocess"] == "dof")
+							addComponent(new vrlib::tien::components::postprocessors::DoF());
 					}
 					else
 					{

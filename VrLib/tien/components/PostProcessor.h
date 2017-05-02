@@ -47,6 +47,11 @@ namespace vrlib
 					shader->bindAttributeLocation("a_position", 0);
 					shader->link();
 					shader->bindFragLocation("fragColor", 0);
+					shader->registerUniform(20, "s_texture");//TODO: don't hardcode 20/21
+					shader->registerUniform(21, "s_depth");
+					shader->use();
+					shader->setUniform(20, 0);
+					shader->setUniform(21, 1);
 				}
 				
 				template<class T, class Q>
