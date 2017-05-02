@@ -72,7 +72,7 @@ namespace vrlib
 					memcpy((void*)meshDesc.triangles.data, &verts.first[0], sizeof(physx::PxU32) * verts.first.size());
 
 					physx::PxDefaultMemoryOutputStream writeBuffer;
-					physx::PxTriangleMeshCookingResult::Enum result;
+//					physx::PxTriangleMeshCookingResult::Enum result;
 					bool status = node->getScene().gCooking->cookTriangleMesh(meshDesc, writeBuffer);
 					if (!status)
 						throw "oops";

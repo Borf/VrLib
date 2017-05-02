@@ -22,6 +22,7 @@ namespace vrlib
 				glm::vec3 getSize() { return size; }
 				json toJson(json &meshes) const override;
 				void buildEditor(EditorBuilder * builder, bool folded) override;
+				virtual void drawDebug() override;
 			};
 		}
 	}
