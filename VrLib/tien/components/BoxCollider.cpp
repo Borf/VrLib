@@ -7,6 +7,8 @@
 #include "../Scene.h"
 #include <VrLib/Model.h>
 #include <VrLib/json.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace vrlib
 {
@@ -82,18 +84,54 @@ namespace vrlib
 					return;
 				builder->beginGroup("Size", false);
 				for(int i = 0; i < 3; i++)
-					builder->addTextBox(builder->toString(size[i]), [this, i](const std::string & newValue) 
-					{ 
-						size[i] = (float)atof(newValue.c_str());  
-//						shape->setImplicitShapeDimensions(btVector3(size.x/2, size.y/2, size.z/2));
-					});
+					builder->addFloatBox(size[i], -1000, 1000, [this, i](float newValue) { size[i] = newValue; } );
 				builder->endGroup();
 
 				builder->beginGroup("offset", false);
 				for (int i = 0; i < 3; i++)
-					builder->addTextBox(builder->toString(offset[i]), [this, i](const std::string & newValue) { offset[i] = (float)atof(newValue.c_str());  });
+					builder->addFloatBox(offset[i], -1000, 1000, [this, i](float newValue) { offset[i] = newValue;  });
 				builder->endGroup();
 
+			}
+
+			void BoxCollider::drawDebug()
+			{
+				glPushMatrix();
+				glMultMatrixf(glm::value_ptr(glm::translate(node->transform->globalTransform, this->offset)));
+				glBegin(GL_QUADS);
+				glVertex3f(-size.x / 2,	-size.y / 2,	size.z / 2);
+				glVertex3f(size.x / 2,	-size.y / 2,	size.z / 2);
+				glVertex3f(size.x / 2,	size.y / 2,		size.z / 2);
+				glVertex3f(-size.x / 2, size.y / 2,		size.z / 2);
+
+				glVertex3f(-size.x / 2, size.y / 2,		-size.z / 2);
+				glVertex3f(size.x / 2,	size.y / 2,		-size.z / 2);
+				glVertex3f(size.x / 2,	-size.y / 2,	-size.z / 2);
+				glVertex3f(-size.x / 2, -size.y / 2,	-size.z / 2);
+
+				glVertex3f(-size.x / 2, size.y / 2,		size.z / 2);
+				glVertex3f(size.x / 2,	size.y / 2,		size.z / 2);
+				glVertex3f(size.x / 2,	size.y / 2,		-size.z / 2);
+				glVertex3f(-size.x / 2, size.y / 2,		-size.z / 2);
+
+				glVertex3f(-size.x / 2, -size.y / 2,	-size.z / 2);
+				glVertex3f(size.x / 2,	-size.y / 2,	-size.z / 2);
+				glVertex3f(size.x / 2,	-size.y / 2,	size.z / 2);
+				glVertex3f(-size.x / 2, -size.y / 2,	size.z / 2);
+
+
+				glVertex3f(-size.x / 2, -size.y / 2,	size.z / 2);
+				glVertex3f(-size.x / 2,	size.y / 2,		size.z / 2);
+				glVertex3f(-size.x / 2,	size.y / 2,		-size.z / 2);
+				glVertex3f(-size.x / 2, -size.y / 2,	-size.z / 2);
+
+				glVertex3f(size.x / 2, -size.y / 2,		-size.z / 2);
+				glVertex3f(size.x / 2,	size.y / 2,		-size.z / 2);
+				glVertex3f(size.x / 2,	size.y / 2,		size.z / 2);
+				glVertex3f(size.x / 2, -size.y / 2,		size.z / 2);
+
+				glEnd();
+				glPopMatrix();
 			}
 
 

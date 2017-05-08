@@ -227,7 +227,7 @@ namespace vrlib
 				glActiveTexture(GL_TEXTURE0 + textureCount + offset);
 				glBindTexture(GL_TEXTURE_2D, texid[textureCount]);
 			}
-			if(textureCount > 1)
+			if(textureCount > 1 || depthTexture > 0)
 				glActiveTexture(GL_TEXTURE0);
 
 		}

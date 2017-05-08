@@ -65,7 +65,8 @@ namespace vrlib
 		math::AABB aabb;
 
 		virtual std::vector<glm::vec3> collisions(const vrlib::math::Ray &ray);
-		virtual std::vector<float> collisionFractions(const vrlib::math::Ray &ray) = 0;
+		virtual std::vector<float> collisionFractions(const vrlib::math::Ray &ray);
+		virtual void collisionFractions(const vrlib::math::Ray &ray, std::function<bool(float)>) = 0;
 
 	};
 
@@ -105,7 +106,7 @@ namespace vrlib
 		template<class VertexFormat>
 		void recenterToCenterBottom(std::vector<VertexFormat> &vertices);
 
-		std::vector<float> collisionFractions(const vrlib::math::Ray &ray) override;
+		void collisionFractions(const vrlib::math::Ray &ray, std::function<bool(float)> callback) override;
 		
 		virtual std::vector<std::string> getAnimationNames() const { return std::vector<std::string>(); };
 	};

@@ -181,8 +181,8 @@ namespace vrlib
 					if (!postProcessorBuffers)
 					{
 						postProcessorBuffers = new vrlib::gl::FBO*[2]{ nullptr, nullptr };
-						postProcessorBuffers[0] = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
-						postProcessorBuffers[1] = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color, vrlib::gl::FBO::Normal);
+						postProcessorBuffers[0] = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color);
+						postProcessorBuffers[1] = new vrlib::gl::FBO(viewport[2], viewport[3], true, vrlib::gl::FBO::Color);
 						postProcessorBuffersMap[std::pair<Node*, int>(cameraNode, renderId)] = postProcessorBuffers;
 					}
 				}
@@ -498,6 +498,15 @@ namespace vrlib
 
 						p->runPass(pass);
 						glDrawArrays(GL_QUADS, 0, 4);
+
+
+						glBindFramebuffer(GL_READ_FRAMEBUFFER, postProcessorBuffers[drawnFbo]->fboId);
+						glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postProcessorBuffers[toDrawTo]->fboId);
+						glBlitFramebuffer(0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight(),
+							0, 0, postProcessorBuffers[0]->getWidth(), postProcessorBuffers[0]->getHeight(),
+							GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+
 						postProcessorBuffers[toDrawTo]->unbind();
 
 						drawnFbo = 1 - drawnFbo;

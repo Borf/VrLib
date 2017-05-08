@@ -21,6 +21,7 @@ namespace vrlib
 				glm::vec3 offset;
 				virtual physx::PxShape* getShape(physx::PxPhysics* physics, const glm::vec3 &scale) = 0;
 
+				virtual void drawDebug() {};
 			};
 		}
 	}

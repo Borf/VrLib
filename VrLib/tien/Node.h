@@ -93,7 +93,7 @@ namespace vrlib
 			}
 
 
-			template<class T> std::vector<T*> getComponents()
+			template<class T> std::vector<T*> getComponents() const
 			{
 				std::vector<T*> ret;
 				for (auto c : components)
@@ -104,7 +104,7 @@ namespace vrlib
 				}
 				return ret;
 			}
-			std::vector<Component*> getComponents()
+			std::vector<Component*> getComponents() const
 			{
 				return components;
 			}

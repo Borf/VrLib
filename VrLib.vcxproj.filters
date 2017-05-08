@@ -408,6 +408,9 @@
     <ClInclude Include="VrLib\tien\components\postprocess\Gamma.h">
       <Filter>tien\components\postprocessors</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\tien\components\postprocess\DoF.h">
+      <Filter>tien\components\postprocessors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -743,6 +746,9 @@
     <ClCompile Include="VrLib\tien\components\PostProcessor.cpp">
       <Filter>tien\components</Filter>
     </ClCompile>
+    <ClCompile Include="VrLib\tien\components\postprocess\DoF.cpp">
+      <Filter>tien\components\postprocessors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.frag">
@@ -755,6 +761,18 @@
       <Filter>tien\components\postprocessors\shaders</Filter>
     </None>
     <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.vert">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\blur.vert">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\DoF.frag">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\DoF.vert">
+      <Filter>tien\components\postprocessors\shaders</Filter>
+    </None>
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\blur.frag">
       <Filter>tien\components\postprocessors\shaders</Filter>
     </None>
   </ItemGroup>

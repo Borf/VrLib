@@ -182,6 +182,7 @@
     <ClInclude Include="VrLib\tien\components\ModelRenderer.h" />
     <ClInclude Include="VrLib\tien\components\PostProcessor.h" />
     <ClInclude Include="VrLib\tien\components\postprocess\Bloom.h" />
+    <ClInclude Include="VrLib\tien\components\postprocess\DoF.h" />
     <ClInclude Include="VrLib\tien\components\postprocess\Gamma.h" />
     <ClInclude Include="VrLib\tien\components\postprocess\Noise.h" />
     <ClInclude Include="VrLib\tien\components\RigidBody.h" />
@@ -294,6 +295,7 @@
     <ClCompile Include="VrLib\tien\components\ModelRenderer.cpp" />
     <ClCompile Include="VrLib\tien\components\PostProcessor.cpp" />
     <ClCompile Include="VrLib\tien\components\postprocess\Bloom.cpp" />
+    <ClCompile Include="VrLib\tien\components\postprocess\DoF.cpp" />
     <ClCompile Include="VrLib\tien\components\postprocess\Gamma.cpp" />
     <ClCompile Include="VrLib\tien\components\postprocess\Noise.cpp" />
     <ClCompile Include="VrLib\tien\components\Renderable.cpp" />
@@ -327,6 +329,10 @@
   <ItemGroup>
     <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.frag" />
     <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\bloom.vert" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\blur.frag" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\blur.vert" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\DoF.frag" />
+    <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\DoF.vert" />
     <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.frag" />
     <None Include="..\..\..\Runtime\data\vrlib\tien\Shaders\postprocess\gamma.vert" />
   </ItemGroup>
