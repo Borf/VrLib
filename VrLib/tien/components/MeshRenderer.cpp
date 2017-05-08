@@ -316,11 +316,13 @@ namespace vrlib
 					vertices.push_back(vv);
 				}
 
-				if(data["material"].find("diffuse") != data["material"].end())
-					material.texture = vrlib::Texture::loadCached(data["material"]["diffuse"]);
-				if (data["material"].find("normal") != data["material"].end())
-					material.normalmap = vrlib::Texture::loadCached(data["material"]["normal"]);
-
+				if (data.find("material") != data.end())
+				{
+					if (data["material"].find("diffuse") != data["material"].end())
+						material.texture = vrlib::Texture::loadCached(data["material"]["diffuse"]);
+					if (data["material"].find("normal") != data["material"].end())
+						material.normalmap = vrlib::Texture::loadCached(data["material"]["normal"]);
+				}
 			}
 
 			json MeshRenderer::Mesh::toJson()
@@ -355,6 +357,8 @@ namespace vrlib
 
 					ret["vertices"].push_back(vv);
 				}
+
+				ret["material"] = json::object();
 
 				if(material.texture && material.texture->image)
 					ret["material"]["diffuse"] = material.texture->image->fileName;
