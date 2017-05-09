@@ -75,6 +75,8 @@ namespace vrlib
 						renderAble = nullptr;
 					if (std::is_same<T, components::Light>::value)
 						light = nullptr;
+					if (std::is_same<T, components::RigidBody>::value)
+						rigidBody = nullptr;
 					//TODO: etc
 
 					return t != nullptr; 
@@ -84,10 +86,12 @@ namespace vrlib
 			template<class T> void removeComponent(T* c)
 			{
 				components.erase(std::remove(components.begin(), components.end(), c), components.end());
-				if (std::is_same<T, components::Renderable>::value)
+				if (renderAble == c)
 					renderAble = nullptr;
-				if (std::is_same<T, components::Light>::value)
+				if (light == c)
 					light = nullptr;
+				if (rigidBody == c)
+					rigidBody = nullptr;
 				//TODO: etc
 				delete c;
 			}
