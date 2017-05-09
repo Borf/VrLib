@@ -23,6 +23,7 @@ namespace vrlib
 		enum XBOXData
 		{
 			LeftThumbMagnitude, RightThumbMagnitude, LeftThumbAngle, RightThumbAngle,
+			LeftThumbStick, RightThumbStick,
 			AButton, BButton, XButton, YButton,
 			DPADLeftButton, DPADRightButton, DPADUpButton, DPADDownButton,
 			LeftShoulder, RightShoulder, LeftTrigger, RightTrigger,
