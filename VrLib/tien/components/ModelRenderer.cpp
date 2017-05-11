@@ -89,6 +89,11 @@ namespace vrlib
 				return ret;
 			}
 
+			Material * ModelRenderer::getCurrentMaterial()
+			{
+				return model->getMaterials()[0];
+			}
+
 			void ModelRenderer::buildEditor(EditorBuilder * builder, bool folded)
 			{
 				builder->addTitle("Model Renderer");
