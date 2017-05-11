@@ -72,7 +72,8 @@ namespace vrlib
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;
 				ret["cullBackFaces"] = cullBackFaces;
-
+				if (!model)
+					return ret;
 				for (vrlib::Material* m : model->getMaterials()) //TODO: getMaterials might not always return same order
 				{
 					const Material &overrideMaterial = materialOverrides.find(m)->second;
