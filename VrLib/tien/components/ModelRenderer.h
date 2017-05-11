@@ -77,7 +77,6 @@ namespace vrlib
 					virtual void useCubemap(bool) override;
 				};
 
-				std::map<vrlib::Material*, vrlib::Material> materialOverrides;
 				vrlib::Model* prevModel = nullptr;
 
 				std::string fileName;
@@ -97,6 +96,8 @@ namespace vrlib
 
 				bool castShadow;
 				bool cullBackFaces;
+				std::map<vrlib::Material*, vrlib::Material> materialOverrides;
+				Material* getCurrentMaterial();
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 
 			};
