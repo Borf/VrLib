@@ -71,6 +71,11 @@ namespace vrlib
 			void update(float elapsedTime);
 			void init();
 
+			/**
+			* Updates all the prefabs to the data in the file. Updates the relative positions of all childnodes, but not the transform of the main node with the prefab
+			*/
+			void updatePrefabs();
+
 			friend class Renderer;
 			friend class Tien;
 			friend class Node;

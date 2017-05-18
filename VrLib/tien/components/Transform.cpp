@@ -10,10 +10,12 @@
 
 #include <sstream>
 
+
 namespace vrlib
 {
 	namespace tien
 	{
+		extern bool _tieneditor;
 		namespace components
 		{
 			Transform::Transform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale) : 
@@ -109,7 +111,7 @@ namespace vrlib
 
 			void Transform::buildTransform(const glm::mat4 &parentTransform)
 			{
-				if (node && node->rigidBody && node->rigidBody->actor)
+				if (node && node->rigidBody && node->rigidBody->actor && !_tieneditor)
 				{
 					auto mat = physx::PxMat44(node->rigidBody->actor->getGlobalPose());
 					glm::mat4 matrix = glm::make_mat4(mat.front());

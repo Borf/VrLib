@@ -36,6 +36,7 @@ namespace vrlib
 			bool enabled = true;
 			std::string guid;
 			std::string name;
+			std::string prefabFile;
 			Node* parent;
 
 			Node(const std::string &name, Node* parent);

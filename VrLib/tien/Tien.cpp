@@ -15,6 +15,8 @@ namespace vrlib
 {
 	namespace tien
 	{
+		bool _tieneditor = false;
+
 		Tien::Tien()
 		{
 			playState = PlayState::Stopped;

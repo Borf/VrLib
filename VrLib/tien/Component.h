@@ -31,6 +31,7 @@ namespace vrlib
 			virtual TextComponent* addTextBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual TextComponent* addTextureBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual TextComponent* addModelBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
+			virtual TextComponent* addPrefabBox(const std::string &value, std::function<void(const std::string &)> onChange) = 0;
 			virtual ColorComponent* addColorBox(const glm::vec4 &value, std::function<void(const glm::vec4 &)> onChange) = 0;
 
 			virtual FloatComponent* addFloatBox(float value, float min, float max, std::function<void(float)> onChange) = 0;

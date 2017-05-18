@@ -63,7 +63,7 @@ namespace vrlib
 
 			void RigidBody::init(physx::PxScene* scene)
 			{
-				this->world = world;
+				this->world = scene;
 				Collider* collider = node->getComponent<Collider>();
 				Transform* transform = node->getComponent<Transform>();
 				ModelRenderer* model = node->getComponent<ModelRenderer>();
@@ -101,7 +101,7 @@ namespace vrlib
 
 				logger << "Updating collider..." << Log::newline;
 				init(world);
-
+				
 			}
 
 
