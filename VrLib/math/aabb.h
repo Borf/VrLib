@@ -27,6 +27,8 @@ namespace vrlib
 		bool hasRayCollision(const Ray& r, float minDistance, float maxDistance);
 
 		void add(const AABB& other, const glm::mat4 &transform);
+
+		inline glm::vec3 getSize() { return bounds[1] - bounds[0]; }
 	};
 	}
 }

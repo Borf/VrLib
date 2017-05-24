@@ -6,6 +6,11 @@
 #include <type_traits>
 #include <VrLib/json.hpp>
 
+#include "components/Renderable.h"
+#include "components/Light.h"
+#include "components/RigidBody.h"
+#include "components/Transform.h"
+
 namespace vrlib
 {
 	namespace tien
@@ -86,11 +91,11 @@ namespace vrlib
 			template<class T> void removeComponent(T* c)
 			{
 				components.erase(std::remove(components.begin(), components.end(), c), components.end());
-				if (renderAble == c)
+				if (std::is_same<T, components::Renderable>::value)
 					renderAble = nullptr;
-				if (light == c)
+				if (std::is_same<T, components::Light>::value)
 					light = nullptr;
-				if (rigidBody == c)
+				if (std::is_same<T, components::RigidBody>::value)
 					rigidBody = nullptr;
 				//TODO: etc
 				delete c;
