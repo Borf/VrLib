@@ -8,6 +8,7 @@ namespace vrlib
 {
 	namespace tien
 	{
+		extern bool _tieneditor;
 		class Renderer;
 		class Scene;
 

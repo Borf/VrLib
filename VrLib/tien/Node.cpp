@@ -97,6 +97,9 @@ namespace vrlib
 			setTreeDirty(this, true);
 			name = data["name"].get<std::string>();
 			guid = data["uuid"].get<std::string>();
+			
+			if (data.find("prefab") != data.end())
+				prefabFile = data["prefab"];
 
 			for (auto c : components)
 				delete c;

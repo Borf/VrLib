@@ -22,7 +22,6 @@ namespace vrlib
 		controllers[1].thumbPad.init("LeftThumbPos");
 		controllers[0].thumbPad.init("RightThumbPos");
 
-
 		if (!controllers[0].applicationMenuButton.isInitialized())
 		{//uhoh, we're not on the vive...
 			controllers[0].triggerButton.init("LeftButton");
