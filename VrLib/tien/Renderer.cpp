@@ -238,10 +238,9 @@ namespace vrlib
 			for (components::Renderable::RenderContext* context : scene.renderContextsDeferred)
 				context->frameSetup(projectionMatrix, modelViewMatrix);
 			//and then actually draw to the gbuffer
-			for (Node* c : scene.renderables)
+			for (components::Renderable* r : scene.allRenderables)
 			{
-				auto r = c->getComponent<components::Renderable>();
-				if (r->visible && c->enabled)
+				if (r->visible && r->node->enabled)
 					r->drawDeferredPass();
 			}
 			gbuffers->unbind(); //gbuffers->oldFBO gets unset here...
@@ -428,11 +427,10 @@ namespace vrlib
 			//call the setup for each rendercontext. This sets the projection matrix and view matrix
 			for (components::Renderable::RenderContext* context : scene.renderContextsForward)
 				context->frameSetup(projectionMatrix, modelViewMatrix);
-			for (Node* c : scene.renderables)
+			for (auto renderable : scene.allRenderables)
 			{
-				auto r = c->getComponent<components::Renderable>();
-				if(r->visible && c->enabled)
-					r->drawForwardPass();
+				if(renderable->visible && renderable->node->enabled)
+					renderable->drawForwardPass();
 			}
 
 

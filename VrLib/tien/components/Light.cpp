@@ -175,11 +175,10 @@ namespace vrlib
 					}
 
 					glCullFace(GL_FRONT);
-					for (Node* c : scene.renderables)
+					for (auto renderable : scene.allRenderables)
 					{
-						auto r = c->getComponent<components::Renderable>();
-						if(r->visible)
-							r->drawShadowMap();
+						if(renderable->visible && renderable->node->enabled)
+							renderable->drawShadowMap();
 					}
 					glCullFace(GL_BACK);
 					shadowMapDirectional->unbind();
@@ -208,11 +207,10 @@ namespace vrlib
 							context->useCubemap(true);
 						}
 
-						for (Node* c : scene.renderables)
+						for (auto renderable : scene.allRenderables)
 						{
-							auto r = c->getComponent<components::Renderable>();
-							if (r->visible)
-								r->drawShadowMap();
+							if (renderable->visible && renderable->node->enabled)
+								renderable->drawShadowMap();
 						}
 					}
 					shadowMapDirectional->unbind();

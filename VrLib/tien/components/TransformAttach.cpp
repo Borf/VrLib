@@ -45,6 +45,7 @@ namespace vrlib
 
 				glm::vec3 pos(mat * glm::vec4(0, 0, 0, 1));
 				glm::quat rot(mat);
+				//rot = glm::normalize(rot);
 				RigidBody* rigidBody = node->getComponent<RigidBody>();
 
 				if (rigidBody && rigidBody->actor)

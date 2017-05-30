@@ -37,7 +37,6 @@ namespace vrlib
 		{
 			this->transform = nullptr;
 			this->rigidBody = nullptr;
-			this->renderAble = nullptr;
 			this->light = nullptr;
 			this->parent = parent;
 			guid = vrlib::util::getGuid();
@@ -108,7 +107,6 @@ namespace vrlib
 			components.clear();
 			transform = nullptr;
 			rigidBody = nullptr;
-			renderAble = nullptr;
 			light = nullptr;
 
 
@@ -310,8 +308,12 @@ namespace vrlib
 					}
 				}
 
-				if (!renderAble)
-					renderAble = dynamic_cast<components::Renderable*>(component);
+				auto renderAble = dynamic_cast<components::Renderable*>(component);
+				if (renderAble)
+				{
+					renderAbles.push_back(renderAble);
+					this->setTreeDirty(this, false);
+				}
 			}
 
 		}

@@ -83,35 +83,36 @@ namespace vrlib
 
 		void Scene::updateRenderables()
 		{
-			renderables.clear();
+			allRenderables.clear();
 			lights.clear();
 			fortree([this](Node* n)
 			{
-				components::Renderable* renderable;
-				if (renderable = n->getComponent<components::Renderable>())
-				{
-					renderables.push_back(n);
-					if (renderable->renderContextDeferred && renderContextsDeferred.find(renderable->renderContextDeferred) == renderContextsDeferred.end())
-					{
-						renderable->renderContextDeferred->init(); // TODO: move this to another place?
-						renderContextsDeferred.insert(renderable->renderContextDeferred);
-					}
-					if (renderable->renderContextShadow && renderContextsShadow.find(renderable->renderContextShadow) == renderContextsShadow.end())
-					{
-						renderable->renderContextShadow->init(); // TODO: move this to another place?
-						renderContextsShadow.insert(renderable->renderContextShadow);
-					}					
-					if (renderable->renderContextForward && renderContextsForward.find(renderable->renderContextForward) == renderContextsForward.end())
-					{
-						renderable->renderContextForward->init(); // TODO: move this to another place?
-						renderContextsForward.insert(renderable->renderContextForward);
-					}
-				}
+				if (!n->renderAbles.empty())
+					allRenderables.insert(allRenderables.end(), n->renderAbles.begin(), n->renderAbles.end());
 				if (n->getComponent<components::Light>())
 					lights.push_back(n);
 			});
+			allRenderables.sort([](components::Renderable* a, components::Renderable* b) { return (int)a->renderContextDeferred < (int)b->renderContextDeferred; });
 
-			renderables.sort([](Node* a, Node* b) { return (int)a->renderAble->renderContextDeferred < (int)b->renderAble->renderContextDeferred; });
+			for (auto renderable : allRenderables)
+			{
+				if (renderable->renderContextDeferred && renderContextsDeferred.find(renderable->renderContextDeferred) == renderContextsDeferred.end())
+				{
+					renderable->renderContextDeferred->init(); // TODO: move this to another place?
+					renderContextsDeferred.insert(renderable->renderContextDeferred);
+				}
+				if (renderable->renderContextShadow && renderContextsShadow.find(renderable->renderContextShadow) == renderContextsShadow.end())
+				{
+					renderable->renderContextShadow->init(); // TODO: move this to another place?
+					renderContextsShadow.insert(renderable->renderContextShadow);
+				}
+				if (renderable->renderContextForward && renderContextsForward.find(renderable->renderContextForward) == renderContextsForward.end())
+				{
+					renderable->renderContextForward->init(); // TODO: move this to another place?
+					renderContextsForward.insert(renderable->renderContextForward);
+				}
+			}
+
 		}
 
 		void Scene::update(float elapsedTime)
@@ -181,7 +182,7 @@ namespace vrlib
 			while (getFirstChild())
 				delete getFirstChild();
 
-			renderables.clear();
+			allRenderables.clear();
 			lights.clear();
 			cameraNode = nullptr;
 		}

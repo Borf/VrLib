@@ -3,6 +3,7 @@
 #include <vector>
 #include <functional>
 #include <algorithm>
+#include <list>
 #include <type_traits>
 #include <VrLib/json.hpp>
 
@@ -36,7 +37,7 @@ namespace vrlib
 		public:
 			components::Transform* transform;
 			components::RigidBody* rigidBody;
-			components::Renderable* renderAble;
+			std::list<components::Renderable*> renderAbles;
 			components::Light* light;
 			bool enabled = true;
 			std::string guid;
@@ -75,16 +76,21 @@ namespace vrlib
 			{
 				components.erase(std::remove_if(components.begin(), components.end(), [this](Component* c) { 
 					T* t = dynamic_cast<T*>(c);
-					if (t)
-						delete t;
-					if (std::is_same<T, components::Renderable>::value)
-						renderAble = nullptr;
+
+					auto r = dynamic_cast<components::Renderable*>(t);
+					if (r)
+					{
+						renderAbles.remove(r);
+						setTreeDirty(this, false);
+					}
 					if (std::is_same<T, components::Light>::value)
 						light = nullptr;
 					if (std::is_same<T, components::RigidBody>::value)
 						rigidBody = nullptr;
 					//TODO: etc
 
+					if (t)
+						delete t;
 					return t != nullptr; 
 				}), components.end());
 			}
@@ -92,8 +98,12 @@ namespace vrlib
 			template<class T> void removeComponent(T* c)
 			{
 				components.erase(std::remove(components.begin(), components.end(), c), components.end());
-				if (std::is_same<T, components::Renderable>::value)
-					renderAble = nullptr;
+				auto r = dynamic_cast<components::Renderable*>(c);
+				if (r)
+				{
+					renderAbles.remove(r);
+					setTreeDirty(this, false);
+				}
 				if (std::is_same<T, components::Light>::value)
 					light = nullptr;
 				if (std::is_same<T, components::RigidBody>::value)

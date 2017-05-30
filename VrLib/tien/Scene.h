@@ -57,7 +57,7 @@ namespace vrlib
 			std::set<components::Renderable::RenderContext*> renderContextsDeferred;
 			std::set<components::Renderable::RenderContext*> renderContextsShadow;
 			std::set<components::Renderable::RenderContext*> renderContextsForward;
-			std::list<Node*> renderables;
+			std::list<components::Renderable*> allRenderables;
 			std::vector<Node*> lights;
 			math::Frustum* frustum;
 

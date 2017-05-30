@@ -16,6 +16,11 @@ namespace vrlib
 		class Renderer;
 		class Scene;
 
+		namespace components
+		{
+			class Light;
+		}
+
 		class EditorBuilder
 		{
 		public:
@@ -62,6 +67,8 @@ namespace vrlib
 			virtual ~Component() {};
 			Node* node;
 			friend class Node;
+			friend class Renderer;
+			friend class components::Light;
 		public:
 			virtual void update(float elapsedTime, Scene& scene) {};
 			virtual void postUpdate(Scene& scene) {};

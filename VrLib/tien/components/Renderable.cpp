@@ -11,7 +11,6 @@ namespace vrlib
 		{
 			Renderable::~Renderable()
 			{
-				node->renderAble = nullptr;
 				node->setTreeDirty(nullptr, nullptr);
 			}
 
