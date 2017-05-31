@@ -411,6 +411,9 @@
     <ClInclude Include="VrLib\tien\components\postprocess\DoF.h">
       <Filter>tien\components\postprocessors</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\csgjs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -748,6 +751,9 @@
     </ClCompile>
     <ClCompile Include="VrLib\tien\components\postprocess\DoF.cpp">
       <Filter>tien\components\postprocessors</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\csgjs.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

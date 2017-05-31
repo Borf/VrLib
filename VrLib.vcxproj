@@ -110,6 +110,7 @@
     <ClInclude Include="VrLib\ClusterManager.h" />
     <ClInclude Include="VrLib\ClusterManagers\ClusterManagerMaster.h" />
     <ClInclude Include="VrLib\ClusterManagers\ClusterManagerSlave.h" />
+    <ClInclude Include="VrLib\csgjs.h" />
     <ClInclude Include="VrLib\Device.h" />
     <ClInclude Include="VrLib\drivers\GloveDriver.h" />
     <ClInclude Include="VrLib\drivers\HydraDriver.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="VrLib\ClusterManager.cpp" />
     <ClCompile Include="VrLib\ClusterManagers\ClusterManagerMaster.cpp" />
     <ClCompile Include="VrLib\ClusterManagers\ClusterManagerSlave.cpp" />
+    <ClCompile Include="VrLib\csgjs.cpp" />
     <ClCompile Include="VrLib\Device.cpp" />
     <ClCompile Include="VrLib\drivers\GloveDriver.cpp" />
     <ClCompile Include="VrLib\drivers\HydraDriver.cpp" />
