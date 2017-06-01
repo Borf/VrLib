@@ -28,11 +28,11 @@ namespace vrlib
 				renderContextDeferred = ModelDeferredRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
 
-				renderContextForward = ModelForwardRenderContext::getInstance();
-				//if (data.find("forwardShader") == data.end())
-				//	renderContextForward = ModelForwardRenderContext::getInstance("");
-				//else
-				//	renderContextForward = ModelForwardRenderContext::getInstance(data["forwardShader"]);
+				//renderContextForward = ModelForwardRenderContext::getInstance();
+				if (data.find("forwardShader") == data.end())
+					renderContextForward = ModelForwardRenderContext::getInstance("");
+				else
+					renderContextForward = ModelForwardRenderContext::getInstance(data["forwardShader"]);
 
 				if (data.is_object())
 				{
@@ -404,10 +404,10 @@ namespace vrlib
 
 
 
-			ModelRenderer::ModelForwardRenderContext::ModelForwardRenderContext()
-			//ModelRenderer::ModelForwardRenderContext::ModelForwardRenderContext(const std::string & shader)
+			//ModelRenderer::ModelForwardRenderContext::ModelForwardRenderContext()
+			ModelRenderer::ModelForwardRenderContext::ModelForwardRenderContext(const std::string & shader)
 			{
-				shaderFile = "";
+				shaderFile = shader;
 				if (shaderFile == "")
 					shaderFile = "data/vrlib/tien/shaders/ModelRenderer.forward";
 

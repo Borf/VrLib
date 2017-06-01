@@ -38,13 +38,13 @@ namespace vrlib
 	};
 
 
-/*	template <class T, class R>
+	template <class T, class R>
 	class MapSingleton
 	{
 	public:
 		static T* getInstance(R r)
 		{
-			static std::map<R, T> cache;
+			static std::map<R, T*> cache;
 			auto it = cache.find(r);
 			if (it == cache.end())
 			{
@@ -52,9 +52,9 @@ namespace vrlib
 				it = cache.find(r);
 			}
 		
-			return *it;
+			return it->second;
 		}
-	};*/
+	};
 
 	template <class T>
 	class AutoSingleton

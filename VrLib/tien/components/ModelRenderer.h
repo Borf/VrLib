@@ -41,7 +41,7 @@ namespace vrlib
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 				};
 
-				class ModelForwardRenderContext : public Renderable::RenderContext, public Singleton<ModelForwardRenderContext>
+				class ModelForwardRenderContext : public Renderable::RenderContext, public MapSingleton<ModelForwardRenderContext, std::string>
 				{
 				public:
 					enum class RenderUniform
@@ -58,8 +58,8 @@ namespace vrlib
 						shinyness,
 					};
 					std::string shaderFile;
-					//ModelForwardRenderContext(const std::string &shader);
-					ModelForwardRenderContext();
+					ModelForwardRenderContext(const std::string &shader);
+					//ModelForwardRenderContext();
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
 					virtual void init() override;
