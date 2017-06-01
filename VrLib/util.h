@@ -17,6 +17,9 @@ namespace vrlib
 		glm::vec3 hsv2rgb(glm::vec3 hsv);
 		glm::vec3 rgb2hsv(glm::vec3 rgb);
 
+		glm::vec4 hex2rgb(const std::string &hex);
+		std::string rgb2hex(const glm::vec4 &rgb);
+
 		float random(float min, float max);
 
 		std::string getGuid();

@@ -186,6 +186,37 @@ namespace vrlib
 			return out;
 		}
 
+		glm::vec4 hex2rgb(const std::string & hex)
+		{
+			std::stringstream c(hex);
+			unsigned int rgb;
+			c >> std::hex >> rgb;
+
+			glm::vec4 color;
+
+			if (hex.size() > 6)
+			{
+				color.a = ((rgb >> 0) & 255) / 255.0f;
+				color.b = ((rgb >> 8) & 255) / 255.0f;
+				color.g = ((rgb >> 16) & 255) / 255.0f;
+				color.r = ((rgb >> 24) & 255) / 255.0f;
+			}
+			else
+			{
+				color.b = ((rgb >> 0) & 255) / 255.0f;
+				color.g = ((rgb >> 8) & 255) / 255.0f;
+				color.r = ((rgb >> 16) & 255) / 255.0f;
+			}
+
+		}
+
+		std::string rgb2hex(const glm::vec4 & rgb)
+		{
+			char hex[10];
+			sprintf(hex, "%02X%02X%02X", (int)(rgb.r * 255), (int)(rgb.g * 255), (int)(rgb.b * 255));
+			return hex;
+		}
+
 		float random(float min, float max)
 		{
 			return (float)((double)rand() / (RAND_MAX + 1)) * (max - min + 1) + min;

@@ -61,7 +61,6 @@ namespace vrlib
 				gl::VIO<unsigned int> vio;
 				gl::VAO* vao;
 
-				vrlib::Material materialOverride;
 				Mesh* prevMesh = nullptr;
 
 			public:

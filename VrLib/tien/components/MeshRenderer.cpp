@@ -6,6 +6,7 @@
 #include <VrLib/util.h>
 #include <VrLib/Image.h>
 #include <VrLib/math/Ray.h>
+#include <VrLib/Texture.h>
 #include "Transform.h"
 #include "../Node.h"
 #include "../Renderer.h"
@@ -102,50 +103,51 @@ namespace vrlib
 					builder->addTitle("Material");
 
 					builder->beginGroup("Ambient", true);
-					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->addColorBox(mesh->material.color.ambient, [this](const glm::vec4 &newValue) { mesh->material.color.ambient = newValue; });
 					builder->endGroup();
 					builder->beginGroup("Diffuse", true);
-					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->addColorBox(mesh->material.color.diffuse, [this](const glm::vec4 &newValue) { mesh->material.color.diffuse = newValue; });
 					builder->endGroup();
 					builder->beginGroup("Specular", true);
-					builder->addTextBox("#AABBCC", [](const std::string &newText) {}); //TODO: color picker
+					builder->addColorBox(glm::vec4(mesh->material.color.specular,1), [this](const glm::vec4 &newValue) { mesh->material.color.specular = glm::vec3(newValue); });
 					builder->endGroup();
 
 					builder->beginGroup("Texture", false);
-					auto textureBox = builder->addTextureBox((materialOverride.texture && materialOverride.texture->image) ? materialOverride.texture->image->fileName : "", [this](const std::string &newFile) {
-						materialOverride.texture = vrlib::Texture::loadCached(newFile);
+					auto textureBox = builder->addTextureBox(mesh->material.texture ? mesh->material.texture->image->fileName : "", [this](const std::string &newFile) {
+						mesh->material.texture = vrlib::Texture::loadCached(newFile);
 					});
 					builder->addSmallButton("x", [this, textureBox]()
 					{
 						textureBox->setText("");
-						materialOverride.texture = nullptr;
+						mesh->material.texture = nullptr;
 					});
 					builder->endGroup();
 
 					builder->beginGroup("Normalmap", false);
-					auto normalBox = builder->addTextureBox((materialOverride.normalmap && materialOverride.normalmap->image) ? materialOverride.normalmap->image->fileName : "", [this](const std::string &newFile) {
-						materialOverride.normalmap = vrlib::Texture::loadCached(newFile);
+					auto normalmapBox = builder->addTextureBox(mesh->material.normalmap ? mesh->material.normalmap->image->fileName : "", [this](const std::string &newFile) {
+						mesh->material.normalmap = vrlib::Texture::loadCached(newFile);
 					});
-					builder->addSmallButton("x", [this, normalBox]()
+					builder->addSmallButton("x", [this, normalmapBox]()
 					{
-						normalBox->setText("");
-						materialOverride.normalmap = nullptr;
+						normalmapBox->setText("");
+						mesh->material.normalmap = nullptr;
 					});
 					builder->endGroup();
 
+
 					builder->beginGroup("Specularmap", false);
-					auto specBox = builder->addTextureBox((materialOverride.specularmap && materialOverride.specularmap->image) ? materialOverride.specularmap->image->fileName : "", [this](const std::string &newFile) {
-						materialOverride.specularmap = vrlib::Texture::loadCached(newFile);
+					auto specBox = builder->addTextureBox(mesh->material.normalmap ? mesh->material.normalmap->image->fileName : "", [this](const std::string &newFile) {
+						mesh->material.normalmap = vrlib::Texture::loadCached(newFile);
 					});
 					builder->addSmallButton("x", [this, specBox]()
 					{
 						specBox->setText("");
-						materialOverride.specularmap = nullptr;
+						mesh->material.specularmap = nullptr;
 					});
 					builder->endGroup();
 
 					builder->beginGroup("Shinyness");
-					builder->addTextBox(builder->toString(materialOverride.color.shinyness), [this](const std::string &newValue) { materialOverride.color.shinyness = (float)atof(newValue.c_str()); });
+					builder->addFloatBox(mesh->material.color.shinyness, 0, 1000, [this](float newValue) { mesh->material.color.shinyness = newValue; });
 					builder->endGroup();
 
 				}
@@ -171,7 +173,6 @@ namespace vrlib
 			{
 				if (mesh != prevMesh)
 				{
-					materialOverride = mesh->material;
 					prevMesh = mesh;
 				}
 //				if(...)
