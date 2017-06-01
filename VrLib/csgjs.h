@@ -1,3 +1,4 @@
+#pragma once
 // Original CSG.JS library by Evan Wallace (http://madebyevan.com), under the MIT license.
 // GitHub: https://github.com/evanw/csg.js/
 // 
@@ -13,7 +14,6 @@
 //
 // To use this as a header file, define CSGJS_HEADER_ONLY before including this file.
 //
-
 #include <list>
 #include <vector>
 #include <algorithm>
@@ -32,6 +32,7 @@ struct csgjs_vertex
 	csgjs_vector pos;
 	csgjs_vector normal;
 	csgjs_vector uv;
+	csgjs_vector tangent;
 };
 
 struct csgjs_model

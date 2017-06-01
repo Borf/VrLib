@@ -27,7 +27,13 @@ namespace vrlib
 				model = cache[fileName];
 				renderContextDeferred = ModelDeferredRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
+
 				renderContextForward = ModelForwardRenderContext::getInstance();
+				//if (data.find("forwardShader") == data.end())
+				//	renderContextForward = ModelForwardRenderContext::getInstance("");
+				//else
+				//	renderContextForward = ModelForwardRenderContext::getInstance(data["forwardShader"]);
+
 				if (data.is_object())
 				{
 					castShadow = data["castShadow"];
@@ -398,10 +404,18 @@ namespace vrlib
 
 
 
+			ModelRenderer::ModelForwardRenderContext::ModelForwardRenderContext()
+			//ModelRenderer::ModelForwardRenderContext::ModelForwardRenderContext(const std::string & shader)
+			{
+				shaderFile = "";
+				if (shaderFile == "")
+					shaderFile = "data/vrlib/tien/shaders/ModelRenderer.forward";
+
+			}
 
 			void ModelRenderer::ModelForwardRenderContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/ModelRenderer.forward.vert", "data/vrlib/tien/shaders/ModelRenderer.forward.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>(shaderFile + ".vert", shaderFile + ".frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_normal", 1);
 				renderShader->bindAttributeLocation("a_bitangent", 2);

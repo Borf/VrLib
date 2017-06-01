@@ -81,6 +81,11 @@ namespace vrlib
 					virtual void collisionFractions(const vrlib::math::Ray & ray, std::function<bool(float)> callback) override;
 				};
 
+				class Cube : public Mesh
+				{
+				public:
+					Cube();
+				};
 
 				MeshRenderer(Mesh* mesh = nullptr);
 				MeshRenderer(const json &data, const json &totalJson);

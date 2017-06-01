@@ -42,6 +42,8 @@ namespace vrlib
 				{
 					world->removeActor(*actor);
 					actor->release();
+					actor = nullptr;
+					world = nullptr;
 				}
 			}
 			json RigidBody::toJson(json &meshes) const

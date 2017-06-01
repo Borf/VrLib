@@ -85,6 +85,9 @@ namespace vrlib
 				builder->beginGroup("Mesh Vertices");
 				builder->addLabel(std::to_string(mesh->vertices.size()));
 				builder->endGroup();
+				builder->beginGroup("Mesh Triangles");
+				builder->addLabel(std::to_string(mesh->indices.size() / 3));
+				builder->endGroup();
 
 
 				builder->beginGroup("Casts Shadows");
@@ -389,6 +392,52 @@ namespace vrlib
 				}
 			}
 
-		}
+
+
+
+			MeshRenderer::Cube::Cube()
+			{
+				//top/bottom
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, .5f, -.5f), glm::vec3(0, 1, 0), glm::vec2(0, 0), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, .5f, .5f), glm::vec3(0, 1, 0), glm::vec2(0, 1), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, .5f, .5f), glm::vec3(0, 1, 0), glm::vec2(1, 1), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, .5f, -.5f), glm::vec3(0, 1, 0), glm::vec2(1, 0), glm::vec3(0, 0, 1)));
+
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, -.5f, -.5f), glm::vec3(0, -1, 0), glm::vec2(0, 0), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, -.5f, .5f), glm::vec3(0, -1, 0), glm::vec2(0, 1), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, -.5f, .5f), glm::vec3(0, -1, 0), glm::vec2(1, 1), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, -.5f, -.5f), glm::vec3(0, -1, 0), glm::vec2(1, 0), glm::vec3(0, 0, 1)));
+				//sides
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, -.5f, -.5f), glm::vec3(1, 0, 0), glm::vec2(0, 0), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, -.5f, .5f), glm::vec3(1, 0, 0), glm::vec2(0, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, .5f, .5f), glm::vec3(1, 0, 0), glm::vec2(1, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, .5f, -.5f), glm::vec3(1, 0, 0), glm::vec2(1, 0), glm::vec3(0, 1, 0)));
+
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, -.5f, -.5f), glm::vec3(-1, 0, 0), glm::vec2(0, 0), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, -.5f, .5f), glm::vec3(-1, 0, 0), glm::vec2(0, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, .5f, .5f), glm::vec3(-1, 0, 0), glm::vec2(1, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, .5f, -.5f), glm::vec3(-1, 0, 0), glm::vec2(1, 0), glm::vec3(0, 1, 0)));
+				//front/back
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, -.5f, -.5f), glm::vec3(0, 0, -1), glm::vec2(0, 0), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, -.5f, -.5f), glm::vec3(0, 0, -1), glm::vec2(0, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, .5f, -.5f), glm::vec3(0, 0, -1), glm::vec2(1, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, .5f, -.5f), glm::vec3(0, 0, -1), glm::vec2(1, 0), glm::vec3(0, 1, 0)));
+
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, -.5f, .5f), glm::vec3(0, 0, 1), glm::vec2(0, 0), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, -.5f, .5f), glm::vec3(0, 0, 1), glm::vec2(0, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, .5f, .5f), glm::vec3(0, 0, 1), glm::vec2(1, 1), glm::vec3(0, 1, 0)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, .5f, .5f), glm::vec3(0, 0, 1), glm::vec2(1, 0), glm::vec3(0, 1, 0)));
+
+				indices.insert(indices.end(), { 0, 1, 2, 0, 2, 3 });
+				indices.insert(indices.end(), { 6, 5, 4, 7, 6, 4 });
+
+				indices.insert(indices.end(), { 10, 9, 8, 11, 10, 8 });
+				indices.insert(indices.end(), { 12, 13, 14, 12, 14, 15 });
+
+				indices.insert(indices.end(), { 18, 17, 16, 19, 18, 16 });
+				indices.insert(indices.end(), { 20, 21, 22, 20, 22, 23 });
+			}
+
+}
 	}
 }
