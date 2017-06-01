@@ -193,19 +193,19 @@ namespace vrlib
 				{
 					context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 1.0f);
 					mesh->material.texture->bind();
-					glActiveTexture(GL_TEXTURE1);
-					if (mesh->material.normalmap)
-						mesh->material.normalmap->bind();
-					else
-						context->defaultNormalMap->bind();
-					glActiveTexture(GL_TEXTURE0);
-
 				}
 				else
 				{
 					context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 0.0f);
 					context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, mesh->material.color.diffuse);
 				}
+
+				glActiveTexture(GL_TEXTURE1);
+				if (mesh->material.normalmap)
+					mesh->material.normalmap->bind();
+				else
+					context->defaultNormalMap->bind();
+				glActiveTexture(GL_TEXTURE0);
 
 
 				if (vao)
