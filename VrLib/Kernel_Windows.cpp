@@ -78,8 +78,8 @@ namespace vrlib
 		}
 		case WM_KEYDOWN:
 			if (wParam == VK_ESCAPE)
-				PostQuitMessage(0);
-
+				if(!getenv("VRLIB_NOESCAPE"))
+					PostQuitMessage(0);
 			if (keyboardDriver && ((lParam >> 30) & 1) == 0)
 				keyboardDriver->keyDown(wParam);
 			break;
