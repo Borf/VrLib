@@ -8,7 +8,7 @@ namespace vrlib
 {
 	namespace util
 	{
-
+		std::string replace(std::string str, const std::string &toReplace, const std::string &replacement);
 		std::vector<std::string> split(std::string toSplit, const std::string &seperator);
 
 		std::vector<std::string> scandir(const std::string &path, bool recursive = false);

@@ -20,7 +20,19 @@ namespace vrlib
 	namespace util
 	{
 
-
+		std::string replace(std::string str, const std::string &toReplace, const std::string &replacement)
+		{
+			size_t index = 0;
+			while (true)
+			{
+				index = str.find(toReplace, index);
+				if (index == std::string::npos)
+					break;
+				str.replace(index, toReplace.length(), replacement);
+				++index;
+			}
+			return str;
+		}
 		std::vector<std::string> split(std::string value, const std::string &seperator)
 		{
 			std::vector<std::string> ret;

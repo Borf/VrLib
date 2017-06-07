@@ -414,6 +414,9 @@
     <ClInclude Include="VrLib\csgjs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VrLib\stb_image_resize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VrLib\VrLib.cpp">
@@ -753,6 +756,9 @@
       <Filter>tien\components\postprocessors</Filter>
     </ClCompile>
     <ClCompile Include="VrLib\csgjs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VrLib\stb_image_resize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

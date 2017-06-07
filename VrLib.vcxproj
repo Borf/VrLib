@@ -166,6 +166,7 @@
     <ClInclude Include="VrLib\PerfMon.h" />
     <ClInclude Include="VrLib\ServerConnection.h" />
     <ClInclude Include="VrLib\stb_image.h" />
+    <ClInclude Include="VrLib\stb_image_resize.h" />
     <ClInclude Include="VrLib\stb_image_write.h" />
     <ClInclude Include="VrLib\stb_rect_pack.h" />
     <ClInclude Include="VrLib\stb_truetype.h" />
@@ -281,6 +282,7 @@
     <ClCompile Include="VrLib\PerfMon.cpp" />
     <ClCompile Include="VrLib\ServerConnection.cpp" />
     <ClCompile Include="VrLib\stb_image.c" />
+    <ClCompile Include="VrLib\stb_image_resize.cpp" />
     <ClCompile Include="VrLib\stb_image_write.cpp" />
     <ClCompile Include="VrLib\stb_truetype.cpp" />
     <ClCompile Include="VrLib\Texture.cpp" />

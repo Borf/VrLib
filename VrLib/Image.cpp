@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include <VrLib/stb_image_write.h>
+#include <VrLib/stb_image_resize.h>
 
 
 namespace vrlib
@@ -74,9 +75,33 @@ namespace vrlib
 		data = NULL;
 	}
 
+	void Image::flipv()
+	{
+		const int rowSize = width * 4;
+		char* row = new char[rowSize];
+		for (int y = 0; y < height / 2; y++)
+		{
+			memcpy(row, data + rowSize * y, rowSize);
+			memcpy(data + rowSize * y, data + rowSize * (height - 1 - y), rowSize);
+			memcpy(data + rowSize * (height - 1 - y), row, rowSize);
+		}
+	}
+
 	void Image::save(const std::string & fileName)
 	{
-		stbi_write_png("test.png", width, height, depth, data,0);
+		stbi_write_png(fileName.c_str(), width, height, 4, data,0);
+	}
+
+	void Image::scale(int w, int h)
+	{
+		unsigned char* out = new unsigned char[w*h*4];
+
+		stbir_resize_uint8(data, width, height, 0, out, w, h, 0, 4);
+
+		delete[] data;
+		data = out;
+		width = w;
+		height = h;
 	}
 
 }
