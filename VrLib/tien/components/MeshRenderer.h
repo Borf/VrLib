@@ -23,7 +23,7 @@ namespace vrlib
 			public:
 				class Mesh;
 			private:
-				class ModelRenderContext : public Renderable::RenderContext, public Singleton<ModelRenderContext>
+				class ModelDeferredRenderContext : public Renderable::RenderContext, public Singleton<ModelDeferredRenderContext>
 				{
 				public:
 					enum class RenderUniform
@@ -37,6 +37,31 @@ namespace vrlib
 						diffuseColor,
 						textureFactor,
 					};
+					vrlib::gl::Shader<RenderUniform>* renderShader;
+					vrlib::Texture* defaultNormalMap;
+					virtual void init() override;
+					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
+				};
+
+				class ModelForwardRenderContext : public Renderable::RenderContext, public MapSingleton<ModelForwardRenderContext, std::string>
+				{
+				public:
+					enum class RenderUniform
+					{
+						modelMatrix,
+						projectionMatrix,
+						viewMatrix,
+						normalMatrix,
+						s_texture,
+						s_normalmap,
+						s_specularmap,
+						diffuseColor,
+						textureFactor,
+						shinyness,
+					};
+					std::string shaderFile;
+					ModelForwardRenderContext(const std::string &shader);
+					//ModelForwardRenderContext();
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
 					virtual void init() override;
@@ -80,11 +105,9 @@ namespace vrlib
 					virtual void collisionFractions(const vrlib::math::Ray & ray, std::function<bool(float)> callback) override;
 				};
 
-				class Cube : public Mesh
-				{
-				public:
-					Cube();
-				};
+				class Cube : public Mesh { public:			Cube(); };
+				class Plane : public Mesh { public:			Plane(); };
+				class Sphere : public Mesh { public:		Sphere(); };
 
 				MeshRenderer(Mesh* mesh = nullptr);
 				MeshRenderer(const json &data, const json &totalJson);
@@ -99,11 +122,12 @@ namespace vrlib
 				virtual void update(float elapsedTime, Scene& scene) override;
 
 				void drawDeferredPass() override;
-				void drawForwardPass() override {};
+				void drawForwardPass() override;
 				void drawShadowMap() override;
 
 				bool castShadow;
 				bool cullBackFaces = true;
+				bool useDeferred = true;
 			};
 		}
 	}

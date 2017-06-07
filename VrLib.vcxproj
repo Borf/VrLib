@@ -201,6 +201,7 @@
     <ClInclude Include="VrLib\tien\SceneManager.h" />
     <ClInclude Include="VrLib\tien\Terrain.h" />
     <ClInclude Include="VrLib\tien\Tien.h" />
+    <ClInclude Include="VrLib\tiny_jpeg.h" />
     <ClInclude Include="VrLib\User.h" />
     <ClInclude Include="VrLib\util.h" />
     <ClInclude Include="VrLib\util\mutex.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="VrLib\tien\SceneManager.cpp" />
     <ClCompile Include="VrLib\tien\Terrain.cpp" />
     <ClCompile Include="VrLib\tien\Tien.cpp" />
+    <ClCompile Include="VrLib\tiny_jpeg.cpp" />
     <ClCompile Include="VrLib\User.cpp" />
     <ClCompile Include="VrLib\util.cpp" />
     <ClCompile Include="VrLib\util\mutex.cpp" />

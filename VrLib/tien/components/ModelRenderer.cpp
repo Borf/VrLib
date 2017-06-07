@@ -27,8 +27,6 @@ namespace vrlib
 				model = cache[fileName];
 				renderContextDeferred = ModelDeferredRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
-
-				//renderContextForward = ModelForwardRenderContext::getInstance();
 				if (data.find("forwardShader") == data.end())
 					renderContextForward = ModelForwardRenderContext::getInstance("");
 				else
