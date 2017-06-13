@@ -34,11 +34,14 @@ namespace vrlib
 						normalMatrix,
 						s_texture,
 						s_normalmap,
+						s_specularmap,
 						diffuseColor,
 						textureFactor,
+						shinyness,
 					};
 					vrlib::gl::Shader<RenderUniform>* renderShader;
 					vrlib::Texture* defaultNormalMap;
+					vrlib::Texture* white;
 					virtual void init() override;
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 				};

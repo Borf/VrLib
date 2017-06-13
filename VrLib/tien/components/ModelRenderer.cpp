@@ -233,16 +233,11 @@ namespace vrlib
 						else
 							context->defaultNormalMap->bind();
 
+						glActiveTexture(GL_TEXTURE2);
 						if (material.specularmap)
-						{
-							glActiveTexture(GL_TEXTURE2);
 							material.specularmap->bind();
-						}
 						else
-						{
-							glActiveTexture(GL_TEXTURE2);
 							context->white->bind();
-						}
 					
 						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::shinyness, material.color.shinyness);
 						glActiveTexture(GL_TEXTURE0);

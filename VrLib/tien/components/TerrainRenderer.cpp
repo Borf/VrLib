@@ -169,7 +169,7 @@ namespace vrlib
 				glEnablei(GL_BLEND, 0);
 				glEnablei(GL_BLEND, 1);
 				glBlendFunci(0, GL_ONE, GL_ONE);
-				glBlendFunci(1, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glBlendFunci(1, GL_ONE, GL_ZERO);
 				glDepthFunc(GL_EQUAL);
 
 				for (size_t i = 0; i < materials.size(); i++)
@@ -177,9 +177,13 @@ namespace vrlib
 					glActiveTexture(GL_TEXTURE0);
 					if(materials[i].diffuse)
 						materials[i].diffuse->bind();
+					else
+						context->white->bind();
 					glActiveTexture(GL_TEXTURE1);
 					if(materials[i].normal)
 						materials[i].normal->bind();
+					else
+						context->defaultNormalMap->bind();
 					glActiveTexture(GL_TEXTURE2);
 					materials[i].mask->bind();
 					glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
@@ -227,7 +231,7 @@ namespace vrlib
 
 			void TerrainRenderer::TerrainRenderContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/terrain.vert", "data/vrlib/tien/shaders/terrain.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/TerrainRenderer.deferred.vert", "data/vrlib/tien/shaders/TerrainRenderer.deferred.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->bindAttributeLocation("a_normal", 1);
 				renderShader->bindAttributeLocation("a_bitangent", 2);
@@ -251,7 +255,7 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);
 				renderShader->setUniform(RenderUniform::s_mask, 2);
 
-				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/emptyNormalMap.png");
+				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultNormalMap.png");
 				black = vrlib::Texture::loadCached("data/vrlib/tien/textures/black.png");
 				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 			}
@@ -268,7 +272,7 @@ namespace vrlib
 
 
 
-
+			 
 			void TerrainRenderer::TerrainRenderShadowContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
@@ -277,7 +281,7 @@ namespace vrlib
 			}
 			void TerrainRenderer::TerrainRenderShadowContext::init()
 			{
-				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/defaultShadow.vert", "data/vrlib/tien/shaders/defaultShadow.frag");
+				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/TerrainRenderer.shadow.vert", "data/vrlib/tien/shaders/TerrainRenderer.shadow.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
 				renderShader->link();
 				//shader->bindFragLocation("fragColor", 0);

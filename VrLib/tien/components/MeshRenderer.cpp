@@ -146,7 +146,7 @@ namespace vrlib
 
 					builder->beginGroup("Specularmap", false);
 					auto specBox = builder->addTextureBox(mesh->material.normalmap ? mesh->material.normalmap->image->fileName : "", [this](const std::string &newFile) {
-						mesh->material.normalmap = vrlib::Texture::loadCached(newFile);
+						mesh->material.specularmap = vrlib::Texture::loadCached(newFile);
 					});
 					builder->addSmallButton("x", [this, specBox]()
 					{
@@ -211,11 +211,19 @@ namespace vrlib
 					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::diffuseColor, mesh->material.color.diffuse);
 				}
 
+				context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::shinyness, mesh->material.color.shinyness);
+
 				glActiveTexture(GL_TEXTURE1);
 				if (mesh->material.normalmap)
 					mesh->material.normalmap->bind();
 				else
 					context->defaultNormalMap->bind();
+
+				glActiveTexture(GL_TEXTURE2);
+				if (mesh->material.specularmap)
+					mesh->material.specularmap->bind();
+				else
+					context->white->bind();
 				glActiveTexture(GL_TEXTURE0);
 
 
@@ -308,13 +316,17 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::normalMatrix, "normalMatrix");
 				renderShader->registerUniform(RenderUniform::s_texture, "s_texture");
 				renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
+				renderShader->registerUniform(RenderUniform::s_specularmap, "s_specularmap");
 				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
 				renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
+				renderShader->registerUniform(RenderUniform::shinyness, "shinyness");
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::s_texture, 0);
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);
+				renderShader->setUniform(RenderUniform::s_specularmap, 2);
 
 				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
+				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 
 			}
 
@@ -440,6 +452,18 @@ namespace vrlib
 						material.texture = vrlib::Texture::loadCached(data["material"]["diffuse"]);
 					if (data["material"].find("normal") != data["material"].end())
 						material.normalmap = vrlib::Texture::loadCached(data["material"]["normal"]);
+					if (data["material"].find("specular") != data["material"].end())
+						material.specularmap = vrlib::Texture::loadCached(data["material"]["specular"]);
+					if (data["material"].find("color") != data["material"].end())
+					{
+						for (int i = 0; i < 3; i++)
+						{
+							material.color.ambient[i] = data["material"]["color"]["ambient"][i];
+							material.color.diffuse[i] = data["material"]["color"]["diffuse"][i];
+							material.color.specular[i] = data["material"]["color"]["specular"][i];
+						}
+						material.color.shinyness = data["material"]["color"]["shinyness"];
+					}
 				}
 			}
 
@@ -480,9 +504,18 @@ namespace vrlib
 
 				if(material.texture && material.texture->image)
 					ret["material"]["diffuse"] = material.texture->image->fileName;
-				if(material.normalmap && material.normalmap->image)
+				if (material.normalmap && material.normalmap->image)
 					ret["material"]["normal"] = material.normalmap->image->fileName;
+				if (material.specularmap && material.specularmap->image)
+					ret["material"]["specular"] = material.normalmap->image->fileName;
 
+				for (int i = 0; i < 3; i++)
+				{
+					ret["material"]["color"]["ambient"].push_back(material.color.ambient[i]);
+					ret["material"]["color"]["diffuse"].push_back(material.color.diffuse[i]);
+					ret["material"]["color"]["specular"].push_back(material.color.specular[i]);
+				}
+				ret["material"]["color"]["shinyness"] = material.color.shinyness;
 
 				return ret;
 			}
