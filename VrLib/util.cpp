@@ -206,8 +206,10 @@ namespace vrlib
 				color.b = ((rgb >> 0) & 255) / 255.0f;
 				color.g = ((rgb >> 8) & 255) / 255.0f;
 				color.r = ((rgb >> 16) & 255) / 255.0f;
+				color.a = 1;
 			}
 
+			return color;
 		}
 
 		std::string rgb2hex(const glm::vec4 & rgb)
