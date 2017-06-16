@@ -92,6 +92,11 @@ namespace vrlib
 				~ModelRenderer();
 
 				vrlib::Model* model;
+				std::string getFileName()
+				{
+					return fileName;
+				}
+
 				virtual void update(float elapsedTime, Scene& scene) override;
 				void drawDeferredPass() override;
 				void drawForwardPass() override;
