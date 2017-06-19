@@ -96,6 +96,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DirtyFlag.h" />
     <ClInclude Include="externals\clipper\clipper.hpp" />
     <ClInclude Include="externals\poly2tri\common\shapes.h" />
     <ClInclude Include="externals\poly2tri\common\utils.h" />

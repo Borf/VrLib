@@ -227,29 +227,34 @@ namespace vrlib
 					{
 						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::textureFactor, 1.0f);
 						material.texture->bind();
-						glActiveTexture(GL_TEXTURE1);
-						if (material.normalmap)
-							material.normalmap->bind();
-						else
-							context->defaultNormalMap->bind();
-
-						glActiveTexture(GL_TEXTURE2);
-						if (material.specularmap)
-							material.specularmap->bind();
-						else
-							context->white->bind();
-					
-						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::shinyness, material.color.shinyness);
-						glActiveTexture(GL_TEXTURE0);
 					}
 					else
 					{
 						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::textureFactor, 0.0f);
 						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::diffuseColor, material.color.diffuse);
-						glActiveTexture(GL_TEXTURE1);
-						context->defaultNormalMap->bind();
-						glActiveTexture(GL_TEXTURE0);
 					}
+					glActiveTexture(GL_TEXTURE1);
+					if (material.normalmap)
+					{
+						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::hasNormalMap, 1.0f);
+						material.normalmap->bind();
+					}
+					else
+					{
+						context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::hasNormalMap, 0.0f);
+						context->defaultNormalMap->bind();
+					}
+
+					glActiveTexture(GL_TEXTURE2);
+					if (material.specularmap)
+						material.specularmap->bind();
+					else
+						context->white->bind();
+
+					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::shinyness, material.color.shinyness);
+					glActiveTexture(GL_TEXTURE0);
+
+
 					Renderer::drawCalls++;
 					return true;
 				});
@@ -374,6 +379,7 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
 				renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
 				renderShader->registerUniform(RenderUniform::shinyness, "shinyness");
+				renderShader->registerUniform(RenderUniform::hasNormalMap, "hasNormalMap");
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::s_texture, 0);
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);

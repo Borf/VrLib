@@ -6,8 +6,6 @@
 #include <VrLib/json.hpp>
 #include <glm/glm.hpp>
 
-class TienEdit;
-
 namespace vrlib
 {
 	namespace tien

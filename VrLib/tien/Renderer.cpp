@@ -204,7 +204,7 @@ namespace vrlib
 			//update the lights / shadowmaps
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_POLYGON_OFFSET_FILL);
-			glPolygonOffset(1.0, 1.0f); //no idea what these values are or should be
+			glPolygonOffset(4.0, 20.0f); //no idea what these values are or should be
 			for (auto l : visibleLights)
 			{
 				if (!l->light)continue;

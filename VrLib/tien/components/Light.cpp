@@ -148,7 +148,7 @@ namespace vrlib
 					glm::vec3 lightPosition = frustumCenter - 50.0f * lightDir;
 
 					if (type == Type::directional)
-						projectionMatrix = glm::ortho(-size, size, -size, size, 0.0f, 250.0f * size); //TODO: auto generate depth
+						projectionMatrix = glm::ortho(-size, size, -size, size, 0.0f, 250.0f * size * .5f); //TODO: auto generate depth
 					else
 						projectionMatrix = glm::perspective(glm::radians(spotlightAngle), 1.0f, .1f, range); //TODO: test if range works
 
