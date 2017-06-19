@@ -2,6 +2,7 @@
 #include <VrLib/Log.h>
 #include <glm/glm.hpp>
 #include <VrLib/stb_image_write.h>
+#include <VrLib/tiny_jpeg.h>
 #include <thread>
 using vrlib::Log;
 
@@ -60,10 +61,13 @@ namespace vrlib
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
+				float color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+				glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
 
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texid[textureCount], 0);
 				if(textureCount == 0)
@@ -260,8 +264,10 @@ namespace vrlib
 				stbi_write_bmp(fileName.c_str(), getWidth(), getHeight(), 4, data);
 			else if (fileName.substr(fileName.size() - 4) == ".tga")
 				stbi_write_tga(fileName.c_str(), getWidth(), getHeight(), 4, data);
-			else
+			else if (fileName.substr(fileName.size() - 4) == ".png")
 				stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
+			else if (fileName.substr(fileName.size() - 4) == ".jpg")
+				tje_encode_to_file(fileName.c_str(), getWidth(), getHeight(), 4, (unsigned char*)data);
 			delete[] data;
 		}
 		void FBO::saveAsFileBackground(const std::string &fileName, std::function<void()> callback)
@@ -283,8 +289,10 @@ namespace vrlib
 					stbi_write_bmp(fileName.c_str(), getWidth(), getHeight(), 4, data);
 				else if (fileName.substr(fileName.size() - 4) == ".tga")
 					stbi_write_tga(fileName.c_str(), getWidth(), getHeight(), 4, data);
-				else
+				else if (fileName.substr(fileName.size() - 4) == ".png")
 					stbi_write_png(fileName.c_str(), getWidth(), getHeight(), 4, data, 4 * getWidth());
+				else if (fileName.substr(fileName.size() - 4) == ".jpg")
+					tje_encode_to_file(fileName.c_str(), getWidth(), getHeight(), 4, (unsigned char*)data);
 				delete[] data;
 				callback();
 			});

@@ -24,8 +24,9 @@ namespace vrlib
 				if (mesh)
 					updateMesh();
 				castShadow = true;
-				renderContextDeferred = ModelRenderContext::getInstance();
+				renderContextDeferred = ModelDeferredRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
+				renderContextForward = ModelForwardRenderContext::getInstance("");
 			}
 
 			MeshRenderer::MeshRenderer(const json &data, const json &totalJson)
@@ -48,8 +49,12 @@ namespace vrlib
 				if(mesh)
 					updateMesh();
 				castShadow = data["castShadow"];
-				renderContextDeferred = ModelRenderContext::getInstance();
+				renderContextDeferred = ModelDeferredRenderContext::getInstance();
 				renderContextShadow = ModelShadowRenderContext::getInstance();
+				if (data.find("forwardShader") == data.end())
+					renderContextForward = ModelForwardRenderContext::getInstance("");
+				else
+					renderContextForward = ModelForwardRenderContext::getInstance(data["forwardShader"]);
 			}
 
 			MeshRenderer::~MeshRenderer()
@@ -99,6 +104,10 @@ namespace vrlib
 				builder->addCheckbox(cullBackFaces, [this](bool newValue) {	cullBackFaces = newValue; });
 				builder->endGroup();
 
+				builder->beginGroup("Use deferred");
+				builder->addCheckbox(useDeferred, [this](bool newValue) {	useDeferred = newValue; });
+				builder->endGroup();
+
 				{
 					builder->addTitle("Material");
 
@@ -137,7 +146,7 @@ namespace vrlib
 
 					builder->beginGroup("Specularmap", false);
 					auto specBox = builder->addTextureBox(mesh->material.normalmap ? mesh->material.normalmap->image->fileName : "", [this](const std::string &newFile) {
-						mesh->material.normalmap = vrlib::Texture::loadCached(newFile);
+						mesh->material.specularmap = vrlib::Texture::loadCached(newFile);
 					});
 					builder->addSmallButton("x", [this, specBox]()
 					{
@@ -182,22 +191,71 @@ namespace vrlib
 
 			void MeshRenderer::drawDeferredPass()
 			{
+				if (!useDeferred)
+					return;
 				components::Transform* t = node->getComponent<Transform>();
 
-				ModelRenderContext* context = dynamic_cast<ModelRenderContext*>(renderContextDeferred);
+				ModelDeferredRenderContext* context = dynamic_cast<ModelDeferredRenderContext*>(renderContextDeferred);
 				context->renderShader->use(); //TODO: only call this once!
 
-				context->renderShader->setUniform(ModelRenderContext::RenderUniform::modelMatrix, t->globalTransform);
-				context->renderShader->setUniform(ModelRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
+				context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::modelMatrix, t->globalTransform);
+				context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
 				if (mesh->material.texture)
 				{
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 1.0f);
+					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::textureFactor, 1.0f);
 					mesh->material.texture->bind();
 				}
 				else
 				{
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::textureFactor, 0.0f);
-					context->renderShader->setUniform(ModelRenderContext::RenderUniform::diffuseColor, mesh->material.color.diffuse);
+					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::textureFactor, 0.0f);
+					context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::diffuseColor, mesh->material.color.diffuse);
+				}
+
+				context->renderShader->setUniform(ModelDeferredRenderContext::RenderUniform::shinyness, mesh->material.color.shinyness);
+
+				glActiveTexture(GL_TEXTURE1);
+				if (mesh->material.normalmap)
+					mesh->material.normalmap->bind();
+				else
+					context->defaultNormalMap->bind();
+
+				glActiveTexture(GL_TEXTURE2);
+				if (mesh->material.specularmap)
+					mesh->material.specularmap->bind();
+				else
+					context->white->bind();
+				glActiveTexture(GL_TEXTURE0);
+
+
+				if (vao)
+				{
+					vao->bind();
+					glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+					Renderer::drawCalls++;
+					vao->unBind();
+				}
+			}
+
+			void MeshRenderer::drawForwardPass()
+			{
+				if (useDeferred)
+					return;
+				components::Transform* t = node->getComponent<Transform>();
+
+				ModelForwardRenderContext* context = dynamic_cast<ModelForwardRenderContext*>(renderContextForward);
+				context->renderShader->use(); //TODO: only call this once!
+
+				context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::modelMatrix, t->globalTransform);
+				context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
+				if (mesh->material.texture)
+				{
+					context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::textureFactor, 1.0f);
+					mesh->material.texture->bind();
+				}
+				else
+				{
+					context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::textureFactor, 0.0f);
+					context->renderShader->setUniform(ModelForwardRenderContext::RenderUniform::diffuseColor, mesh->material.color.diffuse);
 				}
 
 				glActiveTexture(GL_TEXTURE1);
@@ -217,21 +275,30 @@ namespace vrlib
 				}
 			}
 
-
 			void MeshRenderer::drawShadowMap()
 			{
-				if (!castShadow)
+				if (!castShadow || !mesh || !visible)
 					return;
+				if (!cullBackFaces)
+					glDisable(GL_CULL_FACE);
 				components::Transform* t = node->getComponent<Transform>();
 				ModelShadowRenderContext* context = dynamic_cast<ModelShadowRenderContext*>(renderContextShadow);
 				context->renderShader->use(); //TODO: only call this once!
 				context->renderShader->setUniform(ModelShadowRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 
+				vao->bind();
+				glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+				Renderer::drawCalls++;
+
+
+				if (!cullBackFaces)
+					glEnable(GL_CULL_FACE);
+
 				//TODO
 			}
 
 
-			void MeshRenderer::ModelRenderContext::init()
+			void MeshRenderer::ModelDeferredRenderContext::init()
 			{
 				renderShader = new vrlib::gl::Shader<RenderUniform>("data/vrlib/tien/shaders/ModelRenderer.deferred.vert", "data/vrlib/tien/shaders/ModelRenderer.deferred.frag");
 				renderShader->bindAttributeLocation("a_position", 0);
@@ -249,17 +316,21 @@ namespace vrlib
 				renderShader->registerUniform(RenderUniform::normalMatrix, "normalMatrix");
 				renderShader->registerUniform(RenderUniform::s_texture, "s_texture");
 				renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
+				renderShader->registerUniform(RenderUniform::s_specularmap, "s_specularmap");
 				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
 				renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
+				renderShader->registerUniform(RenderUniform::shinyness, "shinyness");
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::s_texture, 0);
 				renderShader->setUniform(RenderUniform::s_normalmap, 1);
+				renderShader->setUniform(RenderUniform::s_specularmap, 2);
 
 				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
+				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 
 			}
 
-			void MeshRenderer::ModelRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			void MeshRenderer::ModelDeferredRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{
 				renderShader->use();
 				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
@@ -267,6 +338,61 @@ namespace vrlib
 				renderShader->setUniform(RenderUniform::diffuseColor, glm::vec4(1, 1, 1, 1));
 				renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
 			}
+
+
+
+
+			MeshRenderer::ModelForwardRenderContext::ModelForwardRenderContext(const std::string & shader)
+			{
+				shaderFile = shader;
+				if (shaderFile == "")
+					shaderFile = "data/vrlib/tien/shaders/ModelRenderer.forward";
+
+			}
+
+			void MeshRenderer::ModelForwardRenderContext::init()
+			{
+				renderShader = new vrlib::gl::Shader<RenderUniform>(shaderFile + ".vert", shaderFile + ".frag");
+				renderShader->bindAttributeLocation("a_position", 0);
+				renderShader->bindAttributeLocation("a_normal", 1);
+				renderShader->bindAttributeLocation("a_bitangent", 2);
+				renderShader->bindAttributeLocation("a_tangent", 3);
+				renderShader->bindAttributeLocation("a_texture", 4);
+				renderShader->link();
+				renderShader->bindFragLocation("fragColor", 0);
+				renderShader->registerUniform(RenderUniform::modelMatrix, "modelMatrix");
+				renderShader->registerUniform(RenderUniform::projectionMatrix, "projectionMatrix");
+				renderShader->registerUniform(RenderUniform::viewMatrix, "viewMatrix");
+				renderShader->registerUniform(RenderUniform::normalMatrix, "normalMatrix");
+				renderShader->registerUniform(RenderUniform::s_texture, "s_texture");
+				renderShader->registerUniform(RenderUniform::s_normalmap, "s_normalmap");
+				renderShader->registerUniform(RenderUniform::s_specularmap, "s_specularmap");
+				renderShader->registerUniform(RenderUniform::diffuseColor, "diffuseColor");
+				renderShader->registerUniform(RenderUniform::textureFactor, "textureFactor");
+				renderShader->registerUniform(RenderUniform::shinyness, "shinyness");
+				renderShader->use();
+				renderShader->setUniform(RenderUniform::s_texture, 0);
+				renderShader->setUniform(RenderUniform::s_normalmap, 1);
+				renderShader->setUniform(RenderUniform::s_specularmap, 2);
+
+				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultnormalmap.png");
+
+			}
+
+			void MeshRenderer::ModelForwardRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
+			{
+				renderShader->use();
+				renderShader->setUniform(RenderUniform::projectionMatrix, projectionMatrix);
+				renderShader->setUniform(RenderUniform::viewMatrix, viewMatrix);
+				renderShader->setUniform(RenderUniform::diffuseColor, glm::vec4(1, 1, 1, 1));
+				renderShader->setUniform(RenderUniform::textureFactor, 1.0f);
+			}
+
+
+
+
+
+
 
 
 			void MeshRenderer::ModelShadowRenderContext::init()
@@ -326,6 +452,18 @@ namespace vrlib
 						material.texture = vrlib::Texture::loadCached(data["material"]["diffuse"]);
 					if (data["material"].find("normal") != data["material"].end())
 						material.normalmap = vrlib::Texture::loadCached(data["material"]["normal"]);
+					if (data["material"].find("specular") != data["material"].end())
+						material.specularmap = vrlib::Texture::loadCached(data["material"]["specular"]);
+					if (data["material"].find("color") != data["material"].end())
+					{
+						for (int i = 0; i < 3; i++)
+						{
+							material.color.ambient[i] = data["material"]["color"]["ambient"][i];
+							material.color.diffuse[i] = data["material"]["color"]["diffuse"][i];
+							material.color.specular[i] = data["material"]["color"]["specular"][i];
+						}
+						material.color.shinyness = data["material"]["color"]["shinyness"];
+					}
 				}
 			}
 
@@ -366,9 +504,18 @@ namespace vrlib
 
 				if(material.texture && material.texture->image)
 					ret["material"]["diffuse"] = material.texture->image->fileName;
-				if(material.normalmap && material.normalmap->image)
+				if (material.normalmap && material.normalmap->image)
 					ret["material"]["normal"] = material.normalmap->image->fileName;
+				if (material.specularmap && material.specularmap->image)
+					ret["material"]["specular"] = material.normalmap->image->fileName;
 
+				for (int i = 0; i < 3; i++)
+				{
+					ret["material"]["color"]["ambient"].push_back(material.color.ambient[i]);
+					ret["material"]["color"]["diffuse"].push_back(material.color.diffuse[i]);
+					ret["material"]["color"]["specular"].push_back(material.color.specular[i]);
+				}
+				ret["material"]["color"]["shinyness"] = material.color.shinyness;
 
 				return ret;
 			}
@@ -439,6 +586,62 @@ namespace vrlib
 				indices.insert(indices.end(), { 20, 21, 22, 20, 22, 23 });
 			}
 
-}
+			MeshRenderer::Plane::Plane()
+			{
+				//top/bottom
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, 0, -.5f), glm::vec3(0, 1, 0), glm::vec2(0, 0), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(-.5f, 0, .5f), glm::vec3(0, 1, 0), glm::vec2(0, 1), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, 0, .5f), glm::vec3(0, 1, 0), glm::vec2(1, 1), glm::vec3(0, 0, 1)));
+				vertices.push_back(vrlib::gl::VertexP3N2B2T2T2(glm::vec3(.5f, 0, -.5f), glm::vec3(0, 1, 0), glm::vec2(1, 0), glm::vec3(0, 0, 1)));
+				indices.insert(indices.end(), { 0, 1, 2, 0, 2, 3 });
+			}
+			MeshRenderer::Sphere::Sphere()
+			{
+				int stacks = 10;
+				int slices = 10;
+
+				float thetaInc = glm::pi<float>() / stacks;
+				float phiInc = 2 * glm::pi<float>() / slices;
+
+				for (float theta = -glm::half_pi<float>(); theta < glm::half_pi<float>(); theta += thetaInc)
+				{
+					for (float phi = 0; phi < glm::two_pi<float>(); phi += phiInc)
+					{
+						float x1 = glm::cos(theta) * glm::cos(phi);
+						float y1 = glm::cos(theta) * glm::sin(phi);
+						float z1 = glm::sin(theta);
+
+						float x2 = glm::cos(theta + thetaInc) * glm::cos(phi + phiInc);
+						float y2 = glm::cos(theta + thetaInc) * glm::sin(phi + phiInc);
+						float z2 = glm::sin(theta + thetaInc);
+
+						float x3 = glm::cos(theta + thetaInc) * glm::cos(phi);
+						float y3 = glm::cos(theta + thetaInc) * glm::sin(phi);
+						float z3 = glm::sin(theta + thetaInc);
+
+						float x4 = glm::cos(theta) * glm::cos(phi + phiInc);
+						float y4 = glm::cos(theta) * glm::sin(phi + phiInc);
+						float z4 = glm::sin(theta);
+
+						vrlib::gl::VertexP3N2B2T2T2 v;
+						setP3(v, glm::vec3(x1, y1, z1));		setN3(v, glm::vec3(x1, y1, z1));		setT2(v, glm::vec2(asin(x1) / glm::pi<float>() + 0.5f, asin(y1) / glm::pi<float>() + 0.5f));		vrlib::gl::setTan3(v, glm::vec3(0, 1, 0));	 vertices.push_back(v);
+						setP3(v, glm::vec3(x2, y2, z2));		setN3(v, glm::vec3(x2, y2, z2));		setT2(v, glm::vec2(asin(x2) / glm::pi<float>() + 0.5f, asin(y2) / glm::pi<float>() + 0.5f));		vrlib::gl::setTan3(v, glm::vec3(0, 1, 0));	vertices.push_back(v);
+						setP3(v, glm::vec3(x3, y3, z3));		setN3(v, glm::vec3(x3, y3, z3));		setT2(v, glm::vec2(asin(x3) / glm::pi<float>() + 0.5f, asin(y3) / glm::pi<float>() + 0.5f));		vrlib::gl::setTan3(v, glm::vec3(0, 1, 0));	vertices.push_back(v);
+						setP3(v, glm::vec3(x4, y4, z4));		setN3(v, glm::vec3(x4, y4, z4));		setT2(v, glm::vec2(asin(x4) / glm::pi<float>() + 0.5f, asin(y4) / glm::pi<float>() + 0.5f));		vrlib::gl::setTan3(v, glm::vec3(0, 1, 0));	vertices.push_back(v);
+					}
+				}
+				indices.clear();
+				for (unsigned short i = 0; i < vertices.size(); i += 4)
+				{
+					indices.push_back(i + 0);
+					indices.push_back(i + 1);
+					indices.push_back(i + 2);
+
+					indices.push_back(i + 3);
+					indices.push_back(i + 1);
+					indices.push_back(i + 0);
+				}
+			}
+		}
 	}
 }

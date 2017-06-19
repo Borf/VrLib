@@ -20,7 +20,19 @@ namespace vrlib
 	namespace util
 	{
 
-
+		std::string replace(std::string str, const std::string &toReplace, const std::string &replacement)
+		{
+			size_t index = 0;
+			while (true)
+			{
+				index = str.find(toReplace, index);
+				if (index == std::string::npos)
+					break;
+				str.replace(index, toReplace.length(), replacement);
+				++index;
+			}
+			return str;
+		}
 		std::vector<std::string> split(std::string value, const std::string &seperator)
 		{
 			std::vector<std::string> ret;
@@ -35,7 +47,7 @@ namespace vrlib
 			return ret;
 		}
 
-		std::vector<std::string> scandir(const std::string &path)
+		std::vector<std::string> scandir(const std::string &path, bool recursive)
 		{
 			std::vector<std::string> files;
 #ifndef WIN32
@@ -77,12 +89,23 @@ namespace vrlib
 			{
 				while (true)														// loop through all the files
 				{
-					if ((FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+					if (FileData.cFileName[0] != '.')
 					{
-						files.push_back(std::string(FileData.cFileName) + "/");
+						if ((FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+						{
+							if (recursive)
+							{
+								std::vector<std::string> sub = scandir(path + FileData.cFileName + "/", true);
+								for (size_t i = 0; i < sub.size(); i++)
+									sub[i] = std::string(FileData.cFileName) + "/" + sub[i];
+								files.insert(files.end(), sub.begin(), sub.end());
+							}
+							else
+								files.push_back(std::string(FileData.cFileName) + "/");
+						}
+						else
+							files.push_back(FileData.cFileName);
 					}
-					else
-						files.push_back(FileData.cFileName);
 
 					if (!FindNextFile(hSearch, &FileData))								// find next file in the resultset
 					{

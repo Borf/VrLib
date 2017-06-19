@@ -21,11 +21,11 @@ namespace vrlib
 
 		void registerAsEnvironment();
 	
-	private:
 		enum Method { POST, GET, PUT };
 
 		json callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData = nullptr);
 		json buildJson(const std::string &data);
+	private:
 
 	};
 

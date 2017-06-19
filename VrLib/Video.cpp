@@ -14,6 +14,9 @@ extern "C"
 using vrlib::logger;
 
 
+#pragma warning(push)
+#pragma warning(disable: 4996)
+
 namespace vrlib
 {
 	Video::Video(const std::string &fileName, vrlib::Texture* texture) : Image(10,10)
@@ -135,3 +138,5 @@ namespace vrlib
 
 
 }
+
+#pragma warning(pop)

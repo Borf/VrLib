@@ -142,7 +142,7 @@ namespace vrlib
 
 		request += " /" + url + " HTTP/1.1\r\n";
 
-		request += "Host: " + apiHost + ":8080\r\n";
+		request += "Host: " + apiHost + "\r\n";
 
 		if (method == POST)
 		{

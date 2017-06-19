@@ -421,7 +421,7 @@ namespace vrlib
 			glCullFace(GL_BACK);
 			//done with all the deferred rendering, let's draw the forward rendered objects (objects with alpha)
 			glEnable(GL_DEPTH_TEST);
-			glDepthMask(GL_FALSE);
+			glDepthMask(GL_TRUE);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			//call the setup for each rendercontext. This sets the projection matrix and view matrix

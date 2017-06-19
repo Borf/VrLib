@@ -20,6 +20,8 @@ namespace vrlib
 		virtual ~Image();
 		void unload();
 		void save(const std::string &fileName);
+		void scale(int w, int h);
+		void flipv();
 
 		class Col
 		{
