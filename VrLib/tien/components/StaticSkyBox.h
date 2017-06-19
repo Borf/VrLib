@@ -23,8 +23,6 @@ namespace vrlib
 				vrlib::gl::Shader<Uniforms>* shader;
 				vrlib::Model* skybox;
 				vrlib::gl::CubeMap* cubemap;
-
-				vrlib::Texture* skydomeGlow;
 			public:
 				virtual void initialize() override;
 				virtual void update(float elapsedTime, Scene& scene) override;

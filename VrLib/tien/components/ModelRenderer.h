@@ -33,6 +33,7 @@ namespace vrlib
 						diffuseColor,
 						textureFactor,
 						shinyness,
+						hasNormalMap
 					};
 					vrlib::Texture* white;
 					vrlib::gl::Shader<RenderUniform>* renderShader;
