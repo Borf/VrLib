@@ -117,7 +117,7 @@ namespace vrlib
 		}
 		addr.sin_family = host->h_addrtype;
 		memcpy((char*)&addr.sin_addr.s_addr, host->h_addr_list[0], host->h_length);
-		addr.sin_port = htons(8080);
+		addr.sin_port = htons(1337);
 		memset(addr.sin_zero, 0, 8);
 	
 		SOCKET s;
@@ -142,7 +142,7 @@ namespace vrlib
 
 		request += " /" + url + " HTTP/1.1\r\n";
 
-		request += "Host: " + apiHost + ":8080\r\n";
+		request += "Host: " + apiHost + "\r\n";
 
 		if (method == POST)
 		{

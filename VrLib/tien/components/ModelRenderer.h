@@ -104,6 +104,10 @@ namespace vrlib
 				void drawShadowMap() override;
 				json toJson(json &meshes) const override;
 
+				std::string getFileName() {
+					return fileName;
+				}
+
 				bool castShadow;
 				bool cullBackFaces;
 				std::map<vrlib::Material*, vrlib::Material> materialOverrides;
