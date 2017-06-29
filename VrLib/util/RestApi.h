@@ -10,7 +10,7 @@ namespace vrlib
 {
 	class RestApi : public Singleton<RestApi>
 	{
-		const std::string apiHost = "127.0.0.1:1337";
+		const std::string apiHost = "145.48.6.10";
 		std::string myHostname;
 
 
