@@ -28,21 +28,21 @@ typedef int SOCKET;
 
 namespace vrlib
 {
-	RestApi::RestApi()
+	const std::string RestApi::apiHost = "145.48.6.10";
+	std::string RestApi::myHostname = "";
+
+	std::string RestApi::getHostName()
 	{
+		if (!myHostname.empty())
+			return myHostname;
 		char hostname[1024];
 		gethostname(hostname, 1024);
 		myHostname = hostname;
-	
 		logger << "Rest API: hostname: " << myHostname << Log::newline;
+		return myHostname;
 	}
 
-
-	RestApi::~RestApi()
-	{
-	}
-
-	void RestApi::registerAsEnvironment()
+	/*void RestApi::registerAsEnvironment()
 	{
 		std::vector<std::string> headers;
 		headers.push_back("Content-Type: application/json");
@@ -73,7 +73,7 @@ namespace vrlib
 
 		json session = callApi(GET, "session:" + std::to_string(sessionId), headers, json());
 
-	}
+	}*/
 
 
 
@@ -93,14 +93,27 @@ namespace vrlib
 		return ret;
 	}
 
+	json RestApi::getSessionInfo(const std::string & sessionId, const std::string & key)
+	{
+		std::vector<std::string> headers;
+		headers.push_back("Content-Type: application/json");
+		json postData;
+		postData["sessionid"] = sessionId;
+		postData["key"] = key;
+
+		json retValue = callApi(Method::POST, "v1/oauth/confirm", headers, postData);
+
+		return retValue;
+	}
+
 	json RestApi::callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData /*= Json::nullValue*/)
 	{
 		std::string request;
-		if (method == POST)
+		if (method == Method::POST)
 			request += "POST";
-		if (method == GET)
+		if (method == Method::GET)
 			request += "GET";
-		if (method == PUT)
+		if (method == Method::PUT)
 			request += "PUT";
 
 		logger << "REST " << request << " call to " << apiHost << "/" << url << Log::newline;
@@ -144,7 +157,7 @@ namespace vrlib
 
 		request += "Host: " + apiHost + "\r\n";
 
-		if (method == POST)
+		if (method == Method::POST)
 		{
 			request += "Content-Length: " + Log::format("%i\r\n", postDataStr.size());
 			request += "Content-Type: application/json\r\n";
@@ -153,7 +166,7 @@ namespace vrlib
 		for (auto h : headers)
 			request += h + "\r\n";
 		request += "\r\n";
-		if (method == POST)
+		if (method == Method::POST)
 		{
 			request += postDataStr;
 		}

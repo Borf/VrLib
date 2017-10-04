@@ -10,21 +10,17 @@ namespace vrlib
 {
 	class RestApi : public Singleton<RestApi>
 	{
-		const std::string apiHost = "145.48.6.10";
-		std::string myHostname;
-
-
+		static const std::string apiHost;
+		static std::string myHostname;
+		static std::string getHostName();
 	public:
-		RestApi();
-		~RestApi();
+		enum class Method { POST, GET, PUT };
+
+		static json getSessionInfo(const std::string &sessionId, const std::string &key);
 
 
-		void registerAsEnvironment();
-	
-		enum Method { POST, GET, PUT };
-
-		json callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData = nullptr);
-		json buildJson(const std::string &data);
+		static json callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData = nullptr);
+		static json buildJson(const std::string &data);
 	private:
 
 	};

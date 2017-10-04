@@ -420,7 +420,7 @@
     <ClInclude Include="VrLib\tiny_jpeg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirtyFlag.h">
+    <ClInclude Include="VrLib\DirtyFlag.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

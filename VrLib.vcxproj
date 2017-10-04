@@ -96,7 +96,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirtyFlag.h" />
     <ClInclude Include="externals\clipper\clipper.hpp" />
     <ClInclude Include="externals\poly2tri\common\shapes.h" />
     <ClInclude Include="externals\poly2tri\common\utils.h" />
@@ -113,6 +112,7 @@
     <ClInclude Include="VrLib\ClusterManagers\ClusterManagerSlave.h" />
     <ClInclude Include="VrLib\csgjs.h" />
     <ClInclude Include="VrLib\Device.h" />
+    <ClInclude Include="VrLib\DirtyFlag.h" />
     <ClInclude Include="VrLib\drivers\GloveDriver.h" />
     <ClInclude Include="VrLib\drivers\HydraDriver.h" />
     <ClInclude Include="VrLib\drivers\Keyboard.h" />

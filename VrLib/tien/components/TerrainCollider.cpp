@@ -18,7 +18,7 @@ namespace vrlib
 				offset = glm::vec3(terrain.getWidth() / 2.0f, terrain.getStretch()/2.0f, terrain.getHeight() / 2.0f);
 				Transform* transform = n->getComponent<Transform>();
 				if (transform)
-					offset *= transform->scale;
+					offset = offset * transform->scale;
 
 		/*		float* data = new float[terrain.getHeight() * terrain.getWidth()];
 				memset(data, 0, sizeof(float) * terrain.getHeight() * terrain.getWidth());
