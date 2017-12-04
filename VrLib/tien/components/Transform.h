@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <VrLib/json.hpp>
-
+#include <VrLib/DirtyFlag.h>
 #include "../Component.h"
 
 namespace vrlib
@@ -23,15 +23,15 @@ namespace vrlib
 				friend class vrlib::tien::Scene;
 				friend class vrlib::tien::Node;
 				friend class vrlib::tien::components::TransformAttach;
+				bool staticTransform = false;
 			public:
-				glm::vec3 position;
-				glm::quat rotation;
-				glm::vec3 scale;
+				DirtyFlag<glm::vec3> position;
+				DirtyFlag<glm::quat> rotation;
+				DirtyFlag<glm::vec3> scale;
 
 				glm::mat4 transform;
 				glm::mat4 globalTransform;
 
-				bool staticTransform = false;
 
 				Transform(const glm::vec3 &position = glm::vec3(0, 0, 0), const glm::quat &rotation = glm::quat(), const glm::vec3 &scale = glm::vec3(1, 1, 1));
 				Transform(const json &data);
@@ -51,6 +51,9 @@ namespace vrlib
 
 				bool moveTo(const glm::vec3 &target, float speed);
 				void rotate(const glm::vec3 &angle);
+
+				void setStatic(bool newValue);
+				bool isStatic() { return staticTransform; }
 
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 

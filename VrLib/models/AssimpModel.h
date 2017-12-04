@@ -142,6 +142,7 @@ namespace vrlib
 
 
 		AssimpModel(const std::string &fileName, const ModelLoadOptions& options);
+		~AssimpModel();
 
 		void import(const glm::mat4 &matrix, const aiScene* scene, aiNode* node);
 		Bone* buildSkeleton(const aiNode* node, Bone* parent = nullptr) const;

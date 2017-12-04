@@ -361,6 +361,24 @@ namespace vrlib
 	}
 
 	template<class T>
+	AssimpModel<T>::~AssimpModel()
+	{
+		for (auto &mesh : meshes)
+		{
+			if (mesh.material.texture)
+				vrlib::Texture::unloadCached(mesh.material.texture);
+			if (mesh.material.normalmap)
+				vrlib::Texture::unloadCached(mesh.material.normalmap);
+			if (mesh.material.specularmap)
+				vrlib::Texture::unloadCached(mesh.material.specularmap);
+
+		}
+
+		delete vao;
+	}
+
+
+	template<class T>
 	Bone* AssimpModel<T>::buildSkeleton(const aiNode* node, Bone* parent) const
 	{
 		Bone* bone = new Bone();

@@ -17,6 +17,7 @@ namespace vrlib
 		static Texture* loadCached(const std::string &fileName);
 		static void unloadCached(Texture* texture);
 		Texture(Image* image);
+		~Texture();
 		virtual void update(float elapsedTime);
 		Image* image;
 		

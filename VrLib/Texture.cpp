@@ -81,6 +81,14 @@ namespace vrlib
 		load();
 	}
 
+	Texture::~Texture()
+	{
+		if (image)
+			delete image;
+		if (texid != 0)
+			glDeleteTextures(1, &texid);
+	}
+
 	void Texture::load()
 	{
 		if(texid == 0)

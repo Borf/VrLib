@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -14,18 +14,19 @@
     <ProjectGuid>{C1C8BD19-EF70-44E0-A9B4-E11BAC4FB858}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>VrLib</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -96,7 +97,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirtyFlag.h" />
     <ClInclude Include="externals\clipper\clipper.hpp" />
     <ClInclude Include="externals\poly2tri\common\shapes.h" />
     <ClInclude Include="externals\poly2tri\common\utils.h" />
@@ -113,6 +113,7 @@
     <ClInclude Include="VrLib\ClusterManagers\ClusterManagerSlave.h" />
     <ClInclude Include="VrLib\csgjs.h" />
     <ClInclude Include="VrLib\Device.h" />
+    <ClInclude Include="VrLib\DirtyFlag.h" />
     <ClInclude Include="VrLib\drivers\GloveDriver.h" />
     <ClInclude Include="VrLib\drivers\HydraDriver.h" />
     <ClInclude Include="VrLib\drivers\Keyboard.h" />

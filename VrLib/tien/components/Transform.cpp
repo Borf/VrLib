@@ -100,7 +100,6 @@ namespace vrlib
 					return scale;
 				};
 				return parentScale(node);
-
 			}
 
 
@@ -126,11 +125,16 @@ namespace vrlib
 				}
 				else
 				{
-					transform = glm::mat4();
-					transform = glm::translate(transform, position);
-					transform = transform * glm::toMat4(rotation);
-					transform = glm::scale(transform, scale);
-
+					if (position.isDirty() || rotation.isDirty() || scale.isDirty())
+					{
+						transform = glm::mat4();
+						transform = glm::translate(transform, position);
+						transform = transform * glm::toMat4(rotation);
+						transform = glm::scale(transform, scale);
+						position.markClean();
+						rotation.markClean();
+						scale.markClean();
+					}
 					globalTransform = parentTransform * transform;
 				}
 			}
@@ -212,6 +216,24 @@ namespace vrlib
 				builder->endGroup();
 
 
+				builder->beginGroup("Static");
+				builder->addCheckbox(this->staticTransform, [this](bool newValue) { setStatic(newValue); });
+				builder->endGroup();
+
+
+			}
+
+
+			void Transform::setStatic(bool newValue)
+			{
+				if (staticTransform == newValue)
+					return;
+				staticTransform = newValue;
+
+				if (staticTransform)
+				{
+
+				}
 			}
 		}
 	}
