@@ -93,7 +93,7 @@ namespace vrlib
 				~ModelRenderer();
 
 				vrlib::Model* model;
-				std::string getFileName()
+				inline std::string getFileName()
 				{
 					return fileName;
 				}
@@ -103,10 +103,6 @@ namespace vrlib
 				void drawForwardPass() override;
 				void drawShadowMap() override;
 				json toJson(json &meshes) const override;
-
-				std::string getFileName() {
-					return fileName;
-				}
 
 				bool castShadow;
 				bool cullBackFaces;

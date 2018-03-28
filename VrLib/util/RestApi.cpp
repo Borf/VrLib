@@ -217,14 +217,12 @@ namespace vrlib
 		}
 
 
-		json ret(buffer);
-
 		closesocket(s);
 
 
 
 
-		return ret;
+		return json::parse(buffer);
 	}
 
 	json RestApi::buildJson(const std::string &data)
