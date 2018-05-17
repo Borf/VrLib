@@ -180,7 +180,7 @@ namespace vrlib
 						else
 						{
 							logger << "Invalid packet from server" << Log::newline;
-							logger << data << Log::newline;
+							logger << data.dump() << Log::newline;
 							//closesocket(s);
 							//s = 0;
 							//break;
