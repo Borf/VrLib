@@ -93,6 +93,14 @@ namespace vrlib
 
 		void Node::fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> &callback)
 		{
+			this->fromJson(data, totalJson, [=](const json& jsonParam, const std::string stringParam)
+			{
+				return callback(data);
+			});
+		}
+
+		void Node::fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &, const std::string)> &callback)
+		{
 			setTreeDirty(this, true);
 			name = data["name"].get<std::string>();
 			guid = data["uuid"].get<std::string>();
@@ -159,7 +167,7 @@ namespace vrlib
 					{
 						if (callback)
 						{
-							vrlib::tien::Component* newComponent = callback(c);
+							vrlib::tien::Component* newComponent = callback(c, guid);
 							if (newComponent)
 								addComponent(newComponent);
 							else
