@@ -40,12 +40,12 @@ namespace vrlib
 
 	class ServerConnection
 	{
-#if 0
-		const std::string apiHost = "127.0.0.1";
-#else
-		const std::string apiHost = "145.48.6.10";
-#endif
-		const int apiPort = 6666;
+//#if 0
+//		const std::string apiHost = "127.0.0.1";
+//#else
+//		const std::string apiHost = "145.48.6.10";
+//#endif
+//		const int apiPort = 6666;
 		SOCKET s;
 		std::map<std::string, std::function<void(const json &)>> callbacks;
 		std::map<std::string, std::function<void(const json &)>> singleCallbacks;
@@ -53,11 +53,13 @@ namespace vrlib
 		std::function<void(Tunnel*)> tunnelCallback;
 		std::map<std::string, Tunnel*> tunnels;
 
+		json config;
+
 	public:
 		bool running;
 		std::thread backgroundThread;
 
-		ServerConnection();
+		ServerConnection(json &config);
 
 
 		void thread();
@@ -76,5 +78,4 @@ namespace vrlib
 		void sendFps(float fps);
 
 	};
-
 }
