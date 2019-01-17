@@ -19,7 +19,7 @@
 #define closesocket(x) ::close((x))
 typedef int SOCKET;
 #endif
-
+#include "Log.h"
 
 namespace vrlib
 {
@@ -31,7 +31,11 @@ namespace vrlib
 		s = 0;
 		tunnelCallback = nullptr;
 
-		callbacks["session/start"] = [](const json &) { };
+		callbacks["session/start"] = [](const json & data) {
+			logger << "session/start" << Log::newline;
+			std::string dataString = data.dump();
+			logger << dataString << Log::newline;
+		};
 		callbacks["tunnel/connect"] = [this](const json & data)
 		{
 			Tunnel* t = new Tunnel(data["data"]["id"], this);
@@ -49,7 +53,6 @@ namespace vrlib
 			tunnels[data["data"]["id"]]->mtx.lock();
 			tunnels[data["data"]["id"]]->queue.push_back(data["data"]["data"]);
 			tunnels[data["data"]["id"]]->mtx.unlock();
-
 		};
 		renderer = glGetString(GL_RENDERER);
 		running = true;
@@ -171,17 +174,17 @@ namespace vrlib
 							break;
 						}
 
-						if (callbacks.find(data["id"]) != callbacks.end())
+						if (callbacks.find(data["id"]) != callbacks.end()) {
 							callbacks[data["id"]](data);
-						else if (singleCallbacks.find(data["id"]) != singleCallbacks.end())
-						{
+						}
+						else if (singleCallbacks.find(data["id"]) != singleCallbacks.end()) {
 							singleCallbacks[data["id"]](data);
 							singleCallbacks.erase(singleCallbacks.find(data["id"]));
 						}
 						else
 						{
 							logger << "Invalid packet from server" << Log::newline;
-							logger << data << Log::newline;
+							logger << data.dump() << Log::newline;
 							//closesocket(s);
 							//s = 0;
 							//break;
