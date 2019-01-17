@@ -48,7 +48,7 @@ namespace vrlib
 						materialOverrides[m] = *m;
 				prevModel = model;
 
-				if (data.find("materialoverrides") != data.end())
+				if (data.find("materialoverrides") != data.end() && model)
 				{
 					std::vector<Material*> orig = model->getMaterials();
 					int i = 0;
