@@ -24,6 +24,6 @@ namespace vrlib
 		virtual void latePreFrame() {};
 
 
-		virtual void stop();;
+		virtual void stop();
 	};
 }

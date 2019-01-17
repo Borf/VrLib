@@ -40,18 +40,11 @@ namespace vrlib
 
 	class ServerConnection
 	{
-#if 0
+#ifdef _DEBUG
 		const std::string apiHost = "127.0.0.1";
 #else
 		const std::string apiHost = "145.48.6.10";
 #endif
-		const int apiPort = 6666;
-		SOCKET s;
-		std::map<std::string, std::function<void(const json &)>> callbacks;
-		std::map<std::string, std::function<void(const json &)>> singleCallbacks;
-
-		std::function<void(Tunnel*)> tunnelCallback;
-		std::map<std::string, Tunnel*> tunnels;
 
 	public:
 		bool running;
@@ -71,9 +64,21 @@ namespace vrlib
 		json call(const std::string &action, const json& data = nullptr);
 		Tunnel* createTunnel(const std::string &sessionId);
 		void onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel, const std::string &key = "");
-		inline void onTunnelCreate(const std::string &key, const std::function<void(Tunnel*)> &onTunnel) {		onTunnelCreate(onTunnel, key);	};
+		inline void onTunnelCreate(const std::string &key, const std::function<void(Tunnel*)> &onTunnel) {
+			onTunnelCreate(onTunnel, key);
+		};
 
 		void sendFps(float fps);
+
+	private:
+		const int apiPort = 6666;
+		SOCKET s;
+		std::map<std::string, std::function<void(const json &)>> callbacks;
+		std::map<std::string, std::function<void(const json &)>> singleCallbacks;
+
+		std::function<void(Tunnel*)> tunnelCallback;
+		std::map<std::string, Tunnel*> tunnels;
+
 
 	};
 
