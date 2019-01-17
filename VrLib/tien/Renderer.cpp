@@ -124,7 +124,7 @@ namespace vrlib
 
 		void Renderer::render(const Scene& scene, const glm::mat4 &projectionMatrix, const glm::mat4 &modelMatrix, Node* cameraNode, int renderId)
 		{
-			drawCalls = 0;
+			drawCalls = 0;	
 
 			//first let's initialize the gbuffers
 			int viewport[4];

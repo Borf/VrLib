@@ -53,8 +53,6 @@ namespace vrlib
 			return ((tmin < maxDistance) && (tmax > minDistance));
 		}
 
-
-
 		void AABB::add(const AABB & other, const glm::mat4 &transform)
 		{
 			glm::vec3 obounds1(transform * glm::vec4(other.bounds[0], 1));

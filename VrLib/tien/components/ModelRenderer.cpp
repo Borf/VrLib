@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "../Node.h"
 #include "../Renderer.h"
+#include <VrLib\Log.h>
 
 namespace vrlib
 {
@@ -43,9 +44,17 @@ namespace vrlib
 					cullBackFaces = true;
 				}
 				hasForward = false;
-				if(model)
-					for (auto m : model->getMaterials())
+				if (model) {
+					for (auto m : model->getMaterials()) {
 						materialOverrides[m] = *m;
+					}
+				} else {
+#ifdef _DEBUG
+					vrlib::logger << "model was null!" << data["file"] << vrlib::Log::newline;
+#endif // _DEBUG
+					return;
+				}
+
 				prevModel = model;
 
 				if (data.find("materialoverrides") != data.end())
