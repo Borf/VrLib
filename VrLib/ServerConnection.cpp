@@ -24,8 +24,10 @@ typedef int SOCKET;
 namespace vrlib
 {
 	const unsigned char* renderer;
-	ServerConnection::ServerConnection() : running(false), backgroundThread(&ServerConnection::thread, this)
+	ServerConnection::ServerConnection(json &config) : running(false), backgroundThread(&ServerConnection::thread, this)
 	{
+		this->config = config;
+
 		s = 0;
 		tunnelCallback = nullptr;
 
@@ -86,15 +88,17 @@ namespace vrlib
 			struct sockaddr_in addr;
 			struct hostent* host;
 
-			host = gethostbyname(apiHost.c_str());
+			std::string ipAddr = config["ip"];
+
+			host = gethostbyname(ipAddr.c_str());
 			if (host == NULL)
 			{
-				logger << "Could not look up host " << apiHost << "', are you connected to the internet?";
+				logger << "Could not look up host " << config["ip"] << "', are you connected to the internet?";
 				return;
 			}
 			addr.sin_family = host->h_addrtype;
 			memcpy((char*)&addr.sin_addr.s_addr, host->h_addr_list[0], host->h_length);
-			addr.sin_port = htons(apiPort);
+			addr.sin_port = htons(config["port"]);
 			memset(addr.sin_zero, 0, 8);
 
 			SOCKET tempSocket = 0;
@@ -117,7 +121,7 @@ namespace vrlib
 			if (rc < 0)
 			{
 				if(lastConnected)
-					logger << "Could not connect to api host: " << apiHost << Log::newline;
+					logger << "Could not connect to api host: " << config["ip"] << Log::newline;
 				lastConnected = false;
 				closesocket(tempSocket);
 				#ifdef WIN32

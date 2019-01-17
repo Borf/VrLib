@@ -40,17 +40,21 @@ namespace vrlib
 
 	class ServerConnection
 	{
-#ifdef _DEBUG
-		const std::string apiHost = "127.0.0.1";
-#else
+		SOCKET s;
+		std::map<std::string, std::function<void(const json &)>> callbacks;
+		std::map<std::string, std::function<void(const json &)>> singleCallbacks;
+
+		std::function<void(Tunnel*)> tunnelCallback;
+		std::map<std::string, Tunnel*> tunnels;
 		const std::string apiHost = "145.48.6.10";
-#endif
+
+		json config;
 
 	public:
 		bool running;
 		std::thread backgroundThread;
 
-		ServerConnection();
+		ServerConnection(json &config);
 
 
 		void thread();
@@ -81,5 +85,4 @@ namespace vrlib
 
 
 	};
-
 }

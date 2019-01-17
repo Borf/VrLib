@@ -102,7 +102,7 @@ namespace vrlib
 		loadDeviceDrivers();
 		loadCluster();
 		createWindow();
-		serverConnection = new ServerConnection();
+		serverConnection = new ServerConnection(config["server"]);
 
 		User* user = new User("MainUser");
 		users.push_back(user);
