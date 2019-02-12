@@ -27,6 +27,11 @@ namespace vrlib
 	ServerConnection::ServerConnection(json &config) : running(false), backgroundThread(&ServerConnection::thread, this)
 	{
 		this->config = config;
+		if (this->config.is_null())
+		{
+			this->config["ip"] = apiHost;
+			this->config["port"] = apiPort;
+		}
 
 		s = 0;
 		tunnelCallback = nullptr;
