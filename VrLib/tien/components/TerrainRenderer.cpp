@@ -143,6 +143,13 @@ namespace vrlib
 				materials.push_back({ vrlib::Texture::loadCached(diffuse), vrlib::Texture::loadCached(normal), new vrlib::Texture(mask) });
 			}
 
+			void TerrainRenderer::setTerrainMask(vrlib::Texture* mask)
+			{
+				TerrainRenderContext* context = dynamic_cast<TerrainRenderContext*>(renderContextDeferred);
+				this->terrainMask = mask;
+				context->terrainMask = mask;
+			}
+
 
 			void TerrainRenderer::drawDeferredPass()
 			{
@@ -153,7 +160,8 @@ namespace vrlib
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::modelMatrix, t->globalTransform);
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::normalMatrix, glm::transpose(glm::inverse(glm::mat3(t->globalTransform))));
 				context->renderShader->setUniform(TerrainRenderContext::RenderUniform::heightmapSize, glm::vec2(terrain.width, terrain.height)); //TODO: only do this once
-
+				if (terrainMask)
+					context->terrainMask = terrainMask;
 
 				vao->bind();
 				glDisable(GL_BLEND);
@@ -162,7 +170,7 @@ namespace vrlib
 				glActiveTexture(GL_TEXTURE1);
 				context->black->bind();
 				glActiveTexture(GL_TEXTURE2);
-				context->white->bind();
+				context->terrainMask->bind();
 
 				glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
 
@@ -198,7 +206,7 @@ namespace vrlib
 					context->white->bind();
 					glDrawArrays(GL_QUADS, 0, terrain.width * terrain.height * 4);
 				}
-
+				
 
 
 				glActiveTexture(GL_TEXTURE0);
@@ -258,6 +266,7 @@ namespace vrlib
 				defaultNormalMap = vrlib::Texture::loadCached("data/vrlib/tien/textures/defaultNormalMap.png");
 				black = vrlib::Texture::loadCached("data/vrlib/tien/textures/black.png");
 				white = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
+				terrainMask = vrlib::Texture::loadCached("data/vrlib/tien/textures/white.png");
 			}
 			void TerrainRenderer::TerrainRenderContext::frameSetup(const glm::mat4 & projectionMatrix, const glm::mat4 & viewMatrix)
 			{

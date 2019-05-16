@@ -38,6 +38,7 @@ namespace vrlib
 					virtual void frameSetup(const glm::mat4 &projectionMatrix, const glm::mat4 &viewMatrix) override;
 
 					vrlib::Texture* black;
+					vrlib::Texture* terrainMask;
 					vrlib::Texture* white;
 					vrlib::Texture* defaultNormalMap;
 				};
@@ -57,6 +58,8 @@ namespace vrlib
 
 				gl::VBO<gl::VertexP3N2B2T2T2> vbo;
 				gl::VIO<unsigned int> vio;
+				vrlib::Texture* terrainMask = nullptr;
+
 			public:
 				gl::VAO* vao;
 
@@ -85,6 +88,8 @@ namespace vrlib
 				void addMaterialLayer(vrlib::Texture* diffuse, vrlib::Texture* normal, vrlib::Texture* mask);
 				void addMaterialLayer(const std::string &diffuse, const std::string &normal, const std::string &mask);
 				void addMaterialLayer(const std::string &diffuse, const std::string &normal, float minHeight, float maxHeight, float fadeDist);
+
+				void setTerrainMask(vrlib::Texture* mask);
 
 				int addRoadTexture(vrlib::Texture* diffuse, vrlib::Texture* normal); //TODO
 				void addRoad(); // TODO
