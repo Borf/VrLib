@@ -261,14 +261,14 @@ namespace vrlib
 			});
 		}
 
-		std::pair<Node*, glm::vec3> Scene::castRay(const math::Ray & ray, bool physics, const std::function<bool(vrlib::tien::Node*)> &filter) const
+		std::pair<Node*, glm::vec3> Scene::castRay(const math::Ray & ray, bool physics, const std::function<CollisionFilter(const vrlib::tien::Node*)> &filter) const
 		{
 			float closest = 99999;
 			std::pair<Node*, glm::vec3> ret(nullptr, glm::vec3(0, 0, 0));
 
 			castRay(ray, [&](Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)
 			{
-				if (!filter(node))
+				if (filter(node) == CollisionFilter::Ignore)
 					return true;
 				if (hitFraction < closest)
 				{
@@ -277,11 +277,11 @@ namespace vrlib
 					ret.second = hitPosition;
 				}
 				return true;
-			}, physics);
+			}, physics, filter);
 			return ret;
 		}
 
-		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics) const
+		void Scene::castRay(const math::Ray & ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics, std::function<CollisionFilter(const vrlib::tien::Node*)> filter) const
 		{
 			if (physics)
 			{
@@ -318,9 +318,16 @@ namespace vrlib
 			}
 			else
 			{
-				this->fortree([callback, &ray](const vrlib::tien::Node* node)
+				this->fortree([callback, &ray, &filter](const vrlib::tien::Node* node)
 				{
 					if (!node->transform)
+						return;
+
+					CollisionFilter filterResult = CollisionFilter::Include;
+
+					if (filter)
+						filterResult = filter(node);
+					if(filterResult == CollisionFilter::Ignore)
 						return;
 
 					vrlib::math::Ray inverseRay = glm::inverse(node->transform->globalTransform) * ray;
@@ -343,10 +350,20 @@ namespace vrlib
 
 					if (model)
 					{
-						model->collisionFractions(inverseRay, [&callback, &node, &ray](float f)
+						if (filterResult == CollisionFilter::IgnorePolygon)
 						{
-							return callback(const_cast<vrlib::tien::Node*>(node), f, ray.mOrigin + f * ray.mDir, glm::vec3(0, 0, 0));
-						});
+							float f = model->aabb.getRayCollision(inverseRay, 0, 10000);
+							if (f >= 0)
+							{
+								glm::vec3 collision = inverseRay.mOrigin + f * inverseRay.mDir;
+								callback(const_cast<vrlib::tien::Node*>(node), f, collision, glm::vec3(0, 0, 0));
+							}
+						}
+						else
+							model->collisionFractions(inverseRay, [&callback, &node, &ray](float f)
+							{
+								return callback(const_cast<vrlib::tien::Node*>(node), f, ray.mOrigin + f * ray.mDir, glm::vec3(0, 0, 0));
+							});
 					}
 
 

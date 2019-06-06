@@ -42,7 +42,14 @@ namespace vrlib
 	namespace math { class Ray; }
 	namespace tien
 	{
-		namespace components { class Light;  }
+		namespace components { class Light; }
+
+		enum class CollisionFilter
+		{
+			Ignore, // completely ignore this model
+			IgnorePolygon, // just do a bounding box collision test
+			Include, // include this model completely
+		};
 
 		class Scene : public Node
 		{
@@ -111,8 +118,8 @@ namespace vrlib
 			* casts a ray through the scene, using the physics world or the polygon meshes
 			* callback is called when a collision occurs. Callback should return true for further results, false for no more results. Fraction is a fraction of the ray, based on a normalized ray
 			*/
-			void castRay(const math::Ray& ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true) const;
-			std::pair<Node*, glm::vec3> castRay(const math::Ray& ray, bool physics = true, const std::function<bool(vrlib::tien::Node*)> &filter = [](vrlib::tien::Node*) {return true; }) const;
+			void castRay(const math::Ray& ray, std::function<bool(Node* node, float hitFraction, const glm::vec3 &hitPosition, const glm::vec3 &hitNormal)> callback, bool physics = true, std::function<CollisionFilter(const vrlib::tien::Node*)> filter = nullptr) const;
+			std::pair<Node*, glm::vec3> castRay(const math::Ray& ray, bool physics = true, const std::function<CollisionFilter(const vrlib::tien::Node*)> &filter = [](const vrlib::tien::Node*) {return CollisionFilter::Include; }) const;
 
 
 		};
