@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <list>
+#include <string>
 #include <glm/glm.hpp>
 #include <VrLib/math/aabb.h>
 

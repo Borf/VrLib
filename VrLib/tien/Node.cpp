@@ -70,7 +70,7 @@ namespace vrlib
 			newParent->children.push_back(this);
 		}
 
-		bool Node::isChildOf(Node * parent)
+		bool Node::isChildOf(Node * parent) const
 		{
 			if (this == parent)
 				return true;
@@ -95,7 +95,7 @@ namespace vrlib
 		{
 			this->fromJson(data, totalJson, [=](const json& jsonParam, const std::string stringParam)
 			{
-				return callback(data);
+				return callback(jsonParam);
 			});
 		}
 

@@ -37,14 +37,14 @@
 
 
 #ifdef _DEBUG
-#pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed
-#pragma comment(lib, "sixense_utils.lib")	// debug version needs vs debug installed
+//#pragma comment(lib, "sixense.lib")	// debug version needs vs debug installed
+//#pragma comment(lib, "sixense_utils.lib")	// debug version needs vs debug installed
 #pragma comment(lib, "fgloved.lib")
 #pragma comment(lib, "freetype255d.lib")
 #pragma comment(lib, "assimp-vc140-mt.lib")
 #else
-#pragma comment(lib, "sixense.lib")
-#pragma comment(lib, "sixense_utils.lib")
+//#pragma comment(lib, "sixense.lib")
+//#pragma comment(lib, "sixense_utils.lib")
 #pragma comment(lib, "fglove.lib")
 #pragma comment(lib, "freetype255.lib")
 #pragma comment(lib, "assimp-vc140-mt-static.lib") //so that you don't get annoying dll trouble
