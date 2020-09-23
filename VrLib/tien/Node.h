@@ -52,7 +52,7 @@ namespace vrlib
 			Node* getFirstChild() const { return children.empty() ? nullptr : children.front(); }
 			Node* getNextSibling() const;
 			void setParent(Node* newParent);
-			bool isChildOf(Node* parent);
+			bool isChildOf(Node* parent) const;
 
 			json asJson(json &meshes) const;
 			void fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> & = nullptr);

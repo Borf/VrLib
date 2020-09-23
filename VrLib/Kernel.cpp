@@ -226,8 +226,8 @@ namespace vrlib
 		}
 		else if (name == "glove")
 			return new GloveDeviceDriver();
-		else if (name == "hydra")
-			return new HydraDeviceDriver();
+//		else if (name == "hydra")
+//			return new HydraDeviceDriver();
 		else if (name == "leapmotion")
 			return new LeapMotionDeviceDriver();
 		else if (name == "wheel")
