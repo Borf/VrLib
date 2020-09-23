@@ -43,7 +43,7 @@ namespace vrlib
 		{
 			int rx = (int)p.x;
 			int ry = (int)p.y;
-			if (rx < 0 || ry < 0 || rx >= width || ry >= height)
+			if (rx < 0 || ry < 0 || rx >= width-1 || ry >= height-1)
 				return glm::vec3(p.x, 0.01, p.y);
 
 			glm::vec3 p1 = glm::vec3(rx, ry, heights[rx][ry]);
