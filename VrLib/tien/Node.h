@@ -54,9 +54,9 @@ namespace vrlib
 			void setParent(Node* newParent);
 			bool isChildOf(Node* parent) const;
 
-			json asJson(json &meshes) const;
-			void fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> & = nullptr);
-			void fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &, const std::string)> & = nullptr);
+			nlohmann::json asJson(nlohmann::json &meshes) const;
+//			void fromJson(const nlohmann::json &data, const nlohmann::json &totalJson, const std::function<Component*(const nlohmann::json &)> & = nullptr);
+			void fromJson(const nlohmann::json &data, const nlohmann::json &totalJson, const std::function<Component*(const nlohmann::json &, const std::string)> & = nullptr);
 			
 			void updateNodePointer(vrlib::tien::Node* oldNode, vrlib::tien::Node* newNode);
 

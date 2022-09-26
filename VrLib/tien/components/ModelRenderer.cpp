@@ -17,7 +17,7 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> ModelRenderer::cache;
 
-			ModelRenderer::ModelRenderer(const json &data)
+			ModelRenderer::ModelRenderer(const nlohmann::json &data)
 			{
 				if (data.is_string())
 					fileName = data.get<std::string>();
@@ -61,7 +61,7 @@ namespace vrlib
 				{
 					std::vector<Material*> orig = model->getMaterials();
 					int i = 0;
-					for (const json &v : data["materialoverrides"])
+					for (const nlohmann::json &v : data["materialoverrides"])
 					{
 						Material* overrideMaterial = &materialOverrides[orig[i]];
 						if (v.find("texture") != v.end())
@@ -78,9 +78,9 @@ namespace vrlib
 			}
 
 
-			json ModelRenderer::toJson(json &meshes) const
+			nlohmann::json ModelRenderer::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "modelrenderer";
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;
@@ -90,7 +90,7 @@ namespace vrlib
 				for (vrlib::Material* m : model->getMaterials()) //TODO: getMaterials might not always return same order
 				{
 					const Material &overrideMaterial = materialOverrides.find(m)->second;
-					json v;					
+					nlohmann::json v;
 					if (m->texture != overrideMaterial.texture && overrideMaterial.texture)
 						v["texture"] = overrideMaterial.texture->image->fileName;
 					if (m->normalmap != overrideMaterial.normalmap && overrideMaterial.normalmap)

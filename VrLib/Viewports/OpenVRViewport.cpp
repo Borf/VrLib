@@ -74,6 +74,7 @@ namespace vrlib
 
 
 		glm::mat4 hmdMatrix = glm::inverse(openVRDriver->hmd);
+
 		resetOpenGL();
 
 		glEnable(GL_MULTISAMPLE);

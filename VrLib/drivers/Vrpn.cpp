@@ -49,14 +49,14 @@ namespace vrlib
 		driver->data[t.sensor] = glm::translate(glm::mat4(), glm::vec3((float)t.pos[0], (float)t.pos[1], (float)t.pos[2])) * rot;
 	}
 
-	VrpnDeviceDriver::VrpnDeviceDriver(const json &config)
+	VrpnDeviceDriver::VrpnDeviceDriver(const nlohmann::json &config)
 	{
 		tracker = new vrpn_Tracker_Remote("test_tracker@localhost");
 		tracker->register_change_handler(this, handle_tracker_pos_quat);
 
 		if (!config.is_null())
 		{
-			for (const json &t : config)
+			for (const nlohmann::json &t : config)
 			{
 				if (t.find("transform") != t.end())
 				{

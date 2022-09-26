@@ -19,9 +19,9 @@ void vrlib::tien::components::postprocessors::Bloom::pass(int index)
 
 
 
-json vrlib::tien::components::postprocessors::Bloom::toJson(json & meshes) const
+nlohmann::json vrlib::tien::components::postprocessors::Bloom::toJson(nlohmann::json & meshes) const
 {
-	json ret;
+	nlohmann::json ret;
 	ret["type"] = "postprocess";
 	ret["postprocess"] = "bloom";
 	return ret;

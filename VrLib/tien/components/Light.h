@@ -24,10 +24,10 @@ namespace vrlib
 				bool shadowmapGenerated = false;
 			public:
 				Light() {};
-				Light(const json &data);
+				Light(const nlohmann::json &data);
 				~Light();
 
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 
 
 				enum class Type

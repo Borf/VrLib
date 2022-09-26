@@ -10,9 +10,9 @@ vrlib::tien::components::postprocessors::Gamma::Gamma() : PostProcessor("Gamma")
 
 
 
-json vrlib::tien::components::postprocessors::Gamma::toJson(json & meshes) const
+nlohmann::json vrlib::tien::components::postprocessors::Gamma::toJson(nlohmann::json & meshes) const
 {
-	json ret;
+	nlohmann::json ret;
 	ret["type"] = "postprocess";
 	ret["postprocess"] = "gamma";
 	ret["gamma"] = gamma;

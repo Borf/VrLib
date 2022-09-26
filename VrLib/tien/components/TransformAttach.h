@@ -25,7 +25,7 @@ namespace vrlib
 
 				TransformAttach(const vrlib::PositionalDevice &device);
 				~TransformAttach();
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 
 				void postUpdate(Scene& scene) override;
 			};

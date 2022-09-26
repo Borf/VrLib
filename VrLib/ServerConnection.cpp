@@ -24,7 +24,7 @@ typedef int SOCKET;
 namespace vrlib
 {
 	const unsigned char* renderer;
-	ServerConnection::ServerConnection(json &config) : running(false), backgroundThread(&ServerConnection::thread, this)
+	ServerConnection::ServerConnection(nlohmann::json &config) : running(false), backgroundThread(&ServerConnection::thread, this)
 	{
 		this->config = config;
 		if (this->config.is_null())
@@ -36,19 +36,19 @@ namespace vrlib
 		s = 0;
 		tunnelCallback = nullptr;
 
-		callbacks["session/start"] = [](const json & data) {
+		callbacks["session/start"] = [](const nlohmann::json & data) {
 			logger << "session/start" << Log::newline;
 			std::string dataString = data.dump();
 			logger << dataString << Log::newline;
 		};
-		callbacks["tunnel/connect"] = [this](const json & data)
+		callbacks["tunnel/connect"] = [this](const nlohmann::json & data)
 		{
 			Tunnel* t = new Tunnel(data["data"]["id"], this);
 			tunnels[t->id] = t;
 			if (tunnelCallback)
 				tunnelCallback(t);
 		};
-		callbacks["tunnel/send"] = [this](const json & data)
+		callbacks["tunnel/send"] = [this](const nlohmann::json & data)
 		{
 			if (tunnels.find(data["data"]["id"]) == tunnels.end())
 			{
@@ -139,7 +139,7 @@ namespace vrlib
 			lastConnected = true;
 			logger << "Connected to remote API" << Log::newline;
 
-			json packet;
+			nlohmann::json packet;
 			packet["id"] = "session/start";
 			packet["data"]["host"] = hostname;
 			packet["data"]["file"] = applicationName;
@@ -167,7 +167,7 @@ namespace vrlib
 					unsigned int len = *((unsigned int*)&buffer[0]);
 					if (buffer.size() >= len + 4)
 					{
-						json data = json::parse(buffer.substr(4, len));
+						nlohmann::json data = nlohmann::json::parse(buffer.substr(4, len));
 						buffer = buffer.substr(4 + len);
 
 						if (data.find("id") == data.end())
@@ -209,7 +209,7 @@ namespace vrlib
 		}
 	}
 
-	void ServerConnection::send(const json &value, int sock)
+	void ServerConnection::send(const nlohmann::json &value, int sock)
 	{
 		std::string data = value.dump();
 		unsigned int len = data.size();
@@ -240,23 +240,23 @@ namespace vrlib
 	}
 
 
-	void ServerConnection::callBackOnce(const std::string &action, std::function<void(const json &)> callback)
+	void ServerConnection::callBackOnce(const std::string &action, std::function<void(const nlohmann::json &)> callback)
 	{
 		singleCallbacks[action] = callback;
 	}
 
-	json ServerConnection::call(const std::string &action, const json& data)
+	nlohmann::json ServerConnection::call(const std::string &action, const nlohmann::json& data)
 	{
-		json result;
+		nlohmann::json result;
 		if (s == 0)
 			return result;
 		bool done = false;
-		callBackOnce(action, [&done, &result](const json &data)
+		callBackOnce(action, [&done, &result](const nlohmann::json &data)
 		{
 			result = data["data"];
 			done = true;
 		});
-		json packet;
+		nlohmann::json packet;
 		packet["id"] = action;
 		packet["data"] = data;
 		send(packet);
@@ -285,7 +285,7 @@ namespace vrlib
 
 	void ServerConnection::sendFps(float fps)
 	{
-		json v;
+		nlohmann::json v;
 		v["id"] = "session/report";
 		v["data"]["fps"] = fps;
 		send(v);
@@ -296,9 +296,9 @@ namespace vrlib
 	Tunnel* ServerConnection::createTunnel(const std::string &sessionId)
 	{
 		waitForConnection();
-		json data;
+		nlohmann::json data;
 		data["session"] = sessionId;
-		json result = call("tunnel/create", data);
+		nlohmann::json result = call("tunnel/create", data);
 
 		if (result["status"] == "ok")
 		{
@@ -314,7 +314,7 @@ namespace vrlib
 	void ServerConnection::onTunnelCreate(const std::function<void(Tunnel*)> &onTunnel, const std::string &key)
 	{
 		waitForConnection();
-		json v;
+		nlohmann::json v;
 		v["id"] = "session/enable";
 		v["data"].push_back("tunnel");
 		if(key != "")
@@ -323,21 +323,21 @@ namespace vrlib
 		tunnelCallback = onTunnel;
 	}
 
-	void Tunnel::send(const json &data)
+	void Tunnel::send(const nlohmann::json &data)
 	{
 		if (!this)
 			return;
-		json packet;
+		nlohmann::json packet;
 		packet["id"] = "tunnel/send";
 		packet["data"]["dest"] = id;
 		packet["data"]["data"] = data;
 		connection->send(packet);
 	}
 
-	json Tunnel::recv()
+	nlohmann::json Tunnel::recv()
 	{
 		mtx.lock();
-		json res = queue.front();
+		nlohmann::json res = queue.front();
 		queue.pop_front();
 		mtx.unlock();
 		return res;

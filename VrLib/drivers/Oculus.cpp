@@ -18,7 +18,7 @@ namespace vrlib
 	static void quat_to_matrix(const float *quat, float *mat);
 
 
-	OculusDeviceDriver::OculusDeviceDriver(json config)
+	OculusDeviceDriver::OculusDeviceDriver(nlohmann::json config)
 	{
 		this->config = config;
 

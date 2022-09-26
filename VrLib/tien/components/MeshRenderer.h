@@ -96,14 +96,14 @@ namespace vrlib
 				{
 				public:
 					Mesh();
-					Mesh(const json &data);
+					Mesh(const nlohmann::json &data);
 					std::string guid;
 
 					vrlib::Material material;
 					std::vector<vrlib::gl::VertexP3N2B2T2T2> vertices;
 					std::vector<unsigned int> indices;
 
-					json toJson();
+					nlohmann::json toJson();
 
 					virtual void collisionFractions(const vrlib::math::Ray & ray, std::function<bool(float)> callback) override;
 				};
@@ -113,12 +113,12 @@ namespace vrlib
 				class Sphere : public Mesh { public:		Sphere(); };
 
 				MeshRenderer(Mesh* mesh = nullptr);
-				MeshRenderer(const json &data, const json &totalJson);
+				MeshRenderer(const nlohmann::json &data, const nlohmann::json &totalJson);
 				~MeshRenderer();
 
 				Mesh* mesh;
 
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 				void updateMesh();
 

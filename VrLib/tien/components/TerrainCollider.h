@@ -19,7 +19,7 @@ namespace vrlib
 				btHeightfieldTerrainShape* shape;
 			public:
 				TerrainCollider(Node* n = nullptr);
-				virtual json toJson(json &meshes) const override;
+				virtual nlohmann::json toJson(nlohmann::json &meshes) const override;
 				virtual physx::PxShape* getShape(physx::PxPhysics* physics, const glm::vec3 &scale) override;
 			};
 		}

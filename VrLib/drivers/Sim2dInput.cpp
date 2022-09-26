@@ -16,14 +16,14 @@ namespace vrlib
 	}
 
 
-	Sim2dInputDeviceDriver::Sim2dInputDeviceDriver(const json &config)
+	Sim2dInputDeviceDriver::Sim2dInputDeviceDriver(const nlohmann::json &config)
 	{
 
 
-		for (json::const_iterator it = config.cbegin(); it != config.cend(); it++)
+		for (nlohmann::json::const_iterator it = config.cbegin(); it != config.cend(); it++)
 		{
 			std::string key = it.key();
-			const json &value = it.value();
+			const nlohmann::json &value = it.value();
 
 			static struct ActionMapping { std::string str; Action action; } actionMapping[] = {
 				{ "xneg", X_NEG },

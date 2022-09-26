@@ -76,7 +76,7 @@ namespace vrlib
 			logger << "Could not open file " << fileName << Log::newline;
 			return;
 		}
-		json newValue;
+		nlohmann::json newValue;
 		file >> newValue;
 		mergeConfig(config, newValue);
 	}
@@ -157,9 +157,9 @@ namespace vrlib
 	}
 
 
-	void Kernel::mergeConfig(json &config, const json &newConfig)
+	void Kernel::mergeConfig(nlohmann::json &config, const nlohmann::json &newConfig)
 	{
-		for (json::const_iterator it = newConfig.cbegin(); it != newConfig.cend(); it++)
+		for (nlohmann::json::const_iterator it = newConfig.cbegin(); it != newConfig.cend(); it++)
 			if (config.find(it.key()) != config.end())
 				if (config[it.key()].is_object())
 					mergeConfig(config[it.key()], it.value());
@@ -338,7 +338,7 @@ namespace vrlib
 			if (!driver)
 				continue;
 			std::string src = "";
-			src = config["devices"][i]["src"];
+			src = config["devices"][i]["src"].get<std::string>();
 
 			adaptors[config["devices"][i]["name"]] = driver->getAdaptor(src);
 		}

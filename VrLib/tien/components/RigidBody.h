@@ -38,11 +38,11 @@ namespace vrlib
 				physx::PxScene* world;
 
 				RigidBody(float mass, Type type = Type::Auto);
-				RigidBody(const json &json);
+				RigidBody(const nlohmann::json &json);
 				~RigidBody();
 				physx::PxRigidActor* actor = nullptr;
 				physx::PxRigidDynamic* rigidDynamic = nullptr;
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 				void buildEditor(EditorBuilder * builder, bool folded) override;
 				inline float getMass() const {return mass; };
 				void setMass(float newMass);

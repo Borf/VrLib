@@ -34,9 +34,9 @@ namespace vrlib
 
 
 				Transform(const glm::vec3 &position = glm::vec3(0, 0, 0), const glm::quat &rotation = glm::quat(), const glm::vec3 &scale = glm::vec3(1, 1, 1));
-				Transform(const json &data);
+				Transform(const nlohmann::json &data);
 				~Transform();
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 
 
 				void lookAt(const glm::vec3 &position, const glm::vec3 &target, const glm::vec3 &up);

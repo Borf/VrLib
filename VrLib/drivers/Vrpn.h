@@ -34,7 +34,7 @@ namespace vrlib
 
 		std::map<int, glm::mat4> postTransforms;
 
-		VrpnDeviceDriver(const json &json);
+		VrpnDeviceDriver(const nlohmann::json &json);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 
 		virtual void update();

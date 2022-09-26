@@ -29,9 +29,9 @@ namespace vrlib
 				}
 
 				
-				json DoF::toJson(json & meshes) const
+				nlohmann::json DoF::toJson(nlohmann::json & meshes) const
 				{
-					json ret;
+					nlohmann::json ret;
 					ret["type"] = "postprocess";
 					ret["postprocess"] = "dof";
 					return ret;

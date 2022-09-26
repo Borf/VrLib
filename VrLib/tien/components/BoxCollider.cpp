@@ -46,7 +46,7 @@ namespace vrlib
 				this->size = size;
 			}
 
-			BoxCollider* BoxCollider::fromJson(const json & json, Scene* scene)
+			BoxCollider* BoxCollider::fromJson(const nlohmann::json & json, Scene* scene)
 			{
 				BoxCollider* ret = new BoxCollider();
 				for (int i = 0; i < 3; i++)
@@ -64,9 +64,9 @@ namespace vrlib
 				return shape;
 			}
 
-			json BoxCollider::toJson(json &meshes) const
+			nlohmann::json BoxCollider::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "collider";
 				ret["collider"] = "box";
 				for (int i = 0; i < 3; i++)

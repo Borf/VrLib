@@ -79,7 +79,7 @@ namespace vrlib
 				void drawDeferredPass() override;
 				void drawForwardPass() override {};
 				void drawShadowMap() override;
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 
 				void rebuildBuffers();
 				void updateBuffers(int x, int y);

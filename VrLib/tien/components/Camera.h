@@ -15,7 +15,7 @@ namespace vrlib
 			{
 			public:
 				Camera();
-				Camera(const json &data);
+				Camera(const nlohmann::json &data);
 				~Camera();
 
 				bool useFbo = false;
@@ -23,7 +23,7 @@ namespace vrlib
 				vrlib::gl::FBO* target = nullptr;
 
 				void render();
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 				virtual void buildEditor(EditorBuilder* builder, bool folded) override;
 
 			};

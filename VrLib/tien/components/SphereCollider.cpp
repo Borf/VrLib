@@ -12,9 +12,9 @@ namespace vrlib
 				return nullptr;
 			}
 
-			json SphereCollider::toJson(json &meshes) const
+			nlohmann::json SphereCollider::toJson(nlohmann::json &meshes) const
 			{
-				return json();
+				return nlohmann::json();
 			}
 
 		}

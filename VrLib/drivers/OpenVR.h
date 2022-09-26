@@ -16,6 +16,11 @@ namespace vrlib
 
 	class OpenVRDriver : public DeviceDriver
 	{
+	public:
+		glm::mat4 hmd;
+		glm::mat4 controller0;
+		glm::mat4 controller1;
+	private:
 		class OpenVrPositionDeviceDriverAdaptor : public PositionalDeviceDriverAdaptor
 		{
 			std::string src;
@@ -48,7 +53,7 @@ namespace vrlib
 		};
 
 
-		json config;
+		nlohmann::json config;
 
 	public:
 		vr::IVRSystem *m_pHMD;
@@ -58,12 +63,9 @@ namespace vrlib
 		int hmdIndex;
 		std::vector<int> lighthouses;
 
-		vr::VRControllerState_t prevControllerStates[16];
-		vr::VRControllerState_t controllerStates[16];
+		vr::VRControllerState_t prevControllerStates[64];
+		vr::VRControllerState_t controllerStates[64];
 
-		glm::mat4 hmd;
-		glm::mat4 controller0;
-		glm::mat4 controller1;
 		glm::mat4 lighthouse0;
 		glm::mat4 lighthouse1;
 
@@ -71,7 +73,7 @@ namespace vrlib
 		glm::vec2 touch1;
 
 
-		OpenVRDriver(json config);
+		OpenVRDriver(nlohmann::json config);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 		virtual void update();
 	};

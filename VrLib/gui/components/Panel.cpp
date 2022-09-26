@@ -30,15 +30,15 @@ namespace vrlib
 			Panel::Panel(const std::string &jsonFileName)
 			{
 				std::ifstream file(jsonFileName.c_str());
-				json config;
+				nlohmann::json config;
 				file>>config;
 				loadJson(config);
 			}
 
 
-			void Panel::loadJson(const json &config)
+			void Panel::loadJson(const nlohmann::json &config)
 			{
-				for (const json &element : config)
+				for (const nlohmann::json &element : config)
 				{
 					Component* component = NULL;
 					if (element["type"] == "button")

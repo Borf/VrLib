@@ -32,7 +32,7 @@ namespace vrlib
 		Log& operator <<(const glm::vec3 &vec);
 		Log& operator <<(const glm::vec4 &vec);
 		Log& operator <<(const EndLine& endline);
-		Log& operator <<(const json &json);
+		Log& operator <<(const nlohmann::json &json);
 
 		static std::string format(char* fmt, ...); //TODO: move this to a better spot
 	};

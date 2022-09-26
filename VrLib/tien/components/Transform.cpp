@@ -26,7 +26,7 @@ namespace vrlib
 				buildTransform(glm::mat4());
 			}
 
-			Transform::Transform(const json & json)
+			Transform::Transform(const nlohmann::json & json)
 			{
 				position = glm::vec3(json["position"][0], json["position"][1], json["position"][2]);
 				rotation = glm::quat(json["rotation"][3], json["rotation"][0], json["rotation"][1], json["rotation"][2]);
@@ -39,9 +39,9 @@ namespace vrlib
 
 			}
 
-			json Transform::toJson(json &meshes) const
+			nlohmann::json Transform::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "transform";
 				for (int i = 0; i < 3; i++)
 					ret["position"].push_back(position[i]);

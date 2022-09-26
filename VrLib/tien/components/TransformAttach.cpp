@@ -24,9 +24,9 @@ namespace vrlib
 				}
 			}
 
-			json TransformAttach::toJson(json &meshes) const
+			nlohmann::json TransformAttach::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "transformattach";
 				ret["attach"] = device.name;
 				return ret;

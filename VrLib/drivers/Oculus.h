@@ -23,9 +23,9 @@ namespace vrlib
 			virtual glm::mat4 getData();
 		};
 
-		json config;
+		nlohmann::json config;
 	public:
-		OculusDeviceDriver(json config);
+		OculusDeviceDriver(nlohmann::json config);
 		void update(KeyboardDeviceDriver* keyboardDriver);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 

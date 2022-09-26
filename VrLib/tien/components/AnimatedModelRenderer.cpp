@@ -18,7 +18,7 @@ namespace vrlib
 		{
 			std::map<std::string, vrlib::Model*> AnimatedModelRenderer::cache;
 
-			AnimatedModelRenderer::AnimatedModelRenderer(const json &data)
+			AnimatedModelRenderer::AnimatedModelRenderer(const nlohmann::json &data)
 			{
 				if (data.is_string())
 					fileName = data.get<std::string>();
@@ -55,9 +55,9 @@ namespace vrlib
 			{
 
 			}
-			json AnimatedModelRenderer::toJson(json &meshes) const
+			nlohmann::json AnimatedModelRenderer::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "animatedmodelrenderer";
 				ret["file"] = fileName;
 				ret["castShadow"] = castShadow;

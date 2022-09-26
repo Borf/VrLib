@@ -507,7 +507,7 @@ namespace vrlib
 		unsigned char* tmpImage = new unsigned char[1024 * 1024];
 
 		stbtt_pack_context pc;
-		stbtt_PackBegin(&pc, tmpImage, 1024, 1024, 0, 2, NULL);
+		stbtt_PackBegin(&pc, tmpImage, 1024, 1024, 1024, 2, NULL);
 		if(oversample > 0)
 			stbtt_PackSetOversampling(&pc, oversample, oversample);
 		stbtt_PackFontRange(&pc, fileData, 0, size, 0, 256, fontData);

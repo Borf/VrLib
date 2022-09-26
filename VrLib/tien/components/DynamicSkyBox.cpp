@@ -15,16 +15,16 @@ namespace vrlib
 	{
 		namespace components
 		{
-			DynamicSkyBox::DynamicSkyBox(const json & json)
+			DynamicSkyBox::DynamicSkyBox(const nlohmann::json & json)
 			{
 				timeOfDay = json["timeOfDay"];
 				//TODO: light
 			}
 
 
-			json DynamicSkyBox::toJson(json &meshes) const
+			nlohmann::json DynamicSkyBox::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "dynamicskybox";
 				ret["timeOfDay"] = timeOfDay;
 				ret["light"] = light ? light->guid : "";

@@ -16,7 +16,7 @@ namespace vrlib
 				Panel(const std::string &jsonFileName);
 
 				virtual void draw(const glm::mat4 &parentMatrix) override;
-				void loadJson(const json &config);
+				void loadJson(const nlohmann::json &config);
 
 				virtual void foreachWithMatrix(const std::function<void(const glm::mat4 &matrix, Component*) > &callback, const glm::mat4 &parentMatrix = glm::mat4()) override;
 

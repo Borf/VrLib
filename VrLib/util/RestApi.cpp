@@ -46,13 +46,13 @@ namespace vrlib
 	{
 		std::vector<std::string> headers;
 		headers.push_back("Content-Type: application/json");
-		json postData;
+		nlohmann::json postData;
 		postData["name"] = myHostname;
 		postData["platform"] = "cave";
 		postData["scenarios"].push_back("Presentatie1.json");
 		postData["scenarios"].push_back("Presentatie2.json");
 		postData["scenarios"].push_back("Presentatie3.json");
-		json ret = callApi(POST, "environment", headers, postData);
+		nlohmann::json ret = callApi(POST, "environment", headers, postData);
 
 
 		int id = ret["success"]["id"];
@@ -63,7 +63,7 @@ namespace vrlib
 
 		while (sessionId == 0)
 		{
-			json ret = callApi(PUT, "environment/" + std::to_string(id), headers, json());
+			nlohmann::json ret = callApi(PUT, "environment/" + std::to_string(id), headers, json());
 
 			sessionId = ret["success"]["sessionid"];
 			if (sessionId != 0)
@@ -71,7 +71,7 @@ namespace vrlib
 			std::this_thread::sleep_for(std::chrono::seconds(5));
 		}
 
-		json session = callApi(GET, "session:" + std::to_string(sessionId), headers, json());
+		nlohmann::json session = callApi(GET, "session:" + std::to_string(sessionId), headers, json());
 
 	}*/
 
@@ -93,20 +93,20 @@ namespace vrlib
 		return ret;
 	}
 
-	json RestApi::getSessionInfo(const std::string & sessionId, const std::string & key)
+	nlohmann::json RestApi::getSessionInfo(const std::string & sessionId, const std::string & key)
 	{
 		std::vector<std::string> headers;
 		headers.push_back("Content-Type: application/json");
-		json postData;
+		nlohmann::json postData;
 		postData["sessionid"] = sessionId;
 		postData["key"] = key;
 
-		json retValue = callApi(Method::POST, "v1/oauth/confirm", headers, postData);
+		nlohmann::json retValue = callApi(Method::POST, "v1/oauth/confirm", headers, postData);
 
 		return retValue;
 	}
 
-	json RestApi::callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const json &postData /*= Json::nullValue*/)
+	nlohmann::json RestApi::callApi(Method method, const std::string &url, const std::vector<std::string> &headers, const nlohmann::json &postData /*= Json::nullValue*/)
 	{
 		std::string request;
 		if (method == Method::POST)
@@ -222,11 +222,11 @@ namespace vrlib
 
 
 
-		return json::parse(buffer);
+		return nlohmann::json::parse(buffer);
 	}
 
-	json RestApi::buildJson(const std::string &data)
+	nlohmann::json RestApi::buildJson(const std::string &data)
 	{
-		return json(data);
+		return nlohmann::json(data);
 	}
 }

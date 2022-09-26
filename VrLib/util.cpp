@@ -1,5 +1,6 @@
 #include "util.h"
 #include "Log.h"
+#include <sstream>
 using vrlib::Log;
 
 #ifdef WIN32

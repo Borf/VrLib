@@ -20,7 +20,7 @@ namespace vrlib
 				public:
 					float gamma = 1.0;
 					Gamma();
-					virtual json toJson(json &meshes) const;
+					virtual nlohmann::json toJson(nlohmann::json &meshes) const;
 				};
 			}
 		}

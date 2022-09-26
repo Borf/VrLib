@@ -61,7 +61,7 @@ namespace vrlib
 
 				static std::map<std::string, vrlib::Model*> cache;
 			public:
-				AnimatedModelRenderer(const json &data);
+				AnimatedModelRenderer(const nlohmann::json &data);
 				~AnimatedModelRenderer();
 
 				std::string fileName;
@@ -75,7 +75,7 @@ namespace vrlib
 				void drawDeferredPass() override;
 				void drawForwardPass() override;
 				void drawShadowMap() override;
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 
 				void playAnimation(const std::string &animation, bool loop = true);
 				void playAnimation(const std::string &animation, std::function<void()> callbackOnDone);

@@ -24,7 +24,7 @@ namespace vrlib
 					float focalDepth;
 
 					DoF();
-					virtual json toJson(json &meshes) const;
+					virtual nlohmann::json toJson(nlohmann::json &meshes) const;
 					virtual void pass(int index);
 				};
 			}

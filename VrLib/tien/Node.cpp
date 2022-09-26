@@ -79,9 +79,9 @@ namespace vrlib
 			return this->parent->isChildOf(parent);
 		}
 
-		json Node::asJson(json &meshes) const
+		nlohmann::json Node::asJson(nlohmann::json &meshes) const
 		{
-			json v;
+			nlohmann::json v;
 			v["name"] = name;
 			v["uuid"] = guid;
 			for (auto c : components)
@@ -91,22 +91,22 @@ namespace vrlib
 			return v;
 		}
 
-		void Node::fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &)> &callback)
-		{
-			this->fromJson(data, totalJson, [=](const json& jsonParam, const std::string stringParam)
-			{
-				return callback(jsonParam);
-			});
-		}
+		//void Node::fromJson(const nlohmann::json &data, const nlohmann::json &totalJson, const std::function<Component*(const nlohmann::json &)> &callback)
+		//{
+		//	this->fromJson(data, totalJson, [=](const nlohmann::json& jsonParam, const std::string stringParam)
+		//	{
+		//		return callback(jsonParam);
+		//	});
+		//}
 
-		void Node::fromJson(const json &data, const json &totalJson, const std::function<Component*(const json &, const std::string)> &callback)
+		void Node::fromJson(const nlohmann::json &data, const nlohmann::json &totalJson, const std::function<Component*(const nlohmann::json &, const std::string)> &callback)
 		{
 			setTreeDirty(this, true);
 			name = data["name"].get<std::string>();
 			guid = data["uuid"].get<std::string>();
 			
 			if (data.find("prefab") != data.end())
-				prefabFile = data["prefab"];
+				prefabFile = data["prefab"].get<std::string>();
 
 			for (auto c : components)
 				delete c;

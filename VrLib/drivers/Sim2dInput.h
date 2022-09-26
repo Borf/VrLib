@@ -56,7 +56,7 @@ namespace vrlib
 		friend class Kernel;
 
 	public:
-		Sim2dInputDeviceDriver(const json &config);
+		Sim2dInputDeviceDriver(const nlohmann::json &config);
 		void update(KeyboardDeviceDriver* keyboardDriver, double elapsedTime);
 		virtual DeviceDriverAdaptor* getAdaptor(std::string options);
 	};

@@ -118,7 +118,7 @@ namespace vrlib
 		return (*this) << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w;
 	}
 
-	Log& Log::operator<<(const json& data)
+	Log& Log::operator<<(const nlohmann::json& data)
 	{
 		std::cout << data;
 		return *this;

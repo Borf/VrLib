@@ -41,7 +41,7 @@ namespace vrlib
 			
 
 
-			Light::Light(const json & data)
+			Light::Light(const nlohmann::json & data)
 			{
 				if (data["lighttype"] == "directional")	type = Type::directional;
 				if (data["lighttype"] == "point")		type = Type::point;
@@ -68,9 +68,9 @@ namespace vrlib
 				if (data.find("cutoff") != data.end())
 					cutoff = data["cutoff"];
 			}
-			json Light::toJson(json &meshes) const
+			nlohmann::json Light::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "light";
 
 				switch (type)

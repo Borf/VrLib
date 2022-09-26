@@ -49,7 +49,7 @@ namespace vrlib
 		glLoadIdentity();
 	}
 
-	Viewport* Viewport::createViewport(Kernel* kernel, json viewportConfig, json otherConfigs)
+	Viewport* Viewport::createViewport(Kernel* kernel, nlohmann::json viewportConfig, nlohmann::json otherConfigs)
 	{
 		Viewport* viewport = NULL;
 		if (viewportConfig["type"] == "viewport")
@@ -78,7 +78,7 @@ namespace vrlib
 			{
 				for (size_t iii = 0; iii < otherConfigs[ii]["viewports"].size(); iii++)
 				{
-					json viewportConfig = otherConfigs[ii]["viewports"][iii];
+					nlohmann::json viewportConfig = otherConfigs[ii]["viewports"][iii];
 					if (viewportConfig["type"] == "viewport")
 					{
 						glm::vec3 tl(otherConfigs[ii]["viewports"][iii]["topleft"][0u], otherConfigs[ii]["viewports"][iii]["topleft"][1u], otherConfigs[ii]["viewports"][iii]["topleft"][2u]);

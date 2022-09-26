@@ -29,7 +29,7 @@ namespace vrlib
 				renderContextForward = ModelForwardRenderContext::getInstance("");
 			}
 
-			MeshRenderer::MeshRenderer(const json &data, const json &totalJson)
+			MeshRenderer::MeshRenderer(const nlohmann::json &data, const nlohmann::json &totalJson)
 			{
 				vao = nullptr;
 				this->mesh = nullptr;
@@ -62,9 +62,9 @@ namespace vrlib
 
 			}
 
-			json MeshRenderer::toJson(json &meshes) const
+			nlohmann::json MeshRenderer::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "meshrenderer";
 				ret["castShadow"] = castShadow;
 				ret["mesh"] = "";
@@ -429,9 +429,9 @@ namespace vrlib
 				guid = vrlib::util::getGuid();
 			}
 
-			MeshRenderer::Mesh::Mesh(const json &data)
+			MeshRenderer::Mesh::Mesh(const nlohmann::json &data)
 			{
-				guid = data["id"];
+				guid = data["id"].get<std::string>();
 
 				for (int i : data["indices"])
 					indices.push_back(i);
@@ -467,9 +467,9 @@ namespace vrlib
 				}
 			}
 
-			json MeshRenderer::Mesh::toJson()
+			nlohmann::json MeshRenderer::Mesh::toJson()
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["id"] = guid;
 
 				for (auto i : indices)
@@ -477,7 +477,7 @@ namespace vrlib
 
 				for (auto &v : vertices)
 				{
-					json vv;
+					nlohmann::json vv;
 					vv["pos"].push_back(v.px);
 					vv["pos"].push_back(v.py);
 					vv["pos"].push_back(v.pz);
@@ -500,7 +500,7 @@ namespace vrlib
 					ret["vertices"].push_back(vv);
 				}
 
-				ret["material"] = json::object();
+				ret["material"] = nlohmann::json::object();
 
 				if(material.texture && material.texture->image)
 					ret["material"]["diffuse"] = material.texture->image->fileName;

@@ -33,7 +33,7 @@ namespace vrlib
 
 		void resetOpenGL();
 
-		static Viewport* createViewport(Kernel* kernel, json viewportConfig, json otherConfigs);
+		static Viewport* createViewport(Kernel* kernel, nlohmann::json viewportConfig, nlohmann::json otherConfigs);
 	};
 
 

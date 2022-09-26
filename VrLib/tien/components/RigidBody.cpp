@@ -27,7 +27,7 @@ namespace vrlib
 				world = nullptr;
 			}
 
-			RigidBody::RigidBody(const json & json)
+			RigidBody::RigidBody(const nlohmann::json & json)
 			{
 				this->mass = json["mass"];
 				this->type = Type::Static; //TODO
@@ -46,9 +46,9 @@ namespace vrlib
 					world = nullptr;
 				}
 			}
-			json RigidBody::toJson(json &meshes) const
+			nlohmann::json RigidBody::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "rigidbody";
 				ret["mass"] = mass;
 				switch (type)

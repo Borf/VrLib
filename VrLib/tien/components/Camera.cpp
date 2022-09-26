@@ -17,7 +17,7 @@ namespace vrlib
 
 			}
 
-			Camera::Camera(const json & data)
+			Camera::Camera(const nlohmann::json & data)
 			{
 				if (data.find("useFbo") != data.end())
 					useFbo = data["useFbo"];
@@ -38,9 +38,9 @@ namespace vrlib
 			{
 
 			}
-			json Camera::toJson(json &meshes) const
+			nlohmann::json Camera::toJson(nlohmann::json &meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 				ret["type"] = "camera";
 				ret["useFbo"] = useFbo;
 				if (useFbo)

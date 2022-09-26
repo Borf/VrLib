@@ -39,7 +39,7 @@ namespace vrlib
 				vrlib::Model* moon;
 			public:
 				DynamicSkyBox() {};
-				DynamicSkyBox(const json &data);
+				DynamicSkyBox(const nlohmann::json &data);
 				virtual void initialize() override;
 				virtual void update(float elapsedTime, Scene& scene) override;
 				virtual void render(const glm::mat4 & projectionMatrix, const glm::mat4 & modelviewMatrix) override;
@@ -49,7 +49,7 @@ namespace vrlib
 
 				Node* light = nullptr;
 				float timeOfDay = 14;
-				virtual json toJson(json &meshes) const override;
+				virtual nlohmann::json toJson(nlohmann::json &meshes) const override;
 			};
 		}
 	}

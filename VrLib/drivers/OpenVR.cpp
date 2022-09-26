@@ -32,7 +32,7 @@ namespace vrlib
 	}
 
 
-	OpenVRDriver::OpenVRDriver(json config)
+	OpenVRDriver::OpenVRDriver(nlohmann::json config)
 	{
 		this->config = config;
 

@@ -83,8 +83,8 @@ namespace vrlib
 		bool running;
 		int 	frameCount;
 
-		json config;
-		json localConfig;
+		nlohmann::json config;
+		nlohmann::json localConfig;
 
 		Application* currentApplication;
 		Application* newApplication;
@@ -120,7 +120,7 @@ namespace vrlib
 		//virtual HWND GetHWND();
 
 
-		void mergeConfig(json &config, const json &newConfig);
+		void mergeConfig(nlohmann::json &config, const nlohmann::json &newConfig);
 		DeviceDriver* getDeviceDriver(std::string name);
 		void registerClusterData(ClusterDataBase*);
 		void loadCluster();

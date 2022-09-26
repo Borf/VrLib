@@ -8,7 +8,7 @@ namespace vrlib
 {
 	namespace tien
 	{
-		json Component::toJson(json &meshes) const
+		nlohmann::json Component::toJson(nlohmann::json &meshes) const
 		{ 
 			throw "Cannot serialize..."; 
 		};

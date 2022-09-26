@@ -16,16 +16,16 @@ namespace vrlib
 	}
 
 
-	SimPositionDeviceDriver::SimPositionDeviceDriver(const json &config)
+	SimPositionDeviceDriver::SimPositionDeviceDriver(const nlohmann::json &config)
 	{
 		mouseOffsetX = 0;
 		mouseOffsetY = 0;
 
 
-		for (json::const_iterator it = config.cbegin(); it != config.cend(); it++)
+		for (nlohmann::json::const_iterator it = config.cbegin(); it != config.cend(); it++)
 		{
 			std::string key = it.key();
-			const json &value = it.value();
+			const nlohmann::json &value = it.value();
 
 			if (value.find("initial") != value.end())
 				data[key].position = glm::vec3(value["initial"][0], value["initial"][1], value["initial"][2]);

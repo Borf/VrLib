@@ -88,7 +88,7 @@ namespace vrlib
 				static std::map<std::string, vrlib::Model*> cache;
 				bool hasForward = false;
 			public:
-				ModelRenderer(const json &json);
+				ModelRenderer(const nlohmann::json &json);
 //				ModelRenderer(const std::string &fileName);
 				~ModelRenderer();
 
@@ -102,7 +102,7 @@ namespace vrlib
 				void drawDeferredPass() override;
 				void drawForwardPass() override;
 				void drawShadowMap() override;
-				json toJson(json &meshes) const override;
+				nlohmann::json toJson(nlohmann::json &meshes) const override;
 
 				bool castShadow;
 				bool cullBackFaces;

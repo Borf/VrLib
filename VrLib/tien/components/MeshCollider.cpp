@@ -89,9 +89,9 @@ namespace vrlib
 				return shape;
 			}
 
-			json MeshCollider::toJson(json & meshes) const
+			nlohmann::json MeshCollider::toJson(nlohmann::json & meshes) const
 			{
-				json ret;
+				nlohmann::json ret;
 
 				ret["type"] = "collider";
 				ret["collider"] = "mesh";
